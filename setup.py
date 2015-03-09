@@ -69,13 +69,12 @@ setup(
     install_requires=[
       'setuptools',
       'bob.io.base',
+      'bob.io.image',
       'bob.core',
       'bob.ip.base',
       'bob.sp',
       'bob.io.matlab',
-      'facereclib',
-      'bob.db.vera',
-      'bob.db.utfvp',
+      'facereclib',   
 
     ],
 
