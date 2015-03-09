@@ -7,6 +7,7 @@ References
 ==========
 
 .. [LLP09]_  *E.C. Lee, H.C. Lee and K.R. Park. Finger vein recognition using minutia-based alignment and local binary pattern-based feature extraction. International Journal of Imaging Systems and Technology. Vol. 19, No. 3, pp. 175-178, September 2009.
+
 .. [KUU02]_  *M. Kono, H. Ueki and S. Umemura. Near-infrared finger vein patterns for personal identification, Applied Optics, Vol. 41, Issue 35, pp. 7429-7436 (2002).
 
 .. [ZY09]_   *J. Zhang and J. Yang. Finger-vein image enhancement based on combination of gray-level grouping and circular gabor filter. In International Conference on Information Engineering and Computer Science (ICIECS), pp. 1-4, Dec 2009.
@@ -20,4 +21,3 @@ References
 .. [HDLTL10]_  *B. Huang, Y. Dai, R. Li, D. Tang and W. Li. Finger-vein authentication based on wide line detector and pattern normalization, Proceedings on 20th International Conference on Pattern Recognition (ICPR), 2010.
 
 .. [MD13]_  *L. Mirmohamadsadeghi and A. Drygajlo. Palm vein recognition uisng local texture patterns, IET Biometrics, pp. 1-9, 2013.
-

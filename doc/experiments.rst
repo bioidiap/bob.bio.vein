@@ -138,16 +138,16 @@ Fingervein Cropping Parameters
 
 * ``padding_offset``: An offset to the paddy array to be applied arround the fingervein image.
 * ``padding_threshold``: The pixel value of this paddy array.
-Defined to 0.2 to uncontrolled (low quality) fingervein databases and to 0 for controlled (high quality) fingervein databases. (By default 0.2).
+  Defined to 0.2 to uncontrolled (low quality) fingervein databases and to 0 for controlled (high quality) fingervein databases. (By default 0.2).
       
 * ``preprocessing``: The pre-processing applied to the fingervein image before finger contour extraction. 
-By default equal to 'None'.
+  By default equal to 'None'.
 
 * ``fingercontour``: The algorithm used to localize the finger contour.
-Options: 'leemaskMatlab' - Implementation based on [LLP09]_, 'leemaskMod' - Modification based on [LLP09]_ for uncontrolled images introduced by author, and 'konomask' - Implementation based on [KUU02]_.
+  Options: 'leemaskMatlab' - Implementation based on [LLP09]_, 'leemaskMod' - Modification based on [LLP09]_ for uncontrolled images introduced by author, and 'konomask' - Implementation based on [KUU02]_.
 
 * ``postprocessing``: The post-processing applied to the fingervein image after the finger contour extraction.
-Options:  'None', 'HE' - Histogram Equalization, 'HFE' - High Frequency Enphasis Filtering [ZTXL09]_, 'CircGabor' - Circular Gabor Filters [ZY09]_.
+  Options:  'None', 'HE' - Histogram Equalization, 'HFE' - High Frequency Enphasis Filtering [ZTXL09]_, 'CircGabor' - Circular Gabor Filters [ZY09]_.
 
 
 Preprocessor Classes
@@ -190,7 +190,7 @@ Here is a list of the most important algorithms and their parameters:
 
 
 * :py:class:`FingerveinRecLib.tools.MiuraMatch`: Computes the match ratio based on [MNM04]_ convolving the two template image. 
-Return score - Value between 0 and 0.5, larger value is better match.
+  Return score - Value between 0 and 0.5, larger value is better match.
 
   - ``ch``: Maximum search displacement in y-direction. Different defult values based on the different features.
   - ``cw``: Maximum search displacement in x-direction. Different defult values based on the different features.

@@ -4,9 +4,9 @@
 
 .. _fingerveinreclib:
 
-============================================
+=============================================
  Welcome to FingerveinRecLib's documentation!
-============================================
+=============================================
 
 The FingerveinRecLib is an open source tool (based on FaceRecLib_) that is designed to run comparable and reproducible fingervein recognition experiments.
    Most of this documentation is based on the documentation of FaceRecLib_.
@@ -38,7 +38,6 @@ Users Guide
    installation
    experiments
    evaluate
-   
    contribute
    satellite
    references
@@ -48,5 +47,4 @@ This documentation is still under development.
 
 
 .. include:: links.rst
-
 .. _facereclib: http://pythonhosted.org/facereclib/index.html
