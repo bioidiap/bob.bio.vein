@@ -28,6 +28,7 @@ def imfilter(a, b, gpu=False, conv=True):
     return xbob.cusp.conv(a_ext, b)
   else:
     return scipy.signal.convolve2d(a_ext, b, 'valid')
+    #return = self.convfft(a_ext, b)
 
 
 
