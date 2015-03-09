@@ -6,12 +6,12 @@
    :target: http://pythonhosted.org/bob.fingervein/index.html
 .. image:: http://img.shields.io/badge/docs-latest-orange.png
    :target: https://www.idiap.ch/software/bob/docs/latest/idiap/bob.fingervein/master/index.html
-.. image:: https://travis-ci.org/idiap/bob.fingervein.svg?branch=master
-   :target: https://travis-ci.org/idiap/bob.fingervein
-.. image:: https://coveralls.io/repos/idiap/bob.fingervein/badge.png
-   :target: https://coveralls.io/r/idiap/bob.fingervein
+.. image:: https://travis-ci.org/bioidiap/bob.fingervein.svg?branch=master
+   :target: https://travis-ci.org/bioidiap/bob.fingervein
+.. image:: https://coveralls.io/repos/bioidiap/bob.fingervein/badge.png
+   :target: https://coveralls.io/r/bioidiap/bob.fingervein
 .. image:: https://img.shields.io/badge/github-master-0000c0.png
-   :target: https://github.com/idiap/bob.fingervein/tree/master
+   :target: https://github.com/bioidiap/bob.fingervein/tree/master
 .. image:: http://img.shields.io/pypi/v/bob.fingervein.png
    :target: https://pypi.python.org/pypi/bob.fingervein
 .. image:: http://img.shields.io/pypi/dm/bob.fingervein.png
