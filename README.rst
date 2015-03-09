@@ -3,19 +3,19 @@
 .. Thu Jan 15 12:51:09 CEST 2015
 
 .. image:: http://img.shields.io/badge/docs-stable-yellow.png
-   :target: http://pythonhosted.org/fingerveinreclib/index.html
+   :target: http://pythonhosted.org/bob.fingervein/index.html
 .. image:: http://img.shields.io/badge/docs-latest-orange.png
-   :target: https://www.idiap.ch/software/bob/docs/latest/idiap/facereclib/master/index.html
-.. image:: https://travis-ci.org/idiap/fingerveinreclib.svg?branch=master
-   :target: https://travis-ci.org/idiap/fingerveinreclib
-.. image:: https://coveralls.io/repos/idiap/fingerveinreclib/badge.png
-   :target: https://coveralls.io/r/idiap/fingerveinreclib
+   :target: https://www.idiap.ch/software/bob/docs/latest/idiap/bob.fingervein/master/index.html
+.. image:: https://travis-ci.org/idiap/bob.fingervein.svg?branch=master
+   :target: https://travis-ci.org/idiap/bob.fingervein
+.. image:: https://coveralls.io/repos/idiap/bob.fingervein/badge.png
+   :target: https://coveralls.io/r/idiap/bob.fingervein
 .. image:: https://img.shields.io/badge/github-master-0000c0.png
-   :target: https://github.com/idiap/fingerveinreclib/tree/master
-.. image:: http://img.shields.io/pypi/v/fingerveinreclib.png
-   :target: https://pypi.python.org/pypi/fingerveinreclib
-.. image:: http://img.shields.io/pypi/dm/fingerveinreclib.png
-   :target: https://pypi.python.org/pypi/fingerveinreclib
+   :target: https://github.com/idiap/bob.fingervein/tree/master
+.. image:: http://img.shields.io/pypi/v/bob.fingervein.png
+   :target: https://pypi.python.org/pypi/bob.fingervein
+.. image:: http://img.shields.io/pypi/dm/bob.fingervein.png
+   :target: https://pypi.python.org/pypi/bob.fingervein
 
 
 ===================================
@@ -32,7 +32,7 @@ It contains scripts to execute various kinds of finger vein recognition experime
 About
 -----
 
-This library is developed at the `Biometrics group <http://www.idiap.ch/~marcel/professional/Research_Team.html>`_ at the `Idiap Research Institute <http://www.idiap.ch>`_.
+This library is developed at the `Biometrics group <http://www.idiap.ch/scientific-research/research-groups/biometric-person-recognition>`_ at the `Idiap Research Institute <http://www.idiap.ch>`_.
 The FingerVeinRecLib is designed to run finger vein recognition experiments in a comparable and reproducible manner.
 
 .. note::
