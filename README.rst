@@ -5,7 +5,7 @@
 .. image:: http://img.shields.io/badge/docs-stable-yellow.png
    :target: http://pythonhosted.org/bob.fingervein/index.html
 .. image:: http://img.shields.io/badge/docs-latest-orange.png
-   :target: https://www.idiap.ch/software/bob/docs/latest/idiap/bob.fingervein/master/index.html
+   :target: https://www.idiap.ch/software/bob/docs/latest/bioidiap/bob.fingervein/master/index.html
 .. image:: https://travis-ci.org/bioidiap/bob.fingervein.svg?branch=master
    :target: https://travis-ci.org/bioidiap/bob.fingervein
 .. image:: https://coveralls.io/repos/bioidiap/bob.fingervein/badge.png
