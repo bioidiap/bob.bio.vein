@@ -64,7 +64,7 @@ import time
 copyright = u'%s, Idiap Research Institute' % time.strftime('%Y')
 
 # Grab the setup entry
-distribution = pkg_resources.require('bob.fingervein')[0]
+distribution = pkg_resources.require('bob.bio.vein')[0]
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -190,7 +190,7 @@ html_favicon = 'img/favicon.ico'
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'fingerveinreclib_doc'
+htmlhelp_basename = 'bobbiovein_doc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -234,7 +234,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'fingerveinreclib', u'FingerveinRecLib Documentation', [u'Idiap Research Institute'], 1)
+    ('index', 'bobbiovein', u'FingerveinRecLib Documentation', [u'Idiap Research Institute'], 1)
 ]
 
 # Default processing flags for sphinx
@@ -247,7 +247,7 @@ from bob.extension.utils import link_documentation
 intersphinx_mapping = link_documentation([
   'python', 'numpy', 'scipy', 'gridtk',
   'bob.extension', 'bob.math', 'bob.io.base', 'bob.ip.base', 'bob.ip.gabor', 'bob.learn.linear', 'bob.learn.misc', 'facereclib'
-  'bob.db.verification.utils', 'bob.db.verification.filelist', 
+  'bob.db.verification.utils', 'bob.db.verification.filelist',
   'bob.db.vera', 'bob.db.utfvp'
 ])
 

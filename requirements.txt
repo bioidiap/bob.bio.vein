@@ -1,0 +1,13 @@
+setuptools
+numpy
+scipy
+pillow
+argparse
+bob.extension
+bob.core
+bob.io.base
+bob.ip.base
+bob.io.matlab
+bob.bio.base
+bob.db.utfvp
+bob.db.vera
