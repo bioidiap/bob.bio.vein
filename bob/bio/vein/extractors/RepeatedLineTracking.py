@@ -2,23 +2,23 @@
 # vim: set fileencoding=utf-8 :
 # Pedro Tome <Pedro.Tome@idiap.ch>
 
+import numpy
+import math
+
 import bob.core
 import bob.io.base
 import bob.ip.base
 
-import numpy
-import math
-#from math import pi 
-#from mumpy import sqrt
-import scipy.signal
-from facereclib.features.Extractor import Extractor
-from .. import utils
+from bob.bio.base.features.Extractor import Extractor
+
 
 class RepeatedLineTracking (Extractor):
-  
-  """Repeated Line Tracking feature extractor based on 
-     N. Miura, A. Nagasaka, and T. Miyatake. Feature extraction of finger vein patterns based on repeated line tracking and its application 
-     to personal identification. Machine Vision and Applications, Vol. 15, Num. 4, pp. 194--203, 2004
+  """Repeated Line Tracking feature extractor
+
+  Based on N. Miura, A. Nagasaka, and T. Miyatake. Feature extraction of finger
+  vein patterns based on repeated line tracking and its application to personal
+  identification. Machine Vision and Applications, Vol. 15, Num. 4, pp.
+  194--203, 2004
   """
 
   def __init__(
@@ -26,18 +26,18 @@ class RepeatedLineTracking (Extractor):
       iterations = 3000, # Maximum number of iterations
       r = 1,             # Distance between tracking point and cross section of the profile
       profile_w = 21,     # Width of profile (Error: profile_w must be odd)
-      rescale = True
-  ):
-          
+      rescale = True,
+      ):
+
     # call base class constructor
     Extractor.__init__(
         self,
         iterations = iterations,
         r = r,
         profile_w = profile_w,
-        rescale = rescale
-    )
-    
+        rescale = rescale,
+        )
+
     # block parameters
     self.iterations = iterations
     self.r = r
@@ -46,23 +46,24 @@ class RepeatedLineTracking (Extractor):
 
 
   def repeated_line_tracking(self, finger_image, mask):
-    """Computes and returns the MiuraMax features for the given input fingervein image"""
-    
+    """Computes and returns the MiuraMax features for the given input
+    fingervein image"""
+
     #Convert image to uint8
     if finger_image.dtype != numpy.uint8:
       finger_image = bob.core.convert(finger_image,numpy.uint8,(0,255),(0,1))
 
     finger_mask = numpy.zeros(mask.shape)
-    finger_mask[mask == True] = 1 
-    
+    finger_mask[mask == True] = 1
+
     # Rescale image if required
     if self.rescale == True:
-      scaling_factor = 0.6  
+      scaling_factor = 0.6
       finger_image = bob.ip.base.scale(finger_image,scaling_factor)
       finger_mask = bob.ip.base.scale(finger_mask,scaling_factor)
       #To eliminate residuals from the scalation of the binary mask
       finger_mask = scipy.ndimage.binary_dilation(finger_mask, structure=numpy.ones((1,1))).astype(int)
-          
+
     p_lr = 0.5  # Probability of goin left or right
     p_ud = 0.25 # Probability of going up or down
 
@@ -72,24 +73,24 @@ class RepeatedLineTracking (Extractor):
     # Check if progile w is even
     if (self.profile_w.__mod__(2) == 0):
         print ('Error: profile_w must be odd')
-            
+
     ro = numpy.round(self.r*math.sqrt(2)/2)    # r for oblique directions
     hW = (self.profile_w-1)/2                  # half width for horz. and vert. directions
     hWo = numpy.round(hW*math.sqrt(2)/2)       # half width for oblique directions
-    
+
     # Omit unreachable borders
     finger_mask[0:self.r+hW,:] = 0
     finger_mask[finger_mask.shape[0]-(self.r+hW):,:] = 0
     finger_mask[:,0:self.r+hW] = 0
     finger_mask[:,finger_mask.shape[1]-(self.r+hW):] = 0
-    
+
     ## Uniformly distributed starting points
     aux = numpy.argwhere( (finger_mask > 0) == True )
     indices = numpy.random.permutation(aux)
     indices = indices[0:self.iterations,:]    # Limit to number of iterations
 
-    ## Iterate through all starting points    
-    for it in range(0,self.iterations):    
+    ## Iterate through all starting points
+    for it in range(0,self.iterations):
         yc = indices[it,0] # Current tracking point, y
         xc = indices[it,1] # Current tracking point, x
 
@@ -98,17 +99,17 @@ class RepeatedLineTracking (Extractor):
         if (numpy.random.random_sample() >= 0.5):
             Dlr = -1  # Going left
         else:
-            Dlr = 1   # Going right 
-       
+            Dlr = 1   # Going right
+
         # Going up or down ?
         if (numpy.random.random_sample() >= 0.5):
             Dud = -1  # Going up
         else:
-            Dud = 1   # Going down 
-                
+            Dud = 1   # Going down
+
         # Initialize locus-positition table Tc
         Tc = numpy.zeros(finger_image.shape, numpy.bool)
-                        
+
         #Dlr = -1; Dud=-1; LET OP
         Vl = 1
         while (Vl > 0):
@@ -116,27 +117,27 @@ class RepeatedLineTracking (Extractor):
             Nr = numpy.zeros([3,3], numpy.bool)
             Rnd = numpy.random.random_sample()
             #Rnd = 0.8 LET OP
-            if (Rnd < p_lr): 
+            if (Rnd < p_lr):
                 # Going left or right
                 Nr[:,1+Dlr] = True
-            elif (Rnd >= p_lr) and (Rnd < (p_lr + p_ud)): 
+            elif (Rnd >= p_lr) and (Rnd < (p_lr + p_ud)):
                 # Going up or down
                 Nr[1+Dud,:] = True
-            else: 
+            else:
                 # Going any direction
                 Nr = numpy.ones([3,3], numpy.bool)
                 Nr[1,1] = False
-            #tmp = numpy.argwhere( (~Tc[yc-2:yc+1,xc-2:xc+1] & Nr & finger_mask[yc-2:yc+1,xc-2:xc+1].astype(numpy.bool)).T.reshape(-1) == True )    
+            #tmp = numpy.argwhere( (~Tc[yc-2:yc+1,xc-2:xc+1] & Nr & finger_mask[yc-2:yc+1,xc-2:xc+1].astype(numpy.bool)).T.reshape(-1) == True )
             tmp = numpy.argwhere( (~Tc[yc-1:yc+2,xc-1:xc+2] & Nr & finger_mask[yc-1:yc+2,xc-1:xc+2].astype(numpy.bool)).T.reshape(-1) == True )
             Nc = numpy.concatenate((xc + filtermask[tmp,0],yc + filtermask[tmp,1]),axis=1)
             if (Nc.size==0):
                 Vl=-1
                 continue
-            
+
             ## Detect dark line direction near current tracking point
             Vdepths = numpy.zeros((Nc.shape[0],1)) # Valley depths
-            for i in range(0,Nc.shape[0]):           
-                ## Horizontal or vertical 
+            for i in range(0,Nc.shape[0]):
+                ## Horizontal or vertical
                 if (Nc[i,1] == yc):
                     # Horizontal plane
                     yp = Nc[i,1]
@@ -157,7 +158,7 @@ class RepeatedLineTracking (Extractor):
                         # Up direction
                         yp = Nc[i,1] - self.r
                     Vdepths[i] = finger_image[yp, xp + hW] - 2*finger_image[yp,xp] + finger_image[yp, xp - hW]
-                                    
+
                 ## Oblique directions
                 if ( (Nc[i,0] > xc) and (Nc[i,1] < yc) ) or ( (Nc[i,0] < xc) and (Nc[i,1] > yc) ):
                     # Diagonal, up /
@@ -184,70 +185,70 @@ class RepeatedLineTracking (Extractor):
             # End search of candidates
             index = numpy.argmax(Vdepths)  #Determine best candidate
             # Register tracking information
-            Tc[yc, xc] = True    
+            Tc[yc, xc] = True
             # Increase value of tracking space
             Tr[yc, xc] = Tr[yc, xc] + 1
             # Move tracking point
             xc = Nc[index, 0]
             yc = Nc[index, 1]
-                   
+
     img_veins = Tr
-           
+
     # Binarise the vein image
     md = numpy.median(img_veins[img_veins>0])
     img_veins_bin = img_veins > md
     img_veins_bin = scipy.ndimage.binary_closing(img_veins_bin, structure=numpy.ones((2,2))).astype(int)
 
-    #import ipdb; ipdb.set_trace() 
+    #import ipdb; ipdb.set_trace()
     #img_veins_bin2 = scipy.ndimage.binary_closing(img_veins_bin, structure=numpy.ones((2,2))).astype(int)
     #from PIL import Image
-    
+
     #Image.fromarray(bob.core.convert(img_veins_bin,numpy.uint8,(0,255),(0,1))).show()
     #skel = self.skeletonize(img_veins_bin2)
     #Image.fromarray(bob.core.convert(skel,numpy.uint8,(0,255),(0,1))).show()
 
-    return img_veins_bin.astype(numpy.float64)       
-           
+    return img_veins_bin.astype(numpy.float64)
+
+
   def skeletonize(self, img):
     import scipy.ndimage.morphology as m
-    h1 = numpy.array([[0, 0, 0],[0, 1, 0],[1, 1, 1]]) 
-    m1 = numpy.array([[1, 1, 1],[0, 0, 0],[0, 0, 0]]) 
-    h2 = numpy.array([[0, 0, 0],[1, 1, 0],[0, 1, 0]]) 
-    m2 = numpy.array([[0, 1, 1],[0, 0, 1],[0, 0, 0]])    
-    hit_list = [] 
+    h1 = numpy.array([[0, 0, 0],[0, 1, 0],[1, 1, 1]])
+    m1 = numpy.array([[1, 1, 1],[0, 0, 0],[0, 0, 0]])
+    h2 = numpy.array([[0, 0, 0],[1, 1, 0],[0, 1, 0]])
+    m2 = numpy.array([[0, 1, 1],[0, 0, 1],[0, 0, 0]])
+    hit_list = []
     miss_list = []
-    for k in range(4): 
+    for k in range(4):
         hit_list.append(numpy.rot90(h1, k))
         hit_list.append(numpy.rot90(h2, k))
         miss_list.append(numpy.rot90(m1, k))
-        miss_list.append(numpy.rot90(m2, k))    
+        miss_list.append(numpy.rot90(m2, k))
     img = img.copy()
     while True:
         last = img
-        for hit, miss in zip(hit_list, miss_list): 
-            hm = m.binary_hit_or_miss(img, hit, miss) 
-            img = numpy.logical_and(img, numpy.logical_not(hm)) 
-        if numpy.all(img == last):  
+        for hit, miss in zip(hit_list, miss_list):
+            hm = m.binary_hit_or_miss(img, hit, miss)
+            img = numpy.logical_and(img, numpy.logical_not(hm))
+        if numpy.all(img == last):
             break
     return img
 
 
-  def __call__(self, image):    
-    """Reads the input image, extract the features based on Maximum Curvature of the fingervein image, and writes the resulting template"""
-    
+  def __call__(self, image):
+    """Reads the input image, extract the features based on Maximum Curvature
+    of the fingervein image, and writes the resulting template"""
+
     finger_image = image[0]    #Normalized image with or without histogram equalization
-    finger_mask = image[1]   
-    
-    return self.repeated_line_tracking(finger_image, finger_mask)  
-    
+    finger_mask = image[1]
+
+    return self.repeated_line_tracking(finger_image, finger_mask)
+
 
   def save_feature(self, feature, feature_file):
     f = bob.io.base.HDF5File(feature_file, 'w')
     f.set('feature', feature)
-            
+
   def read_feature(self, feature_file):
     f = bob.io.base.HDF5File(feature_file, 'r')
     image = f.read('feature')
     return (image)
-
-  
