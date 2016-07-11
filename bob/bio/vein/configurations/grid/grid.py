@@ -1,7 +1,7 @@
 #!/usr/bin/env python
+# vim: set fileencoding=utf-8 :
 
-import facereclib
+import bob.bio.base.grid import Grid
 
-# define the queue using all the default parameters
-grid = facereclib.utils.GridParameters(
-)
+
+grid = Grid()

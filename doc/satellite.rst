@@ -1,5 +1,4 @@
 .. vim: set fileencoding=utf-8 :
-.. author: Pedro Tome <pedro.tome@idiap.ch>
 .. date: Wed Jan 14 11:58:57 CEST 2015
 
 .. _satellite-packages:

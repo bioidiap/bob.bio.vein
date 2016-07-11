@@ -1,5 +1,4 @@
 .. vim: set fileencoding=utf-8 :
-.. author: Pedro Tome <pedro.tome@idiap.ch>
 .. date: Thu Jan 15 15:58:57 CEST 2015
 
 .. _installation:
@@ -33,7 +32,7 @@ Be aware that you will get the latest changes and that it might not work as expe
 Bob
 ~~~
 
-The FingerveinRecLib is a satellite package of Bob_, where most of the image processing, feature extraction, and fingervein recognition algorithms, as well as the evaluation techniques are implemented. This package uses FaceRecLib_ as a parent package.  
+The FingerveinRecLib is a satellite package of Bob_, where most of the image processing, feature extraction, and fingervein recognition algorithms, as well as the evaluation techniques are implemented. This package uses FaceRecLib_ as a parent package.
 In its current version, the FingerveinRecLib requires Bob_ version 2 or greater.
 Since version 2.0 there is no need for a global installation of Bob any more, all required packages will be automatically downloaded from PyPi_.
 

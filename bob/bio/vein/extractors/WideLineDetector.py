@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
-# Pedro Tome <Pedro.Tome@idiap.ch>
-
-import bob.io.base
-import bob.ip.base
 
 import numpy
 import scipy
 import scipy.misc
+
+import bob.io.base
+import bob.ip.base
 
 from bob.bio.base.features.Extractor import Extractor
 

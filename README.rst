@@ -1,5 +1,4 @@
 .. vim: set fileencoding=utf-8 :
-.. Andre Anjos <andre.anjos@idiap.ch>
 .. Fri 08 Jul 2016 15:38:56 CEST
 
 .. image:: http://img.shields.io/badge/docs-stable-yellow.png

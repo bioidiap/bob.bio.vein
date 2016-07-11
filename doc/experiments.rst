@@ -1,33 +1,41 @@
 .. vim: set fileencoding=utf-8 :
-.. author: Pedro Tome <pedro.tome@idiap.ch>
 .. date: Thu Jan 15 15:58:57 CEST 2015
 
 .. _experiments:
 
-===================
-Running Experiments
-===================
+=====================
+ Running Experiments
+=====================
 
-For running experiments with a defined setup, you should use the ``bin/fingerveinverify.py`` script directly.
+For running experiments with a defined setup, you should use the
+``bin/fingerveinverify.py`` script directly.
 
 In the following sections the available command line arguments are listed.
-Sometimes, arguments have a long version starting with ``--`` and a short one starting with a single ``-``.
-In this section, only the long names of the arguments are listed, please refer to ``bin/fingerveinverify.py --help`` (or short: ``bin/fingerveinverify.py -h``) for the abbreviations.
+Sometimes, arguments have a long version starting with ``--`` and a short one
+starting with a single ``-``.  In this section, only the long names of the
+arguments are listed, please refer to ``bin/fingerveinverify.py --help`` (or
+short: ``bin/fingerveinverify.py -h``) for the abbreviations.
+
 
 .. _required:
 
 Required Command Line Arguments
 -------------------------------
-To run a fingervein recognition experiment using the FingerveinRecLib, you have to tell the ``bin/fingerveinverify.py`` script, which database, preprocessing, features, and algorithm should be used.
-To use this script, you have to specify at least these command line arguments (see also the ``--help`` option):
 
-* ``--database``: The database to run the experiments on, and which protocol to use.
+To run a fingervein recognition experiment using the FingerveinRecLib, you have
+to tell the ``bin/fingerveinverify.py`` script, which database, preprocessing,
+features, and algorithm should be used.  To use this script, you have to
+specify at least these command line arguments (see also the ``--help`` option):
+
+* ``--database``: The database to run the experiments on, and which protocol to
+  use.
 * ``--preprocessing``: The data preprocessing and its parameters.
 * ``--features``: The features to extract and their options.
 * ``--tool``: The recognition algorithm and all its required parameters.
 
-There is another command line argument that is used to separate the resulting files from different experiments.
-Please specify a descriptive name for your experiment to be able to remember, how the experiment was run:
+There is another command line argument that is used to separate the resulting
+files from different experiments.  Please specify a descriptive name for your
+experiment to be able to remember, how the experiment was run:
 
 * ``--sub-directory``: A descriptive name for your experiment.
 
@@ -36,38 +44,45 @@ Please specify a descriptive name for your experiment to be able to remember, ho
 
 Managing Resources
 ~~~~~~~~~~~~~~~~~~
-The FingerveinRecLib is designed in a way that makes it very easy to select the setup of your experiments.
-Basically, you can specify your algorithm and its configuration in three different ways:
 
-1. You choose one of the registered resources.
-   Just call ``bin/resources.py`` or ``bin/fingerveinverify.py --help`` to see, which kind of resources are currently registered.
-   Of course, you can also register a new resource.
+The FingerveinRecLib is designed in a way that makes it very easy to select the
+setup of your experiments.  Basically, you can specify your algorithm and its
+configuration in three different ways:
+
+1. You choose one of the registered resources. Just call ``bin/resources.py``
+   or ``bin/fingerveinverify.py --help`` to see, which kind of resources are
+   currently registered. Of course, you can also register a new resource.
    How this is done is detailed in section :ref:`register-resources`.
 
    Example:
 
    .. code-block:: sh
 
-     $ bin/fingerveinverify.py --database vera
+      $ bin/fingerveinverify.py --database vera
 
-2. You define a configuration file or choose one of the already existing configuration files that are located in `FingerveinRecLib/configurations`_ and its sub-directories.
-   How to define a new configuration file, please read section :ref:`configuration-files`.
+
+2. You define a configuration file or choose one of the already existing
+   configuration files that are located in `FingerveinRecLib/configurations`_
+   and its sub-directories. How to define a new configuration file, please read
+   section :ref:`configuration-files`.
 
    Example:
 
    .. code-block:: sh
 
-     $ bin/fingerveinverify.py --preprocessing histeq
+      $ bin/fingerveinverify.py --preprocessing histeq
+
 
 3. You directly put the constructor call of the class into the command line.
-   Since the parentheses are special characters in the shell, usually you have to enclose the constructor call into quotes.
-   If you, e.g., want to extract MC-MaximumCurvature features, just add a to your command line.
+   Since the parentheses are special characters in the shell, usually you have
+   to enclose the constructor call into quotes.  If you, e.g., want to extract
+   MC-MaximumCurvature features, just add a to your command line.
 
    Example:
 
    .. code-block:: sh
 
-     $ bin/fingerveinverify.py --features mc-maximumcurvature
+      $ bin/fingerveinverify.py --features mc-maximumcurvature
 
 
 Of course, you can mix the ways, how you define command line options.
@@ -134,13 +149,13 @@ Fingervein Cropping Parameters
 
 
 * ``mask_h``: Height of the cropping finger mask.
-* ``mask_w``: Width of the cropping finger mask.  
+* ``mask_w``: Width of the cropping finger mask.
 
 * ``padding_offset``: An offset to the paddy array to be applied arround the fingervein image.
 * ``padding_threshold``: The pixel value of this paddy array.
   Defined to 0.2 to uncontrolled (low quality) fingervein databases and to 0 for controlled (high quality) fingervein databases. (By default 0.2).
-      
-* ``preprocessing``: The pre-processing applied to the fingervein image before finger contour extraction. 
+
+* ``preprocessing``: The pre-processing applied to the fingervein image before finger contour extraction.
   By default equal to 'None'.
 
 * ``fingercontour``: The algorithm used to localize the finger contour.
@@ -171,10 +186,10 @@ Several different kinds of features can be extracted from the preprocessed data.
 Here is the list of classes to perform feature extraction and its parameters.
 
 * :py:class:`FingerveinRecLib.features.normalised_crosscorr`: Just use the full image as a feature.
-* :py:class:`FingerveinRecLib.features.maximum_curvature`: Extracts Maximum Curvature features [MNM05]_ from the preprocessed data. 
-* :py:class:`FingerveinRecLib.features.repeated_line_tracking`: Extracts Repeated Line Tracking features [MNM04]_ from the preprocessed data. 
-* :py:class:`FingerveinRecLib.features.wide_line_detector`: Extracts Wide Line Detector features [HDLTL10]_ from the preprocessed data. 
-* :py:class:`FingerveinRecLib.features.lbp`: Extracts Local Binary Patterns features [MD13]_ from the preprocessed data. 
+* :py:class:`FingerveinRecLib.features.maximum_curvature`: Extracts Maximum Curvature features [MNM05]_ from the preprocessed data.
+* :py:class:`FingerveinRecLib.features.repeated_line_tracking`: Extracts Repeated Line Tracking features [MNM04]_ from the preprocessed data.
+* :py:class:`FingerveinRecLib.features.wide_line_detector`: Extracts Wide Line Detector features [HDLTL10]_ from the preprocessed data.
+* :py:class:`FingerveinRecLib.features.lbp`: Extracts Local Binary Patterns features [MD13]_ from the preprocessed data.
 
 
 .. _algorithms:
@@ -189,12 +204,12 @@ These parameters mainly deal with how to compute a single score when more than o
 Here is a list of the most important algorithms and their parameters:
 
 
-* :py:class:`FingerveinRecLib.tools.MiuraMatch`: Computes the match ratio based on [MNM04]_ convolving the two template image. 
+* :py:class:`FingerveinRecLib.tools.MiuraMatch`: Computes the match ratio based on [MNM04]_ convolving the two template image.
   Return score - Value between 0 and 0.5, larger value is better match.
 
   - ``ch``: Maximum search displacement in y-direction. Different defult values based on the different features.
   - ``cw``: Maximum search displacement in x-direction. Different defult values based on the different features.
-  
+
 * :py:class:`FingerveinRecLib.tools.HammingDistance`: Computes the Hamming Distance between two fingervein templates.
 
 
@@ -277,7 +292,7 @@ If you want to re-use parts previous experiments, you can specify the directorie
 
 * ``--preprocessed-data-directory``
 * ``--features-directory``
-* ``--models-directories`` 
+* ``--models-directories``
 
 or even trained extractor, projector, or enroller (i.e., the results of the extractor, projector, or enroller training):
 

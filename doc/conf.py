@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
-# Pedro Tome <pedro.tome@idiap.ch>
-# Wed Jan 14 11:58:57 CEST 2015
-#
-# Copyright (C) 2011-2014 Idiap Research Institute, Martigny, Switzerland
 
 import os
 import sys

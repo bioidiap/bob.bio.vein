@@ -1,13 +1,6 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
-# Pedro Tome <Pedro.Tome@idiap.ch>
 
-import bob.fingervein
+from ...extractors import NormalisedCrossCorrelation
 
-# Parameters 
-
-#Define feature extractor
-feature_extractor = bob.fingervein.features.NormalisedCrossCorrelation(
-	
-)
-
+feature_extractor = bob.fingervein.features.NormalisedCrossCorrelation()

@@ -1,23 +1,24 @@
 #!/usr/bin/env python
+# vim: set fileencoding=utf-8 :
 
-import facereclib
+import bob.bio.base.grid import Grid
 
-# define a queue with demanding parameters
-grid = facereclib.utils.GridParameters(
-  training_queue = '32G',
-  # preprocessing
-  number_of_preprocessings_per_job = 200,
-  preprocessing_queue = '4G',
-  # feature extraction
-  number_of_extracted_features_per_job = 200,
-  extraction_queue = '8G',
-  # feature projection
-  number_of_projected_features_per_job = 200,
-  projection_queue = '8G',
-  # model enrollment
-  number_of_enrolled_models_per_job = 10,
-  enrollment_queue = '8G',
-  # scoring
-  number_of_models_per_scoring_job = 10,
-  scoring_queue = '8G'
-)
+
+grid = Grid(
+    training_queue='32G',
+
+    number_of_preprocessings_per_job=200,
+    preprocessing_queue='4G',
+
+    number_of_extraction_jobs=200,
+    extraction_queue='8G',
+
+    number_of_projection_jobs=200,
+    projection_queue='8G',
+
+    number_of_enrollment_jobs=10,
+    enrollment_queue='8G',
+
+    number_of_scoring_jobs=10,
+    scoring_queue='8G',
+    )
