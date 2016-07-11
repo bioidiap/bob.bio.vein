@@ -8,7 +8,7 @@ import scipy.misc
 import bob.io.base
 import bob.ip.base
 
-from bob.bio.base.features.Extractor import Extractor
+from bob.bio.base.extractor import Extractor
 
 
 class WideLineDetector (Extractor):

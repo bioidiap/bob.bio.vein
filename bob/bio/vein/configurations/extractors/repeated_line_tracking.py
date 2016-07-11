@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
-from ...extractors import RepeatedLineTracking
+from ...extractors.RepeatedLineTracking import RepeatedLineTracking
 
 # Maximum number of iterations
 NUMBER_ITERATIONS = 3000

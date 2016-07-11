@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
-from ..algorithms import MiuraMatch
+from ..algorithms.MiuraMatch import MiuraMatch
 
 huangwl_tool = MiuraMatch(ch=18, cw=28)
 huangwl_gpu_tool = MiuraMatch(ch=18, cw=28, gpu=True)

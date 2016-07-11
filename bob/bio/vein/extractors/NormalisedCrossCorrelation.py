@@ -5,7 +5,7 @@ import numpy
 
 import bob.io.base
 
-from bob.bio.base.features.Extractor import Extractor
+from bob.bio.base.extractor import Extractor
 
 
 class NormalisedCrossCorrelation (Extractor):

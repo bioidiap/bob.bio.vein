@@ -48,11 +48,11 @@ setup(
 
       # registered feature extractors
       'bob.bio.extractor': [
-        'ncc-normalisedcrosscorr = bob.bio.vein.configurations.extractors.normalised_crosscorr:feature_extractor',
-        'mc-maximumcurvature = bob.bio.vein.configurations.extractors.maximum_curvature:feature_extractor',
-        'rlt-repeatedlinetracking = bob.bio.vein.configurations.extractors.repeated_line_tracking:feature_extractor',
-        'wld-widelinedetector = bob.bio.vein.configurations.extractors.wide_line_detector:feature_extractor',
-        'lbp-localbinarypatterns = bob.bio.vein.configurations.extractors.lbp:feature_extractor',
+        'normalisedcrosscorr = bob.bio.vein.configurations.extractors.normalised_crosscorr:feature_extractor',
+        'maximumcurvature = bob.bio.vein.configurations.extractors.maximum_curvature:feature_extractor',
+        'repeatedlinetracking = bob.bio.vein.configurations.extractors.repeated_line_tracking:feature_extractor',
+        'widelinedetector = bob.bio.vein.configurations.extractors.wide_line_detector:feature_extractor',
+        'localbinarypatterns = bob.bio.vein.configurations.extractors.lbp:feature_extractor',
       ],
 
       # registered fingervein recognition algorithms
