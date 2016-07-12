@@ -329,7 +329,6 @@ class FingerCrop (Preprocessor):
 
   def __HE__(self, image):
     #Umbralization based on the pixels non zero
-    #import ipdb; ipdb.set_trace()
     imageEnhance = numpy.zeros(image.shape)
     imageEnhance = imageEnhance.astype(numpy.uint8)
 
@@ -372,7 +371,6 @@ class FingerCrop (Preprocessor):
     imageEnhance = utils.imfilter(image, gaborfilter, self.gpu, conv=False)
     imageEnhance = numpy.abs(imageEnhance)
 
-    #import ipdb; ipdb.set_trace()
     imageEnhance = bob.core.convert(imageEnhance,numpy.uint8,(0,255),(imageEnhance.min(),imageEnhance.max()))
 
     return imageEnhance
@@ -387,8 +385,6 @@ class FingerCrop (Preprocessor):
     a = 0.6
     b = 1.2
     n = 2.0
-
-    #import ipdb; ipdb.set_trace()
 
     #Convert image to doubles
     image_new = bob.core.convert(image,numpy.float64,(0,1),(0,255))
@@ -459,7 +455,6 @@ class FingerCrop (Preprocessor):
   def crop_finger(self, image):
 
     spoofingValue = self.__spoofingdetector__(image)
-    #import ipdb; ipdb.set_trace()
 
     #Padding array
     image = self.__padding_finger__(image)

@@ -80,8 +80,6 @@ class LocalBinaryPatterns (Extractor):
     """Copies the given array into the given blocks"""
 
     # fill array in the desired shape
-    #For debugging
-    #import ipdb; ipdb.set_trace()
     for b in range(self.m_n_blocks):
       lbphs_array[b * self.m_n_bins : (b+1) * self.m_n_bins] = lbphs_blocks[b][:]
 
@@ -89,9 +87,6 @@ class LocalBinaryPatterns (Extractor):
   def lbp_features(self, finger_image, mask):
     """Computes and returns the LBP features for the given input fingervein
     image"""
-
-    # For debugging
-    #import ipdb; ipdb.set_trace()
 
     finger_image = finger_image.astype(numpy.float64)
 
@@ -112,9 +107,6 @@ class LocalBinaryPatterns (Extractor):
 
     # create new array
     lbphs_array = numpy.zeros(shape, 'float64')
-
-    #For debugging
-    #import ipdb; ipdb.set_trace()
 
     # fill the array with the absolute values of the Gabor wavelet transform
     self.__fill__(lbphs_array, abs_blocks, 0)

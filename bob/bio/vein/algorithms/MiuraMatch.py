@@ -47,7 +47,6 @@ class MiuraMatch (Algorithm):
     """Enrolls the model by computing an average graph for each model"""
 
     # return the generated model
-    #import ipdb; ipdb.set_trace()
     return numpy.array(enroll_features)
 
 

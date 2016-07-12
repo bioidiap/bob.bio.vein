@@ -47,7 +47,8 @@ To achieve this goal, interfaces to some publicly available vein image
 databases are contained, and default evaluation protocols are defined, e.g.:
 
 - UTFVP - University of Twente Finger Vein Database [http://www.sas.ewi.utwente.nl/]
-- VERA Finger vein Database [http://www.idiap.ch/scientific-research/resources]
+- VERA - Finger vein Database [http://www.idiap.ch/scientific-research/resources]
+- PUT - The PUT biometric vein (palm and wrist) recognition dataset [http://biometrics.put.poznan.pl/vein-dataset/]
 
 
 Algorithms
@@ -97,7 +98,8 @@ this package using the same installation mechanism.
 Development
 -----------
 
-In order to develop the latest version of this package::
+In order to develop the latest version of this package, install Bob_ as
+indicated above. Once that is done, do this::
 
   $ git clone https://gitlab.idiap.ch/biometrc/bob.bio.vein.git
   $ cd bob.bio.vein

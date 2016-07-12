@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
-import numpy
 import math
+import numpy
+import scipy.ndimage
 
 import bob.core
 import bob.io.base
@@ -197,14 +198,6 @@ class RepeatedLineTracking (Extractor):
     md = numpy.median(img_veins[img_veins>0])
     img_veins_bin = img_veins > md
     img_veins_bin = scipy.ndimage.binary_closing(img_veins_bin, structure=numpy.ones((2,2))).astype(int)
-
-    #import ipdb; ipdb.set_trace()
-    #img_veins_bin2 = scipy.ndimage.binary_closing(img_veins_bin, structure=numpy.ones((2,2))).astype(int)
-    #from PIL import Image
-
-    #Image.fromarray(bob.core.convert(img_veins_bin,numpy.uint8,(0,255),(0,1))).show()
-    #skel = self.skeletonize(img_veins_bin2)
-    #Image.fromarray(bob.core.convert(skel,numpy.uint8,(0,255),(0,1))).show()
 
     return img_veins_bin.astype(numpy.float64)
 

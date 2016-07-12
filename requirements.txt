@@ -6,8 +6,10 @@ argparse
 bob.extension
 bob.core
 bob.io.base
-bob.ip.base
 bob.io.matlab
+bob.io.image
+bob.ip.base
 bob.bio.base
 bob.db.utfvp
 bob.db.vera
+bob.db.putvein

@@ -13,6 +13,7 @@ import pkg_resources
 
 import bob.io.base
 import bob.io.matlab
+import bob.io.image
 
 
 def F(parts):
@@ -23,17 +24,17 @@ def F(parts):
 
 def test_finger_crop():
 
-  #Test finger vein image preprocessing
+  #Test finger vein image preprocessors
 
-  input_filename = F(('preprocessing', '0019_3_1_120509-160517.png'))
-  output_img_filename  = F(('preprocessing',
+  input_filename = F(('preprocessors', '0019_3_1_120509-160517.png'))
+  output_img_filename  = F(('preprocessors',
     '0019_3_1_120509-160517_img_lee_huang.mat'))
-  output_fvr_filename  = F(('preprocessing',
+  output_fvr_filename  = F(('preprocessors',
     '0019_3_1_120509-160517_fvr_lee_huang.mat'))
 
   img = bob.io.base.load(input_filename)
 
-  from bob.fingervein.preprocessing.FingerCrop import FingerCrop
+  from bob.bio.vein.preprocessors.FingerCrop import FingerCrop
   FC = FingerCrop(4, 40, False, False)
   #FC = FingerCrop(4, 40, False, 5, 0.2, False)
 
@@ -52,16 +53,16 @@ def test_miuramax():
 
   #Maximum Curvature method against Matlab reference
 
-  input_img_filename  = F(('features', 'miuramax_input_img.mat'))
-  input_fvr_filename  = F(('features', 'miuramax_input_fvr.mat'))
-  output_filename     = F(('features', 'miuramax_output.mat'))
+  input_img_filename  = F(('extractors', 'miuramax_input_img.mat'))
+  input_fvr_filename  = F(('extractors', 'miuramax_input_fvr.mat'))
+  output_filename     = F(('extractors', 'miuramax_output.mat'))
 
   # Load inputs
   input_img = bob.io.base.load(input_img_filename)
   input_fvr = bob.io.base.load(input_fvr_filename)
 
   # Apply Python implementation
-  from bob.fingervein.features.MaximumCurvature import MaximumCurvature
+  from bob.bio.vein.extractors.MaximumCurvature import MaximumCurvature
   MC = MaximumCurvature(5, False)
   output_img = MC((input_img, input_fvr))
 
@@ -77,16 +78,16 @@ def test_miurarlt():
 
   #Repeated Line Tracking method against Matlab reference
 
-  input_img_filename  = F(('features', 'miurarlt_input_img.mat'))
-  input_fvr_filename  = F(('features', 'miurarlt_input_fvr.mat'))
-  output_filename     = F(('features', 'miurarlt_output.mat'))
+  input_img_filename  = F(('extractors', 'miurarlt_input_img.mat'))
+  input_fvr_filename  = F(('extractors', 'miurarlt_input_fvr.mat'))
+  output_filename     = F(('extractors', 'miurarlt_output.mat'))
 
   # Load inputs
   input_img = bob.io.base.load(input_img_filename)
   input_fvr = bob.io.base.load(input_fvr_filename)
 
   # Apply Python implementation
-  from bob.fingervein.features.RepeatedLineTracking import RepeatedLineTracking
+  from bob.bio.vein.extractors.RepeatedLineTracking import RepeatedLineTracking
   RLT = RepeatedLineTracking(3000, 1, 21, False)
   output_img = RLT((input_img, input_fvr))
 
@@ -102,16 +103,16 @@ def test_huangwl():
 
   #Wide Line Detector method against Matlab reference
 
-  input_img_filename  = F(('features', 'huangwl_input_img.mat'))
-  input_fvr_filename  = F(('features', 'huangwl_input_fvr.mat'))
-  output_filename     = F(('features', 'huangwl_output.mat'))
+  input_img_filename  = F(('extractors', 'huangwl_input_img.mat'))
+  input_fvr_filename  = F(('extractors', 'huangwl_input_fvr.mat'))
+  output_filename     = F(('extractors', 'huangwl_output.mat'))
 
   # Load inputs
   input_img = bob.io.base.load(input_img_filename)
   input_fvr = bob.io.base.load(input_fvr_filename)
 
   # Apply Python implementation
-  from bob.fingervein.features.WideLineDetector import WideLineDetector
+  from bob.bio.vein.extractors.WideLineDetector import WideLineDetector
   WL = WideLineDetector(5, 1, 41, False)
   output_img = WL((input_img, input_fvr))
 
@@ -123,17 +124,18 @@ def test_huangwl():
 
 
 def test_miura_match():
-  """Test matching: Match Ratio method against Matlab reference"""
 
-  template_filename = F(('matching', '0001_2_1_120509-135338.mat'))
-  probe_gen_filename = F(('matching', '0001_2_2_120509-135558.mat'))
-  probe_imp_filename = F(('matching', '0003_2_1_120509-141255.mat'))
+  #Match Ratio method against Matlab reference
+
+  template_filename = F(('algorithms', '0001_2_1_120509-135338.mat'))
+  probe_gen_filename = F(('algorithms', '0001_2_2_120509-135558.mat'))
+  probe_imp_filename = F(('algorithms', '0003_2_1_120509-141255.mat'))
 
   template_vein = bob.io.base.load(template_filename)
   probe_gen_vein = bob.io.base.load(probe_gen_filename)
   probe_imp_vein = bob.io.base.load(probe_imp_filename)
 
-  from bob.fingervein.tools.MiuraMatch import MiuraMatch
+  from bob.bio.vein.algorithms.MiuraMatch import MiuraMatch
   MM = MiuraMatch(ch=18, cw=28)
   score_gen = MM.score(template_vein, probe_gen_vein)
 
