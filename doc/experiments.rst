@@ -81,10 +81,12 @@ Here is a list of the most important algorithms and their parameters:
 * :py:class:`FingerveinRecLib.tools.MiuraMatch`: Computes the match ratio based
   on [MNM04]_ convolving the two template image.  Return score - Value between
   0 and 0.5, larger value is better match.
-  - ``ch``: Maximum search displacement in y-direction. Different defult values
+
+  * ``ch``: Maximum search displacement in y-direction. Different defult values
     based on the different features.
-  - ``cw``: Maximum search displacement in x-direction. Different defult values
+  * ``cw``: Maximum search displacement in x-direction. Different defult values
     based on the different features.
+
 * :py:class:`FingerveinRecLib.tools.HammingDistance`: Computes the Hamming Distance between two fingervein templates.
 
 

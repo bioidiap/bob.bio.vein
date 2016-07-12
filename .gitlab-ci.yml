@@ -1,0 +1,15 @@
+py27-conda-idiap:
+    - source /idiap/group/torch5spro/conda/bin/activate bob-2.2.0-py27_0
+    - git clean -ffdx
+    - export TMPDIR=/var/tmp
+    - python bootstrap-buildout.py
+    - ./bin/buildout
+    - unset TMPDIR
+    - ./bin/python --version
+    - export NOSE_WITH_COVERAGE=1
+    - export NOSE_COVER_PACKAGE=bob.bio.vein
+    - ./bin/bob_dbmanage.py bob.db.vera download
+    - ./bin/nosetests -sv bob.bio.vein
+    - ./bin/sphinx-build doc html
+  tags:
+    - lidiap2015
