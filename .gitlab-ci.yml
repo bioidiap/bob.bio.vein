@@ -9,7 +9,7 @@ py27-conda-idiap:
     - ./bin/python --version
     - export NOSE_WITH_COVERAGE=1
     - export NOSE_COVER_PACKAGE=bob.bio.vein
-    - ./bin/bob_dbmanage.py bob.db.vera download
+    - ./bin/bob_dbmanage.py vera download
     - ./bin/nosetests -sv bob.bio.vein
     - ./bin/sphinx-build doc html
   tags:
