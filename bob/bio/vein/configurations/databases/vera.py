@@ -5,12 +5,13 @@ import bob.db.vera
 
 from bob.bio.base.database import DatabaseBob
 
-vera_directory = "/idiap/project/vera"
+directory = "/idiap/project/vera"
+extension = ".png"
 
 database = DatabaseBob(
     database = bob.db.vera.Database(
-      original_directory = vera_directory,
-      original_extension = ".png",
+      original_directory = directory,
+      original_extension = extension,
       ),
     name = 'vera',
     )

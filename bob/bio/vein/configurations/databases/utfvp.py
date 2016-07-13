@@ -5,12 +5,13 @@ import bob.db.utfvp
 
 from bob.bio.base.database import DatabaseBob
 
-utfvp_directory = "/idiap/resource/database/UTFVP/data/"
+directory = "/idiap/resource/database/UTFVP/data/"
+extension = ".png"
 
 database = DatabaseBob(
     database = bob.db.utfvp.Database(
-      original_directory = utfvp_directory,
-      original_extension = ".png"
+      original_directory = directory,
+      original_extension = extension,
       ),
     name = 'utfvp',
     )
