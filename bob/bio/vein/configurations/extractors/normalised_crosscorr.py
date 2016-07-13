@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
-from ...extractors.NormalisedCrossCorrelation import NormalisedCrossCorrelation
+from ...extractors import NormalisedCrossCorrelation
 
 feature_extractor = NormalisedCrossCorrelation()

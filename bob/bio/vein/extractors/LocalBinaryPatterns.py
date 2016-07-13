@@ -13,7 +13,7 @@ class LocalBinaryPatterns (Extractor):
   """LBP feature extractor
 
   Parameters fixed based on L. Mirmohamadsadeghi and A. Drygajlo. Palm vein
-  recognition uisng local texture patterns, IET Biometrics, pp. 1-9, 2013.
+  recognition using local texture patterns, IET Biometrics, pp. 1-9, 2013.
   """
 
   def __init__(

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
-from ...preprocessors.FingerCrop import FingerCrop
+from ...preprocessors import FingerCrop
 
 # Contour localization mask
 CONTOUR_MASK_HEIGHT = 4 # Height of the mask

@@ -1,9 +1,9 @@
 .. vim: set fileencoding=utf-8 :
 .. date: Thu Jan 15 15:58:57 CEST 2015
 
-==========
-References
-==========
+============
+ References
+============
 
 .. [KUU02] *M. Kono, H. Ueki and S. Umemura*, **Near-infrared finger vein patterns for personal identification**, Applied Optics, Vol. 41, Issue 35, pp. 7429-7436 (2002).
 

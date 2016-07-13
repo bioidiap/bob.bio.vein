@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
-from ...extractors.WideLineDetector import WideLineDetector
+from ...extractors import WideLineDetector
 
 # Radius of the circular neighbourhood region
 RADIUS_NEIGHBOURHOOD_REGION = 5

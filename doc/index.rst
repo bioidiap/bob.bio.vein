@@ -21,7 +21,7 @@ Users Guide
 .. toctree::
    :maxdepth: 2
 
-   experiments
+   baselines
    references
    api
 

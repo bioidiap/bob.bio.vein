@@ -10,14 +10,14 @@ This section contains a listing of all functionality available on this library
 which can be used for vein experiments.
 
 
-Pre-configured Databases
-------------------------
+Databases
+---------
 
 .. automodule:: bob.bio.vein.configurations.databases
 
 
-Preprocessors
--------------
+Pre-processors
+--------------
 
 .. automodule:: bob.bio.vein.preprocessors
 

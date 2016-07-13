@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
-from ...extractors.MaximumCurvature import MaximumCurvature
+from ...extractors import MaximumCurvature
 
 
 # Parameters

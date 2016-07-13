@@ -11,7 +11,7 @@ setup(
 
     name='bob.bio.vein',
     version=open("version.txt").read().rstrip(),
-    description='Vein recognition based on Bob and the bob.bio framework',
+    description='Vein biometrics recognition based on Bob and the bob.bio framework',
 
     url='https://gitlab.idiap.ch/biometric/bob.bio.vein',
     license='GPLv3',
