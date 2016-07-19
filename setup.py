@@ -35,6 +35,7 @@ setup(
       'bob.bio.database': [
         'utfvp = bob.bio.vein.configurations.databases.utfvp:database',
         'vera = bob.bio.vein.configurations.databases.vera:database',
+	'biowave_test = bob.bio.vein.configurations.databases.biowave_test:database',
       ],
 
       # registered preprocessors
@@ -43,7 +44,7 @@ setup(
         'histeq = bob.bio.vein.configurations.preprocessors.finger_crop_None_HE:preprocessor',
         'highfreq = bob.bio.vein.configurations.preprocessors.finger_crop_None_HFE:preprocessor',
         'circGabor = bob.bio.vein.configurations.preprocessors.finger_crop_None_CircGabor:preprocessor',
-
+        'topography-cut-roi = bob.bio.vein.configurations.preprocessors.topography_cut_roi:preprocessor', # topography cut roi
       ],
 
       # registered feature extractors

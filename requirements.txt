@@ -13,3 +13,4 @@ bob.bio.base
 bob.db.utfvp
 bob.db.vera
 bob.db.putvein
+bob.db.biowave_test

@@ -60,7 +60,9 @@ class MaximumCurvature (Extractor):
     gy[indices] = 0
 
     # Normalize
-    Gmag( find(Gmag == 0) ) = 1  # Avoid dividing by zero
+#    Gmag( find(Gmag == 0) ) = 1  # Avoid dividing by zero
+    Gmag[ Gmag == 0 ] = 1  # Avoid dividing by zero    
+    
     gx = gx/Gmag
     gy = gy/Gmag
 
@@ -72,8 +74,11 @@ class MaximumCurvature (Extractor):
     veins = lambda1*finger_mask
 
     # Normalise
-    veins = veins - min(veins(:))
-    veins = veins/max(veins(:))
+#    veins = veins - min( veins(:) )
+#    veins = veins/max( veins(:) )
+    
+    veins = veins - min( veins[:] )
+    veins = veins/max( veins[:] )
 
     veins = veins*finger_mask
 
