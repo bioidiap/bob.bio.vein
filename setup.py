@@ -45,10 +45,28 @@ setup(
         'parallel = bob.bio.vein.configurations.parallel',
         ],
 
+
       'console_scripts': [
         'compare_rois.py = bob.bio.vein.script.compare_rois:main',
         'view_mask.py = bob.bio.vein.script.view_mask:main',
         ]
+
+      # registered database short cuts
+      'bob.bio.database': [
+        'utfvp = bob.bio.vein.configurations.databases.utfvp:database',
+        'vera = bob.bio.vein.configurations.databases.vera:database',
+	'biowave_test = bob.bio.vein.configurations.databases.biowave_test:database',
+      ],
+
+      # registered preprocessors
+      'bob.bio.preprocessor': [
+        'none = bob.bio.vein.configurations.preprocessors.finger_crop_None_None:preprocessor',
+        'histeq = bob.bio.vein.configurations.preprocessors.finger_crop_None_HE:preprocessor',
+        'highfreq = bob.bio.vein.configurations.preprocessors.finger_crop_None_HFE:preprocessor',
+        'circGabor = bob.bio.vein.configurations.preprocessors.finger_crop_None_CircGabor:preprocessor',
+        'topography-cut-roi = bob.bio.vein.configurations.preprocessors.topography_cut_roi:preprocessor', # topography cut roi
+      ],
+
       },
 
     classifiers = [
