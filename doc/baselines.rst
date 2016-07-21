@@ -84,7 +84,7 @@ Repeated Line-Tracking with Miura Matching
 You can find the description of this method on the paper from Miura *et al.*
 [MNM04]_.
 
-To run the baseline on the `VERA fingervein`_ database, using the ``1vsall``
+To run the baseline on the `VERA fingervein`_ database, using the ``1vsAll``
 protocol (1-fold cross-validation), do the following:
 
 .. code-block:: sh
