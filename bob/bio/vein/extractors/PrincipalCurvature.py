@@ -94,14 +94,3 @@ class PrincipalCurvature (Extractor):
     finger_mask = image[1]
 
     return self.principal_curvature(finger_image, finger_mask)
-
-
-  def save_feature(self, feature, feature_file):
-    f = bob.io.base.HDF5File(feature_file, 'w')
-    f.set('feature', feature)
-
-
-  def read_feature(self, feature_file):
-    f = bob.io.base.HDF5File(feature_file, 'r')
-    image = f.read('feature')
-    return (image)

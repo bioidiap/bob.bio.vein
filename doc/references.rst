@@ -20,3 +20,5 @@
 .. [HDLTL10] *B. Huang, Y. Dai, R. Li, D. Tang and W. Li*, **Finger-vein authentication based on wide line detector and pattern normalization**, Proceedings on 20th International Conference on Pattern Recognition (ICPR), 2010.
 
 .. [MD13] *L. Mirmohamadsadeghi and A. Drygajlo*, **Palm vein recognition using local texture patterns**, IET Biometrics, pp. 1-9, 2013.
+
+.. [TVM14] *Pedro Tome, Matthias Vanoni and Sébastien Marcel*, **On the Vulnerability of Finger Vein Recognition to Spoofing**, in: IEEE International Conference of the Biometrics Special Interest Group (BIOSIG), Darmstadt, Germay, pages 1 - 10, IEEE, 2014

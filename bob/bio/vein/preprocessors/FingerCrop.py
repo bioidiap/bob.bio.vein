@@ -6,6 +6,7 @@ import numpy
 from PIL import Image
 
 import bob.io.base
+import bob.io.image
 import bob.ip.base
 import bob.sp
 import bob.core
@@ -505,7 +506,7 @@ class FingerCrop (Preprocessor):
     return self.crop_finger(image)
 
 
-  def save_data(self, image, image_file):
+  def write_data(self, image, image_file):
     f = bob.io.base.HDF5File(image_file, 'w')
     f.set('image', image[0])
     f.set('finger_mask', image[1])

@@ -18,3 +18,7 @@
 .. _virtualbox: https://www.virtualbox.org
 .. _hdf5: http://www.hdfgroup.org/HDF5
 .. _bob.bio.base: https://pypi.python.org/pypi/bob.bio.base
+.. _vera fingervein: https://www.idiap.ch/dataset/vera-fingervein
+.. _vera palmvein: https://www.idiap.ch/dataset/vera-palmvein
+.. _utfvp: http://scs.ewi.utwente.nl/downloads/show,Finger%20Vein/
+.. _put: http://biometrics.put.poznan.pl/vein-dataset/
