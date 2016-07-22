@@ -39,11 +39,10 @@ setup(
 
       # registered preprocessors
       'bob.bio.preprocessor': [
-        'none = bob.bio.vein.configurations.preprocessors.finger_crop_None_None:preprocessor',
-        'histeq = bob.bio.vein.configurations.preprocessors.finger_crop_None_HE:preprocessor',
-        'highfreq = bob.bio.vein.configurations.preprocessors.finger_crop_None_HFE:preprocessor',
-        'circGabor = bob.bio.vein.configurations.preprocessors.finger_crop_None_CircGabor:preprocessor',
-
+        'nonorm = bob.bio.vein.configurations.preprocessors:nonorm',
+        'histeq = bob.bio.vein.configurations.preprocessors:he',
+        'highfreq = bob.bio.vein.configurations.preprocessors:hfe',
+        'circgabor = bob.bio.vein.configurations.preprocessors:circgabor',
       ],
 
       # registered feature extractors
@@ -64,14 +63,9 @@ setup(
        ],
 
       # registered SGE grid configuration files
-      'facereclib.grid': [
-        'gpu = bob.bio.vein.configurations.grid.gpu:grid',
-        'gpu2 = bob.bio.vein.configurations.grid.gpu2:grid',
-        'gpu3 = bob.bio.vein.configurations.grid.gpu3:grid',
-        'grid = bob.bio.vein.configurations.grid.grid:grid',
+      'bob.bio.grid': [
+        'local = bob.bio.vein.configurations.grid.local:grid',
         'demanding = bob.bio.vein.configurations.grid.demanding:grid',
-        'very-demanding = bob.bio.vein.configurations.grid.very_demanding:grid',
-        'gbu = bob.bio.vein.configurations.grid.gbu:grid',
       ],
 
       },

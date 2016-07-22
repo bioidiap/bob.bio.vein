@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
-import bob.bio.base.grid import Grid
+from bob.bio.base.grid import Grid
 
 
 grid = Grid(
     training_queue='32G',
 
-    number_of_preprocessings_per_job=200,
+    number_of_preprocessing_jobs=200,
     preprocessing_queue='4G',
 
     number_of_extraction_jobs=200,

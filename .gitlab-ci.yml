@@ -12,5 +12,6 @@ py27-conda-idiap:
     - ./bin/bob_dbmanage.py vera download
     - ./bin/nosetests -sv bob.bio.vein
     - ./bin/sphinx-build doc html
+    - ./bin/resources.py -d
   tags:
     - lidiap2015
