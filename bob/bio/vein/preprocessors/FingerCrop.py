@@ -232,7 +232,6 @@ class FingerCrop (Preprocessor):
     for i in range(0,y_up.size):
         img_filt[y_up[i]:y_lo[i]+img_filt_lo.shape[0],i]=1
 
-    import ipdb; ipdb.set_trace()
     finger_mask = numpy.ndarray(image.shape, numpy.bool)
     finger_mask[:,:] = False
 
