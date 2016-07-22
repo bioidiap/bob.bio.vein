@@ -2,7 +2,6 @@ setuptools
 numpy
 scipy
 pillow
-argparse
 bob.extension
 bob.core
 bob.io.base

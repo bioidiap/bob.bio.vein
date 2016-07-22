@@ -2,7 +2,14 @@
 # vim: set fileencoding=utf-8 :
 
 
-"""Test Units
+"""Unit tests against references extracted from
+
+Matlab code from Bram Ton available on the matlab central website:
+
+https://www.mathworks.com/matlabcentral/fileexchange/35754-wide-line-detector
+
+This code implements the detector described in [HDLTL10] (see the references in
+the generated sphinx documentation)
 """
 
 import os
@@ -24,8 +31,6 @@ def F(parts):
 
 def test_finger_crop():
 
-  #Test finger vein image preprocessors
-
   input_filename = F(('preprocessors', '0019_3_1_120509-160517.png'))
   output_img_filename  = F(('preprocessors',
     '0019_3_1_120509-160517_img_lee_huang.mat'))
@@ -35,10 +40,9 @@ def test_finger_crop():
   img = bob.io.base.load(input_filename)
 
   from bob.bio.vein.preprocessors.FingerCrop import FingerCrop
-  FC = FingerCrop(4, 40, False, False)
-  #FC = FingerCrop(4, 40, False, 5, 0.2, False)
+  preprocess = FingerCrop(fingercontour='leemaskMatlab')
 
-  output_img, finger_mask_norm, finger_mask2, spoofingValue = FC(img)
+  output_img, finger_mask_norm = preprocess(img)
 
   # Load Matlab reference
   output_img_ref = bob.io.base.load(output_img_filename)
@@ -143,11 +147,3 @@ def test_miura_match():
 
   score_imp = MM.score(template_vein, probe_imp_vein)
   assert numpy.isclose(score_imp, 0.172906739278421)
-
-  if False: #testing gpu enabled calculations
-    MM = MiuraMatch(ch=18, cw=28, gpu=True)
-    score_gen = MM.score(template_vein, probe_gen_vein)
-    assert numpy.isclose(score_gen, 0.382689335394127)
-
-    score_imp = MM.score(template_vein, probe_imp_vein)
-    assert numpy.isclose(score_imp, 0.172906739278421)

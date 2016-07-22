@@ -14,16 +14,12 @@ PREPROCESSING = None
 FINGERCONTOUR = 'leemaskMod' # Options: 'leemaskMatlab', 'konomask'
 POSTPROCESSING = 'HE' 		 # Options: None, 'HE', 'HFE', 'CircGabor'
 
-GPU_ACCELERATION = False
-
 # define the preprocessor
 preprocessor = FingerCrop(
     mask_h=CONTOUR_MASK_HEIGHT,
     mask_w=CONTOUR_MASK_WIDTH,
     padding_offset=PADDING_OFFSET,
     padding_threshold=PADDING_THRESHOLD,
-    preprocessing=PREPROCESSING,
     fingercontour=FINGERCONTOUR,
     postprocessing=POSTPROCESSING,
-    gpu=GPU_ACCELERATION
     )

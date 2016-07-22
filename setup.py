@@ -57,12 +57,9 @@ setup(
 
       # registered fingervein recognition algorithms
       'bob.bio.algorithm': [
-        'match-wld = bob.bio.vein.configurations.algorithms:huangwl_tool',
-        'match-wld-gpu = bob.bio.vein.configurations.algorithms:huangwl_gpu_tool',
-        'match-mc = bob.bio.vein.configurations.algorithms:miuramax_tool',
-        'match-mc-gpu = bob.bio.vein.configurations.algorithms:miuramax_gpu_tool',
-        'match-rlt = bob.bio.vein.configurations.algorithms:miurarlt_tool',
-        'match-rlt-gpu = bob.bio.vein.configurations.algorithms:miurarlt_gpu_tool',
+        'match-wld = bob.bio.vein.configurations.algorithms:huangwl',
+        'match-mc = bob.bio.vein.configurations.algorithms:miuramax',
+        'match-rlt = bob.bio.vein.configurations.algorithms:miurarlt',
         #'match-lbp = bob.bio.face.configurations.algorithms.lgbphs:tool',
        ],
 

@@ -8,23 +8,37 @@ import bob.sp
 import bob.core
 
 
-def imfilter(a, b, gpu=False, conv=True):
-  """imfilter function based on MATLAB implementation."""
+def imfilter(a, b, conv=True):
+  """Applies a 2D filtering between images
 
-  if (a.dtype == numpy.uint8):
-      a= bob.core.convert(a,numpy.float64,(0,1))
-  M, N = a.shape
-  if conv == True:
+  This implementation was created to work exactly like the Matlab one.
+
+
+  Parameters:
+
+    a (numpy.ndarray): A 2-dimensional :py:class:`numpy.ndarray` which
+      represents the image to be filtered. The dtype of the array is supposed
+      to be 64-floats. You can also pass an 8-bit unsigned integer array,
+      loaded from a file (for example). In this case it will be scaled as
+      with :py:func:`bob.core.convert` and the range reset to ``[0.0, 1.0]``.
+
+    b (numpy.ndarray): A 64-bit float 2-dimensional :py:class:`numpy.ndarray`
+      which represents the filter to be applied to the image
+
+    conv (bool, Optional): If set, then rotates the filter ``b`` by 180 degrees
+      before applying it to the image ``a``, with
+      :py:func:`bob.ip.base.rotate`.
+
+  """
+
+  if a.dtype == numpy.uint8:
+      a = bob.core.convert(a, numpy.float64, (0,1))
+
+  if conv:
       b = bob.ip.base.rotate(b, 180)
-  shape = numpy.array((0,0))
-  shape[0] = a.shape[0] + b.shape[0] - 1
-  shape[1] = a.shape[1] + b.shape[1] - 1
+
+  shape = (a.shape[0] + b.shape[0] - 1, a.shape[1] + b.shape[1] - 1)
   a_ext = numpy.ndarray(shape=shape, dtype=numpy.float64)
   bob.sp.extrapolate_nearest(a, a_ext)
 
-  if gpu == True:
-    import xbob.cusp
-    return xbob.cusp.conv(a_ext, b)
-  else:
-    return scipy.signal.convolve2d(a_ext, b, 'valid')
-    #return = self.convfft(a_ext, b)
+  return scipy.signal.convolve2d(a_ext, b, 'valid')

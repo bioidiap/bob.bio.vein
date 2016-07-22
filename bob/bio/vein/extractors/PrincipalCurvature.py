@@ -20,7 +20,6 @@ class PrincipalCurvature (Extractor):
       self,
       sigma = 2, # Gaussian standard deviation applied
       threshold = 1.3, # Percentage of maximum used for hard thresholding
-      gpu = False,
       ):
 
     # call base class constructor
@@ -28,13 +27,11 @@ class PrincipalCurvature (Extractor):
         self,
         sigma = sigma,
         threshold = threshold,
-        gpu = gpu,
         )
 
     # block parameters
     self.sigma = sigma
     self.threshold = threshold
-    self.gpu = gpu
 
 
   def principal_curvature(self, image, mask):

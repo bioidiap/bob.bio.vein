@@ -17,13 +17,40 @@ from .. import utils
 
 
 class FingerCrop (Preprocessor):
-  """Fingervein mask
+  """Extracts the mask and pre-processes fingervein images
 
   Based on the implementation: E.C. Lee, H.C. Lee and K.R. Park. Finger vein
   recognition using minutia-based alignment and local binary pattern-based
   feature extraction. International Journal of Imaging Systems and
   Technology. Vol. 19, No. 3, pp. 175-178, September 2009.
+
+
+  Parameters:
+
+    mask_h (int, Optional): Height of contour mask in pixels
+
+    mask_w (int, Optional): Width of the contour mask in pixels
+
+    padding_offset (int, Optional):
+
+    padding_threshold (float, Optional):
+
+    fingercontour (str, Optional): Select between three finger contour
+      implementations: leemaskMod, leemaskMatlab or konomask. (From Pedro Tome:
+      the option ``leemaskMatlab`` was just implemented for testing purposes so
+      we could compare with MAT files generated from Matlab code of other
+      authors. He only used it with the UTFVP database, using ``leemaskMod``
+      with that database yields slight worse results.)
+
+    postprocessing (str, Optional): Select between ``HE`` (histogram
+      equalization, as with :py:func:`bob.ip.base.histogram_equalization`),
+      ``HFE`` (high-frequency emphasis filter, with hard-coded parameters - see
+      implementation) or ``CircGabor`` (circular Gabor filter with band-width
+      1.12 octaves and standard deviation of 5 pixels (this is hard-coded). By
+      default, no postprocessing is applied on the image.
+
   """
+
 
   def __init__(
       self,
@@ -33,56 +60,33 @@ class FingerCrop (Preprocessor):
       padding_offset = 5,     #Always the same
       padding_threshold = 0.2,  #0 for UTFVP database (high quality), 0.2 for VERA database (low quality)
 
-      preprocessing = None,
-      fingercontour = 'leemaskMatlab',
+      fingercontour = 'leemaskMod',
       postprocessing = None,
 
-      gpu = False,
-      color_channel = 'gray',    # the color channel to extract from colored images, if colored images are in the database
-      **kwargs                   # parameters to be written in the __str__ method
+      **kwargs
   ):
     """Parameters of the constructor of this preprocessor:
 
-    color_channel
-      In case of color images, which color channel should be used?
-
-    mask_h
-      Height of the cropped mask of a fingervein image
-
-    mask_w
-      Height of the cropped mask of a fingervein image
-
     """
 
-    # call base class constructor
-    Preprocessor.__init__(
-        self,
+    Preprocessor.__init__(self,
         mask_h = mask_h,
         mask_w = mask_w,
-
         padding_offset = padding_offset,
         padding_threshold = padding_threshold,
-
-        preprocessing = preprocessing,
         fingercontour = fingercontour,
         postprocessing = postprocessing,
-
-        gpu = gpu,
-        color_channel = color_channel,
         **kwargs
-    )
+        )
 
     self.mask_h = mask_h
     self.mask_w = mask_w
 
-    self.preprocessing = preprocessing
     self.fingercontour = fingercontour
     self.postprocessing = postprocessing
 
     self.padding_offset = padding_offset
     self.padding_threshold = padding_threshold
-    self.gpu = gpu
-    self.color_channel = color_channel
 
 
   def __konomask__(self, image, sigma):
@@ -109,7 +113,7 @@ class FingerCrop (Preprocessor):
     hy = (-Y/(2*math.pi*sigma**4))*numpy.exp(-(X**2 + Y**2)/(2*sigma**2))
 
     # Filter the image with the directional kernel
-    fy = utils.imfilter(image, hy, self.gpu, conv=False)
+    fy = utils.imfilter(image, hy, conv=False)
 
     # Upper part of filtred image
     img_filt_up = fy[0:half_img_h,:]
@@ -155,7 +159,7 @@ class FingerCrop (Preprocessor):
     mask[0:self.mask_h/2,:] = -1
     mask[self.mask_h/2:,:] = 1
 
-    img_filt = utils.imfilter(image, mask, self.gpu, conv=True)
+    img_filt = utils.imfilter(image, mask, conv=True)
 
     # Upper part of filtred image
     img_filt_up = img_filt[0:half_img_h-1,:]
@@ -165,7 +169,7 @@ class FingerCrop (Preprocessor):
     img_filt_lo = img_filt[half_img_h-1:,:]
     y_lo = img_filt_lo.argmin(axis=0)
 
-    img_filt = utils.imfilter(image, mask.T, self.gpu, conv=True)
+    img_filt = utils.imfilter(image, mask.T, conv=True)
 
         # Left part of filtered image
     img_filt_lf = img_filt[:,0:half_img_w]
@@ -215,7 +219,7 @@ class FingerCrop (Preprocessor):
     mask[0:self.mask_h/2,:] = -1
     mask[self.mask_h/2:,:] = 1
 
-    img_filt = utils.imfilter(image, mask, self.gpu, conv=True)
+    img_filt = utils.imfilter(image, mask, conv=True)
 
     # Upper part of filtred image
     img_filt_up = img_filt[0:numpy.floor(img_h/2),:]
@@ -228,6 +232,7 @@ class FingerCrop (Preprocessor):
     for i in range(0,y_up.size):
         img_filt[y_up[i]:y_lo[i]+img_filt_lo.shape[0],i]=1
 
+    import ipdb; ipdb.set_trace()
     finger_mask = numpy.ndarray(image.shape, numpy.bool)
     finger_mask[:,:] = False
 
@@ -321,30 +326,51 @@ class FingerCrop (Preprocessor):
     return bob.core.convert(image_new,numpy.uint8,(0,255),(0,1))
 
 
-  def __CLAHE__(self, image):
-    """  Contrast-limited adaptive histogram equalization (CLAHE).
-    """
-    #TODO
-    return true
-
-
   def __HE__(self, image):
+    """Applies histogram equalization on the input image
+
+
+    Parameters:
+
+        image (numpy.ndarray): raw image to be filtered, as 2D array of
+          unsigned 8-bit integers
+
+
+    Returns:
+
+        numpy.ndarray: normalized image as a 2D array of unsigned 8-bit
+        integers
+
+    """
+
     #Umbralization based on the pixels non zero
-    imageEnhance = numpy.zeros(image.shape)
-    imageEnhance = imageEnhance.astype(numpy.uint8)
-
-    bob.ip.base.histogram_equalization(image, imageEnhance)
-
-    return imageEnhance
+    retval = numpy.zeros(image.shape, dtype=numpy.uint8)
+    bob.ip.base.histogram_equalization(image, retval)
+    return retval
 
 
   def __circularGabor__(self, image, bw, sigma):
-    """ CIRCULARGABOR Construct a circular gabor filter
+    """Applies a circular gabor filter on the input image, with parameters
+
+
     Parameters:
-        bw    = bandwidth, (1.12 octave)
-        sigma = standard deviation, (5  pixels)
+
+        image (numpy.ndarray): raw image to be filtered, as 2D array of
+          unsigned 8-bit integers
+
+        bw (float): bandwidth (1.12 octave)
+
+        sigma (int): standard deviation (5  pixels)
+
+
+    Returns:
+
+        numpy.ndarray: normalized image as a 2D array of unsigned 8-bit
+        integers
+
     """
-    #Convert image to doubles
+
+    # Converts image to doubles
     image_new = bob.core.convert(image,numpy.float64,(0,1),(0,255))
     img_h, img_w = image_new.shape
 
@@ -352,10 +378,9 @@ class FingerCrop (Preprocessor):
 
     sz = numpy.fix(8*numpy.max([sigma,sigma]))
 
-    if numpy.mod(sz,2) == 0:
-      sz = sz+1
+    if numpy.mod(sz,2) == 0: sz = sz+1
 
-    #Construct filter kernel
+    #Constructs filter kernel
     winsize = numpy.fix(sz/2)
 
     x = numpy.arange(-winsize, winsize+1)
@@ -369,26 +394,26 @@ class FingerCrop (Preprocessor):
     # Without normalisation
     #gaborfilter = numpy.exp(-0.5*(X**2/sigma**2+Y**2/sigma**2))*numpy.cos(2*math.pi*fc*numpy.sqrt(X**2+Y**2))
 
-    imageEnhance = utils.imfilter(image, gaborfilter, self.gpu, conv=False)
+    imageEnhance = utils.imfilter(image, gaborfilter, conv=False)
     imageEnhance = numpy.abs(imageEnhance)
 
-    imageEnhance = bob.core.convert(imageEnhance,numpy.uint8,(0,255),(imageEnhance.min(),imageEnhance.max()))
-
-    return imageEnhance
+    return bob.core.convert(imageEnhance,numpy.uint8, (0,255),
+        (imageEnhance.min(),imageEnhance.max()))
 
 
   def __HFE__(self,image):
-    """ High Frequency Enphasis Filtering (HFE)
+    """ High Frequency Emphasis Filtering (HFE)
 
     """
-    ### Parameters
+
+    ### Hard-coded parameters for the HFE filtering
     D0 = 0.025
     a = 0.6
     b = 1.2
     n = 2.0
 
-    #Convert image to doubles
-    image_new = bob.core.convert(image,numpy.float64,(0,1),(0,255))
+    # converts image to doubles
+    image_new = bob.core.convert(image,numpy.float64, (0,1), (0,255))
     img_h, img_w = image_new.shape
 
     # DFT
@@ -399,123 +424,67 @@ class FingerCrop (Preprocessor):
     col = numpy.arange(1,img_h+1)
     y =  (numpy.tile(col,(img_w,1)).T - (numpy.fix(img_h/2)+1))/img_h
 
-    #D  is  the  distance  from  point  (u,v)  to  the  centre  of the frequency rectangle.
+    # D  is  the  distance  from  point  (u,v)  to  the  centre  of the
+    # frequency rectangle.
     radius = numpy.sqrt(x**2 + y**2)
 
     f = a + b / (1.0 + (D0 / radius)**(2*n))
     Ffreq = Ffreq * f
-    #Inverse DFT
+
+    # implements the inverse DFT
     imageEnhance = bob.sp.ifft(bob.sp.ifftshift(Ffreq))
-    #Skip complex part
+
+    # skips complex part
     imageEnhance = numpy.abs(imageEnhance)
 
-    #To solve errors
-    imageEnhance = bob.core.convert(imageEnhance,numpy.uint8,(0,255),(imageEnhance.min(),imageEnhance.max()))
-
-    return imageEnhance
-
-
-  def __spoofingdetector__(self, image):
-    #Histogram equalization to normalize
-    imageEnhance = numpy.zeros(image.shape)
-    imageEnhance = imageEnhance.astype(numpy.uint8)
-
-    bob.ip.base.histogram_equalization(image, imageEnhance)
-
-    #Convert image to doubles
-    image_new = bob.core.convert(imageEnhance,numpy.float64,(0,1),(0,255))
-
-    img_h, img_w = image_new.shape
-
-    # Determine lower half starting point vertically
-    if numpy.mod(img_h,2) == 0:
-        half_img_h = img_h/2 + 1
-    else:
-        half_img_h = numpy.ceil(img_h/2)
-
-    # Determine lower half starting point horizontally
-    if numpy.mod(img_w,2) == 0:
-        half_img_w = img_w/2 + 1
-    else:
-        half_img_w = numpy.ceil(img_w/2)
-
-    Ffreq = bob.sp.fftshift(bob.sp.fft(image_new.astype(numpy.complex128))/math.sqrt(img_h*img_w))
-    F = numpy.log10(abs(Ffreq)**2)
-
-    offset_window = 10
-    img_half_section_v = F[:,(half_img_w-offset_window):(half_img_w+offset_window)]
-
-    pv = numpy.mean(img_half_section_v,1)
-
-    dBthreshold = -3
-    Bwv = numpy.size(numpy.where(pv>dBthreshold))*1.0 / img_h
-
-    return Bwv
-
-
-  def crop_finger(self, image):
-
-    spoofingValue = self.__spoofingdetector__(image)
-
-    #Padding array
-    image = self.__padding_finger__(image)
-
-    ## Fingervein image enhancement:
-    if self.preprocessing != None:
-      if self.preprocessing == 'CLAHE':
-        image_eq = self.__CLAHE__(image)
-      elif self.preprocessing == 'HE':
-        image_eq = self.__HE__(image)
-      elif self.preprocessing == 'HFE':
-        image_eq = self.__HFE__(image)
-      elif self.preprocessing == 'CircGabor':
-        image_eq = self.__circularGabor__(image, 1.12, 5)
-    else: image_eq = image
-
-    ## Finger edges and contour extraction:
-    if self.fingercontour == 'leemaskMatlab':
-      finger_mask, finger_edges = self.__leemaskMatlab__(image_eq)        #Function for UTFVP
-    elif self.fingercontour == 'leemaskMod':
-      finger_mask, finger_edges = self.__leemaskMod__(image_eq)            #Function for VERA
-    elif self.fingercontour == 'konomask':
-      finger_mask, finger_edges = self.__konomask__(image_eq, sigma=5)
-
-    ## Finger region normalization:
-    image_norm,finger_mask_norm = self.__huangnormalization__(image_eq, finger_mask, finger_edges)
-
-    ## veins enhancement:
-    if self.postprocessing != None:
-      if self.postprocessing == 'CLAHE':
-        image_norm = self.__CLAHE__(image_norm)
-      elif self.postprocessing == 'HE':
-        image_norm = self.__HE__(image_norm)
-      elif self.postprocessing == 'HFE':
-        image_norm = self.__HFE__(image_norm)
-      elif self.postprocessing == 'CircGabor':
-        image_norm = self.__circularGabor__(image_norm, 1.12, 5)
-
-
-    #To check the mask:
-    finger_mask2 = bob.core.convert(finger_mask,numpy.uint8,(0,255),(0,1))
-
-    return (image_norm, finger_mask_norm, finger_mask2, spoofingValue)
+    # renormalizes and returns
+    return bob.core.convert(imageEnhance, numpy.uint8, (0, 255),
+        (imageEnhance.min(), imageEnhance.max()))
 
 
   def __call__(self, image, annotations=None):
-    """Reads the input image, extract the Lee mask of the fingervein, and writes the resulting image"""
-    return self.crop_finger(image)
+    """Reads the input image, extract the mask of the fingervein, postprocesses
+    """
+
+    # Padding array
+    image = self.__padding_finger__(image)
+
+    ## Finger edges and contour extraction:
+    if self.fingercontour == 'leemaskMatlab':
+      finger_mask, finger_edges = self.__leemaskMatlab__(image) #for UTFVP
+    elif self.fingercontour == 'leemaskMod':
+      finger_mask, finger_edges = self.__leemaskMod__(image) #for VERA
+    elif self.fingercontour == 'konomask':
+      finger_mask, finger_edges = self.__konomask__(image, sigma=5)
+
+    ## Finger region normalization:
+    image_norm, finger_mask_norm = self.__huangnormalization__(image,
+        finger_mask, finger_edges)
+
+    ## veins enhancement:
+    if self.postprocessing == 'HE':
+      image_norm = self.__HE__(image_norm)
+    elif self.postprocessing == 'HFE':
+      image_norm = self.__HFE__(image_norm)
+    elif self.postprocessing == 'CircGabor':
+      image_norm = self.__circularGabor__(image_norm, 1.12, 5)
+
+    ## returns the normalized image and the finger mask
+    return image_norm, finger_mask_norm
 
 
-  def write_data(self, image, image_file):
-    f = bob.io.base.HDF5File(image_file, 'w')
-    f.set('image', image[0])
-    f.set('finger_mask', image[1])
-    f.set('mask', image[2])
-    f.set('spoofingValue', image[3])
+  def write_data(self, data, filename):
+    '''Overrides the default method implementation to handle our tuple'''
+
+    f = bob.io.base.HDF5File(filename, 'w')
+    f.set('image', data[0])
+    f.set('finger_mask', data[1])
 
 
-  def read_data(self, image_file):
-    f = bob.io.base.HDF5File(image_file, 'r')
+  def read_data(self, filename):
+    '''Overrides the default method implementation to handle our tuple'''
+
+    f = bob.io.base.HDF5File(filename, 'r')
     image = f.read('image')
     finger_mask = f.read('finger_mask')
     return (image, finger_mask)

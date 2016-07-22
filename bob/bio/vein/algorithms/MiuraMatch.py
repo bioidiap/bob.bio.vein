@@ -24,7 +24,6 @@ class MiuraMatch (Algorithm):
       # some similarity functions might need a GaborWaveletTransform class, so we have to provide the parameters here as well...
       ch = 8,       # Maximum search displacement in y-direction
       cw = 5,       # Maximum search displacement in x-direction
-      gpu = False,
       ):
 
     # call base class constructor
@@ -40,7 +39,6 @@ class MiuraMatch (Algorithm):
 
     self.ch = ch
     self.cw = cw
-    self.gpu = gpu
 
 
   def enroll(self, enroll_features):
@@ -95,13 +93,8 @@ class MiuraMatch (Algorithm):
       bob.ip.base.rotate(crop_R, rotate_R, 180)
       #FFT for scoring!
       #Nm=bob.sp.ifft(bob.sp.fft(I)*bob.sp.fft(rotate_R))
-      if self.gpu == True:
-          Nm = self.convfft(I, rotate_R)
-          #import xbob.cusp
-          #Nm = xbob.cusp.conv(I, rotate_R);
-      else:
-          Nm = self.convfft(I, rotate_R)
-          #Nm2 = scipy.signal.convolve2d(I, rotate_R, 'valid')
+      Nm = self.convfft(I, rotate_R)
+      #Nm2 = scipy.signal.convolve2d(I, rotate_R, 'valid')
 
       t0, s0 = numpy.unravel_index(Nm.argmax(), Nm.shape)
       Nmm = Nm[t0,s0]

@@ -18,25 +18,17 @@ class MaximumCurvature (Extractor):
   Based on N. Miura, A. Nagasaka, and T. Miyatake, Extraction of Finger-Vein
   Pattern Using Maximum Curvature Points in Image Profiles. Proceedings on IAPR
   conference on machine vision applications, 9 (2005), pp. 347--350
+
+  Parameters:
+
+    sigma (int, Optional): Sigma used for determining derivatives
+
   """
 
 
-  def __init__(
-      self,
-      sigma = 5, #Sigma used for determining derivatives
-      gpu = False
-  ):
-
-    # call base class constructor
-    Extractor.__init__(
-        self,
-        sigma = sigma,
-        gpu = gpu
-    )
-
-    # block parameters
+  def __init__(self, sigma = 5):
+    Extractor.__init__(self, sigma = sigma)
     self.sigma = sigma
-    self.gpu = gpu
 
 
   def maximum_curvature(self, image, mask):
@@ -65,11 +57,11 @@ class MaximumCurvature (Extractor):
 
     # Do the actual filtering
 
-    fx = utils.imfilter(image, hx, self.gpu, conv=False)
-    fxx = utils.imfilter(image, hxx, self.gpu, conv=False)
-    fy = utils.imfilter(image, hy, self.gpu, conv=False)
-    fyy = utils.imfilter(image, hyy, self.gpu, conv=False)
-    fxy = utils.imfilter(image, hxy, self.gpu, conv=False)
+    fx = utils.imfilter(image, hx, conv=False)
+    fxx = utils.imfilter(image, hxx, conv=False)
+    fy = utils.imfilter(image, hy, conv=False)
+    fyy = utils.imfilter(image, hyy, conv=False)
+    fxy = utils.imfilter(image, hxy, conv=False)
 
     f1  = 0.5*numpy.sqrt(2)*(fx + fy)   # \  #
     f2  = 0.5*numpy.sqrt(2)*(fx - fy)   # /  #
@@ -263,7 +255,7 @@ class MaximumCurvature (Extractor):
   def __call__(self, image):
     """Reads the input image, extract the features based on Maximum Curvature of the fingervein image, and writes the resulting template"""
 
-    finger_image = image[0]    #Normalized image with or without histogram equalization
+    finger_image = image[0] #Normalized image with or without histogram equalization
     finger_mask = image[1]
 
     return self.maximum_curvature(finger_image, finger_mask)
