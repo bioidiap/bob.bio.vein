@@ -1,6 +1,6 @@
 py27-conda-idiap:
   script:
-    - source /idiap/group/torch5spro/conda/bin/activate bob-2.2.0-py27_0
+    - source /idiap/group/torch5spro/conda/bin/activate bob-2.3.4-py27_0
     - git clean -ffdx
     - export TMPDIR=/var/tmp
     - python bootstrap-buildout.py
