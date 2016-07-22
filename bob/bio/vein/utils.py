@@ -8,10 +8,10 @@ import bob.sp
 import bob.core
 
 
-def imfilter(a, b, conv=True):
+def imfilter(a, b):
   """Applies a 2D filtering between images
 
-  This implementation was created to work exactly like the Matlab one.
+  This implementation was created to work similarly like the Matlab one.
 
 
   Parameters:
@@ -23,19 +23,15 @@ def imfilter(a, b, conv=True):
       with :py:func:`bob.core.convert` and the range reset to ``[0.0, 1.0]``.
 
     b (numpy.ndarray): A 64-bit float 2-dimensional :py:class:`numpy.ndarray`
-      which represents the filter to be applied to the image
-
-    conv (bool, Optional): If set, then rotates the filter ``b`` by 180 degrees
-      before applying it to the image ``a``, with
-      :py:func:`bob.ip.base.rotate`.
+      which represents the filter to be applied to the image. The input filter
+      has to be rotated by 180 degrees as we use
+      :py:func:`scipy.signal.convolve2d` to apply it. You can rotate your
+      filter ``b`` with the help of :py:func:`bob.ip.base.rotate`.
 
   """
 
   if a.dtype == numpy.uint8:
       a = bob.core.convert(a, numpy.float64, (0,1))
-
-  if conv:
-      b = bob.ip.base.rotate(b, 180)
 
   shape = (a.shape[0] + b.shape[0] - 1, a.shape[1] + b.shape[1] - 1)
   a_ext = numpy.ndarray(shape=shape, dtype=numpy.float64)

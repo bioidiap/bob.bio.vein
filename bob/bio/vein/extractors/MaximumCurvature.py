@@ -57,11 +57,11 @@ class MaximumCurvature (Extractor):
 
     # Do the actual filtering
 
-    fx = utils.imfilter(image, hx, conv=False)
-    fxx = utils.imfilter(image, hxx, conv=False)
-    fy = utils.imfilter(image, hy, conv=False)
-    fyy = utils.imfilter(image, hyy, conv=False)
-    fxy = utils.imfilter(image, hxy, conv=False)
+    fx = utils.imfilter(image, hx)
+    fxx = utils.imfilter(image, hxx)
+    fy = utils.imfilter(image, hy)
+    fyy = utils.imfilter(image, hyy)
+    fxy = utils.imfilter(image, hxy)
 
     f1  = 0.5*numpy.sqrt(2)*(fx + fy)   # \  #
     f2  = 0.5*numpy.sqrt(2)*(fx - fy)   # /  #

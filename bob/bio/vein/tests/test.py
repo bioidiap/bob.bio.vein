@@ -29,6 +29,27 @@ def F(parts):
   return pkg_resources.resource_filename(__name__, os.path.join(*parts))
 
 
+def _show_mask_over_image(image, mask, color='red'):
+  """Plots the mask over the image of a finger, for debugging purposes
+
+  Parameters:
+
+    image (numpy.ndarray): A 2D numpy.ndarray compose of 8-bit unsigned
+      integers containing the original image
+
+    mask (numpy.ndarray): A 2D numpy.ndarray compose of boolean values
+      containing the calculated mask
+
+  """
+
+  from PIL import Image
+  img = Image.fromarray(image).convert(mode='RGBA')
+  msk = Image.fromarray((~mask).astype('uint8')*80)
+  red = Image.new('RGBA', img.size, color=color)
+  img.paste(red, mask=msk)
+  img.show()
+
+
 def test_finger_crop():
 
   input_filename = F(('preprocessors', '0019_3_1_120509-160517.png'))
@@ -40,17 +61,17 @@ def test_finger_crop():
   img = bob.io.base.load(input_filename)
 
   from bob.bio.vein.preprocessors.FingerCrop import FingerCrop
-  preprocess = FingerCrop(fingercontour='leemaskMatlab')
+  preprocess = FingerCrop(fingercontour='leemaskMatlab', padding_width=0)
 
-  output_img, finger_mask_norm = preprocess(img)
+  preproc, mask = preprocess(img)
+  #_show_mask_over_image(preproc, mask)
 
-  # Load Matlab reference
-  output_img_ref = bob.io.base.load(output_img_filename)
-  output_fvr_ref = bob.io.base.load(output_fvr_filename)
+  mask_ref = bob.io.base.load(output_fvr_filename)
+  preproc_ref = bob.io.base.load(output_img_filename)
 
-  # Compare output of python's implementation to matlab reference
-  # (loose comparison!)
-  assert numpy.mean(numpy.abs(output_img - output_img_ref)) < 1e2
+  # Very loose comparison!
+  assert numpy.mean(numpy.abs(mask.astype('float64') - mask_ref)) < 1e-2
+  assert numpy.mean(numpy.abs(preproc - preproc_ref)) < 1e2
 
 
 def test_miuramax():
@@ -67,7 +88,7 @@ def test_miuramax():
 
   # Apply Python implementation
   from bob.bio.vein.extractors.MaximumCurvature import MaximumCurvature
-  MC = MaximumCurvature(5, False)
+  MC = MaximumCurvature(5)
   output_img = MC((input_img, input_fvr))
 
   # Load Matlab reference
