@@ -13,6 +13,8 @@ def imfilter(a, b, gpu=False, conv=True):
 
   if (a.dtype == numpy.uint8):
       a= bob.core.convert(a,numpy.float64,(0,1))
+  if len(a.shape) != 2:
+    a = a.reshape( ( len( a ), 1 ) )
   M, N = a.shape
   if conv == True:
       b = bob.ip.base.rotate(b, 180)
