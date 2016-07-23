@@ -259,3 +259,4 @@ class MaximumCurvature (Extractor):
     finger_mask = image[1]
 
     return self.maximum_curvature(finger_image, finger_mask)
+
