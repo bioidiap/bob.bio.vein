@@ -7,7 +7,6 @@ import bob.ip.base
 import bob.sp
 import bob.core
 
-
 def imfilter(a, b):
   """Applies a 2D filtering between images
 
@@ -34,6 +33,7 @@ def imfilter(a, b):
       a = bob.core.convert(a, numpy.float64, (0,1))
 
   shape = (a.shape[0] + b.shape[0] - 1, a.shape[1] + b.shape[1] - 1)
+
   a_ext = numpy.ndarray(shape=shape, dtype=numpy.float64)
   bob.sp.extrapolate_nearest(a, a_ext)
 
