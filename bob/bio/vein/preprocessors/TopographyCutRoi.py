@@ -14,6 +14,9 @@ from skimage.morphology import convex_hull_image
 
 from scipy import ndimage
 
+# to enable .png .jpg ... extensions in bob.io.base.load
+import bob.io.image
+
 #==============================================================================
 # Class implementation:
 
@@ -329,17 +332,76 @@ class TopographyCutRoi( Preprocessor ):
             self.__make_mask_convex__( image )
         
         return self.mask_binary.astype( np.uint8 )
-        
+    
     #==========================================================================
-    def __call__( self, image ):
+    def mask_the_image( self, image ):
+        """
+        Mask the input image with ROI.
+        
+        Arguments:
+        image - input image.
+        
+        Return:
+        Masked image.
+        """
+        
+        return image * self.get_ROI( image )
+        
+    
+    #==========================================================================
+    def __call__(self, image, annotations):
         """
         Get the binary image of the ROI. The ROI should fit into the limits specified in the blob_xywh_offsets list.
         
         Arguments:
         image - input image.
+        
+        Return:
+        image - original image,
+        binary roi / mask for the image.
         """
         
-        return self.get_ROI( image )
+        return ( image, self.get_ROI( image ) )
+    
+    #==========================================================================
+    def write_data( self, data, file_name ):
+        """
+        Writes the given data (that has been generated using the __call__ function of this class) to file.
+        This method overwrites the write_data() method of the Preprocessor class.
+        
+        Arguments:
+        data - data returned by the __call__ method of the class,
+        file_name - name of the file
+        """
+        
+        f = bob.io.base.HDF5File( file_name, 'w' )
+        f.set( 'image', data[ 0 ] )
+        f.set( 'mask', data[ 1 ] )
+        del f
+        
+    #==========================================================================
+    def read_data( self, file_name ):
+        """
+        Reads the preprocessed data from file.
+        his method overwrites the read_data() method of the Preprocessor class.
+        
+        Arguments:
+        file_name - name of the file.
+        
+        Return:
+        
+        """
+        f = bob.io.base.HDF5File( file_name, 'r' )
+        image = f.read( 'image' )
+        mask = f.read( 'mask' )
+        del f
+        return ( image, mask )
+
+
+
+
+
+
 
 
 
