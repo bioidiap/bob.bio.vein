@@ -39,7 +39,7 @@ setup(
 
       # registered preprocessors
       'bob.bio.preprocessor': [
-        'nonorm = bob.bio.vein.configurations.preprocessors:nonorm',
+        'nopp = bob.bio.vein.configurations.preprocessors:none',
         'histeq = bob.bio.vein.configurations.preprocessors:he',
         'highfreq = bob.bio.vein.configurations.preprocessors:hfe',
         'circgabor = bob.bio.vein.configurations.preprocessors:circgabor',
@@ -64,8 +64,7 @@ setup(
 
       # registered SGE grid configuration files
       'bob.bio.grid': [
-        'local = bob.bio.vein.configurations.grid.local:grid',
-        'demanding = bob.bio.vein.configurations.grid.demanding:grid',
+        'idiap = bob.bio.vein.configurations.grid:default',
       ],
 
       },

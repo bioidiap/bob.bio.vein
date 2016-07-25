@@ -85,27 +85,30 @@ Repeated Line-Tracking with Miura Matching
 You can find the description of this method on the paper from Miura *et al.*
 [MNM04]_.
 
-To run the baseline on the `VERA fingervein`_ database, using the ``nom``
+To run the baseline on the `VERA fingervein`_ database, using the ``NOM``
 protocol (called ``Full`` in [TVM14]_), do the following:
+
 
 .. code-block:: sh
 
-   $ ./bin/verify.py --database=vera --protocol=nom --preprocessor=none --extractor=repeatedlinetracking --algorithm=match-rlt --sub-directory="rlt" --verbose --verbose
+   $ ./bin/verify.py --database=vera --protocol=NOM --preprocessor=nopp --extractor=repeatedlinetracking --algorithm=match-rlt --sub-directory="rlt" --verbose --verbose
+
 
 .. tip::
 
    If you have more processing cores on your local machine and don't want to
-   submit your job for SGE execution, you can run it in parallel by adding the
-   options ``?``.
+   submit your job for SGE execution, you can run it in parallel (using 4
+   parallel tasks) by adding the options ``--parallel=4 --nice=10``.
+
 
 This command line selects and runs the following implementations for the
 toolchain:
 
 * Database: Use the base Bob API for the VERA database implementation,
-  protocol variant ``nom`` which corresponds to the ``Full`` evaluation
+  protocol variant ``NOM`` which corresponds to the ``Full`` evaluation
   protocol described in [TVM14]_
-* Preprocessor: Simple finger cropping, with no extra pre-processing and no
-  histogram equalization, as defined in [LLP09]_
+* Preprocessor: Simple finger cropping, with no extra post-processing, as
+  defined in [LLP09]_
 * Feature extractor: Repeated line tracking, as explained in [MNM04]_
 * Matching algorithm: "Miura" matching, as explained on the same paper
 * Subdirectory: This is the subdirectory in which the scores and intermediate
@@ -119,15 +122,18 @@ the detector error trade-off (DET) curve with the performance:
 
 .. code-block:: sh
 
-   $ ./bin/bob_eval_threshold.py  --scores <path-to>/vera/rlt/nom/nonorm/scores-dev --criterium=eer
+   $ ./bin/bob_eval_threshold.py  --scores <path-to>/vera/rlt/NOM/nonorm/scores-dev --criterium=eer
    ('Threshold:', 0.32023322499999995)
    FAR : 24.318% (46866/192720)
    FRR : 24.318% (107/440)
    HTER: 24.318%
-   $ ./bin/evaluate.py --dev-files <path-to>/vera/rlt/nom/nonorm/scores-dev --det det.pdf -l "vera-nom-mnm04" -rr
+   $ ./bin/evaluate.py --dev-files <path-to>/vera/rlt/NOM/nonorm/scores-dev --det det.pdf -l "vera-nom-mnm04" -rr
    The Recognition Rate of the development set of 'rlt' is 48.409%
 
-To view the DET curve stored in
+To view the DET curve stored in the output file, do the following (on a Linux
+machine):
+
+.. code-block:: sh
 
    $ xdg-open det.pdf #to view the DET curve
 

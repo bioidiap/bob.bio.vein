@@ -3,8 +3,8 @@
 
 from bob.bio.base.grid import Grid
 
-
-grid = Grid(
+# our preferred grid setup for Idiap
+default = Grid(
     training_queue='32G',
 
     number_of_preprocessing_jobs=200,

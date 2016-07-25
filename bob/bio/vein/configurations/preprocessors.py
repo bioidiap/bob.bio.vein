@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 
 from ..preprocessors import FingerCrop
-nonorm = FingerCrop()
+none = FingerCrop()
 he = FingerCrop(postprocessing='HE')
 hfe = FingerCrop(postprocessing='HFE')
 circgabor = FingerCrop(postprocessing='CircGabor')
