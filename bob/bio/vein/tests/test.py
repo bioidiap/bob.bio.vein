@@ -29,6 +29,21 @@ def F(parts):
   return pkg_resources.resource_filename(__name__, os.path.join(*parts))
 
 
+def _show_image(image):
+  """Shows a single image
+
+  Parameters:
+
+    image (numpy.ndarray): A 2D numpy.ndarray compose of 8-bit unsigned
+      integers containing the original image
+
+  """
+
+  from PIL import Image
+  img = Image.fromarray(image)
+  img.show()
+
+
 def _show_mask_over_image(image, mask, color='red'):
   """Plots the mask over the image of a finger, for debugging purposes
 
@@ -66,12 +81,15 @@ def test_finger_crop():
   preproc, mask = preprocess(img)
   #_show_mask_over_image(preproc, mask)
 
-  mask_ref = bob.io.base.load(output_fvr_filename)
-  preproc_ref = bob.io.base.load(output_img_filename)
+  mask_ref = bob.io.base.load(output_fvr_filename).astype('bool')
+  preproc_ref = bob.core.convert(bob.io.base.load(output_img_filename),
+      numpy.uint8, (0,255), (0.0,1.0))
+
+  assert numpy.mean(numpy.abs(mask - mask_ref)) < 1e-2
 
   # Very loose comparison!
-  assert numpy.mean(numpy.abs(mask.astype('float64') - mask_ref)) < 1e-2
-  assert numpy.mean(numpy.abs(preproc - preproc_ref)) < 1e2
+  #_show_image(numpy.abs(preproc.astype('int16') - preproc_ref.astype('int16')).astype('uint8'))
+  assert numpy.mean(numpy.abs(preproc - preproc_ref)) < 1.3e2
 
 
 def test_miuramax():
