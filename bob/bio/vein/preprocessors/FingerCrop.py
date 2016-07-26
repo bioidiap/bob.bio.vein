@@ -540,8 +540,6 @@ class FingerCrop (Preprocessor):
     """Reads the input image, extract the mask of the fingervein, postprocesses
     """
 
-    import ipdb; ipdb.set_trace()
-
     # 1. Pads the input image if any padding should be added
     image = numpy.pad(image, self.padding_width, 'constant',
         constant_values = self.padding_constant)
