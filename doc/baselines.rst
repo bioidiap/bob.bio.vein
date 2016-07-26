@@ -117,7 +117,7 @@ toolchain:
 
 As the tool runs, you'll see printouts that show how it advances through
 preprocessing, feature extraction and matching. In a 4-core machine and using
-4 parallel tasks, it takes as around 2 hours to process this baseline with the
+4 parallel tasks, it takes around 2 hours to process this baseline with the
 current code implementation.
 
 To complete the evaluation, run the commands bellow, that will output the equal
@@ -153,13 +153,13 @@ toolchain, with comparison to the previous baseline:
 
 * Feature extractor: Maximum Curvature, as explained in [MNM05]_
 
-In a 4-core machine and using 4 parallel tasks, it takes as around 1 hour and
-40 minutes to process this baseline with the current code implementation.
-Results we obtained:
+In a 4-core machine and using 4 parallel tasks, it takes around 1 hour and 40
+minutes to process this baseline with the current code implementation.  Results
+we obtained:
 
 .. code-block:: sh
 
-   $ ./bin/bob_eval_threshold.py  --scores <path-to>/vera/rlt/NOM/nonorm/scores-dev --criterium=eer
+   $ ./bin/bob_eval_threshold.py  --scores <path-to>/vera/mc/NOM/nonorm/scores-dev --criterium=eer
    ('Threshold:', 0.078274325)
    FAR : 3.182% (1533/48180)
    FRR : 3.182% (7/220)
@@ -186,13 +186,40 @@ toolchain, with comparison to the previous baseline:
 
 * Feature extractor: Wide Line Detector, as explained in [HDLTL10]_
 
+In a 4-core machine and using 4 parallel tasks, it takes only around 5 minutes
+minutes to process this baseline with the current code implementation.
 Results we obtained:
 
 .. code-block:: sh
 
-   $ ./bin/bob_eval_threshold.py  --scores <path-to>/vera/rlt/NOM/nonorm/scores-dev --criterium=eer
+   $ ./bin/bob_eval_threshold.py  --scores <path-to>/vera/wld/NOM/nonorm/scores-dev --criterium=eer
+   ('Threshold:', 0.239141175)
+   FAR : 10.455% (5037/48180)
+   FRR : 10.455% (23/220)
+   HTER: 10.455%
 
 
+Results for other Baselines
+===========================
+
+This package may generate results for other combinations of protocols and
+databases. Here is a summary table for some variants (results are expressed the
+the equal-error rate on the development set, in percentage):
+
+======================== ================= ====== ====== ====== ======
+               Approach                        UTFVP          Vera
+------------------------------------------ ------------- -------------
+   Feature Extractor      Post Processing     B    Full    B     Full
+======================== ================= ====== ====== ====== ======
+Maximum Curvature         Histogram Eq.
+Maximum Curvature            None                                 3.2
+Repeated Line Tracking    Histogram Eq.
+Repeated Line Tracking       None                                26.4
+Wide Line Detector        Histogram Eq.                           8.2
+Wide Line Detector           None                                10.4
+======================== ================= ====== ====== ====== ======
+
+WLD + HEQ (preproc) @ Vera/Full = 10.9%
 
 Available Resources
 -------------------
