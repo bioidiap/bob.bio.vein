@@ -133,7 +133,6 @@ performance:
    HTER: 26.421%
 
 
-
 Maximum Curvature with Miura Matching
 =====================================
 
@@ -141,7 +140,7 @@ You can find the description of this method on the paper from Miura *et al.*
 [MNM05]_.
 
 To run the baseline on the `VERA fingervein`_ database, using the ``NOM``
-protocol (called ``Full`` in [TVM14]_), do the following:
+protocol like above, do the following:
 
 
 .. code-block:: sh
@@ -149,43 +148,49 @@ protocol (called ``Full`` in [TVM14]_), do the following:
    $ ./bin/verify.py --database=vera --protocol=NOM --preprocessor=nopp --extractor=maximumcurvature --algorithm=match-mc --sub-directory="mc" --verbose --verbose
 
 
-.. tip::
-
-   If you have more processing cores on your local machine and don't want to
-   submit your job for SGE execution, you can run it in parallel (using 4
-   parallel tasks) by adding the options ``--parallel=4 --nice=10``.
-
-
 This command line selects and runs the following implementations for the
-toolchain:
+toolchain, with comparison to the previous baseline:
 
-* Database: Use the base Bob API for the VERA database implementation,
-  protocol variant ``NOM`` which corresponds to the ``Full`` evaluation
-  protocol described in [TVM14]_
-* Preprocessor: Simple finger cropping, with no extra post-processing, as
-  defined in [LLP09]_
-* Feature extractor: Repeated line tracking, as explained in [MNM04]_
-* Matching algorithm: "Miura" matching, as explained on the same paper
-* Subdirectory: This is the subdirectory in which the scores and intermediate
-  results of this baseline will be stored.
+* Feature extractor: Maximum Curvature, as explained in [MNM05]_
 
-
-As the tool runs, you'll see printouts that show how it advances through
-preprocessing, feature extraction and matching. In a 4-core machine and using
-4 parallel tasks, it takes as around 2 hours to process this baseline with the
-current code implementation.
-
-To complete the evaluation, run the commands bellow, that will output the equal
-error rate (EER) and plot the detector error trade-off (DET) curve with the
-performance:
+In a 4-core machine and using 4 parallel tasks, it takes as around 1 hour and
+40 minutes to process this baseline with the current code implementation.
+Results we obtained:
 
 .. code-block:: sh
 
    $ ./bin/bob_eval_threshold.py  --scores <path-to>/vera/rlt/NOM/nonorm/scores-dev --criterium=eer
-   ('Threshold:', 0.320748535)
-   FAR : 26.478% (12757/48180)
-   FRR : 26.364% (58/220)
-   HTER: 26.421%
+   ('Threshold:', 0.078274325)
+   FAR : 3.182% (1533/48180)
+   FRR : 3.182% (7/220)
+   HTER: 3.182%
+
+
+Wide Line Detector with Miura Matching
+======================================
+
+You can find the description of this method on the paper from Huang *et al.*
+[HDLTL10]_.
+
+To run the baseline on the `VERA fingervein`_ database, using the ``NOM``
+protocol like above, do the following:
+
+
+.. code-block:: sh
+
+   $ ./bin/verify.py --database=vera --protocol=NOM --preprocessor=nopp --extractor=widelinedetector --algorithm=match-wld --sub-directory="wld" --verbose --verbose
+
+
+This command line selects and runs the following implementations for the
+toolchain, with comparison to the previous baseline:
+
+* Feature extractor: Wide Line Detector, as explained in [HDLTL10]_
+
+Results we obtained:
+
+.. code-block:: sh
+
+   $ ./bin/bob_eval_threshold.py  --scores <path-to>/vera/rlt/NOM/nonorm/scores-dev --criterium=eer
 
 
 
