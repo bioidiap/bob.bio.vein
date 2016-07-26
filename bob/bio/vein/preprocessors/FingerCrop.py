@@ -26,10 +26,10 @@ class FingerCrop (Preprocessor):
 
   In this implementation, the finger image is (in this order):
 
-  1. Padded
-  2. The mask is extracted
-  3. The finger is normalized (made horizontal)
-  3. (optionally) Post processed
+    1. Padded
+    2. The mask is extracted
+    3. The finger is normalized (made horizontal)
+    4. (optionally) Post processed
 
 
   Parameters:
@@ -220,15 +220,15 @@ class FingerCrop (Preprocessor):
 
     # Right region has always the finger ending, crop the padding with the
     # meadian
-    finger_mask[:,numpy.median(y_rg)+img_filt_rg.shape[1]:] = False
+    finger_mask[:,int(numpy.median(y_rg)+img_filt_rg.shape[1]):] = False
 
     # Extract y-position of finger edges
     edges = numpy.zeros((2,img_w))
     edges[0,:] = y_up
-    edges[0,0:round(numpy.mean(y_lf))+1] = edges[0,round(numpy.mean(y_lf))+1]
+    edges[0,0:int(round(numpy.mean(y_lf))+1)] = edges[0,int(round(numpy.mean(y_lf))+1)]
 
     edges[1,:] = numpy.round(y_lo + img_filt_lo.shape[0])
-    edges[1,0:round(numpy.mean(y_lf))+1] = edges[1,round(numpy.mean(y_lf))+1]
+    edges[1,0:int(round(numpy.mean(y_lf))+1)] = edges[1,int(round(numpy.mean(y_lf))+1)]
 
     return finger_mask, edges
 
@@ -401,14 +401,23 @@ class FingerCrop (Preprocessor):
     return (image_norm, mask_norm)
 
 
-  def __HE__(self, image):
-    """Applies histogram equalization on the input image
+  def __HE__(self, image, mask):
+    """Applies histogram equalization on the input image inside the mask
+
+    In this implementation, only the pixels that lie inside the mask will be
+    used to calculate the histogram equalization parameters. Because of this
+    particularity, we don't use Bob's implementation for histogram equalization
+    and have one based exclusively on NumPy.
 
 
     Parameters:
 
         image (numpy.ndarray): raw image to be filtered, as 2D array of
           unsigned 8-bit integers
+
+        mask (numpy.ndarray): mask of the same size of the image, but composed
+          of boolean values indicating which values should be considered for
+          the histogram equalization
 
 
     Returns:
@@ -418,9 +427,19 @@ class FingerCrop (Preprocessor):
 
     """
 
-    #Umbralization based on the pixels non zero
-    retval = numpy.zeros(image.shape, dtype=numpy.uint8)
-    bob.ip.base.histogram_equalization(image, retval)
+    image_histogram, bins = numpy.histogram(image[mask], 256, normed=True)
+    cdf = image_histogram.cumsum() # cumulative distribution function
+    cdf = 255 * cdf / cdf[-1] # normalize
+
+    # use linear interpolation of cdf to find new pixel values
+    image_equalized = numpy.interp(image.flatten(), bins[:-1], cdf)
+    image_equalized = image_equalized.reshape(image.shape)
+
+    # normalized image to be returned is a composition of the original image
+    # (background) and the equalized image (finger area)
+    retval = image.copy()
+    retval[mask] = image_equalized[mask]
+
     return retval
 
 
@@ -521,32 +540,33 @@ class FingerCrop (Preprocessor):
     """Reads the input image, extract the mask of the fingervein, postprocesses
     """
 
+    import ipdb; ipdb.set_trace()
+
     # 1. Pads the input image if any padding should be added
     image = numpy.pad(image, self.padding_width, 'constant',
         constant_values = self.padding_constant)
 
     ## Finger edges and contour extraction:
     if self.fingercontour == 'leemaskMatlab':
-      finger_mask, finger_edges = self.__leemaskMatlab__(image) #for UTFVP
+      mask, edges = self.__leemaskMatlab__(image) #for UTFVP
     elif self.fingercontour == 'leemaskMod':
-      finger_mask, finger_edges = self.__leemaskMod__(image) #for VERA
+      mask, edges = self.__leemaskMod__(image) #for VERA
     elif self.fingercontour == 'konomask':
-      finger_mask, finger_edges = self.__konomask__(image, sigma=5)
+      mask, edges = self.__konomask__(image, sigma=5)
 
     ## Finger region normalization:
-    image_norm, finger_mask_norm = self.__huangnormalization__(image,
-        finger_mask, finger_edges)
+    image_norm, mask_norm = self.__huangnormalization__(image, mask, edges)
 
     ## veins enhancement:
     if self.postprocessing == 'HE':
-      image_norm = self.__HE__(image_norm)
+      image_norm = self.__HE__(image_norm, mask_norm)
     elif self.postprocessing == 'HFE':
       image_norm = self.__HFE__(image_norm)
     elif self.postprocessing == 'CircGabor':
       image_norm = self.__circularGabor__(image_norm, 1.12, 5)
 
     ## returns the normalized image and the finger mask
-    return image_norm, finger_mask_norm
+    return image_norm, mask_norm
 
 
   def write_data(self, data, filename):
