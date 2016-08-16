@@ -30,7 +30,41 @@ def F(parts):
   """Returns the test file path"""
 
   return pkg_resources.resource_filename(__name__, os.path.join(*parts))
- 
+
+def _show_image(image):
+  """Shows a single image
+
+  Parameters:
+
+    image (numpy.ndarray): A 2D numpy.ndarray compose of 8-bit unsigned
+      integers containing the original image
+
+  """
+
+  from PIL import Image
+  img = Image.fromarray(image)
+  img.show()
+
+
+def _show_mask_over_image(image, mask, color='red'):
+  """Plots the mask over the image of a finger, for debugging purposes
+
+  Parameters:
+
+    image (numpy.ndarray): A 2D numpy.ndarray compose of 8-bit unsigned
+      integers containing the original image
+
+    mask (numpy.ndarray): A 2D numpy.ndarray compose of boolean values
+      containing the calculated mask
+
+  """
+
+  from PIL import Image
+  img = Image.fromarray(image).convert(mode='RGBA')
+  msk = Image.fromarray((~mask).astype('uint8')*80)
+  red = Image.new('RGBA', img.size, color=color)
+  img.paste(red, mask=msk)
+  img.show()
 
 def test_finger_crop():
 
@@ -543,3 +577,40 @@ def test_correlation():
   total = time.clock() - start
   print('scipy+correlate2d, %d iterations - %.2e per iteration' % (N, total/N))
   '''
+
+def test_manualRoiCut():
+    from bob.bio.vein.preprocessors.utils.utils import ManualRoiCut
+    image_path      = F(('preprocessors', '0019_3_1_120509-160517.png'))
+    annotation_path  = F(('preprocessors', '0019_3_1_120509-160517.txt'))
+    #-------------------
+    #image_path = "/remote/idiap.svm/home.active/teglitis/Desktop/bob.bio.vein/bob/bio/vein/tests/preprocessors/0019_3_1_120509-160517.png"
+    #annotation_path = "/remote/idiap.svm/home.active/teglitis/Desktop/bob.bio.vein/bob/bio/vein/tests/preprocessors/0019_3_1_120509-160517.txt"
+    #-------------------
+    c = ManualRoiCut(annotation_path, image_path)
+    mask_1 = c.roi_mask()
+    image_1 = c.roi_image()
+    # create mask using size:
+    c = ManualRoiCut(annotation_path, sizes=(672,380))
+    mask_2 = c.roi_mask()
+    
+    # loading image:
+    image = bob.io.base.load(image_path)
+    c = ManualRoiCut(annotation_path, image)
+    mask_3 = c.roi_mask()
+    image_3 = c.roi_image()
+    # load text file:
+    with open(annotation_path,'r') as f:
+        retval = numpy.loadtxt(f, ndmin=2)
+        
+    # carefully -- this is BOB format --- (x,y)
+    annotation = list([tuple([k[0], k[1]]) for k in retval])
+    c = ManualRoiCut(annotation, image)
+    mask_4 = c.roi_mask()
+    image_4 = c.roi_image()
+    
+    assert (mask_1 == mask_2).all()
+    assert (mask_1 == mask_3).all()
+    assert (mask_1 == mask_4).all()
+    assert (image_1 == image_3).all()
+    assert (image_1 == image_4).all()
+
