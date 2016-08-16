@@ -28,7 +28,6 @@ def F(parts):
 
   return pkg_resources.resource_filename(__name__, os.path.join(*parts))
 
-
 def _show_image(image):
   """Shows a single image
 
@@ -186,3 +185,40 @@ def test_miura_match():
 
   score_imp = MM.score(template_vein, probe_imp_vein)
   assert numpy.isclose(score_imp, 0.172906739278421)
+
+def test_manualRoiCut():
+    from bob.bio.vein.preprocessors.utils.utils import ManualRoiCut
+    image_path      = F(('preprocessors', '0019_3_1_120509-160517.png'))
+    annotation_path  = F(('preprocessors', '0019_3_1_120509-160517.txt'))
+    #-------------------
+    #image_path = "/remote/idiap.svm/home.active/teglitis/Desktop/bob.bio.vein/bob/bio/vein/tests/preprocessors/0019_3_1_120509-160517.png"
+    #annotation_path = "/remote/idiap.svm/home.active/teglitis/Desktop/bob.bio.vein/bob/bio/vein/tests/preprocessors/0019_3_1_120509-160517.txt"
+    #-------------------
+    c = ManualRoiCut(annotation_path, image_path)
+    mask_1 = c.roi_mask()
+    image_1 = c.roi_image()
+    # create mask using size:
+    c = ManualRoiCut(annotation_path, sizes=(672,380))
+    mask_2 = c.roi_mask()
+    
+    # loading image:
+    image = bob.io.base.load(image_path)
+    c = ManualRoiCut(annotation_path, image)
+    mask_3 = c.roi_mask()
+    image_3 = c.roi_image()
+    # load text file:
+    with open(annotation_path,'r') as f:
+        retval = numpy.loadtxt(f, ndmin=2)
+        
+    # carefully -- this is BOB format --- (x,y)
+    annotation = list([tuple([k[0], k[1]]) for k in retval])
+    c = ManualRoiCut(annotation, image)
+    mask_4 = c.roi_mask()
+    image_4 = c.roi_image()
+    
+    assert (mask_1 == mask_2).all()
+    assert (mask_1 == mask_3).all()
+    assert (mask_1 == mask_4).all()
+    assert (image_1 == image_3).all()
+    assert (image_1 == image_4).all()
+
