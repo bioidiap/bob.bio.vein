@@ -22,13 +22,17 @@ import bob.io.base
 import bob.io.matlab
 import bob.io.image
 
+import bob.ip.color
+
+# for the TopographyCutRoi tests:
+from bob.bio.vein.preprocessors.TopographyCutRoi import  TopographyCutRoi
+
 
 def F(parts):
   """Returns the test file path"""
 
   return pkg_resources.resource_filename(__name__, os.path.join(*parts))
 
-<<<<<<< HEAD
 def _show_image(image):
   """Shows a single image
 
@@ -99,8 +103,32 @@ def test_miuramax():
   input_img_filename  = F(('extractors', 'miuramax_input_img.mat'))
   input_fvr_filename  = F(('extractors', 'miuramax_input_fvr.mat'))
   output_filename     = F(('extractors', 'miuramax_output.mat'))
-=======
 
+#==============================================================================
+def test_TopographyCutRoi():
+    """
+    Test the ROI extraction algorithm namely TopographyCutRoi.
+    """
+    
+    input_filename = F( ( 'preprocessors', 'TopographyCutRoi_test_image.png' ) )
+    
+    output_filename = F( ( 'preprocessors', 'TopographyCutRoi_result_image.hdf5' ) )
+    
+    image = bob.io.base.load( input_filename )
+    
+    extractor = TopographyCutRoi()
+    
+    roi = extractor.get_ROI( image )
+    
+    f = bob.io.base.HDF5File( output_filename )
+    
+    roi_loaded = f.read('data')
+    
+    del f
+    
+    assert (roi == roi_loaded).all()
+
+#==============================================================================
 def test_finger_crop():
 
   #Test finger vein image preprocessors
