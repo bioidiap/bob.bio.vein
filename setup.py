@@ -31,35 +31,36 @@ setup(
 
     entry_points={
 
-      # registered preprocessors
+      'bob.bio.database': [
+        'verafinger = bob.bio.vein.configurations.databases:verafinger',
+        'utfvp = bob.bio.vein.configurations.databases:utfvp',
+        ],
+
       'bob.bio.preprocessor': [
         'nopp = bob.bio.vein.configurations.preprocessors:none',
         'histeq = bob.bio.vein.configurations.preprocessors:he',
         'highfreq = bob.bio.vein.configurations.preprocessors:hfe',
         'circgabor = bob.bio.vein.configurations.preprocessors:circgabor',
-      ],
+        ],
 
-      # registered feature extractors
       'bob.bio.extractor': [
         'normalisedcrosscorr = bob.bio.vein.configurations.extractors.normalised_crosscorr:feature_extractor',
         'maximumcurvature = bob.bio.vein.configurations.extractors.maximum_curvature:feature_extractor',
         'repeatedlinetracking = bob.bio.vein.configurations.extractors.repeated_line_tracking:feature_extractor',
         'widelinedetector = bob.bio.vein.configurations.extractors.wide_line_detector:feature_extractor',
         'localbinarypatterns = bob.bio.vein.configurations.extractors.lbp:feature_extractor',
-      ],
+        ],
 
-      # registered fingervein recognition algorithms
       'bob.bio.algorithm': [
         'match-wld = bob.bio.vein.configurations.algorithms:huangwl',
         'match-mc = bob.bio.vein.configurations.algorithms:miuramax',
         'match-rlt = bob.bio.vein.configurations.algorithms:miurarlt',
         #'match-lbp = bob.bio.face.configurations.algorithms.lgbphs:tool',
-       ],
+        ],
 
-      # registered SGE grid configuration files
       'bob.bio.grid': [
         'idiap = bob.bio.vein.configurations.grid:default',
-      ],
+        ],
 
       },
 
