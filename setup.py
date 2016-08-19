@@ -11,9 +11,9 @@ setup(
 
     name='bob.bio.vein',
     version=open("version.txt").read().rstrip(),
-    description='Vein biometrics recognition based on Bob and the bob.bio framework',
+    description='Vein Recognition Library',
 
-    url='https://gitlab.idiap.ch/biometric/bob.bio.vein',
+    url='https://gitlab.idiap.ch/bob/bob.bio.vein',
     license='GPLv3',
 
     author='Andre Anjos,Pedro Tome',
@@ -30,12 +30,6 @@ setup(
     install_requires=install_requires,
 
     entry_points={
-
-      # registered database short cuts
-      'bob.bio.database': [
-        'utfvp = bob.bio.vein.configurations.databases.utfvp:database',
-        'vera = bob.bio.vein.configurations.databases.vera:database',
-      ],
 
       # registered preprocessors
       'bob.bio.preprocessor': [
