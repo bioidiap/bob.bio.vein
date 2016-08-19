@@ -17,7 +17,6 @@
 .. _sge: http://wiki.idiap.ch/linux/SunGridEngine
 .. _virtualbox: https://www.virtualbox.org
 .. _hdf5: http://www.hdfgroup.org/HDF5
-.. _bob.bio.base: https://pypi.python.org/pypi/bob.bio.base
 .. _vera fingervein: https://www.idiap.ch/dataset/vera-fingervein
 .. _vera palmvein: https://www.idiap.ch/dataset/vera-palmvein
 .. _utfvp: http://scs.ewi.utwente.nl/downloads/show,Finger%20Vein/
@@ -25,4 +24,4 @@
 .. _installation: https://gitlab.idiap.ch/bob/bob/wikis/Installation
 .. _dependencies: https://gitlab.idiap.ch/bob/bob/wikis/Dependencies
 .. _mailing list: https://groups.google.com/forum/?fromgroups#!forum/bob-devel
-.. _bob.bio.base: https://pythonhosted.org/bob.bio.base/
+.. _bob.bio.base: https://pypi.python.org/pypi/bob.bio.base

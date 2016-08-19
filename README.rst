@@ -46,4 +46,4 @@ development `mailing list`_.
 .. _bob: https://www.idiap.ch/software/bob
 .. _installation: https://gitlab.idiap.ch/bob/bob/wikis/Installation
 .. _mailing list: https://groups.google.com/forum/?fromgroups#!forum/bob-devel
-.. _bob.bio.base: https://pythonhosted.org/bob.bio.base/
+.. _bob.bio.base: https://pypi.python.org/pypi/bob.bio.base
