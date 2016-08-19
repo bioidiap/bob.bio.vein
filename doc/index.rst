@@ -21,6 +21,7 @@ Users Guide
 .. toctree::
    :maxdepth: 2
 
+   installation
    baselines
    references
    api

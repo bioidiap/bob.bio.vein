@@ -22,3 +22,7 @@
 .. _vera palmvein: https://www.idiap.ch/dataset/vera-palmvein
 .. _utfvp: http://scs.ewi.utwente.nl/downloads/show,Finger%20Vein/
 .. _put: http://biometrics.put.poznan.pl/vein-dataset/
+.. _installation: https://gitlab.idiap.ch/bob/bob/wikis/Installation
+.. _dependencies: https://gitlab.idiap.ch/bob/bob/wikis/Dependencies
+.. _mailing list: https://groups.google.com/forum/?fromgroups#!forum/bob-devel
+.. _bob.bio.base: https://pythonhosted.org/bob.bio.base/
