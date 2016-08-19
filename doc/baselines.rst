@@ -59,7 +59,7 @@ protocol (called ``Full`` in [TVM14]_), do the following:
 
 .. code-block:: sh
 
-   $ ./bin/verify.py --database=vera --protocol=NOM --preprocessor=nopp --extractor=repeatedlinetracking --algorithm=match-rlt --sub-directory="rlt" --verbose --verbose
+   $ ./bin/verify.py --database=verafinger --protocol=NOM --preprocessor=nopp --extractor=repeatedlinetracking --algorithm=match-rlt --sub-directory="rlt" --verbose --verbose
 
 
 .. tip::
@@ -94,7 +94,7 @@ performance:
 
 .. code-block:: sh
 
-   $ ./bin/bob_eval_threshold.py  --scores <path-to>/vera/rlt/NOM/nonorm/scores-dev --criterium=eer
+   $ ./bin/bob_eval_threshold.py  --scores <path-to>/verafinger/rlt/NOM/nonorm/scores-dev --criterium=eer
    ('Threshold:', 0.320748535)
    FAR : 26.478% (12757/48180)
    FRR : 26.364% (58/220)
@@ -113,7 +113,7 @@ protocol like above, do the following:
 
 .. code-block:: sh
 
-   $ ./bin/verify.py --database=vera --protocol=NOM --preprocessor=nopp --extractor=maximumcurvature --algorithm=match-mc --sub-directory="mc" --verbose --verbose
+   $ ./bin/verify.py --database=verafinger --protocol=NOM --preprocessor=nopp --extractor=maximumcurvature --algorithm=match-mc --sub-directory="mc" --verbose --verbose
 
 
 This command line selects and runs the following implementations for the
@@ -127,7 +127,7 @@ we obtained:
 
 .. code-block:: sh
 
-   $ ./bin/bob_eval_threshold.py  --scores <path-to>/vera/mc/NOM/nonorm/scores-dev --criterium=eer
+   $ ./bin/bob_eval_threshold.py  --scores <path-to>/verafinger/mc/NOM/nonorm/scores-dev --criterium=eer
    ('Threshold:', 0.078274325)
    FAR : 3.182% (1533/48180)
    FRR : 3.182% (7/220)
@@ -146,7 +146,7 @@ protocol like above, do the following:
 
 .. code-block:: sh
 
-   $ ./bin/verify.py --database=vera --protocol=NOM --preprocessor=nopp --extractor=widelinedetector --algorithm=match-wld --sub-directory="wld" --verbose --verbose
+   $ ./bin/verify.py --database=verafinger --protocol=NOM --preprocessor=nopp --extractor=widelinedetector --algorithm=match-wld --sub-directory="wld" --verbose --verbose
 
 
 This command line selects and runs the following implementations for the
@@ -160,7 +160,7 @@ Results we obtained:
 
 .. code-block:: sh
 
-   $ ./bin/bob_eval_threshold.py  --scores <path-to>/vera/wld/NOM/nonorm/scores-dev --criterium=eer
+   $ ./bin/bob_eval_threshold.py  --scores <path-to>/verafinger/wld/NOM/nonorm/scores-dev --criterium=eer
    ('Threshold:', 0.239141175)
    FAR : 10.455% (5037/48180)
    FRR : 10.455% (23/220)
