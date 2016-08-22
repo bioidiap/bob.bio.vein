@@ -144,7 +144,7 @@ class TopographyCutRoi( Preprocessor ):
         if thresh_start < 0 or thresh_end <= 0: # check if the thresholding limits are OK
             return img_geodesic
         
-        for thresh in xrange( thresh_start, thresh_end, self.topography_step):
+        for thresh in range( thresh_start, thresh_end, self.topography_step):
             img_geodesic[ self.filtered_image >= thresh ] = np.uint8( thresh )
             
         return img_geodesic
@@ -177,7 +177,7 @@ class TopographyCutRoi( Preprocessor ):
         if thresh_start < 0 or thresh_end <= 0: # check if the thresholding limits are OK
             return
         
-        for idx, thresh in enumerate( xrange(thresh_start, thresh_end, self.topography_step) ): # this is the main processing loop
+        for idx, thresh in enumerate( range(thresh_start, thresh_end, self.topography_step) ): # this is the main processing loop
         
             img_binary = np.zeros(self.filtered_image.shape, dtype=np.uint8) # initialize the binary image
             
