@@ -22,7 +22,7 @@ import bob.io.base
 import bob.io.matlab
 import bob.io.image
 
-import bob.ip.color
+# import bob.ip.color
 
 # for the TopographyCutRoi tests:
 from bob.bio.vein.preprocessors.TopographyCutRoi import  TopographyCutRoi
