@@ -25,8 +25,6 @@ import bob.io.image
 
 from ..preprocessor import utils as preprocessor_utils
 
-import bob.ip.color
-
 # for the TopographyCutRoi tests:
 from bob.bio.vein.preprocessors.TopographyCutRoi import  TopographyCutRoi
 
