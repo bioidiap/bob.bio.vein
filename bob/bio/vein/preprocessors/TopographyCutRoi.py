@@ -8,7 +8,7 @@ import numpy as np
 
 from bob.bio.base.preprocessor import Preprocessor
 
-import cv2
+#import cv2
 
 from skimage.morphology import convex_hull_image
 
@@ -111,9 +111,15 @@ class TopographyCutRoi( Preprocessor ):
         medianBlur is selected by default.
         """
         if self.filter_name == "GaussianBlur":
-            self.filtered_image = cv2.GaussianBlur( image, (self.mask_size, self.mask_size), 1 ) # blur the image
+            
+#            self.filtered_image = cv2.GaussianBlur( image, (self.mask_size, self.mask_size), 1 ) # blur the image
+            self.filtered_image = ndimage.gaussian_filter( image, sigma = 1 )
+                        
         if self.filter_name == "medianBlur":
-            self.filtered_image = cv2.medianBlur( image, self.mask_size ) # filter the image
+            
+#            self.filtered_image = cv2.medianBlur( image, self.mask_size ) # filter the image
+            self.filtered_image = ndimage.median_filter( image, self.mask_size )
+            
         else:
             self.filtered_image = image
 
@@ -243,9 +249,20 @@ class TopographyCutRoi( Preprocessor ):
         ellipse_mask = np.uint( image.shape[0] / k )
         if ellipse_mask % 2 == 0:
             ellipse_mask = np.uint(ellipse_mask + 1) # make the mask odd
+        
+        kernel = np.zeros( ( ellipse_mask, ellipse_mask ) )
+        radius = ( ellipse_mask - 1 )/2
+        y, x = np.ogrid[ -radius : radius + 1, -radius : radius + 1 ]
+        mask = x**2 + y**2 <= radius**2
+        kernel[ mask ] = 1
+        
 #        print("ellipse mask = {}".format(ellipse_mask))
-        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(ellipse_mask, ellipse_mask))
-        self.mask_binary = cv2.morphologyEx(self.mask_binary, cv2.MORPH_CLOSE, kernel) # perform morphological closing on the image
+#        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(ellipse_mask, ellipse_mask))
+        
+#        self.mask_binary = cv2.morphologyEx(self.mask_binary, cv2.MORPH_CLOSE, kernel) # perform morphological closing on the image
+        
+        self.mask_binary = ndimage.binary_closing( self.mask_binary, structure = kernel )
+        
         if np.sum(self.mask_binary):
             # added lines:
             # image padding:
@@ -255,7 +272,11 @@ class TopographyCutRoi( Preprocessor ):
                 padded_mask = np.lib.pad(self.mask_binary, (k,), 'constant', constant_values=(0))
                 # kernel and erode operation:
                 kernel = np.ones((ellipse_mask*2+1,ellipse_mask*2+1),np.uint8)
-                self.mask_binary = cv2.erode(padded_mask,kernel,iterations = 1)[k:-k, k:-k]
+                
+#                self.mask_binary = cv2.erode(padded_mask,kernel,iterations = 1)[k:-k, k:-k]
+                
+                self.mask_binary = ndimage.binary_erosion( padded_mask, structure = kernel )[ k:-k, k:-k ]
+                
                 self.mask_binary = convex_hull_image(self.mask_binary)
                 
             else:
