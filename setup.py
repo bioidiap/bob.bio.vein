@@ -59,7 +59,34 @@ setup(
         'highfreq = bob.bio.vein.configurations.preprocessors.finger_crop_None_HFE:preprocessor',
         'circGabor = bob.bio.vein.configurations.preprocessors.finger_crop_None_CircGabor:preprocessor',
         'topography-cut-roi = bob.bio.vein.configurations.preprocessors.topography_cut_roi:preprocessor', # topography cut roi
-      ],
+#        'histeq = bob.bio.vein.configurations.preprocessors.finger_crop_None_HE:preprocessor',
+#        'highfreq = bob.bio.vein.configurations.preprocessors.finger_crop_None_HFE:preprocessor',
+#        'circGabor = bob.bio.vein.configurations.preprocessors.finger_crop_None_CircGabor:preprocessor',
+        'topography-cut-roi = bob.bio.vein.configurations.preprocessors:topography_cut_roi',
+        'nopp = bob.bio.vein.configurations.preprocessors:none',
+        'histeq = bob.bio.vein.configurations.preprocessors:he',
+        'highfreq = bob.bio.vein.configurations.preprocessors:hfe',
+        'circgabor = bob.bio.vein.configurations.preprocessors:circgabor',
+        ],
+
+      'bob.bio.extractor': [
+        'normalisedcrosscorr = bob.bio.vein.configurations.extractors.normalised_crosscorr:feature_extractor',
+        'maximumcurvature = bob.bio.vein.configurations.extractors.maximum_curvature:feature_extractor',
+        'repeatedlinetracking = bob.bio.vein.configurations.extractors.repeated_line_tracking:feature_extractor',
+        'widelinedetector = bob.bio.vein.configurations.extractors.wide_line_detector:feature_extractor',
+        'localbinarypatterns = bob.bio.vein.configurations.extractors.lbp:feature_extractor',
+        ],
+
+      'bob.bio.algorithm': [
+        'match-wld = bob.bio.vein.configurations.algorithms:huangwl',
+        'match-mc = bob.bio.vein.configurations.algorithms:miuramax',
+        'match-rlt = bob.bio.vein.configurations.algorithms:miurarlt',
+        #'match-lbp = bob.bio.face.configurations.algorithms.lgbphs:tool',
+        ],
+
+      'bob.bio.grid': [
+        'idiap = bob.bio.vein.configurations.grid:default',
+        ],
 
       },
 
