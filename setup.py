@@ -69,6 +69,7 @@ setup(
 #        'highfreq = bob.bio.vein.configurations.preprocessors.finger_crop_None_HFE:preprocessor',
 #        'circGabor = bob.bio.vein.configurations.preprocessors.finger_crop_None_CircGabor:preprocessor',
         'topography-cut-roi = bob.bio.vein.configurations.preprocessors:topography_cut_roi',
+        'kmeans-roi = bob.bio.vein.configurations.preprocessors:kmeans_roi',
         'nopp = bob.bio.vein.configurations.preprocessors:none',
         'histeq = bob.bio.vein.configurations.preprocessors:he',
         'highfreq = bob.bio.vein.configurations.preprocessors:hfe',
