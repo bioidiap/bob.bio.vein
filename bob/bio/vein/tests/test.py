@@ -22,16 +22,71 @@ import bob.io.base
 import bob.io.matlab
 import bob.io.image
 
+import numpy as np
+
 # import bob.ip.color
 
 # for the TopographyCutRoi tests:
-from bob.bio.vein.preprocessors.TopographyCutRoi import  TopographyCutRoi
+from bob.bio.vein.preprocessors.TopographyCutRoi import TopographyCutRoi
 
+# for the KMeansRoi tests:
+from bob.bio.vein.preprocessors.KMeansRoi import KMeansRoi
 
 def F(parts):
   """Returns the test file path"""
 
   return pkg_resources.resource_filename(__name__, os.path.join(*parts))
+
+#==============================================================================
+def test_KMeansRoi():
+    """
+    Test the ROI extraction algorithm namely KMeansRoi.
+    """
+    
+    input_filename = F( ( 'preprocessors', 'TopographyCutRoi_test_image.png' ) ) # the same image is used for testing of TopographyCutRoi and KMeansRoi algorithms
+    
+    output_filename = F( ( 'preprocessors', 'KMeansRoi_result_image.hdf5' ) )
+    
+    image = bob.io.base.load( input_filename )
+    
+    extractor = KMeansRoi()
+    
+    roi = extractor.get_ROI( image )
+    
+    f = bob.io.base.HDF5File( output_filename )
+    
+    roi_loaded = f.read('data')
+    
+    del f
+    
+    assert ( ( np.sum( np.abs( roi - roi_loaded ) ) ) < 100 ) # the conditions are not strict, because the behaviour of the k-means module may vary slightly
+
+
+#==============================================================================
+def test_TopographyCutRoi():
+    """
+    Test the ROI extraction algorithm namely TopographyCutRoi.
+    """
+    
+    input_filename = F( ( 'preprocessors', 'TopographyCutRoi_test_image.png' ) )
+    
+    output_filename = F( ( 'preprocessors', 'TopographyCutRoi_result_image.hdf5' ) )
+    
+    image = bob.io.base.load( input_filename )
+    
+    extractor = TopographyCutRoi()
+    
+    roi = extractor.get_ROI( image )
+    
+    f = bob.io.base.HDF5File( output_filename )
+    
+    roi_loaded = f.read('data')
+    
+    del f
+    
+    assert (roi == roi_loaded).all()
+
+#==============================================================================
 
 def _show_image(image):
   """Shows a single image
