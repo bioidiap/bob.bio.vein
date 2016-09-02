@@ -16,7 +16,7 @@ topography_cut_roi = TopographyCutRoi( blob_xywh_offsets = [ 1, 1, 1, 1 ],
                                  erode_mask_flag = False, 
                                  convexity_flag = True )
 
-kmeans_roi = TopographyCutRoi( filter_name = "medianBlur", 
+kmeans_roi = KMeansRoi( filter_name = "medianBlur", 
                                  mask_size = 7, 
                                  erode_mask_flag = False, 
                                  convexity_flag = True )
