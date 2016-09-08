@@ -35,6 +35,10 @@ from bob.bio.vein.preprocessors.TopographyCutRoi import TopographyCutRoi
 # for the KMeansRoi tests:
 from bob.bio.vein.preprocessors.KMeansRoi import KMeansRoi
 
+# for the MiuraMatchAligned tests:
+from bob.bio.vein.algorithms.MiuraMatchAligned import MiuraMatchAligned
+
+
 def F(parts):
   """Returns the test file path"""
 
@@ -88,6 +92,34 @@ def test_TopographyCutRoi():
     del f
     
     assert (roi == roi_loaded).all()
+    
+#==============================================================================
+def test_MiuraMatchAligned():
+    """
+    Test the vein matching algorithm namely MiuraMatchAligned.
+    """
+    
+    model_filename = F( ( 'algorithms', 'MiuraMatchAligned_test_data_1.hdf5' ) )
+    
+    probe_filename = F( ( 'algorithms', 'MiuraMatchAligned_test_data_2.hdf5' ) )
+    
+    f = bob.io.base.HDF5File( model_filename )
+    
+    model = f.read('data')
+    
+    del f
+    
+    f = bob.io.base.HDF5File( probe_filename )
+    
+    probe = f.read('data')
+    
+    del f
+    
+    miura_matcher = MiuraMatchAligned( ch = 10, cw = 10, alignment_flag = False, alignment_method = "center_of_mass" )
+
+    score = miura_matcher.score( model, probe )
+    
+    assert np.abs( score - 0.040135929463629753 ) < 0.000001
 
 #==============================================================================
 
