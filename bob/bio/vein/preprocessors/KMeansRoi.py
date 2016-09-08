@@ -85,7 +85,7 @@ class KMeansRoi( TopographyCutRoi, Preprocessor ):
         
         kmeans = bob.learn.em.KMeansMachine( k , data.shape[1] ) # k clusters with a feature dimensionality of N
         
-        kmeansTrainer = bob.learn.em.KMeansTrainer()
+        kmeansTrainer = bob.learn.em.KMeansTrainer( initialization_method = 'KMEANS_PLUS_PLUS' )
         
         bob.learn.em.train( kmeansTrainer, kmeans, data, max_iterations = 100, convergence_threshold = 1e-5 ) # Train the KMeansMachine
         
@@ -182,7 +182,7 @@ class KMeansRoi( TopographyCutRoi, Preprocessor ):
         image = f.read( 'image' )
         mask = f.read( 'mask' )
         del f
-        return ( image, mask )\
+        return ( image, mask )
 
 
 
