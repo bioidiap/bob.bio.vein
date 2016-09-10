@@ -9,7 +9,7 @@ bob.io.matlab
 bob.io.image
 bob.ip.base
 bob.bio.base
-bob.bio.db
 bob.db.utfvp
 bob.db.verafinger
 bob.db.putvein
+bob.db.biowave_test
