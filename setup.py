@@ -87,6 +87,12 @@ setup(
         'repeatedlinetracking = bob.bio.vein.configurations.extractors.repeated_line_tracking:feature_extractor',
         'widelinedetector = bob.bio.vein.configurations.extractors.wide_line_detector:feature_extractor',
         'localbinarypatterns = bob.bio.vein.configurations.extractors.lbp:feature_extractor',
+	'lbp-histogram-n8r2 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:lbp_extractor_n8r2',
+        'lbp-histogram-n8r3 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:lbp_extractor_n8r3',
+        'lbp-histogram-n8r4 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:lbp_extractor_n8r4',
+        'lbp-histogram-n8r5 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:lbp_extractor_n8r5',
+        'lbp-histogram-n8r6 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:lbp_extractor_n8r6',
+        'lbp-histogram-n8r7 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:lbp_extractor_n8r7',
         ],
 
       'bob.bio.algorithm': [
@@ -109,6 +115,14 @@ setup(
         'miura-match-wrist-aligned-120 = bob.bio.vein.configurations.algorithms:miura_wrist_aligned_120',
         'miura-match-wrist-aligned-140 = bob.bio.vein.configurations.algorithms:miura_wrist_aligned_140',
         'miura-match-wrist-aligned-160 = bob.bio.vein.configurations.algorithms:miura_wrist_aligned_160',
+        'miura-match-wrist-dilation-5 = bob.bio.vein.configurations.algorithms:miura_wrist_dilation_5',
+        'miura-match-wrist-dilation-7 = bob.bio.vein.configurations.algorithms:miura_wrist_dilation_7',
+        'miura-match-wrist-dilation-9 = bob.bio.vein.configurations.algorithms:miura_wrist_dilation_9',
+        'miura-match-wrist-dilation-11 = bob.bio.vein.configurations.algorithms:miura_wrist_dilation_11',
+        'miura-match-wrist-dilation-13 = bob.bio.vein.configurations.algorithms:miura_wrist_dilation_13',
+        'miura-match-wrist-dilation-15 = bob.bio.vein.configurations.algorithms:miura_wrist_dilation_15',
+        'miura-match-wrist-dilation-17 = bob.bio.vein.configurations.algorithms:miura_wrist_dilation_17',
+	'chi-square = bob.bio.vein.configurations.algorithms:chi_square',
         #'match-lbp = bob.bio.face.configurations.algorithms.lgbphs:tool',
         ],
 
