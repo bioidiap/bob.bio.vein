@@ -25,8 +25,9 @@ class RepeatedLineTracking (Extractor):
       self,
       iterations = 3000, # Maximum number of iterations
       r = 1,             # Distance between tracking point and cross section of the profile
-      profile_w = 21,     # Width of profile (Error: profile_w must be odd)
+      profile_w = 21,    # Width of profile (Error: profile_w must be odd)
       rescale = True,
+      seed = 0,          # Seed for the algorithm's random walk
       ):
 
     # call base class constructor
@@ -36,6 +37,7 @@ class RepeatedLineTracking (Extractor):
         r = r,
         profile_w = profile_w,
         rescale = rescale,
+        seed = seed,
         )
 
     # block parameters
@@ -43,11 +45,15 @@ class RepeatedLineTracking (Extractor):
     self.r = r
     self.profile_w = profile_w
     self.rescale = rescale
+    self.seed = seed
 
 
   def repeated_line_tracking(self, finger_image, mask):
     """Computes and returns the MiuraMax features for the given input
     fingervein image"""
+
+    # Sets the random seed before starting to process
+    numpy.random.seed(self.seed)
 
     #Convert image to uint8
     if finger_image.dtype != numpy.uint8:
