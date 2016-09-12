@@ -35,6 +35,8 @@ from bob.bio.vein.preprocessors.KMeansRoi import KMeansRoi
 # for the MiuraMatchAligned tests:
 from bob.bio.vein.algorithms.MiuraMatchAligned import MiuraMatchAligned
 
+# for the MaskedLBPHistograms class tests:
+from bob.bio.vein.extractors.MaskedLBPHistograms import MaskedLBPHistograms
 
 def F(parts):
   """Returns the test file path"""
@@ -117,6 +119,35 @@ def test_MiuraMatchAligned():
     score = miura_matcher.score( model, probe )
     
     assert np.abs( score - 0.040135929463629753 ) < 0.000001
+
+#==============================================================================
+def test_MaskedLBPHistograms():
+    """
+    Test the feature extraction algorithm namely MaskedLBPHistograms.
+    """
+    
+    input_filename = F( ( 'extractors', 'MaskedLBPHistograms_test_image.png' ) )
+    
+    results_filename = F( ( 'extractors', 'MaskedLBPHistograms_test_data.hdf5' ) )
+    
+    image = bob.io.base.load( input_filename )
+    
+    mask = np.ones( image.shape )
+    
+    radius = [4, 5, 6]
+    neighbors = [4, 8, 8]
+    
+    lbp_extractor_instance = MaskedLBPHistograms( neighbors, radius )
+    
+    computed = lbp_extractor_instance.masked_lbp_histograms( image, mask )
+    
+    f = bob.io.base.HDF5File( results_filename )
+    
+    downloaded = f.read('data')
+    
+    del f
+    
+    assert np.abs( np.sum( computed - downloaded ) ) < 0.000001
 
 #==============================================================================
 
