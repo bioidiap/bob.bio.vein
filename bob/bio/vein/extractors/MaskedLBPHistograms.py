@@ -17,7 +17,7 @@ import bob.ip.base
 
 class MaskedLBPHistograms( Extractor ):
     """
-    Class to compute a list of lbp histograms for each pair of parameters: (radius, neighbors).
+    Class to compute an array of MCT (or MCT or LBP cancatenated with MCT) histograms for each pair of parameters: (radius, neighbors).
     The histograms are computed taking the binary mask / ROI into account.
     
     **Parameters:**
@@ -25,23 +25,34 @@ class MaskedLBPHistograms( Extractor ):
         Neighbours parameter / parameters in the LBP operator. Possible values: 4, 8.
     radius : single uint value, or a list of uint values. 
         Radius parameter / parameters in the LBP operator.
-    
+    to_average : bool
+        [default: False] Compare the neighbors to the average of the pixels instead of the central pixel?
+    add_average_bit : bool
+        [default: False] (only useful if to_average is True) Add another bit to compare the central pixel to the average of the pixels?
+    concatenate_lbp_mct: bool
+        [default: False] (only useful if to_average=True and add_average_bit=True) 
+        Compute both LBP and MCT histograms and concatenate them if set to True.
     """
 
-    def __init__( self, neighbors, radius ):
+    def __init__( self, neighbors, radius, to_average = False, add_average_bit = False, concatenate_lbp_mct = False ):
 
         Extractor.__init__( self, 
                            neighbors = neighbors,
-                           radius = radius )
+                           radius = radius,
+                           to_average = to_average,
+                           add_average_bit = add_average_bit,
+                           concatenate_lbp_mct = concatenate_lbp_mct )
 
         self.neighbors = neighbors
         self.radius = radius
-
+        self.to_average = to_average
+        self.add_average_bit = add_average_bit
+        self.concatenate_lbp_mct = concatenate_lbp_mct
 
     #==========================================================================
-    def compute_lbp_image( self, image, neighbors, radius ):
+    def compute_lbp_image( self, image, neighbors, radius, to_average, add_average_bit ):
         """
-        Compute lbp image of the input image.
+        Compute LBP or MCT image of the input image.
         
         **Parameters:**
         
@@ -51,15 +62,21 @@ class MaskedLBPHistograms( Extractor ):
             Neighbours parameter / parameters in the LBP operator. Possible values: 4, 8.
         radius : single uint value, or a list of uint values. 
             Radius parameter / parameters in the LBP operator.
+        to_average : bool
+            [default: False] Compare the neighbors to the average of the pixels instead of the central pixel?
+        add_average_bit : bool
+            [default: False] (only useful if to_average is True) Add another bit to compare the central pixel to the average of the pixels?
         
         **Returns:**
         
         lbp_image : 2D :py:class:`numpy.ndarray`
-            LBP image.
+            LBP or MCT image.
         """
         
         # the size of the LBP image is the same as the size of the input image ('wrap' option):
-        lbp_extractor = bob.ip.base.LBP ( neighbors, radius, border_handling = 'wrap' )
+        lbp_extractor = bob.ip.base.LBP ( neighbors = neighbors, radius = radius, border_handling = 'wrap',
+                                         to_average = to_average,
+                                         add_average_bit = add_average_bit )
         
         lbp_image = lbp_extractor(image)
         
@@ -94,6 +111,8 @@ class MaskedLBPHistograms( Extractor ):
             bin_num = 2**4 + 1 # number of bins in the histogram for 4-bit encoded images
         elif image_max <= 255:
             bin_num = 2**8 + 1 # number of bins in the histogram for 8-bit encoded images
+        elif image_max <= 511:
+            bin_num = 2**9 + 1 # number of bins in the histogram for 8-bit encoded images
         elif image_max <= 65535:
             bin_num = 2**16 + 1 # number of bins in the histogram for 16-bit encoded images
         else:
@@ -148,11 +167,10 @@ class MaskedLBPHistograms( Extractor ):
         
         return output_array
 
-
     #==========================================================================
-    def masked_lbp_histograms( self, image, mask ):
+    def __get_array_of_norm_hist__( self, image, mask, neighbors, radius, to_average, add_average_bit ):
         """
-        Compute normalized LBP histograms of the input image given ROI for each pair of parameters: (radius, neighbors).
+        Computes an array of LBP or MCT histograms given neighbors and radius lists.
         
         **Parameters:**
         
@@ -160,27 +178,26 @@ class MaskedLBPHistograms( Extractor ):
             Input image.
         mask : 2D :py:class:`numpy.ndarray`
             Binary mask of the ROI.
+        neighbors : a list of uint values.
+            Neighbours parameter / parameters in the LBP operator. Possible values: 4, 8.
+        radius : a list of uint values. 
+            Radius parameter / parameters in the LBP operator.
+        to_average : bool
+            [default: False] Compare the neighbors to the average of the pixels instead of the central pixel?
+        add_average_bit : bool
+            [default: False] (only useful if to_average is True) Add another bit to compare the central pixel to the average of the pixels?
         
         **Returns:**
         
         hist_mask_norm_array : 1D or 2D :py:class:`numpy.ndarray`
-            Normalized LBP histograms of the input image given ROI for each pair of parameters: (radius, neighbors).
+            Normalized LBP or MCT histograms of the input image given ROI for each pair of parameters: (radius, neighbors).
         """
-
-        if not( isinstance( self.radius, list ) ):
-            self.radius = [ self.radius ]
-        
-        if not( isinstance( self.neighbors, list ) ):
-            self.neighbors = [ self.neighbors ]
-            
-        if len(self.neighbors) != len(self.radius): # check if input image is of correct data type
-            raise Exception("The number of elements in the neighbors and radius lists must be the same.")
         
         hist_mask_norm_list = []
         
-        for neighbors_val, radius_val in zip( self.neighbors, self.radius ):
+        for neighbors_val, radius_val in zip( neighbors, radius ):
             
-            lbp_image = self.compute_lbp_image( image, neighbors_val, radius_val ) # compute LBP image
+            lbp_image = self.compute_lbp_image( image, neighbors_val, radius_val, to_average, add_average_bit ) # compute LBP image
             
             hist_mask_norm = self.normalized_hist_given_mask( lbp_image, mask ) # compute LBP histogram given mask
             
@@ -192,9 +209,56 @@ class MaskedLBPHistograms( Extractor ):
 
 
     #==========================================================================
+    def masked_lbp_histograms( self, image, mask ):
+        """
+        Compute normalized LBP (or MCT or LBP cancatenated with MCT) histograms of the input image given ROI 
+        for each pair of parameters: (radius, neighbors).
+        
+        **Parameters:**
+        
+        image : 2D :py:class:`numpy.ndarray`
+            Input image.
+        mask : 2D :py:class:`numpy.ndarray`
+            Binary mask of the ROI.
+        
+        **Returns:**
+        
+        hist_mask_norm_array : 1D or 2D :py:class:`numpy.ndarray`
+            Normalized LBP (or MCT or LBP cancatenated with MCT) histograms of the input image given ROI 
+            for each pair of parameters: (radius, neighbors).
+        """
+        
+        if not( isinstance( self.radius, list ) ):
+            self.radius = [ self.radius ]
+        
+        if not( isinstance( self.neighbors, list ) ):
+            self.neighbors = [ self.neighbors ]
+            
+        if len(self.neighbors) != len(self.radius): # check if input image is of correct data type
+            raise Exception("The number of elements in the neighbors and radius lists must be the same.")
+        
+        if self.to_average == True and self.add_average_bit == True and self.concatenate_lbp_mct == True:
+            
+            hist_mask_norm_array_lbp = self.__get_array_of_norm_hist__( image, mask, self.neighbors, self.radius,
+                                                                      False, False )
+            
+            hist_mask_norm_array_mct = self.__get_array_of_norm_hist__( image, mask, self.neighbors, self.radius,
+                                                                      self.to_average, self.add_average_bit )
+            
+            hist_mask_norm_array = np.hstack([ hist_mask_norm_array_lbp, hist_mask_norm_array_mct ])
+            
+        else:
+            
+            hist_mask_norm_array = self.__get_array_of_norm_hist__( image, mask, self.neighbors, self.radius,
+                                                                   self.to_average, self.add_average_bit )
+        return hist_mask_norm_array
+
+
+    #==========================================================================
     def __call__( self, input_data ):
         """
-        Compute a list of lbp histograms for each pair of parameters: (radius, neighbors)
+        Compute an array of normalized LBP (or MCT or LBP cancatenated with MCT) histograms for each pair of parameters: (radius, neighbors).
+        The histograms are computed taking the binary mask / ROI into account.
         """
         
         image = input_data[0] # Input image
