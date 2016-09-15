@@ -93,6 +93,13 @@ setup(
         'lbp-histogram-n8r5 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:lbp_extractor_n8r5',
         'lbp-histogram-n8r6 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:lbp_extractor_n8r6',
         'lbp-histogram-n8r7 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:lbp_extractor_n8r7',
+	'mct-histogram-n8r2 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:mct_extractor_n8r2',
+        'mct-histogram-n8r3 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:mct_extractor_n8r3',
+        'mct-histogram-n8r4 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:mct_extractor_n8r4',
+        'mct-histogram-n8r5 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:mct_extractor_n8r5',
+        'mct-histogram-n8r6 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:mct_extractor_n8r6',
+        'mct-histogram-n8r7 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:mct_extractor_n8r7',
+        'lbp-mct-extractor-n8r5 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:lbp_mct_extractor_n8r5',
         ],
 
       'bob.bio.algorithm': [
