@@ -45,7 +45,7 @@ class BiowaveTestBioDatabase(BioDatabase):
 
     def objects(self, protocol=None, groups=None, purposes=None, model_ids=None, **kwargs):
         retval = self.__db.objects(protocol=protocol, groups=groups, purposes=purposes, model_ids=model_ids)
-        return [VeinBioFile(f) for f in retval]
+        return [VeinBioFile(client_id=f.client_id, path=f.path, file_id=f.file_id) for f in retval]
 
     # the methodes are derived from:
     # bob.bio.db/bob/bio/db/database.py

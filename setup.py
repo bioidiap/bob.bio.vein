@@ -32,8 +32,8 @@ setup(
     entry_points={
 
       'bob.bio.database': [
-        'verafinger = bob.bio.base.configurations.database.verafinger:database',
-        'utfvp = bob.bio.base.configurations.database.utfvp:database',
+        'verafinger = bob.bio.vein.configurations.database.verafinger:database',
+        'utfvp = bob.bio.vein.configurations.database.utfvp:database',
         ],
 
       'bob.bio.preprocessor': [
