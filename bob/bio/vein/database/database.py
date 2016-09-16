@@ -17,7 +17,3 @@ class VeinBioFile(BioFile):
         VoxForge database.
         """
         super(VeinBioFile, self).__init__(client_id=client_id, path=path, file_id=file_id)
-
-        self.__f = f
-
-
