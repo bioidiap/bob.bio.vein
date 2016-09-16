@@ -44,4 +44,4 @@ class VerafingerBioDatabase(BioDatabase):
             self.low_level_group_names, self.high_level_group_names)
         retval = self.__db.objects(groups=groups, protocol=protocol,
             purposes=purposes, model_ids=model_ids, **kwargs)
-        return [VeinBioFile(client_id=f.client_id, path=f.path, file_id=f.file_id) for f in retval]
+        return [VeinBioFile(client_id=f.model_id, path=f.path, file_id=f.id) for f in retval]
