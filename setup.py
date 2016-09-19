@@ -53,6 +53,7 @@ setup(
 
       # registered database short cuts
       'bob.bio.database': [
+        'verafinger = bob.bio.vein.configurations.database.verafinger:database',
         'utfvp = bob.bio.vein.configurations.databases.utfvp:database',
         'vera = bob.bio.vein.configurations.databases.vera:database',
 	'biowave_test = bob.bio.vein.configurations.databases.biowave_test:database',
