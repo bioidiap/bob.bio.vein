@@ -14,4 +14,4 @@ bob.db.verafinger
 bob.db.putvein
 bob.db.vera
 bob.db.biowave_test
-skimage
+scikit-image
