@@ -43,7 +43,8 @@ class TopographyCutRoi( Preprocessor ):
         filter_name - filter image before processing. Possible options: "GaussianBlur", "medianBlur",
         mask_size - size of the filetr mask. Defaults value: 7,
         topography_step - thresholding step. Default value: 20,
-        erode_mask_flag - reduce the area of the mask / erode it if flag set to True. Default value: False,
+        erode_mask_flag - reduce the area of the mask / erode it if flag set to True. Default value: False.
+		Note: only valid when convexity_flag is set to True.
         convexity_flag - make mask convex if True. Default value: True.
         **kwargs - .
         """
@@ -417,39 +418,6 @@ class TopographyCutRoi( Preprocessor ):
         mask = f.read( 'mask' )
         del f
         return ( image, mask )
-
-
-
-
-
-
-
-
-
-'''
-
-import TopographyCutRoi
-reload ( TopographyCutRoi )
-
-extractor = TopographyCutRoi.TopographyCutRoi()
-
-preprocessor_biowave = TopographyCutRoi.TopographyCutRoi(  blob_xywh_offsets = [ 10, 0, 10, 0 ], 
-                                                                     filter_name = "medianBlur", 
-                                                                     mask_size = 7, 
-                                                                     topography_step = 20, 
-                                                                     erode_mask_flag = False, 
-                                                                     convexity_flag = True )
-
-roi = preprocessor_biowave(image)
-
-plt.figure()
-plt.imshow( roi, cmap = 'gray' ), plt.xticks([]), plt.yticks([])
-plt.show()
-
-'''
-
-
-
 
 
 

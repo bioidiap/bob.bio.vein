@@ -93,7 +93,7 @@ class KMeansRoi( TopographyCutRoi, Preprocessor ):
         
         labelled_image = np.zeros( image.shape )
         
-        labelled_image[ image > decision_boundary ] = 1
+        labelled_image[ self.filtered_image > decision_boundary ] = 1
         
         retval, labels, stats, centroids = self.connectedComponentsWithStats( labelled_image )
         
