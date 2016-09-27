@@ -75,7 +75,7 @@ def test_finger_crop():
 
   img = bob.io.base.load(input_filename)
 
-  from bob.bio.vein.preprocessors.FingerCrop import FingerCrop
+  from bob.bio.vein.preprocessor.FingerCrop import FingerCrop
   preprocess = FingerCrop(fingercontour='leemaskMatlab', padding_width=0)
 
   preproc, mask = preprocess(img)
@@ -105,7 +105,7 @@ def test_miuramax():
   input_fvr = bob.io.base.load(input_fvr_filename)
 
   # Apply Python implementation
-  from bob.bio.vein.extractors.MaximumCurvature import MaximumCurvature
+  from bob.bio.vein.extractor.MaximumCurvature import MaximumCurvature
   MC = MaximumCurvature(5)
   output_img = MC((input_img, input_fvr))
 
@@ -130,7 +130,7 @@ def test_miurarlt():
   input_fvr = bob.io.base.load(input_fvr_filename)
 
   # Apply Python implementation
-  from bob.bio.vein.extractors.RepeatedLineTracking import RepeatedLineTracking
+  from bob.bio.vein.extractor.RepeatedLineTracking import RepeatedLineTracking
   RLT = RepeatedLineTracking(3000, 1, 21, False)
   output_img = RLT((input_img, input_fvr))
 
@@ -155,7 +155,7 @@ def test_huangwl():
   input_fvr = bob.io.base.load(input_fvr_filename)
 
   # Apply Python implementation
-  from bob.bio.vein.extractors.WideLineDetector import WideLineDetector
+  from bob.bio.vein.extractor.WideLineDetector import WideLineDetector
   WL = WideLineDetector(5, 1, 41, False)
   output_img = WL((input_img, input_fvr))
 
@@ -178,7 +178,7 @@ def test_miura_match():
   probe_gen_vein = bob.io.base.load(probe_gen_filename)
   probe_imp_vein = bob.io.base.load(probe_imp_filename)
 
-  from bob.bio.vein.algorithms.MiuraMatch import MiuraMatch
+  from bob.bio.vein.algorithm.MiuraMatch import MiuraMatch
   MM = MiuraMatch(ch=18, cw=28)
   score_gen = MM.score(template_vein, probe_gen_vein)
 
