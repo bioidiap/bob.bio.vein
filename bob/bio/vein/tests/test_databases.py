@@ -27,3 +27,21 @@ def test_verafinger():
     except IOError as e:
         raise SkipTest(
             "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'" % e)
+
+@db_available('biowave_test')
+def test_biowave_test():
+    database = bob.bio.base.load_resource('biowave_test', 'database', preferred_package='bob.bio.vein')
+    try:
+        check_database(database, protocol='all', groups=('dev', 'eval'), skip_train=True)
+    except IOError as e:
+        raise SkipTest(
+            "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'" % e)
+
+@db_available('biowave_v1')
+def test_biowave_v1():
+    database = bob.bio.base.load_resource('biowave_v1', 'database', preferred_package='bob.bio.vein')
+    try:
+        check_database(database, protocol='Idiap_1_1_R', groups=('dev', 'eval'))
+    except IOError as e:
+        raise SkipTest(
+            "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'" % e)

@@ -51,6 +51,7 @@ setup(
         'utfvp = bob.bio.vein.configurations.databases.utfvp:database',
         'vera = bob.bio.vein.configurations.databases.vera:database',
 	'biowave_test = bob.bio.vein.configurations.databases.biowave_test:database',
+        'biowave_v1 = bob.bio.vein.configurations.database.biowave_v1:database',
       ],
 
       # registered preprocessors
