@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-#Mon 26 Sep 2016 17:21:42 CEST
+# vim: set fileencoding=utf-8 :
+# Mon 26 Sep 2016 17:21:42 CEST
 
 """`VERA Fingervein`_ is a database for biometric fingervein recognition
 

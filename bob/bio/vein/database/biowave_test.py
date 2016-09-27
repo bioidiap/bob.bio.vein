@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
-# Teodors Eglitis <teodors.eglitis@idiap.ch>
-# Wed 20 Jul
+# Tue 27 Sep 2016 16:49:15 CEST
 
-"""
-  BIOWAVE_TEST database implementation of bob.bio.db.BioDatabase interface.
-  It is an extension of an SQL-based database interface, which directly talks to BIOWAVE_TEST database for
-  verification experiments (good to use in bob.bio.base framework).
+"""BIOWAVE_TEST database implementation of bob.bio.db.BioDatabase interface.
+
+It is an extension of an SQL-based database interface, which directly talks to
+BIOWAVE_TEST database for verification experiments (good to use in bob.bio.base
+framework).
 """
 
 from .database import VeinBioFile

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
+# Tue 27 Sep 2016 16:48:16 CEST
 
 '''Huang's Wide-Line Detector and Miura Matching baseline
 

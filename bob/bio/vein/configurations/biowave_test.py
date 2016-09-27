@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# vim: set fileencoding=utf-8 :
+# Tue 27 Sep 2016 16:47:58 CEST
 
 """Not yet documented
 
