@@ -22,3 +22,5 @@
 .. [MD13] *L. Mirmohamadsadeghi and A. Drygajlo*, **Palm vein recognition using local texture patterns**, IET Biometrics, pp. 1-9, 2013.
 
 .. [TVM14] *Pedro Tome, Matthias Vanoni and Sébastien Marcel*, **On the Vulnerability of Finger Vein Recognition to Spoofing**, in: IEEE International Conference of the Biometrics Special Interest Group (BIOSIG), Darmstadt, Germay, pages 1 - 10, IEEE, 2014
+
+.. [TV13] *B. Ton and R. Veldhuis*, **A high quality finger vascular pattern dataset collected using a custom designed capturing device**, in: IAPR International Conference on Biometrics (ICB), 2013.

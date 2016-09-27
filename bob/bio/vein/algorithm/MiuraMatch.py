@@ -21,7 +21,6 @@ class MiuraMatch (Algorithm):
   """
 
   def __init__(self,
-      # some similarity functions might need a GaborWaveletTransform class, so we have to provide the parameters here as well...
       ch = 8,       # Maximum search displacement in y-direction
       cw = 5,       # Maximum search displacement in x-direction
       ):

@@ -12,27 +12,26 @@ This section contains a listing of all functionality available on this library
 which can be used for vein experiments.
 
 
-Databases
----------
+Database Interfaces
+-------------------
 
-.. automodule:: bob.bio.vein.configurations.databases
+.. automodule:: bob.bio.vein.database
 
 
 Pre-processors
 --------------
 
-.. automodule:: bob.bio.vein.preprocessors
+.. automodule:: bob.bio.vein.preprocessor
 
 
 Feature Extractors
 ------------------
 
-.. automodule:: bob.bio.vein.extractors
+.. automodule:: bob.bio.vein.extractor
 
 
 Matching Algorithms
 -------------------
 
-.. automodule:: bob.bio.vein.algorithms
-
+.. automodule:: bob.bio.vein.algorithm
 

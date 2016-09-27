@@ -24,7 +24,9 @@ Users Guide
    installation
    baselines
    references
+   resources
    api
 
+.. todolist::
 
 .. include:: links.rst

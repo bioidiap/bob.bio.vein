@@ -31,35 +31,19 @@ setup(
 
     entry_points={
 
-      'bob.bio.database': [
-        'verafinger = bob.bio.vein.configurations.database.verafinger:database',
-        'utfvp = bob.bio.vein.configurations.database.utfvp:database',
-        ],
+      'bob.bio.config': [
+        # databases
+        'verafinger = bob.bio.vein.configurations.verafinger',
+        'utfvp = bob.bio.vein.configurations.utfvp',
+        'biowave_test = bob.bio.vein.configurations.biowave_test',
 
-      'bob.bio.preprocessor': [
-        'nopp = bob.bio.vein.configurations.preprocessors:none',
-        'histeq = bob.bio.vein.configurations.preprocessors:he',
-        'highfreq = bob.bio.vein.configurations.preprocessors:hfe',
-        'circgabor = bob.bio.vein.configurations.preprocessors:circgabor',
-        ],
+        # baselines
+        'mc = bob.bio.vein.configurations.maximum_curvature',
+        'rlt = bob.bio.vein.configurations.repeated_line_tracking',
+        'wld = bob.bio.vein.configurations.wide_line_detector',
 
-      'bob.bio.extractor': [
-        'normalisedcrosscorr = bob.bio.vein.configurations.extractors.normalised_crosscorr:feature_extractor',
-        'maximumcurvature = bob.bio.vein.configurations.extractors.maximum_curvature:feature_extractor',
-        'repeatedlinetracking = bob.bio.vein.configurations.extractors.repeated_line_tracking:feature_extractor',
-        'widelinedetector = bob.bio.vein.configurations.extractors.wide_line_detector:feature_extractor',
-        'localbinarypatterns = bob.bio.vein.configurations.extractors.lbp:feature_extractor',
-        ],
-
-      'bob.bio.algorithm': [
-        'match-wld = bob.bio.vein.configurations.algorithms:huangwl',
-        'match-mc = bob.bio.vein.configurations.algorithms:miuramax',
-        'match-rlt = bob.bio.vein.configurations.algorithms:miurarlt',
-        #'match-lbp = bob.bio.face.configurations.algorithms.lgbphs:tool',
-        ],
-
-      'bob.bio.grid': [
-        'idiap = bob.bio.vein.configurations.grid:default',
+        # other
+        'parallel = bob.bio.vein.configurations.parallel',
         ],
 
       },

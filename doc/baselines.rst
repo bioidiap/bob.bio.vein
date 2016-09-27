@@ -46,20 +46,58 @@ In the remainder of this section we introduce baseline experiments you can
 readily run with this tool without further configuration. Baselines examplified
 in this guide were published in [TVM14]_.
 
+Database setups and baselines are encoded using
+:ref:`bob.bio.base.configuration-files`, all stored inside the package root, in
+the directory ``bob/bio/vein/configurations``. Documentation for each resource
+is available on the section :ref:`bob.bio.vein.resources`.
+
+.. warning::
+
+   You **cannot** run experiments just by executing the command line
+   instructions described in this guide. You **need first** to procure yourself
+   the raw data files that correspond to *each* database used here in order to
+   correctly run experiments with those data. Biometric data is considered
+   private date and, under EU regulations, cannot be distributed without a
+   consent or license. You may consult our
+   :ref:`bob.bio.vein.resources.databases` resources section for checking
+   currently supported databases and accessing download links for the raw data
+   files.
+
+   Once the raw data files have been downloaded, particular attention should be
+   given to the directory locations of those. Unpack the databases carefully
+   and annotate the root directory where they have been unpacked.
+
+   Then, carefully read the *Databases* section of
+   :ref:`bob.bio.base.installation` on how to correctly setup the
+   ``~/.bob_bio_databases.txt`` file.
+
+   Use the following keywords on the left side of the assignment (see
+   :ref:`bob.bio.vein.resources.databases`):
+
+   .. code-block:: text
+
+      [YOUR_VERAFINGER_DIRECTORY] = /complete/path/to/verafinger
+      [YOUR_UTFVP_DIRECTORY] = /complete/path/to/utfvp
+      [YOUR_BIOWAVE_TEST_DIRECTORY] = /complete/path/to/biowave_test
+
+   Notice it is rather important to use the strings as described above,
+   otherwise ``bob.bio.base`` will not be able to correctly load your images.
+
+   Once this step is done, you can proceed with the instructions below.
+
 
 Repeated Line-Tracking with Miura Matching
 ==========================================
 
-You can find the description of this method on the paper from Miura *et al.*
-[MNM04]_.
+Detailed description at :ref:`bob.bio.vein.resources.recognition.rlt`.
 
-To run the baseline on the `VERA fingervein`_ database, using the ``NOM``
-protocol (called ``Full`` in [TVM14]_), do the following:
+To run the baseline on the `VERA fingervein`_ database, using the ``Nom``
+protocol, do the following:
 
 
 .. code-block:: sh
 
-   $ ./bin/verify.py --database=verafinger --protocol=NOM --preprocessor=nopp --extractor=repeatedlinetracking --algorithm=match-rlt --sub-directory="rlt" --verbose --verbose
+   $ ./bin/verify.py verafinger rlt -vv
 
 
 .. tip::
@@ -72,62 +110,54 @@ protocol (called ``Full`` in [TVM14]_), do the following:
 This command line selects and runs the following implementations for the
 toolchain:
 
-* Database: Use the base Bob API for the VERA database implementation,
-  protocol variant ``NOM`` which corresponds to the ``Full`` evaluation
-  protocol described in [TVM14]_
-* Preprocessor: Simple finger cropping, with no extra post-processing, as
-  defined in [LLP09]_
-* Feature extractor: Repeated line tracking, as explained in [MNM04]_
-* Matching algorithm: "Miura" matching, as explained on the same paper
-* Subdirectory: This is the subdirectory in which the scores and intermediate
-  results of this baseline will be stored.
-
+* :ref:`bob.bio.vein.resources.database.verafinger`
+* :ref:`bob.bio.vein.resources.recognition.rlt`
 
 As the tool runs, you'll see printouts that show how it advances through
 preprocessing, feature extraction and matching. In a 4-core machine and using
-4 parallel tasks, it takes around 2 hours to process this baseline with the
+4 parallel tasks, it takes around 4 hours to process this baseline with the
 current code implementation.
 
-To complete the evaluation, run the commands bellow, that will output the equal
+To complete the evaluation, run the command bellow, that will output the equal
 error rate (EER) and plot the detector error trade-off (DET) curve with the
 performance:
 
 .. code-block:: sh
 
-   $ ./bin/bob_eval_threshold.py  --scores <path-to>/verafinger/rlt/NOM/nonorm/scores-dev --criterium=eer
-   ('Threshold:', 0.320748535)
-   FAR : 26.478% (12757/48180)
+   $ ./bin/bob_eval_threshold.py  --scores <path-to>/verafinger/rlt/Nom/nonorm/scores-dev --criterium=eer
+   ('Threshold:', 0.32045327)
+   FAR : 26.362% (12701/48180)
    FRR : 26.364% (58/220)
-   HTER: 26.421%
+   HTER: 26.363%
 
 
 Maximum Curvature with Miura Matching
 =====================================
 
-You can find the description of this method on the paper from Miura *et al.*
-[MNM05]_.
+Detailed description at :ref:`bob.bio.vein.resources.recognition.mc`.
 
-To run the baseline on the `VERA fingervein`_ database, using the ``NOM``
+To run the baseline on the `VERA fingervein`_ database, using the ``Nom``
 protocol like above, do the following:
 
 
 .. code-block:: sh
 
-   $ ./bin/verify.py --database=verafinger --protocol=NOM --preprocessor=nopp --extractor=maximumcurvature --algorithm=match-mc --sub-directory="mc" --verbose --verbose
+   $ ./bin/verify.py verafinger mc -vv
 
 
 This command line selects and runs the following implementations for the
-toolchain, with comparison to the previous baseline:
+toolchain:
 
-* Feature extractor: Maximum Curvature, as explained in [MNM05]_
+* :ref:`bob.bio.vein.resources.database.verafinger`
+* :ref:`bob.bio.vein.resources.recognition.mc`
 
 In a 4-core machine and using 4 parallel tasks, it takes around 1 hour and 40
-minutes to process this baseline with the current code implementation.  Results
+minutes to process this baseline with the current code implementation. Results
 we obtained:
 
 .. code-block:: sh
 
-   $ ./bin/bob_eval_threshold.py  --scores <path-to>/verafinger/mc/NOM/nonorm/scores-dev --criterium=eer
+   $ ./bin/bob_eval_threshold.py  --scores <path-to>/verafinger/mc/Nom/nonorm/scores-dev --criterium=eer
    ('Threshold:', 0.078274325)
    FAR : 3.182% (1533/48180)
    FRR : 3.182% (7/220)
@@ -146,17 +176,18 @@ protocol like above, do the following:
 
 .. code-block:: sh
 
-   $ ./bin/verify.py --database=verafinger --protocol=NOM --preprocessor=nopp --extractor=widelinedetector --algorithm=match-wld --sub-directory="wld" --verbose --verbose
+   $ ./bin/verify.py verafinger wld -vv
 
 
 This command line selects and runs the following implementations for the
-toolchain, with comparison to the previous baseline:
+toolchain:
 
-* Feature extractor: Wide Line Detector, as explained in [HDLTL10]_
+* :ref:`bob.bio.vein.resources.database.verafinger`
+* :ref:`bob.bio.vein.resources.recognition.wld`
 
 In a 4-core machine and using 4 parallel tasks, it takes only around 5 minutes
-minutes to process this baseline with the current code implementation.
-Results we obtained:
+minutes to process this baseline with the current code implementation.Results
+we obtained:
 
 .. code-block:: sh
 
@@ -188,25 +219,6 @@ Wide Line Detector           None                                10.4
 ======================== ================= ====== ====== ====== ======
 
 WLD + HEQ (preproc) @ Vera/Full = 10.9%
-
-
-Available Resources
--------------------
-
-This package provides various different ``bob.bio.base`` resource
-configurations to handle a variety of techniques in vein recognition: database
-adaptors, preprocessors (cropping and illumination
-normalization), feature extractors and matching algorithms. In order to list
-each contribution, use the script ``./bin/resources.py``.
-
-For available resources:
-
-  .. code-block:: sh
-
-     $ ./bin/resources.py --packages=bob.bio.vein
-
-For a detailed explanation and the configurability of each resource, consult
-:ref:`bob.bio.vein.api`.
 
 
 .. include:: links.rst
