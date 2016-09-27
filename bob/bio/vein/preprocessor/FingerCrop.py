@@ -50,11 +50,11 @@ class FingerCrop (Preprocessor):
       0.2 in a float image with values between 0 and 1).
 
     fingercontour (str, Optional): Select between three finger contour
-      implementations: leemaskMod, leemaskMatlab or konomask. (From Pedro Tome:
-      the option ``leemaskMatlab`` was just implemented for testing purposes so
-      we could compare with MAT files generated from Matlab code of other
-      authors. He only used it with the UTFVP database, using ``leemaskMod``
-      with that database yields slight worse results.)
+      implementations: ``"leemaskMod"``, ``"leemaskMatlab"`` or ``"konomask"``.
+      (From Pedro Tome: the option ``leemaskMatlab`` was just implemented for
+      testing purposes so we could compare with MAT files generated from Matlab
+      code of other authors. He only used it with the UTFVP database, using
+      ``leemaskMod`` with that database yields slight worse results.)
 
     postprocessing (str, Optional): Select between ``HE`` (histogram
       equalization, as with :py:func:`bob.ip.base.histogram_equalization`),

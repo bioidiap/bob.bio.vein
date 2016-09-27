@@ -18,6 +18,16 @@ class MiuraMatch (Algorithm):
   vein patterns based on repeated line tracking and its application to personal
   identification. Machine Vision and Applications, Vol. 15, Num. 4, pp.
   194--203, 2004
+
+
+  Parameters:
+
+    ch (int, Optional): Maximum search displacement in y-direction. Different
+      defult values based on the different features.
+
+    cw (int, Optional): Maximum search displacement in x-direction. Different
+      defult values based on the different features.
+
   """
 
   def __init__(self,
