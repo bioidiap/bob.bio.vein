@@ -44,16 +44,6 @@ UTFVP Database
 .. automodule:: bob.bio.vein.configurations.utfvp
    :members:
 
-
-.. _bob.bio.vein.resources.database.biowave_test:
-
-Biowave Test Database
-=====================
-
-.. automodule:: bob.bio.vein.configurations.biowave_test
-   :members:
-
-
 .. _bob.bio.vein.resources.recognition:
 
 Recognition Systems
