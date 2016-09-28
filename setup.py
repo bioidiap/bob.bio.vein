@@ -35,7 +35,6 @@ setup(
         # databases
         'verafinger = bob.bio.vein.configurations.verafinger',
         'utfvp = bob.bio.vein.configurations.utfvp',
-        'biowave_test = bob.bio.vein.configurations.biowave_test',
 
         # baselines
         'mc = bob.bio.vein.configurations.maximum_curvature',
