@@ -2,4 +2,3 @@ gridtk
 bob.db.verafinger
 bob.db.utfvp
 bob.db.putvein
-bob.db.biowave_test
