@@ -8,7 +8,7 @@ The settings defined here are for ROI detection in the images of the BIOWAVE dat
 
 #import bob.bio.vein
 
-from bob.bio.vein.preprocessors.TopographyCutRoi import TopographyCutRoi
+from ...preprocessors import TopographyCutRoi
 
 #==============================================================================
 # Initialize the instance of the preprocessor:

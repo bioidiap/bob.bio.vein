@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
-from ..algorithms import MiuraMatch
-from ..algorithms.MiuraMatchAligned import MiuraMatchAligned
-from ..algorithms.HistogramsMatch import HistogramsMatch
+from ..algorithm import MiuraMatch
+from ..algorithms import MiuraMatchAligned
+from ..algorithms import HistogramsMatch
+
+# HessianAlignment - supportive class (returns transformation matrix for the alignment of enroll and probe) for the HessianHistMatchAligned class
+from ..algorithms import HessianAlignment
+from ..algorithms import HessianHistMatchAligned
 
 huangwl = MiuraMatch(ch=18, cw=28)
 miuramax = MiuraMatch(ch=80, cw=90)
@@ -36,3 +40,45 @@ miura_wrist_dilation_15 = MiuraMatchAligned( ch = 120, cw = 120, alignment_flag 
 miura_wrist_dilation_17 = MiuraMatchAligned( ch = 120, cw = 120, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 17 )
 
 chi_square = HistogramsMatch( similarity_metrics_name = "chi_square" )
+
+# Successfull parameters for the biowave_test DB:
+window_size = 20
+enroll_center_method = "largest_vector_magnitude"
+N_points = 15
+gap = 10
+step = 7
+align_power = 4
+
+aligner = HessianAlignment( window_size = window_size, N_points = N_points, gap = gap, step = step, align_power = align_power, 
+                           enroll_center_method = enroll_center_method )
+
+
+hessian_hist_match_aligned_nb50p1 = HessianHistMatchAligned( aligner = aligner, n_bins = 50, eigenval_power = 1, 
+								binarize_weights = False, 
+								similarity_metrics_name = "chi_square", 
+								alignment_method_name = "max_dot_product" )
+
+hessian_hist_match_aligned_nb50p2 = HessianHistMatchAligned( aligner = aligner, n_bins = 50, eigenval_power = 2, 
+								binarize_weights = False, 
+								similarity_metrics_name = "chi_square", 
+								alignment_method_name = "max_dot_product" )
+
+hessian_hist_match_aligned_nb20p1 = HessianHistMatchAligned( aligner = aligner, n_bins = 20, eigenval_power = 1, 
+								binarize_weights = False, 
+								similarity_metrics_name = "chi_square", 
+								alignment_method_name = "max_dot_product" )
+
+hessian_hist_match_aligned_nb20p2 = HessianHistMatchAligned( aligner = aligner, n_bins = 20, eigenval_power = 2, 
+								binarize_weights = False, 
+								similarity_metrics_name = "chi_square", 
+								alignment_method_name = "max_dot_product" )
+
+hessian_hist_match_aligned_nb50p1bin = HessianHistMatchAligned( aligner = aligner, n_bins = 50, eigenval_power = 1, 
+								binarize_weights = True, 
+								similarity_metrics_name = "chi_square", 
+								alignment_method_name = "max_dot_product" )
+
+hessian_hist_match_aligned_nb20p1bin = HessianHistMatchAligned( aligner = aligner, n_bins = 20, eigenval_power = 1, 
+								binarize_weights = True, 
+								similarity_metrics_name = "chi_square", 
+								alignment_method_name = "max_dot_product" )

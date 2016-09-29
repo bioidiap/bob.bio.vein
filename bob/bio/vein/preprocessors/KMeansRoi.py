@@ -23,7 +23,7 @@ class KMeansRoi( TopographyCutRoi, Preprocessor ):
     """
     
     #==========================================================================
-    def __init__( self, filter_name = "medianBlur", mask_size = 7, erode_mask_flag = False, 
+    def __init__( self, filter_name = "medianBlur", mask_size = 7, erode_mask_flag = False, erosion_factor = 20, 
                  convexity_flag = True, **kwargs ):
         """
         
@@ -31,6 +31,7 @@ class KMeansRoi( TopographyCutRoi, Preprocessor ):
         filter_name - filter image before processing. Possible options: "GaussianBlur", "medianBlur",
         mask_size - size of the filetr mask. Defaults value: 7,
         erode_mask_flag - reduce the area of the mask / erode it if flag set to True. Default value: False,
+        erosion_factor - the mask will be eroded with elipse kernel of the size: (image_heights/erosion_factor). Default value: 20,
         convexity_flag - make mask convex if True. Default value: True.
         **kwargs - .
         """
@@ -40,18 +41,22 @@ class KMeansRoi( TopographyCutRoi, Preprocessor ):
                                   filter_name = filter_name,
                                   mask_size = mask_size,
                                   erode_mask_flag = erode_mask_flag,
+				  erosion_factor = erosion_factor,
                                   convexity_flag = convexity_flag,
                                   **kwargs )
         
-        Preprocessor.__init__( self, filter_name = filter_name, 
+        Preprocessor.__init__( self, 
+			      filter_name = filter_name, 
                               mask_size = mask_size, 
                               erode_mask_flag = erode_mask_flag, 
+			      erosion_factor = erosion_factor, 
                               convexity_flag = convexity_flag, 
                               **kwargs )
         
         self.filter_name = filter_name # the preprocessing filter name
         self.mask_size = mask_size # the size of the filter mask
         self.erode_mask_flag = erode_mask_flag # erode binary mask if True
+        self.erosion_factor = erosion_factor
         self.convexity_flag = convexity_flag # make mask convex if True
         
         self.filtered_image = np.array([], dtype = np.uint8) # store filtered image
@@ -130,7 +135,7 @@ class KMeansRoi( TopographyCutRoi, Preprocessor ):
         self.__get_blob__( image )
         
         if self.convexity_flag:
-            self.__make_mask_convex__( image )
+            self.__make_mask_convex__( image, self.erosion_factor )
         
         return self.mask_binary.astype( np.uint8 )
 
