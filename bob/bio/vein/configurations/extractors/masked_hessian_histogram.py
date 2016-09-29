@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
-from ...extractors.MaskedHessianHistogram import MaskedHessianHistogram
+from ...extractors import MaskedHessianHistogram
 
 hesshist_extractor_sigma7bins50 = MaskedHessianHistogram( sigma = 7, n_bins = 50 )
 hesshist_extractor_sigma7bins100 = MaskedHessianHistogram( sigma = 7, n_bins = 100 )

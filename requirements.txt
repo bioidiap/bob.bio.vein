@@ -12,6 +12,5 @@ bob.bio.base
 bob.db.utfvp
 bob.db.verafinger
 bob.db.putvein
-bob.db.vera
 bob.db.biowave_test
 scikit-image

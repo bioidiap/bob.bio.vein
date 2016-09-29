@@ -49,28 +49,19 @@ setup(
       'bob.bio.database': [
         'verafinger = bob.bio.vein.configurations.database.verafinger:database',
         'utfvp = bob.bio.vein.configurations.databases.utfvp:database',
-        'vera = bob.bio.vein.configurations.databases.vera:database',
+#        'vera = bob.bio.vein.configurations.databases.vera:database',
 	'biowave_test = bob.bio.vein.configurations.databases.biowave_test:database',
         'biowave_v1 = bob.bio.vein.configurations.database.biowave_v1:database',
       ],
 
       # registered preprocessors
       'bob.bio.preprocessor': [
-        'none = bob.bio.vein.configurations.preprocessors.finger_crop_None_None:preprocessor',
-        'histeq = bob.bio.vein.configurations.preprocessors.finger_crop_None_HE:preprocessor',
-        'highfreq = bob.bio.vein.configurations.preprocessors.finger_crop_None_HFE:preprocessor',
-        'circGabor = bob.bio.vein.configurations.preprocessors.finger_crop_None_CircGabor:preprocessor',
-        'topography-cut-roi = bob.bio.vein.configurations.preprocessors.topography_cut_roi:preprocessor', # topography cut roi
-#        'histeq = bob.bio.vein.configurations.preprocessors.finger_crop_None_HE:preprocessor',
-#        'highfreq = bob.bio.vein.configurations.preprocessors.finger_crop_None_HFE:preprocessor',
-#        'circGabor = bob.bio.vein.configurations.preprocessors.finger_crop_None_CircGabor:preprocessor',
-        'topography-cut-roi = bob.bio.vein.configurations.preprocessors:topography_cut_roi',
-        'kmeans-roi = bob.bio.vein.configurations.preprocessors:kmeans_roi',
         'topography-cut-roi-conv       = bob.bio.vein.configurations.preprocessors:topography_cut_roi_conv',
         'topography-cut-roi-conv-erode = bob.bio.vein.configurations.preprocessors:topography_cut_roi_conv_erode',
         'topography-cut-roi            = bob.bio.vein.configurations.preprocessors:topography_cut_roi',
         'kmeans-roi-conv               = bob.bio.vein.configurations.preprocessors:kmeans_roi_conv',
         'kmeans-roi                    = bob.bio.vein.configurations.preprocessors:kmeans_roi',
+        'kmeans-roi-conv-erode-40      = bob.bio.vein.configurations.preprocessors:kmeans_roi_conv_erode_40',
         'nopp = bob.bio.vein.configurations.preprocessors:none',
         'histeq = bob.bio.vein.configurations.preprocessors:he',
         'highfreq = bob.bio.vein.configurations.preprocessors:hfe',
@@ -111,6 +102,7 @@ setup(
         'hessian-histogram-sigma5bins50pow2 = bob.bio.vein.configurations.extractors.masked_hessian_histogram:hesshist_extractor_sigma5bins50pow2',
         'hessian-histogram-sigma5bins50pow5 = bob.bio.vein.configurations.extractors.masked_hessian_histogram:hesshist_extractor_sigma5bins50pow5',
         'hessian-histogram-sigma5bins50pow10 = bob.bio.vein.configurations.extractors.masked_hessian_histogram:hesshist_extractor_sigma5bins50pow10',
+        'max-eigenvalues-angles-s7p1 = bob.bio.vein.configurations.extractors.max_eigenvalues_angles:max_eigenvalues_angles_extractor_s7p1',
         ],
 
       'bob.bio.algorithm': [
@@ -141,6 +133,12 @@ setup(
         'miura-match-wrist-dilation-15 = bob.bio.vein.configurations.algorithms:miura_wrist_dilation_15',
         'miura-match-wrist-dilation-17 = bob.bio.vein.configurations.algorithms:miura_wrist_dilation_17',
 	'chi-square = bob.bio.vein.configurations.algorithms:chi_square',
+	'hessian-hist-match-aligned-nb50p1 = bob.bio.vein.configurations.algorithms:hessian_hist_match_aligned_nb50p1',
+	'hessian-hist-match-aligned-nb50p2 = bob.bio.vein.configurations.algorithms:hessian_hist_match_aligned_nb50p2',
+	'hessian-hist-match-aligned-nb20p1 = bob.bio.vein.configurations.algorithms:hessian_hist_match_aligned_nb20p1',
+	'hessian-hist-match-aligned-nb20p2 = bob.bio.vein.configurations.algorithms:hessian_hist_match_aligned_nb20p2',
+	'hessian-hist-match-aligned-nb50p1bin = bob.bio.vein.configurations.algorithms:hessian_hist_match_aligned_nb50p1bin',
+	'hessian-hist-match-aligned-nb20p1bin = bob.bio.vein.configurations.algorithms:hessian_hist_match_aligned_nb20p1bin',
         #'match-lbp = bob.bio.face.configurations.algorithms.lgbphs:tool',
         ],
 

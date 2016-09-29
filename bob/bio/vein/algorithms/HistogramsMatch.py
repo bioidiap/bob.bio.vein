@@ -37,7 +37,7 @@ class HistogramsMatch( Algorithm ):
         
         **Parameters:**
         
-        enroll_features : 1D or 2D :py:class:`numpy.ndarray`
+        data : 1D or 2D :py:class:`numpy.ndarray`
             An array of histograms (or only one histogram / vector).
         
         **Returns:**
@@ -108,7 +108,7 @@ class HistogramsMatch( Algorithm ):
             probe = self.__select_first_hist__( probe )
         
         if not( self.similarity_metrics_name in self.available_similarity_metrics ):
-            raise Exception("Specified alignment method is not in the list of available_alignment_methods")
+            raise Exception("Specified similarity metrics is not in the list of available_similarity_metrics")
         
         scores = []
         

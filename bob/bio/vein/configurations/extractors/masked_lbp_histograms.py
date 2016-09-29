@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
-from ...extractors.MaskedLBPHistograms import MaskedLBPHistograms
+from ...extractors import MaskedLBPHistograms
 
 lbp_extractor_n8r2 = MaskedLBPHistograms( neighbors = 8, radius = 2 )
 lbp_extractor_n8r3 = MaskedLBPHistograms( neighbors = 8, radius = 3 )

@@ -29,7 +29,7 @@ class TopographyCutRoi( Preprocessor ):
     #==========================================================================
     def __init__( self, blob_xywh_offsets = [1,1,1,1], 
                  filter_name = "medianBlur", mask_size = 7, 
-                 topography_step = 20, erode_mask_flag = False, 
+                 topography_step = 20, erode_mask_flag = False, erosion_factor = 20, 
                  convexity_flag = True, **kwargs ):
         """
         
@@ -44,7 +44,8 @@ class TopographyCutRoi( Preprocessor ):
         mask_size - size of the filetr mask. Defaults value: 7,
         topography_step - thresholding step. Default value: 20,
         erode_mask_flag - reduce the area of the mask / erode it if flag set to True. Default value: False.
-		Note: only valid when convexity_flag is set to True.
+            Note: only valid when convexity_flag is set to True.
+        erosion_factor - the mask will be eroded with elipse kernel of the size: (image_heights/erosion_factor). Default value: 20
         convexity_flag - make mask convex if True. Default value: True.
         **kwargs - .
         """
@@ -54,6 +55,7 @@ class TopographyCutRoi( Preprocessor ):
                               mask_size = mask_size, 
                               topography_step = topography_step, 
                               erode_mask_flag = erode_mask_flag, 
+			      erosion_factor = erosion_factor, 
                               convexity_flag = convexity_flag, 
                               **kwargs )
         
@@ -62,6 +64,7 @@ class TopographyCutRoi( Preprocessor ):
         self.mask_size = mask_size # the size of the filter mask
         self.topography_step = topography_step # define the step between level cuts
         self.erode_mask_flag = erode_mask_flag # erode binary mask if True
+        self.erosion_factor = erosion_factor # the mask will be eroded with elipse kernel of the size: (image_heights/erosion_factor). Default value: 20
         self.convexity_flag = convexity_flag # make mask convex if True
         
         self.filtered_image = np.array([], dtype = np.uint8) # store filtered image
@@ -351,7 +354,7 @@ class TopographyCutRoi( Preprocessor ):
         self.__get_blob__( image )
         
         if self.convexity_flag:
-            self.__make_mask_convex__( image )
+            self.__make_mask_convex__( image, self.erosion_factor )
         
         return self.mask_binary.astype( np.uint8 )
     

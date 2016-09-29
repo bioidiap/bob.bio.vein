@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
-from ..preprocessors import FingerCrop
-from ..preprocessors.TopographyCutRoi import TopographyCutRoi
-from ..preprocessors.KMeansRoi import KMeansRoi
+from ..preprocessor import FingerCrop
+from ..preprocessors import TopographyCutRoi
+from ..preprocessors import KMeansRoi
 none = FingerCrop()
 he = FingerCrop(postprocessing='HE')
 hfe = FingerCrop(postprocessing='HFE')
@@ -39,3 +39,9 @@ kmeans_roi = KMeansRoi( filter_name = "medianBlur",
                                  mask_size = 7, 
                                  erode_mask_flag = False, 
                                  convexity_flag = False )
+
+kmeans_roi_conv_erode_40 = KMeansRoi( filter_name = "medianBlur", 
+                                 mask_size = 7, 
+                                 erode_mask_flag = True, 
+				 erosion_factor = 40, 
+                                 convexity_flag = True )
