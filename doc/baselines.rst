@@ -107,6 +107,15 @@ protocol, do the following:
    submit your job for SGE execution, you can run it in parallel (using 4
    parallel tasks) by adding the options ``--parallel=4 --nice=10``.
 
+   Optionally, you may use the ``parallel` resource configuration which already
+   sets the number of parallel jobs to the number of hardware cores you have
+   installed on your machine (as with :py:func:`multiprocessing.cpu_count`) and
+   sets ``nice=10``. For example:
+
+   .. code-block:: sh
+
+      $ ./bin/verify.py verafinger rlt parallel -vv
+
 
 This command line selects and runs the following implementations for the
 toolchain:
@@ -125,7 +134,7 @@ performance:
 
 .. code-block:: sh
 
-   $ ./bin/bob_eval_threshold.py  --scores <path-to>/verafinger/rlt/Nom/nonorm/scores-dev --criterium=eer
+   $ ./bin/bob_eval_threshold.py <path-to>/verafinger/rlt/Nom/nonorm/scores-dev
    ('Threshold:', 0.32045327)
    FAR : 26.362% (12701/48180)
    FRR : 26.364% (58/220)
@@ -158,7 +167,7 @@ we obtained:
 
 .. code-block:: sh
 
-   $ ./bin/bob_eval_threshold.py  --scores <path-to>/verafinger/mc/Nom/nonorm/scores-dev --criterium=eer
+   $ ./bin/bob_eval_threshold.py <path-to>/verafinger/mc/Nom/nonorm/scores-dev
    ('Threshold:', 0.078274325)
    FAR : 3.182% (1533/48180)
    FRR : 3.182% (7/220)
@@ -192,7 +201,7 @@ we obtained:
 
 .. code-block:: sh
 
-   $ ./bin/bob_eval_threshold.py  --scores <path-to>/verafinger/wld/NOM/nonorm/scores-dev --criterium=eer
+   $ ./bin/bob_eval_threshold.py <path-to>/verafinger/wld/NOM/nonorm/scores-dev
    ('Threshold:', 0.239141175)
    FAR : 10.455% (5037/48180)
    FRR : 10.455% (23/220)
@@ -211,12 +220,12 @@ correspond to the the equal-error rate on the development set, in percentage):
 ------------------------------------------ -------------------- -------------
    Feature Extractor      Post Processing   Full     B    Nom   1vsall  nom
 ======================== ================= ====== ====== ====== ====== ======
-Repeated Line Tracking       None           23.9   24.1   24.9   1.7    1.4
-Repeated Line Tracking    Histogram Eq.     26.2   23.6   24.9   2.1    0.9
-Maximum Curvature            None            3.2    3.2    3.1   0.4    0.
-Maximum Curvature         Histogram Eq.      3.0    2.7    2.7   0.4    0.
-Wide Line Detector           None           10.2   10.2   10.5   2.3    1.7
-Wide Line Detector        Histogram Eq.      8.0    9.7    7.3   1.7    0.9
+Repeated Line Tracking        None          23.9   24.1   24.9   1.7    1.4
+Repeated Line Tracking     Histogram Eq.    26.2   23.6   24.9   2.1    0.9
+Maximum Curvature             None           3.2    3.2    3.1   0.4    0.
+Maximum Curvature          Histogram Eq.     3.0    2.7    2.7   0.4    0.
+Wide Line Detector            None          10.2   10.2   10.5   2.3    1.7
+Wide Line Detector         Histogram Eq.     8.0    9.7    7.3   1.7    0.9
 ======================== ================= ====== ====== ====== ====== ======
 
 In a machine with 48 cores, running these baselines took the following time
@@ -227,12 +236,12 @@ In a machine with 48 cores, running these baselines took the following time
 ------------------------------------------ -------------------- -------------
    Feature Extractor      Post Processing   Full     B    Nom   1vsall  nom
 ======================== ================= ====== ====== ====== ====== ======
-Repeated Line Tracking       None           01:16  00:23  00:23  12:44  00:35
-Repeated Line Tracking    Histogram Eq.     00:50  00:23  00:23  13:00  00:35
-Maximum Curvature            None           03:28  00:54  00:59  58:34  01:48
-Maximum Curvature         Histogram Eq.     02:45  00:54  00:59  49:03  01:49
-Wide Line Detector           None           00:07  00:01  00:01  02:25  00:05
-Wide Line Detector        Histogram Eq.     00:04  00:01  00:01  02:04  00:06
+Repeated Line Tracking        None          01:16  00:23  00:23  12:44  00:35
+Repeated Line Tracking     Histogram Eq.    00:50  00:23  00:23  13:00  00:35
+Maximum Curvature             None          03:28  00:54  00:59  58:34  01:48
+Maximum Curvature          Histogram Eq.    02:45  00:54  00:59  49:03  01:49
+Wide Line Detector            None          00:07  00:01  00:01  02:25  00:05
+Wide Line Detector         Histogram Eq.    00:04  00:01  00:01  02:04  00:06
 ======================== ================= ====== ====== ====== ====== ======
 
 
