@@ -24,3 +24,5 @@
 .. _dependencies: https://gitlab.idiap.ch/bob/bob/wikis/Dependencies
 .. _mailing list: https://groups.google.com/forum/?fromgroups#!forum/bob-devel
 .. _bob.bio.base: https://pypi.python.org/pypi/bob.bio.base
+.. _biowave v1: https://www.idiap.ch/software/bob/docs/latest/bioidiap/bob.db.biowave_v1/master/guide.html
+.. _biowave test: https://www.idiap.ch/software/bob/docs/latest/bioidiap/bob.db.biowave_test/master/guide.html
