@@ -20,3 +20,5 @@
 .. _mailing list: https://www.idiap.ch/software/bob/discuss
 .. _bob.bio.base: https://pypi.python.org/pypi/bob.bio.base
 .. _jaccard index: https://en.wikipedia.org/wiki/Jaccard_index
+.. _biowave v1: https://www.idiap.ch/software/bob/docs/latest/bioidiap/bob.db.biowave_v1/master/guide.html
+.. _biowave test: https://www.idiap.ch/software/bob/docs/latest/bioidiap/bob.db.biowave_test/master/guide.html

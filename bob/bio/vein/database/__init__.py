@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 
 from .database import VeinBioFile
-# from .biowave_test import BiowaveTestBioDatabase
+from .biowave_test import BiowaveTestBioDatabase
 from .biowave_v1 import BiowaveV1BioDatabase
 from .verafinger import VerafingerBioDatabase
 from .utfvp import UtfvpBioDatabase

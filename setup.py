@@ -35,6 +35,8 @@ setup(
         # databases
         'verafinger = bob.bio.vein.configurations.verafinger',
         'utfvp = bob.bio.vein.configurations.utfvp',
+        'biowave_test   = bob.bio.vein.configurations.biowave_test',
+        'biowave_v1     = bob.bio.vein.configurations.biowave_v1',
 
         # baselines
         'mc = bob.bio.vein.configurations.maximum_curvature',
@@ -45,11 +47,10 @@ setup(
         'parallel = bob.bio.vein.configurations.parallel',
         ],
 
-
       'console_scripts': [
         'compare_rois.py = bob.bio.vein.script.compare_rois:main',
         'view_mask.py = bob.bio.vein.script.view_mask:main',
-        ]
+        ],
 
       # registered database short cuts
       'bob.bio.database': [
