@@ -20,7 +20,10 @@ from bob.bio.vein.database import VerafingerBioDatabase
 verafinger_directory = "[YOUR_VERAFINGER_DIRECTORY]"
 """Value of ``~/.bob_bio_databases.txt`` for this database"""
 
-database = VerafingerBioDatabase(original_directory = verafinger_directory)
+database = VerafingerBioDatabase(
+    original_directory = verafinger_directory,
+    original_extension = '.png',
+    )
 """The :py:class:`bob.bio.base.database.BioDatabase` derivative with Verafinger
 database settings
 

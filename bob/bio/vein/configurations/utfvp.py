@@ -22,7 +22,10 @@ from bob.bio.vein.database import UtfvpBioDatabase
 utfvp_directory = "[YOUR_UTFVP_DIRECTORY]"
 """Value of ``~/.bob_bio_databases.txt`` for this database"""
 
-database = UtfvpBioDatabase(original_directory = utfvp_directory)
+database = UtfvpBioDatabase(
+    original_directory = utfvp_directory,
+    original_extension = '.png',
+    )
 """The :py:class:`bob.bio.base.database.BioDatabase` derivative with UTFVP settings
 
 .. warning::
