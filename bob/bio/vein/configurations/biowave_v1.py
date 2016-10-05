@@ -17,9 +17,29 @@ You can find more information there - `BioWave V1`_ .
 from bob.bio.vein.database import BiowaveV1BioDatabase
 
 biowave_v1_image_directory = "[YOUR_BIOWAVE_V1_IMAGE_DIRECTORY]"
+"""Value of ``~/.bob_bio_databases.txt`` for this database"""
 
 database = BiowaveV1BioDatabase(
-    original_directory=biowave_v1_image_directory,
-    original_extension='.png',
-    protocol='Idiap_1_1_R'
-)
+           original_directory=biowave_v1_image_directory,
+           original_extension = '.png',
+           )
+"""The :py:class:`bob.bio.base.database.BioDatabase` derivative with BioWave V1 settings
+
+.. warning::
+
+   This class only provides a programmatic interface to load data in an orderly
+   manner, respecting usage protocols. It does **not** contain the raw
+   datafiles. You should procure those yourself.
+
+Notice that ``original_directory`` is set to ``[YOUR_BIOWAVE_V1_IMAGE_DIRECTORY]``.
+You must make sure to create ``${HOME}/.bob_bio_databases.txt`` setting this
+value to the place where you actually installed the Verafinger Database, as
+explained in the section :ref:`bob.bio.vein.baselines`.
+"""
+protocol='Idiap_1_1_R'
+"""The default protocol to use for tests
+
+You may modify this at runtime by specifying the option ``--protocol`` on the
+command-line of ``verify.py`` or using the keyword ``protocol`` on a
+configuration file that is loaded **after** this configuration resource.
+"""

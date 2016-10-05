@@ -11,7 +11,7 @@
 """
 
 from .database import VeinBioFile
-from bob.bio.base.database import BioDatabase, BioFile
+from bob.bio.base.database import BioDatabase
 
 
 class BiowaveV1BioFile(VeinBioFile):
@@ -31,9 +31,9 @@ class BiowaveV1BioFile(VeinBioFile):
 
     def load(self, directory=None, extension='.png'):
       if self.protocol.endswith("na"):
-          return self.low_level_file.construct_vein_image(self, directory, center = False)
+          return self.low_level_file.construct_vein_image(self, directory=directory, center=False)
       elif self.protocol.endswith("ca"):
-          return self.low_level_file.construct_vein_image(self, directory, center = True)
+          return self.low_level_file.construct_vein_image(self, directory=directory, center=True)
       else:
         super(BiowaveV1BioFile, self).load(directory=directory, extension=extension)
 

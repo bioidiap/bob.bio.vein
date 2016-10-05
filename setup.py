@@ -46,7 +46,7 @@ setup(
         # other
         'parallel = bob.bio.vein.configurations.parallel',
         ],
-# To be romeved?
+# To be removed?
 #      # registered database short cuts
 #      'bob.bio.database': [
 #        'verafinger     = bob.bio.vein.configurations.database.verafinger:database',
@@ -54,7 +54,7 @@ setup(
 ##       'vera = bob.bio.vein.configurations.databases.vera:database',
 #	'biowave_test   = bob.bio.vein.configurations.databases.biowave_test:database',
 #        'biowave_v1     = bob.bio.vein.configurations.database.biowave_v1:database',
-      ],
+#      ],
 
       # registered preprocessors
       'bob.bio.preprocessor': [
