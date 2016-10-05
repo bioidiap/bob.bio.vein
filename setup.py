@@ -35,6 +35,8 @@ setup(
         # databases
         'verafinger = bob.bio.vein.configurations.verafinger',
         'utfvp = bob.bio.vein.configurations.utfvp',
+        'biowave_test   = bob.bio.vein.configurations.biowave_test',
+        'biowave_v1     = bob.bio.vein.configurations.biowave_v1',
 
         # baselines
         'mc = bob.bio.vein.configurations.maximum_curvature',
@@ -44,15 +46,15 @@ setup(
         # other
         'parallel = bob.bio.vein.configurations.parallel',
         ],
-
-      # registered database short cuts
-      'bob.bio.database': [
-        'verafinger = bob.bio.vein.configurations.database.verafinger:database',
-        'utfvp = bob.bio.vein.configurations.databases.utfvp:database',
-#        'vera = bob.bio.vein.configurations.databases.vera:database',
-	'biowave_test = bob.bio.vein.configurations.databases.biowave_test:database',
-        'biowave_v1 = bob.bio.vein.configurations.database.biowave_v1:database',
-      ],
+# To be removed?
+#      # registered database short cuts
+#      'bob.bio.database': [
+#        'verafinger     = bob.bio.vein.configurations.database.verafinger:database',
+#        'utfvp          = bob.bio.vein.configurations.databases.utfvp:database',
+##       'vera = bob.bio.vein.configurations.databases.vera:database',
+#	'biowave_test   = bob.bio.vein.configurations.databases.biowave_test:database',
+#        'biowave_v1     = bob.bio.vein.configurations.database.biowave_v1:database',
+#      ],
 
       # registered preprocessors
       'bob.bio.preprocessor': [
