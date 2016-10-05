@@ -21,14 +21,19 @@ class MaskedLBPHistograms( Extractor ):
     The histograms are computed taking the binary mask / ROI into account.
     
     **Parameters:**
+    
     neighbors : single uint value, or a list of uint values.
         Neighbours parameter / parameters in the LBP operator. Possible values: 4, 8.
+    
     radius : single uint value, or a list of uint values. 
         Radius parameter / parameters in the LBP operator.
+    
     to_average : bool
         [default: False] Compare the neighbors to the average of the pixels instead of the central pixel?
+    
     add_average_bit : bool
         [default: False] (only useful if to_average is True) Add another bit to compare the central pixel to the average of the pixels?
+    
     concatenate_lbp_mct: bool
         [default: False] (only useful if to_average=True and add_average_bit=True) 
         Compute both LBP and MCT histograms and concatenate them if set to True.
@@ -58,12 +63,16 @@ class MaskedLBPHistograms( Extractor ):
         
         image : 2D :py:class:`numpy.ndarray`
             Input image.
+        
         neighbors : single uint value, or a list of uint values.
             Neighbours parameter / parameters in the LBP operator. Possible values: 4, 8.
+        
         radius : single uint value, or a list of uint values. 
             Radius parameter / parameters in the LBP operator.
+        
         to_average : bool
             [default: False] Compare the neighbors to the average of the pixels instead of the central pixel?
+        
         add_average_bit : bool
             [default: False] (only useful if to_average is True) Add another bit to compare the central pixel to the average of the pixels?
         
@@ -93,6 +102,7 @@ class MaskedLBPHistograms( Extractor ):
         
         image : 2D :py:class:`numpy.ndarray`
             Input image.
+        
         mask : 2D :py:class:`numpy.ndarray`
             Binary mask of the ROI.
         
@@ -176,14 +186,19 @@ class MaskedLBPHistograms( Extractor ):
         
         image : 2D :py:class:`numpy.ndarray`
             Input image.
+        
         mask : 2D :py:class:`numpy.ndarray`
             Binary mask of the ROI.
+        
         neighbors : a list of uint values.
             Neighbours parameter / parameters in the LBP operator. Possible values: 4, 8.
+        
         radius : a list of uint values. 
             Radius parameter / parameters in the LBP operator.
+        
         to_average : bool
             [default: False] Compare the neighbors to the average of the pixels instead of the central pixel?
+        
         add_average_bit : bool
             [default: False] (only useful if to_average is True) Add another bit to compare the central pixel to the average of the pixels?
         
@@ -218,6 +233,7 @@ class MaskedLBPHistograms( Extractor ):
         
         image : 2D :py:class:`numpy.ndarray`
             Input image.
+        
         mask : 2D :py:class:`numpy.ndarray`
             Binary mask of the ROI.
         

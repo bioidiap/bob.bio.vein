@@ -11,28 +11,36 @@ from bob.bio.base.algorithm import Algorithm
 from scipy import ndimage
 
 class MiuraMatchAligned( Algorithm ):
-    """ Vein matching: match ratio
+    """
+    Vein matching: match ratio
+    
     Based on N. Miura, A. Nagasaka, and T. Miyatake. Feature extraction of finger
     vein patterns based on repeated line tracking and its application to personal
     identification. Machine Vision and Applications, Vol. 15, Num. 4, pp.
     194--203, 2004
     
     The pre-alignment step is added to this class. The following alignment methods are implemented:
-    1) image centering based on the center of mass. Both enroll and probe images are centered independently before Miura matching.
+    
+    1. image centering based on the center of mass. Both enroll and probe images are centered independently before Miura matching.
     
     **Parameters:**
     
     ch : uint
         Maximum search displacement in y-direction. Default value: 10.
+    
     cw : uint
         Maximum search displacement in x-direction. Default value: 10.
+    
     alignment_flag : bool
         If set to "True" pre-alignment of the images is done before the matching. Default value: True.
+    
     alignment_method : str
         Name of the prealignment method. Possible values: "center_of_mass".
-            "center_of_mass" - image centering based on the center of mass.
+        "center_of_mass" - image centering based on the center of mass.
+    
     dilation_flag : bool
         If set to "True" binary dilation of the images is done before the matching. Default value: False.
+    
     ellipse_mask_size : uint
         Diameter of the elliptical kernel in pixels. Default value: 5. 
     """
@@ -59,7 +67,8 @@ class MiuraMatchAligned( Algorithm ):
 
 
     def enroll(self, enroll_features):
-        """enroll(enroll_features) -> model
+        """
+        enroll(enroll_features) -> model
         
         This function will enroll and return the model from the given list of features.
         It must be overwritten by derived classes.
@@ -135,7 +144,8 @@ class MiuraMatchAligned( Algorithm ):
 
 
     def binary_dilation_with_ellipse( self, image ):
-        """binary_dilation_with_ellipse( image, ellipse_mask_size ) -> image_dilated
+        """
+        binary_dilation_with_ellipse( image, ellipse_mask_size ) -> image_dilated
         
         Dilates an input binary image with the ellipse kernel of the size ``ellipse_mask_size``.
         
@@ -167,7 +177,8 @@ class MiuraMatchAligned( Algorithm ):
 
 
     def score(self, model, probe):
-        """score(model, probe) -> score
+        """
+        score(model, probe) -> score
         
         Computes the score of the probe and the model using Miura matching algorithm.
         Prealignment with selected method is performed before matching if "alignment_flag = True".
@@ -177,9 +188,12 @@ class MiuraMatchAligned( Algorithm ):
         
         model : 2D :py:class:`numpy.ndarray`
             The model enrolled by the :py:meth:`enroll` function.
+        
         probe : 2D :py:class:`numpy.ndarray`
             The probe read by the :py:meth:`read_probe` function.
+        
         **Returns:**
+        
         score : float
             The resulting similarity score.         
         """
