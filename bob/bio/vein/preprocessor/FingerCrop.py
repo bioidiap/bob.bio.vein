@@ -17,7 +17,8 @@ from .. import utils
 
 
 class FingerCrop (Preprocessor):
-  """Extracts the mask and pre-processes fingervein images
+  """
+  Extracts the mask and pre-processes fingervein images.
 
   Based on the implementation: E.C. Lee, H.C. Lee and K.R. Park. Finger vein
   recognition using minutia-based alignment and local binary pattern-based
@@ -32,37 +33,42 @@ class FingerCrop (Preprocessor):
     4. (optionally) Post processed
 
 
-  Parameters:
+  **Parameters:**
 
-    mask_h (int, Optional): Height of contour mask in pixels, must be an even
+  mask_h : :py:class:`int`
+      Optional,  Height of contour mask in pixels, must be an even
       number
 
-    mask_w (int, Optional): Width of the contour mask in pixels
+  mask_w : :py:class:`int`
+      Optional,  Width of the contour mask in pixels
 
-    padding_width (int, Optional): How much padding (in pixels) to add around
+  padding_width : :py:class:`int`
+      Optional,  How much padding (in pixels) to add around
       the borders of the input image. We normally always keep this value on its
       default (5 pixels).
 
-    padding_constant (int, Optional): What is the value of the pixels added
+  padding_constant : :py:class:`int`
+      Optional,  What is the value of the pixels added
       to the padding. This number should be a value between 0 and 255. (From
       Pedro Tome: for UTFVP (high-quality samples), use 0. For the VERA
       Fingervein database (low-quality samples), use 51 (that corresponds to
       0.2 in a float image with values between 0 and 1).
 
-    fingercontour (str, Optional): Select between three finger contour
+  fingercontour : :py:class:`str`
+      Optional,  Select between three finger contour
       implementations: ``"leemaskMod"``, ``"leemaskMatlab"`` or ``"konomask"``.
       (From Pedro Tome: the option ``leemaskMatlab`` was just implemented for
       testing purposes so we could compare with MAT files generated from Matlab
       code of other authors. He only used it with the UTFVP database, using
       ``leemaskMod`` with that database yields slight worse results.)
 
-    postprocessing (str, Optional): Select between ``HE`` (histogram
+  postprocessing : :py:class:`str`
+      Optional,  Select between ``HE`` (histogram
       equalization, as with :py:func:`bob.ip.base.histogram_equalization`),
       ``HFE`` (high-frequency emphasis filter, with hard-coded parameters - see
       implementation) or ``CircGabor`` (circular Gabor filter with band-width
       1.12 octaves and standard deviation of 5 pixels (this is hard-coded)). By
       default, no postprocessing is applied on the image.
-
   """
 
 
@@ -91,7 +97,8 @@ class FingerCrop (Preprocessor):
 
 
   def __konomask__(self, image, sigma):
-    """Finger vein mask extractor
+    """
+    Finger vein mask extractor.
 
     Based on the work of M. Kono, H. Ueki and S. Umemura. Near-infrared finger
     vein patterns for personal identification, Applied Optics, Vol. 41, Issue
@@ -144,7 +151,8 @@ class FingerCrop (Preprocessor):
 
 
   def __leemaskMod__(self, image):
-    """A method to calculate the finger mask
+    """
+    A method to calculate the finger mask.
 
     Based on the work of Finger vein recognition using minutia-based alignment
     and local binary pattern-based feature extraction, E.C. Lee, H.C. Lee and
@@ -160,19 +168,19 @@ class FingerCrop (Preprocessor):
     a horizontal filter is also applied on the vertical axis.
 
 
-    Parameters:
+    **Parameters:**
 
-      image (numpy.ndarray): raw image to use for finding the mask, as 2D array
+    image (numpy.ndarray): raw image to use for finding the mask, as 2D array
         of unsigned 8-bit integers
 
 
-    Returns:
+    **Returns:**
 
-      numpy.ndarray: A 2D boolean array with the same shape of the input image
+    numpy.ndarray: A 2D boolean array with the same shape of the input image
         representing the cropping mask. ``True`` values indicate where the
         finger is.
 
-      numpy.ndarray: A 2D array with 64-bit floats indicating the indexes where
+    numpy.ndarray: A 2D array with 64-bit floats indicating the indexes where
        the mask, for each column, starts and ends on the original image. The
        same of this array is (2, number of columns on input image).
 
@@ -234,7 +242,8 @@ class FingerCrop (Preprocessor):
 
 
   def __leemaskMatlab__(self, image):
-    """A method to calculate the finger mask
+    """
+    A method to calculate the finger mask.
 
     Based on the work of Finger vein recognition using minutia-based alignment
     and local binary pattern-based feature extraction, E.C. Lee, H.C. Lee and
@@ -255,19 +264,19 @@ class FingerCrop (Preprocessor):
     and goes up to the point where the minima is detected on the lower part.
 
 
-    Parameters:
+    **Parameters:**
 
-      image (numpy.ndarray): raw image to use for finding the mask, as 2D array
+    image (numpy.ndarray): raw image to use for finding the mask, as 2D array
         of unsigned 8-bit integers
 
 
-    Returns:
+    **Returns:**
 
-      numpy.ndarray: A 2D boolean array with the same shape of the input image
+    numpy.ndarray: A 2D boolean array with the same shape of the input image
         representing the cropping mask. ``True`` values indicate where the
         finger is.
 
-      numpy.ndarray: A 2D array with 64-bit floats indicating the indexes where
+    numpy.ndarray: A 2D array with 64-bit floats indicating the indexes where
        the mask, for each column, starts and ends on the original image. The
        same of this array is (2, number of columns on input image).
 
@@ -308,7 +317,8 @@ class FingerCrop (Preprocessor):
 
 
   def __huangnormalization__(self, image, mask, edges):
-    """Simple finger normalization
+    """
+    Simple finger normalization.
 
     Based on B. Huang, Y. Dai, R. Li, D. Tang and W. Li, Finger-vein
     authentication based on wide line detector and pattern normalization,
@@ -325,27 +335,25 @@ class FingerCrop (Preprocessor):
     through those points.
 
 
-    Parameters:
+    **Parameters:**
 
-      image (numpy.ndarray): raw image to normalize as 2D array of unsigned
+    image (numpy.ndarray): raw image to normalize as 2D array of unsigned
         8-bit integers
 
-      mask (numpy.ndarray): mask to normalize as 2D array of booleans
+    mask (numpy.ndarray): mask to normalize as 2D array of booleans
 
-      edges (numpy.ndarray): edges of the mask, 2D array with 2 rows and as
+    edges (numpy.ndarray): edges of the mask, 2D array with 2 rows and as
         many columns as the input image, containing the start of the mask and
         the end of the mask.
 
 
-    Returns:
+    **Returns:**
 
-      numpy.ndarray: A 2D boolean array with the same shape and data type of
+    numpy.ndarray: A 2D boolean array with the same shape and data type of
         the input image representing the newly aligned image.
 
-      numpy.ndarray: A 2D boolean array with the same shape and data type of
+    numpy.ndarray: A 2D boolean array with the same shape and data type of
         the input mask representing the newly aligned mask.
-
-
     """
 
     img_h, img_w = image.shape
@@ -402,7 +410,8 @@ class FingerCrop (Preprocessor):
 
 
   def __HE__(self, image, mask):
-    """Applies histogram equalization on the input image inside the mask
+    """
+    Applies histogram equalization on the input image inside the mask.
 
     In this implementation, only the pixels that lie inside the mask will be
     used to calculate the histogram equalization parameters. Because of this
@@ -410,20 +419,19 @@ class FingerCrop (Preprocessor):
     and have one based exclusively on NumPy.
 
 
-    Parameters:
+    **Parameters:**
 
-        image (numpy.ndarray): raw image to be filtered, as 2D array of
+    image (numpy.ndarray): raw image to be filtered, as 2D array of
           unsigned 8-bit integers
 
-        mask (numpy.ndarray): mask of the same size of the image, but composed
+    mask (numpy.ndarray): mask of the same size of the image, but composed
           of boolean values indicating which values should be considered for
           the histogram equalization
 
 
-    Returns:
+    **Returns:**
 
-        numpy.ndarray: normalized image as a 2D array of unsigned 8-bit
-        integers
+    numpy.ndarray: normalized image as a 2D array of unsigned 8-bit integers
 
     """
 
@@ -444,24 +452,23 @@ class FingerCrop (Preprocessor):
 
 
   def __circularGabor__(self, image, bw, sigma):
-    """Applies a circular gabor filter on the input image, with parameters
+    """
+    Applies a circular gabor filter on the input image, with parameters.
 
 
-    Parameters:
+    **Parameters:**
 
-        image (numpy.ndarray): raw image to be filtered, as 2D array of
+    image (numpy.ndarray): raw image to be filtered, as 2D array of
           unsigned 8-bit integers
 
-        bw (float): bandwidth (1.12 octave)
+    bw (float): bandwidth (1.12 octave)
 
-        sigma (int): standard deviation (5  pixels)
+    sigma (int): standard deviation (5  pixels)
 
 
-    Returns:
+    **Returns:**
 
-        numpy.ndarray: normalized image as a 2D array of unsigned 8-bit
-        integers
-
+    numpy.ndarray: normalized image as a 2D array of unsigned 8-bit integers
     """
 
     # Converts image to doubles
@@ -496,8 +503,8 @@ class FingerCrop (Preprocessor):
 
 
   def __HFE__(self,image):
-    """ High Frequency Emphasis Filtering (HFE)
-
+    """
+    High Frequency Emphasis Filtering (HFE).
     """
 
     ### Hard-coded parameters for the HFE filtering
@@ -537,7 +544,8 @@ class FingerCrop (Preprocessor):
 
 
   def __call__(self, image, annotations=None):
-    """Reads the input image, extract the mask of the fingervein, postprocesses
+    """
+    Reads the input image, extract the mask of the fingervein, postprocesses.
     """
 
     # 1. Pads the input image if any padding should be added

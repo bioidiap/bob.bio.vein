@@ -6,4 +6,4 @@ py:class BioFileSet
 py:class bob.bio.base.database.file.BioFile
 py:class bob.bio.base.preprocessor.Preprocessor.Preprocessor
 py:class bob.bio.base.extractor.Extractor.Extractor
-
+py:class bob.bio.base.algorithm.Algorithm.Algorithm

@@ -13,16 +13,17 @@ from .. import utils
 
 
 class MaximumCurvature (Extractor):
-  """MiuraMax feature extractor
+  """
+  MiuraMax feature extractor.
 
   Based on N. Miura, A. Nagasaka, and T. Miyatake, Extraction of Finger-Vein
   Pattern Using Maximum Curvature Points in Image Profiles. Proceedings on IAPR
   conference on machine vision applications, 9 (2005), pp. 347--350
 
-  Parameters:
+  **Parameters:**
 
-    sigma (int, Optional): Sigma used for determining derivatives
-
+  sigma : :py:class:`int`
+      Optional: Sigma used for determining derivatives.
   """
 
 

@@ -20,14 +20,15 @@ class MiuraMatch (Algorithm):
   194--203, 2004
 
 
-  Parameters:
+  **Parameters:**
 
-    ch (int, Optional): Maximum search displacement in y-direction. Different
+  ch : :py:class:`int`
+      Optional : Maximum search displacement in y-direction. Different
       defult values based on the different features.
 
-    cw (int, Optional): Maximum search displacement in x-direction. Different
+  cw : :py:class:`int`
+      Optional : Maximum search displacement in x-direction. Different
       defult values based on the different features.
-
   """
 
   def __init__(self,
@@ -80,8 +81,13 @@ class MiuraMatch (Algorithm):
 
 
   def score(self, model, probe):
-    """Computes the score of the probe and the model
-         Return score - Value between 0 and 0.5, larger value is better match
+    """
+    Computes the score of the probe and the model.
+
+    **Parameters:**
+
+    score : :py:class:`float`
+        Value between 0 and 0.5, larger value is better match
     """
     #print model.shape
     #print probe.shape
