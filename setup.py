@@ -71,11 +71,11 @@ setup(
         ],
 
       'bob.bio.extractor': [
-        'normalisedcrosscorr = bob.bio.vein.configurations.extractors.normalised_crosscorr:feature_extractor',
+#        'normalisedcrosscorr = bob.bio.vein.configurations.extractors.normalised_crosscorr:feature_extractor',
         'maximumcurvature = bob.bio.vein.configurations.extractors.maximum_curvature:feature_extractor',
-        'repeatedlinetracking = bob.bio.vein.configurations.extractors.repeated_line_tracking:feature_extractor',
-        'widelinedetector = bob.bio.vein.configurations.extractors.wide_line_detector:feature_extractor',
-        'localbinarypatterns = bob.bio.vein.configurations.extractors.lbp:feature_extractor',
+#        'repeatedlinetracking = bob.bio.vein.configurations.extractors.repeated_line_tracking:feature_extractor',
+#        'widelinedetector = bob.bio.vein.configurations.extractors.wide_line_detector:feature_extractor',
+#        'localbinarypatterns = bob.bio.vein.configurations.extractors.lbp:feature_extractor',
 	'lbp-histogram-n8r2 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:lbp_extractor_n8r2',
         'lbp-histogram-n8r3 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:lbp_extractor_n8r3',
         'lbp-histogram-n8r4 = bob.bio.vein.configurations.extractors.masked_lbp_histograms:lbp_extractor_n8r4',
