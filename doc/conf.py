@@ -131,7 +131,7 @@ pygments_style = 'sphinx'
 
 # Some variables which are useful for generated material
 project_variable = project.replace('.', '_')
-short_description = u'bob.biovein API'
+short_description = u'Vein Recognition Library'
 owner = [u'Idiap Research Institute']
 
 

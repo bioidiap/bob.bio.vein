@@ -4,7 +4,7 @@
 
 
 from .database import VeinBioFile
-from bob.bio.base.database import BioDatabase, BioFile
+from bob.bio.base.database import BioDatabase
 
 
 class VerafingerBioDatabase(BioDatabase):
