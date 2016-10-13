@@ -1,3 +1,5 @@
+from .AlignedMatching import AlignedMatching
+
 from .HessianAlignment import HessianAlignment
 from .HessianHistMatchAligned import HessianHistMatchAligned
 from .HistogramsMatch import HistogramsMatch

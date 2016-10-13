@@ -48,7 +48,7 @@ class HessianHistMatchAligned( Algorithm ):
         self.available_similarity_metrics = [ "chi_square", "histogram_intersection" ]
         
         self.alignment_method_name = alignment_method_name
-        self.available_alignment_methods = [ "max_dot_product" ]
+        self.available_alignment_methods = [ "max_dot_product", "hessian_cross_corr" ]
 
 
 
@@ -120,7 +120,7 @@ class HessianHistMatchAligned( Algorithm ):
          eigenvalues_probe, angles_probe, mask_probe ) = self.__unroll_data__( enroll, probe )
         
         parameters_dict = {}
-        if alignment_method_name == "max_dot_product":
+        if alignment_method_name in [ "max_dot_product", "hessian_cross_corr" ]:
             
             parameters_dict[ 'eigenvalues_enroll' ] = eigenvalues_enroll
             parameters_dict[ 'angles_enroll' ] = angles_enroll
@@ -238,7 +238,7 @@ class HessianHistMatchAligned( Algorithm ):
             raise Exception("Specified alignment method is not in the list of available_alignment_methods")
         
         parameters_dict = self.__fill_aligner_kwargs__( enroll, probe, self.alignment_method_name )
-            
+        
         M = self.aligner.get_transformation_matrix( **parameters_dict ) # the transformation matrix
         
         enroll_updated, probe_updated = self.allign_enroll_probe( enroll, probe, M )
