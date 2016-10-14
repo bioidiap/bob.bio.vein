@@ -301,17 +301,17 @@ matcher_align_angl_spat_enh_lbp_hist_neigh4rd3 = matcher_dict[ "matcher_align_an
 #for item in matcher_dict.keys():    
 #    print "        '" + item[14:18] + '-align-spat-enh-lbp-hist-' + item[ item.find("neigh"): ] + ' = bob.bio.vein.configurations.alignment_algorithms.algorithms:'+ item + "',"
 
-## Use this loop for bash scripts purposes:
+# Use this loop for bash scripts purposes:
 #alg_string = ""
 #for item in matcher_dict.keys():
 #    
-#    alg_string = alg_string + ' "' + item[14:18] + '-align-spat-enh-hes-hist-' + item[ item.find("bin"): ] + '" '
-
+#    alg_string = alg_string + ' "' + item[14:18] + '-align-spat-enh-lbp-hist-' + item[ item.find("neigh"): ] + '" '
+#
 ## Use this loop for bash scripts purposes:
 #subdir_string = ""
 #for item in matcher_dict.keys():
 #    
-#    subdir_string = subdir_string + ' "' + "kmce40_mea71_" + item[14:18] + "SpatEnhHesHist" + item[ item.find("bin"): ] + '/" '
+#    subdir_string = subdir_string + ' "' + "kmce40_mea51_" + item[14:18] + "SpatEnhLBPHist" + item[ item.find("neigh"): ] + '/" '
 
 
 
