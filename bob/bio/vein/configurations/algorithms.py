@@ -9,6 +9,8 @@ from ..algorithms import HistogramsMatch
 from ..algorithms import HessianAlignment
 from ..algorithms import HessianHistMatchAligned
 
+from ..algorithms import AnnotationMatch
+
 huangwl = MiuraMatch(ch=18, cw=28)
 miuramax = MiuraMatch(ch=80, cw=90)
 miurarlt = MiuraMatch(ch=65, cw=55)
@@ -82,3 +84,33 @@ hessian_hist_match_aligned_nb20p1bin = HessianHistMatchAligned( aligner = aligne
 								binarize_weights = True, 
 								similarity_metrics_name = "chi_square", 
 								alignment_method_name = "max_dot_product" )
+
+
+
+
+annotationmatch_0_min = AnnotationMatch(sigma=0, score_method='min')
+annotationmatch_1_min = AnnotationMatch(sigma=1, score_method='min')
+annotationmatch_2_min = AnnotationMatch(sigma=2, score_method='min')
+annotationmatch_3_min = AnnotationMatch(sigma=3, score_method='min')
+annotationmatch_4_min = AnnotationMatch(sigma=4, score_method='min')
+annotationmatch_5_min = AnnotationMatch(sigma=5, score_method='min')
+annotationmatch_6_min = AnnotationMatch(sigma=6, score_method='min')
+annotationmatch_7_min = AnnotationMatch(sigma=7, score_method='min')
+
+annotationmatch_0_max = AnnotationMatch(sigma=0, score_method='max')
+annotationmatch_1_max = AnnotationMatch(sigma=1, score_method='max')
+annotationmatch_2_max = AnnotationMatch(sigma=2, score_method='max')
+annotationmatch_3_max = AnnotationMatch(sigma=3, score_method='max')
+annotationmatch_4_max = AnnotationMatch(sigma=4, score_method='max')
+annotationmatch_5_max = AnnotationMatch(sigma=5, score_method='max')
+annotationmatch_6_max = AnnotationMatch(sigma=6, score_method='max')
+annotationmatch_7_max = AnnotationMatch(sigma=7, score_method='max')
+
+annotationmatch_0_mean = AnnotationMatch(sigma=0, score_method='mean')
+annotationmatch_1_mean = AnnotationMatch(sigma=1, score_method='mean')
+annotationmatch_2_mean = AnnotationMatch(sigma=2, score_method='mean')
+annotationmatch_3_mean = AnnotationMatch(sigma=3, score_method='mean')
+annotationmatch_4_mean = AnnotationMatch(sigma=4, score_method='mean')
+annotationmatch_5_mean = AnnotationMatch(sigma=5, score_method='mean')
+annotationmatch_6_mean = AnnotationMatch(sigma=6, score_method='mean')
+annotationmatch_7_mean = AnnotationMatch(sigma=7, score_method='mean')

@@ -4,6 +4,8 @@
 from ..preprocessor import FingerCrop
 from ..preprocessors import TopographyCutRoi
 from ..preprocessors import KMeansRoi
+from ..preprocessors import PreNone
+from ..preprocessors import PreRotate
 none = FingerCrop()
 he = FingerCrop(postprocessing='HE')
 hfe = FingerCrop(postprocessing='HFE')
@@ -45,3 +47,8 @@ kmeans_roi_conv_erode_40 = KMeansRoi( filter_name = "medianBlur",
                                  erode_mask_flag = True, 
 				 erosion_factor = 40, 
                                  convexity_flag = True )
+
+prenone = PreNone()
+
+prerotate = PreRotate()
+
