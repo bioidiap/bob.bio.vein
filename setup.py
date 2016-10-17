@@ -204,6 +204,10 @@ setup(
         'angl-align-spat-enh-lbp-hist-neigh8rd5 = bob.bio.vein.configurations.alignment_algorithms.algorithms:matcher_align_angl_spat_enh_lbp_hist_neigh8rd5',
         'angl-align-spat-enh-lbp-hist-neigh4rd2 = bob.bio.vein.configurations.alignment_algorithms.algorithms:matcher_align_angl_spat_enh_lbp_hist_neigh4rd2',
         'angl-align-spat-enh-lbp-hist-neigh4rd3 = bob.bio.vein.configurations.alignment_algorithms.algorithms:matcher_align_angl_spat_enh_lbp_hist_neigh4rd3',
+        'matcher-align-angl-spat-enh-eigenval-similarity-error-mean = bob.bio.vein.configurations.alignment_algorithms.algorithms:matcher_align_angl_spat_enh_eigenval_similarity_error_mean',
+        'matcher-align-angl-spat-enh-eigenval-similarity-shift-std = bob.bio.vein.configurations.alignment_algorithms.algorithms:matcher_align_angl_spat_enh_eigenval_similarity_shift_std',
+        'matcher-align-magn-spat-enh-eigenval-similarity-error-mean = bob.bio.vein.configurations.alignment_algorithms.algorithms:matcher_align_magn_spat_enh_eigenval_similarity_error_mean',
+        'matcher-align-magn-spat-enh-eigenval-similarity-shift-std = bob.bio.vein.configurations.alignment_algorithms.algorithms:matcher_align_magn_spat_enh_eigenval_similarity_shift_std',
         ],
 
       'bob.bio.grid': [

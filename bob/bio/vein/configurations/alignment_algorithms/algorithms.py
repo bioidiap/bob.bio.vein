@@ -6,8 +6,10 @@ from ...algorithms.transformers import ShiftEnrollProbeMasked
 from ...algorithms.extractors import HessianHistMasked
 from ...algorithms.extractors import SpatEnhancHessianHistMasked
 from ...algorithms.extractors import SpatEnhancLBPHistMasked
+from ...algorithms.extractors import SpatEnhancEigenvalMasked
 # Available matching algorithms:
 from ...algorithms.algorithms import HistogramsMatching
+from ...algorithms.algorithms import SpatEnhancEigenvalMatching
 # main matching algorithm class:
 from ...algorithms import AlignedMatching
 
@@ -314,12 +316,82 @@ matcher_align_angl_spat_enh_lbp_hist_neigh4rd3 = matcher_dict[ "matcher_align_an
 #    subdir_string = subdir_string + ' "' + "kmce40_mea51_" + item[14:18] + "SpatEnhLBPHist" + item[ item.find("neigh"): ] + '/" '
 
 
+"""
+Configurations 4:
+"""
+    
+#==============================================================================
+def set_matcher4( data_name_to_align, similarity_metrics_name ):
+    """
+    Set the parameters of the matching algorithm.
+    The following pipeline is set with this function:
+    
+    1. aligner = HessianCrossCorrAlignment
+    2. extractor = SpatEnhancEigenvalMasked
+    3. algorithm = SpatEnhancEigenvalMatching
+    
+    4. matcher = AlignedMatching
+    """
+    # Set up the aligner:
+    align_power = 1 # we keep this parameter fixed:
+    aligner = HessianCrossCorrAlignment( align_power = align_power, data_name_to_align = data_name_to_align )
+    #==============================================================================
+    # Set up the transformer:
+    transformer = ShiftEnrollProbeMasked()
+    #==============================================================================
+    # Set up the extractor:
+    extractor = SpatEnhancEigenvalMasked( )
+    #==============================================================================
+    # Set up the algorithm:
+    algorithm = SpatEnhancEigenvalMatching( similarity_metrics_name = similarity_metrics_name )
+    #==============================================================================
+    # Set up matching algorithm:
+    matcher = AlignedMatching( aligner, transformer, extractor, algorithm )
+    
+    return matcher
+
+#==============================================================================
+# Define parameters we want to test here:
+params_dict = {}
+params_dict["data_name_to_align"] = [ "eigenvectors_magnitude", "eigenvectors_angles" ]
+params_dict["similarity_metrics_name"] = [ "shift_std", "error_mean" ]
+possible_combinations = combinations( params_dict )
+
+matcher_dict = {}
+
+for idx, item in enumerate( possible_combinations ):
+    
+    matcher_name = 'matcher_align_{}_spat_enh_eigenval_similarity_{}'.format( item['data_name_to_align'][13:17], 
+                    item['similarity_metrics_name'] )
+    
+    matcher_dict[ matcher_name ] = set_matcher4( **item )
 
 
+## Use this to print the bottom text:
+#for item in matcher_dict.keys():
+#    print item + ' = matcher_dict[ "{}" ]'.format( item ) 
 
+    
+matcher_align_angl_spat_enh_eigenval_similarity_error_mean = matcher_dict[ "matcher_align_angl_spat_enh_eigenval_similarity_error_mean" ]
+matcher_align_angl_spat_enh_eigenval_similarity_shift_std = matcher_dict[ "matcher_align_angl_spat_enh_eigenval_similarity_shift_std" ]
+matcher_align_magn_spat_enh_eigenval_similarity_error_mean = matcher_dict[ "matcher_align_magn_spat_enh_eigenval_similarity_error_mean" ]
+matcher_align_magn_spat_enh_eigenval_similarity_shift_std = matcher_dict[ "matcher_align_magn_spat_enh_eigenval_similarity_shift_std" ]
 
+## Use this loop to generate the entry points for the setup.py
+#for item in matcher_dict.keys():    
+#    print "        '" + item.replace("_", "-") + ' = bob.bio.vein.configurations.alignment_algorithms.algorithms:'+ item + "',"
 
+## Use this loop for bash scripts purposes:
+#alg_string = ""
+#for item in matcher_dict.keys():
+#    
+#    alg_string = alg_string + ' "' + item.replace("_", "-") + '"'
 
+## Use this loop for bash scripts purposes:
+#subdir_string = ""
+#for item in matcher_dict.keys():
+#    
+#    subdir_string = subdir_string + ' "' + item + '/"'
 
 
 
