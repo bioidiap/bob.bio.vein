@@ -73,6 +73,8 @@ setup(
         'histeq = bob.bio.vein.configurations.preprocessors:he',
         'highfreq = bob.bio.vein.configurations.preprocessors:hfe',
         'circgabor = bob.bio.vein.configurations.preprocessors:circgabor',
+        'prenone = bob.bio.vein.configurations.preprocessors:prenone',
+        'prerotate = bob.bio.vein.configurations.preprocessors:prerotate',
         ],
 
       'bob.bio.extractor': [
@@ -116,6 +118,7 @@ setup(
         'max-eigenvalues-angles-s6p1 = bob.bio.vein.configurations.extractors.max_eigenvalues_angles:max_eigenvalues_angles_extractor_s6p1',
         'max-eigenvalues-angles-s65p1 = bob.bio.vein.configurations.extractors.max_eigenvalues_angles:max_eigenvalues_angles_extractor_s65p1',
         'max-eigenvalues-angles-s7p1 = bob.bio.vein.configurations.extractors.max_eigenvalues_angles:max_eigenvalues_angles_extractor_s7p1',
+        'extnone = bob.bio.vein.configurations.extractors.extnone:extnone',
         ],
 
       'bob.bio.algorithm': [
@@ -208,6 +211,30 @@ setup(
         'matcher-align-angl-spat-enh-eigenval-similarity-shift-std = bob.bio.vein.configurations.alignment_algorithms.algorithms:matcher_align_angl_spat_enh_eigenval_similarity_shift_std',
         'matcher-align-magn-spat-enh-eigenval-similarity-error-mean = bob.bio.vein.configurations.alignment_algorithms.algorithms:matcher_align_magn_spat_enh_eigenval_similarity_error_mean',
         'matcher-align-magn-spat-enh-eigenval-similarity-shift-std = bob.bio.vein.configurations.alignment_algorithms.algorithms:matcher_align_magn_spat_enh_eigenval_similarity_shift_std',
+        'annotationmatch_0_min = bob.bio.vein.configurations.algorithms:annotationmatch_0_min',
+        'annotationmatch_1_min = bob.bio.vein.configurations.algorithms:annotationmatch_1_min',
+        'annotationmatch_2_min = bob.bio.vein.configurations.algorithms:annotationmatch_2_min',
+        'annotationmatch_3_min = bob.bio.vein.configurations.algorithms:annotationmatch_3_min',
+        'annotationmatch_4_min = bob.bio.vein.configurations.algorithms:annotationmatch_4_min',
+        'annotationmatch_5_min = bob.bio.vein.configurations.algorithms:annotationmatch_5_min',
+        'annotationmatch_6_min = bob.bio.vein.configurations.algorithms:annotationmatch_6_min',
+        'annotationmatch_7_min = bob.bio.vein.configurations.algorithms:annotationmatch_7_min',
+        'annotationmatch_0_max = bob.bio.vein.configurations.algorithms:annotationmatch_0_max',
+        'annotationmatch_1_max = bob.bio.vein.configurations.algorithms:annotationmatch_1_max',
+        'annotationmatch_2_max = bob.bio.vein.configurations.algorithms:annotationmatch_2_max',
+        'annotationmatch_3_max = bob.bio.vein.configurations.algorithms:annotationmatch_3_max',
+        'annotationmatch_4_max = bob.bio.vein.configurations.algorithms:annotationmatch_4_max',
+        'annotationmatch_5_max = bob.bio.vein.configurations.algorithms:annotationmatch_5_max',
+        'annotationmatch_6_max = bob.bio.vein.configurations.algorithms:annotationmatch_6_max',
+        'annotationmatch_7_max = bob.bio.vein.configurations.algorithms:annotationmatch_7_max',
+        'annotationmatch_0_mean = bob.bio.vein.configurations.algorithms:annotationmatch_0_mean',
+        'annotationmatch_1_mean = bob.bio.vein.configurations.algorithms:annotationmatch_1_mean',
+        'annotationmatch_2_mean = bob.bio.vein.configurations.algorithms:annotationmatch_2_mean',
+        'annotationmatch_3_mean = bob.bio.vein.configurations.algorithms:annotationmatch_3_mean',
+        'annotationmatch_4_mean = bob.bio.vein.configurations.algorithms:annotationmatch_4_mean',
+        'annotationmatch_5_mean = bob.bio.vein.configurations.algorithms:annotationmatch_5_mean',
+        'annotationmatch_6_mean = bob.bio.vein.configurations.algorithms:annotationmatch_6_mean',
+        'annotationmatch_7_mean = bob.bio.vein.configurations.algorithms:annotationmatch_7_mean',
         ],
 
       'bob.bio.grid': [

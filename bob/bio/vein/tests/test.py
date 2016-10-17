@@ -414,6 +414,7 @@ def test_miura_match():
   score_imp = MM.score(template_vein, probe_imp_vein)
   assert numpy.isclose(score_imp, 0.172906739278421)
 
+
 def test_assert_points():
 
   # Tests that point assertion works as expected
@@ -774,4 +775,59 @@ def test_manualRoiCut():
     assert (image_1 == image_3).all()
     assert (image_1 == image_4).all()
 
+
+def test_AnnotationMatch():
+  test_pattern = np.zeros((480,480))
+  test_pattern[np.random.randint(0,480,size=1000), np.random.randint(0,480,size=1000)] = 1
+  test_pattern2 = np.zeros((480,480))
+  test_pattern2[np.random.randint(0,480,size=1000), np.random.randint(0,480,size=1000)] = 1
+  from bob.bio.vein.algorithms import AnnotationMatch
+  AM = AnnotationMatch(sigma=0, score_method='mean')
+  assert np.isclose(AM.score(test_pattern, test_pattern), 1)
+  AM = AnnotationMatch(sigma=5, score_method='mean')
+  assert np.isclose(AM.score(test_pattern, test_pattern), 1)
+  AM = AnnotationMatch(sigma=0, score_method='min')
+  assert np.isclose(AM.score(test_pattern, test_pattern), 1)
+  AM = AnnotationMatch(sigma=5, score_method='min')
+  assert np.isclose(AM.score(test_pattern, test_pattern), 1)
+  AM = AnnotationMatch(sigma=0, score_method='max')
+  assert np.isclose(AM.score(test_pattern, test_pattern), 1)
+  AM = AnnotationMatch(sigma=5, score_method='max')
+  assert np.isclose(AM.score(test_pattern, test_pattern), 1)
+  
+  AM = AnnotationMatch(sigma=0, score_method='mean')
+  assert not np.isclose(AM.score(test_pattern, test_pattern2), 1)
+  AM = AnnotationMatch(sigma=5, score_method='mean')
+  assert not np.isclose(AM.score(test_pattern, test_pattern2), 1)
+  AM = AnnotationMatch(sigma=0, score_method='min')
+  assert not np.isclose(AM.score(test_pattern, test_pattern2), 1)
+  AM = AnnotationMatch(sigma=5, score_method='min')
+  assert not np.isclose(AM.score(test_pattern, test_pattern2), 1)
+  AM = AnnotationMatch(sigma=0, score_method='max')
+  assert not np.isclose(AM.score(test_pattern, test_pattern2), 1)
+  AM = AnnotationMatch(sigma=5, score_method='max')
+  assert not np.isclose(AM.score(test_pattern, test_pattern2), 1)
+  
+def test_PreNone():
+  """
+  Test empty prepocesor - PreNone
+  """
+  input_filename = F( ( 'preprocessors', 'TopographyCutRoi_test_image.png' ) )
+  image = bob.io.base.load( input_filename )
+  from bob.bio.vein.preprocessors import PreNone
+  preprocesor = PreNone()
+  output = preprocesor(image)
+  assert (output == image).all()
+
+
+def test_ExtNone():
+  """
+  Test empty extractor - PreNone
+  """
+  input_filename = F( ( 'preprocessors', 'TopographyCutRoi_test_image.png' ) )
+  image = bob.io.base.load( input_filename )
+  from bob.bio.vein.extractors import ExtNone
+  extractor = ExtNone()
+  output = extractor(image)
+  assert (output == image).all()
 
