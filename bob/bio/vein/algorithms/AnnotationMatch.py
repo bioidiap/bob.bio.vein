@@ -21,12 +21,12 @@ class AnnotationMatch (Algorithm):
 
   Parameters:
 
-    sigma (int, Optional): Gausian sigma value. By defult value is 0 - Gausian 
+    sigma (:py:class:`int`, Optional): Gausian sigma value. By defult value is 0 - Gausian 
       filter isn't used.
     
-    size (int, Optional): Gausian filter kernal size. Defult value is ``27``.
+    size (:py:class:`int`, Optional): Gausian filter kernal size. Defult value is ``27``.
     
-    score_method (str, Optional): method that is used when the final result is 
+    score_method (:py:class:`str`, Optional): method that is used when the final result is 
       calculated from all scores. Default is ``mean``, possible other choices 
       are ``min`` and ``max``.
     """

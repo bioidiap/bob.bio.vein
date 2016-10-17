@@ -1,6 +1,6 @@
 .. vim: set fileencoding=utf-8 :
 
-.. _bob.bio.vein.api_biowave:
+.. _bob.bio.vein.api-biowave:
 
 =============================
  Python API (biowave project)

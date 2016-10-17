@@ -26,7 +26,7 @@ Users Guide
    references
    resources
    api
-   biowave/api
+   api-biowave
 
 .. todolist::
 

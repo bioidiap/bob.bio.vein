@@ -8,7 +8,8 @@ import numpy as np
 
 from bob.bio.base.preprocessor import Preprocessor
 
-from .TopographyCutRoi import  TopographyCutRoi
+from . import  TopographyCutRoi
+
 
 import bob.learn.em # for the k-means
 

@@ -1,38 +1,20 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
-
-#==============================================================================
-# Import what is needed here:
 import numpy as np
-
 from bob.bio.base.preprocessor import Preprocessor
-
-#import cv2
-
 from skimage.morphology import convex_hull_image
-
 from scipy import ndimage
-
-# to enable .png .jpg ... extensions in bob.io.base.load
-import bob.io.image
-
-#==============================================================================
-# Class implementation:
-
 class TopographyCutRoi( Preprocessor ):
     """
     Get the ROI using the topography cuts (iterative thresholding) followed by the largest blob selection within the
     predetermoned region of the input image.
     """
-    
-    #==========================================================================
     def __init__( self, blob_xywh_offsets = [1,1,1,1], 
                  filter_name = "medianBlur", mask_size = 7, 
                  topography_step = 20, erode_mask_flag = False, erosion_factor = 20, 
                  convexity_flag = True, **kwargs ):
-        """
-        
+        """      
         Arguments:
         blob_xywh_offsets - a list of 4 values: [x_start, y_start, w_offset, h_offset], where
             x_start - is the x starting position of the blob bounding box,
@@ -49,7 +31,6 @@ class TopographyCutRoi( Preprocessor ):
         convexity_flag - make mask convex if True. Default value: True.
         **kwargs - .
         """
-        
         Preprocessor.__init__( self, blob_xywh_offsets = blob_xywh_offsets, 
                               filter_name = filter_name, 
                               mask_size = mask_size, 
