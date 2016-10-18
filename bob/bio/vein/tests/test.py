@@ -46,6 +46,54 @@ def F(parts):
 
   return pkg_resources.resource_filename(__name__, os.path.join(*parts))
 
+
+
+#==============================================================================
+def test_AlignedMatching():
+    """
+    Test the AlignedMatching class, which is a matching Algorithm with alignment.
+    """
+    
+    from bob.bio.vein.algorithms.aligners import HessianCrossCorrAlignment
+    from bob.bio.vein.algorithms.transformers import ShiftEnrollProbeMasked
+    from bob.bio.vein.algorithms.extractors import SpatEnhancHessianHistMasked
+    from bob.bio.vein.algorithms.algorithms import HistogramsMatching
+    from bob.bio.vein.algorithms import AlignedMatching
+    
+    enroll_filename = F( ( 'algorithms', 'AlignedMatching_test_data_1.hdf5' ) ) # filename with enroll data
+    
+    probe_filename = F( ( 'algorithms', 'AlignedMatching_test_data_2.hdf5' ) ) # filename with probe data
+    
+    # Initialize the aligner, which alignes the magnitudes of eigenvectors of Hessian matrices
+    align_power = 1
+    data_name_to_align = "eigenvectors_magnitude"
+    aligner = HessianCrossCorrAlignment( align_power = align_power, data_name_to_align = data_name_to_align )
+    
+    # Initialize the transformer, which updates the enroll and probe
+    transformer = ShiftEnrollProbeMasked()
+    
+    # Initialize the extractor, which extracts the Spatially Enhanced Hessian Histogram
+    n_bins = 25
+    eigenval_power = 1
+    extractor = SpatEnhancHessianHistMasked( n_bins = n_bins, eigenval_power = eigenval_power )
+    
+    # Initialize the matching algorithm, which matches histograms using chi_square metrics
+    algorithm = HistogramsMatching()    
+    
+    # Initialize the instance of the AlignedMatching class:
+    matcher = AlignedMatching( aligner, transformer, extractor, algorithm )
+    
+    
+    enroll = matcher.read_probe( enroll_filename )
+    probe = matcher.read_probe( probe_filename )
+        
+    model = [enroll]
+    
+    score = matcher.score( model, probe )
+    
+    assert ( (score + 0.35447476151901641) < 1e-10 ) # Test the score value
+    
+    
 #==============================================================================
 def test_KMeansRoi():
     """
