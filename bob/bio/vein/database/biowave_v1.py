@@ -34,7 +34,7 @@ class BiowaveV1BioFile(VeinBioFile):
       elif self.protocol.endswith("ca"):
         return self.low_level_file.construct_vein_image(directory=directory, center=True)
       else:
-        super(BiowaveV1BioFile, self).load(directory=directory, extension=extension)
+        return super(BiowaveV1BioFile, self).load(directory=directory, extension=extension)
 
 
 class BiowaveV1BioDatabase(BioDatabase):
@@ -62,5 +62,4 @@ class BiowaveV1BioDatabase(BioDatabase):
     def objects(self, protocol=None, groups=None, purposes=None, model_ids=None, **kwargs):
         retval = self.__db.objects(protocol=protocol, groups=groups, purposes=purposes, model_ids=model_ids, sessions=None, attempts=None, im_numbers=None)
         return [BiowaveV1BioFile(f, client_id=f.client_id, path=f.path, file_id=f.id, protocol=protocol) for f in retval]
-        #return [VeinBioFile(client_id=f.client_id, path=f.path, file_id=f.id) for f in retval]
 
