@@ -20,10 +20,9 @@ class BiowaveV1BioFile(VeinBioFile):
         Initializes this File object with an File equivalent from the low level
         implementation. The load function depends on the low level database 
         protocol.
-        If the protocol name ends with letter ``na`` (the ``n`` stands for ``Not 
-        centered`` and the ``a`` -- for ``annotations``) than the not centered 
-        / centered annotations are loaded respectively instead of the original
-        image.
+        If the protocol name ends with letter ``a`` (the letter ``a`` stands for
+        ``annotations``) than the not centered / centered annotations are loaded
+        respectively instead of the original image.
         """
         super(BiowaveV1BioFile, self).__init__(client_id=client_id, path=path, file_id=file_id)
         self.protocol = protocol
@@ -31,9 +30,9 @@ class BiowaveV1BioFile(VeinBioFile):
 
     def load(self, directory=None, extension='.png'):
       if self.protocol.endswith("na"):
-          return self.low_level_file.construct_vein_image(directory=directory, center=False)
+        return self.low_level_file.construct_vein_image(directory=directory, center=False)
       elif self.protocol.endswith("ca"):
-          return self.low_level_file.construct_vein_image(directory=directory, center=True)
+        return self.low_level_file.construct_vein_image(directory=directory, center=True)
       else:
         super(BiowaveV1BioFile, self).load(directory=directory, extension=extension)
 
@@ -63,4 +62,5 @@ class BiowaveV1BioDatabase(BioDatabase):
     def objects(self, protocol=None, groups=None, purposes=None, model_ids=None, **kwargs):
         retval = self.__db.objects(protocol=protocol, groups=groups, purposes=purposes, model_ids=model_ids, sessions=None, attempts=None, im_numbers=None)
         return [BiowaveV1BioFile(f, client_id=f.client_id, path=f.path, file_id=f.id, protocol=protocol) for f in retval]
+        #return [VeinBioFile(client_id=f.client_id, path=f.path, file_id=f.id) for f in retval]
 
