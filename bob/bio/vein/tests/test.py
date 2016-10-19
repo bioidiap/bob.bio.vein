@@ -54,6 +54,9 @@ def test_AlignedMatching():
     Test the AlignedMatching class, which is a matching Algorithm with alignment.
     """
     
+    #==========================================================================
+    # 1) Test the pipeline based on Masked Spatially Enhanced Hessian Histograms:
+    
     from bob.bio.vein.algorithms.aligners import HessianCrossCorrAlignment
     from bob.bio.vein.algorithms.transformers import ShiftEnrollProbeMasked
     from bob.bio.vein.algorithms.extractors import SpatEnhancHessianHistMasked
@@ -91,7 +94,60 @@ def test_AlignedMatching():
     
     score = matcher.score( model, probe )
     
+    #==========================================================================
+    # 2) Test the pipeline based on Masked Hessian Histograms:
+
+    from bob.bio.vein.algorithms.extractors import HessianHistMasked
+    
+    # Initialize the extractor, which extracts the Hessian Histogram
+    n_bins = 50
+    eigenval_power = 1
+    extractor = HessianHistMasked( n_bins = n_bins, eigenval_power = eigenval_power )
+    
+    matcher = AlignedMatching( aligner, transformer, extractor, algorithm )
+    
+    score_hessian_hist = matcher.score( model, probe )
+    
+    #==========================================================================
+    # 3) Test the pipeline based on Spatially Enhanced LBP Histograms applied to Hessian images:
+    
+    from bob.bio.vein.algorithms.extractors import SpatEnhancLBPHistMasked
+    
+    neighbors = 8
+    radius = 4
+    to_average = False
+    add_average_bit = False
+    
+    extractor = SpatEnhancLBPHistMasked( neighbors = neighbors, radius = radius, to_average = to_average, add_average_bit = add_average_bit )
+    
+    matcher = AlignedMatching( aligner, transformer, extractor, algorithm )
+    
+    score_spat_enh_lbp_hist = matcher.score( model, probe )
+        
+    #==========================================================================
+    # 4) Test the pipeline based on Re-Alignment of Spatially Enhanced Hessian Images:
+    
+    from bob.bio.vein.algorithms.extractors import SpatEnhancEigenvalMasked
+    from bob.bio.vein.algorithms.algorithms import SpatEnhancEigenvalMatching
+    
+    # Initialize the extractor, which splits the image of eigenvalues into 4 sub-regions
+    extractor = SpatEnhancEigenvalMasked()
+    
+    # Initialize the matching algorithm, which 4 subregions computed by above extractor
+    similarity_metrics_name = "error_mean"
+    algorithm = SpatEnhancEigenvalMatching( similarity_metrics_name = similarity_metrics_name )
+    
+    # Initialize the instance of the AlignedMatching class:
+    matcher = AlignedMatching( aligner, transformer, extractor, algorithm )
+    
+    score_spat_enh_eigenvalues = matcher.score( model, probe )
+    
+    #==========================================================================
+    
     assert ( (score + 0.35447476151901641) < 1e-10 ) # Test the score value
+    assert ( (score_hessian_hist + 0.019778549180568854) < 1e-10 ) # Test the score produced by the second pipeline
+    assert ( (score_spat_enh_lbp_hist + 0.86723861364068888) < 1e-10 ) # Test the score produced by the third pipeline
+    assert ( (score_spat_enh_eigenvalues + 0.47366791419007259) < 1e-10 ) # Test the score produced by the last pipeline
     
     
 #==============================================================================
