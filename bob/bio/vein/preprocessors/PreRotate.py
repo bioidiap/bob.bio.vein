@@ -158,10 +158,6 @@ class PreRotate (Preprocessor):
   def __call__(self, image, annotations=None):
     """An empty __call_method that returns the inputted image
     """
-    
-    
-    
-    
     image = np.array(image, dtype = np.float)
     [rotated_image, rotation_angle, angle_error] = self.__align_image__(image)
     return rotated_image

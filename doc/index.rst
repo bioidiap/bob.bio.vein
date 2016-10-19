@@ -25,6 +25,7 @@ Users Guide
    baselines
    references
    resources
+   results-biowave-v1
    api
    api-biowave
 
