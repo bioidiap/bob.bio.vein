@@ -25,7 +25,7 @@ In this section annotation comparison results are summarized.
 
 
 Protocol ``Idiap_1_1_R``, ``centred`` annotations
-***********************************************
+*************************************************
 
 +-------------------------------------+---------------+--------------+---------------+
 |               Algorithm             | ``EER`` using different score fusion methods |
