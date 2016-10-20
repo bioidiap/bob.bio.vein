@@ -13,7 +13,7 @@ class PreRotate (Preprocessor):
     Preprocessor.__init__(self,postprocessing = postprocessing,**kwargs)
   
   
-  def __rotate_point__(x,y, angle):
+  def __rotate_point__(self, x,y, angle):
     """
     [xp, yp] = __rotate_point__(x,y, angle)
     """
@@ -31,13 +31,13 @@ class PreRotate (Preprocessor):
     
     return int(np.round(xp)), int(np.round(yp))
   
-  def __guss_mask__(guss_size=27, sigma=6):
+  def __guss_mask__(self, guss_size=27, sigma=6):
       """Returns a 2D Gaussian kernel array."""
       inp = np.zeros((guss_size, guss_size))
       inp[guss_size//2, guss_size//2] = 1
       return fi.gaussian_filter(inp, sigma)
   
-  def __ramp__(a):
+  def __ramp__(self, a):
     a = np.array(a)
     a[a < 0]=0 
     return a
@@ -130,13 +130,13 @@ class PreRotate (Preprocessor):
     angle = result_angle.mean()
     return angle
   
-  def __rotate_image__(image, angle):
+  def __rotate_image__(self, image, angle):
     """
     image = rotate_image(image, angle)
     """
     image = scipy.ndimage.rotate(image, angle, reshape = False, cval=0)
-    image[image > 1] = 1
-    image[image < 0] = 0
+    image[image > 255] = 255
+    image[image < 0]   = 0
     return image
   
   def __align_image__(self, image, precision = 0.5, iterations = 25):
@@ -151,13 +151,14 @@ class PreRotate (Preprocessor):
       rotation_angle = rotation_angle + (angle_error * 0.33)
       image = self.__rotate_image__(image, angle_error * 0.33)
       angle_error = self.__get_rotatation_angle__(image)
-      print(rotation_angle)
+      #print(rotation_angle)
       if abs(angle_error) <= precision or k == iterations - 1:
         return image, rotation_angle, angle_error
 
   def __call__(self, image, annotations=None):
     """An empty __call_method that returns the inputted image
     """
-    image = np.array(image, dtype = np.float)
+    #image = np.array(image, dtype = np.float)
     [rotated_image, rotation_angle, angle_error] = self.__align_image__(image)
+    rotated_image = np.array(rotated_image, dtype = np.uint8)
     return rotated_image
