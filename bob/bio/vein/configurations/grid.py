@@ -22,3 +22,25 @@ default = Grid(
     number_of_scoring_jobs=10,
     scoring_queue='8G',
     )
+
+
+
+# prefered setup if score computation is slow:
+idiap_speedup_score = Grid(
+    training_queue='32G',
+
+    number_of_preprocessing_jobs=200,
+    preprocessing_queue='4G',
+
+    number_of_extraction_jobs=200,
+    extraction_queue='8G',
+
+    number_of_projection_jobs=200,
+    projection_queue='8G',
+
+    number_of_enrollment_jobs=200,
+    enrollment_queue='8G',
+
+    number_of_scoring_jobs=200,
+    scoring_queue='8G',
+    )

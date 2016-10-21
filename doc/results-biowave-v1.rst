@@ -16,7 +16,50 @@ In this page is summarized baseline experiment results on `BioWave V1`_ database
 Fully-automated experiments
 ---------------------------
 
-TBD
+The baseline verification results are summarized in this section. 
+The evaluation of verification pipe-lines is done in two steps:
+
+  1. First, the papameters of each algorithm are adjusted using the grid search on the ``Idiap_1_1_R_a`` protocol of the `BioWave V1`_ database. 
+     Only ``'dev'`` set of the database is used in the grid search.
+  2. Once best parameters are selected the performance is comuted for 
+     ``Idiap_1_1_R``, ``Idiap_1_5_R``, ``Idiap_5_5_R``, ``Idiap_1_1_L``, ``Idiap_1_5_L``, ``Idiap_5_5_L`` protocols of the `BioWave V1`_ database.
+
+**First evaluated verification pipe-line:**
+
+  1. \{ ``KMeansRoi`` or ``TopographyCutRoi`` \} Preprocessor + ``MaximumCurvature`` Extractor + ``MiuraMatch`` Algorithm
+
+In the first sequence of experiments the best performing ``Preprocessor`` is selected. 
+The following options are iteratively passed to the verification algorithm (arguments for the ``verify.py`` script):
+
+  1. ``--preprocessor`` \{ ``kmeans-roi``, ``kmeans-roi-conv``, ``kmeans-roi-conv-erode-40``, 
+     ``topography-cut-roi``, ``topography-cut-roi-conv``, ``topography-cut-roi-conv-erode`` \}
+  2. ``--extractor maximumcurvature``
+  3. ``--algorithm miura-match-wrist-100``
+
+The results are summarized in the following Table:
+
+EER for the ``'dev'`` set, ``Idiap_1_1_R_a`` protocol of the `BioWave V1`_ database.
+
++-----------------------------------+----------+
+|          ``Preprocessor``         | EER,\%   |
++===================================+==========+
+|           ``kmeans-roi``          |  24.375  |
++-----------------------------------+----------+
+|        ``kmeans-roi-conv``        |  25.625  |
++-----------------------------------+----------+
+|    ``kmeans-roi-conv-erode-40``   |  26.250  |
++-----------------------------------+----------+
+|       ``topography-cut-roi``      |  22.188  |
++-----------------------------------+----------+
+|    ``topography-cut-roi-conv``    |  25.938  |
++-----------------------------------+----------+
+| ``topography-cut-roi-conv-erode`` |  27.837  |
++-----------------------------------+----------+
+
+The ROC curves for the particular experiment can be downlooaded from here:
+
+:download:`ROC curve <img/ROC_verification_experiment_1.pdf>`
+
 
 Annotation comparison
 ---------------------

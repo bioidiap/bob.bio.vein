@@ -239,6 +239,7 @@ setup(
 
       'bob.bio.grid': [
         'idiap = bob.bio.vein.configurations.grid:default',
+        'idiap-fast = bob.bio.vein.configurations.grid:idiap_speedup_score',
         ],
 
       },
