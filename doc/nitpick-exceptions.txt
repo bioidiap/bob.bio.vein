@@ -1,12 +1,3 @@
-py:class bob.bio.base.database.BioFile
-py:class bob.bio.base.database.BioDatabase
-py:class bob.bio.base.database.database.BioDatabase
-py:class bob.bio.base.database.file.BioFile
-py:class bob.bio.base.preprocessor.Preprocessor.Preprocessor
-py:class bob.bio.base.extractor.Extractor.Extractor
-py:class bob.bio.base.algorithm.Algorithm.Algorithm
-py:class BioFile
-py:class BioFileSet
 
 # These are not documented at all in Python 2.7, but works for 3.x
 py:exc ValueError
