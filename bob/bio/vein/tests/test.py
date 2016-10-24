@@ -14,6 +14,7 @@ the generated sphinx documentation)
 
 import os
 import numpy
+import numpy as np
 import nose.tools
 
 import pkg_resources
@@ -186,3 +187,59 @@ def test_miura_match():
 
   score_imp = MM.score(template_vein, probe_imp_vein)
   assert numpy.isclose(score_imp, 0.172906739278421)
+  
+def test_manualRoiCut():
+    from bob.bio.vein.preprocessors.utils.utils import ManualRoiCut
+    image_path      = F(('preprocessors', '0019_3_1_120509-160517.png'))
+    annotation_path  = F(('preprocessors', '0019_3_1_120509-160517.txt'))
+
+    c = ManualRoiCut(annotation_path, image_path)
+    mask_1 = c.roi_mask()
+    image_1 = c.roi_image()
+    # create mask using size:
+    c = ManualRoiCut(annotation_path, sizes=(672,380))
+    mask_2 = c.roi_mask()
+    
+    # loading image:
+    image = bob.io.base.load(image_path)
+    c = ManualRoiCut(annotation_path, image)
+    mask_3 = c.roi_mask()
+    image_3 = c.roi_image()
+    # load text file:
+    with open(annotation_path,'r') as f:
+        retval = numpy.loadtxt(f, ndmin=2)
+        
+    # carefully -- this is BOB format --- (x,y)
+    annotation = list([tuple([k[0], k[1]]) for k in retval])
+    c = ManualRoiCut(annotation, image)
+    mask_4 = c.roi_mask()
+    image_4 = c.roi_image()
+    
+    assert (mask_1 == mask_2).all()
+    assert (mask_1 == mask_3).all()
+    assert (mask_1 == mask_4).all()
+    assert (image_1 == image_3).all()
+    assert (image_1 == image_4).all()
+    
+def test_ConstructAnnotations():
+  """
+  Test ConstructAnnotations preprocessor
+  """
+  image_filename = "/idiap/home/teglitis/Desktop/REFACTOR_ALL/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/ConstructAnnotations.png"
+  roi_annotations_filename = "/idiap/home/teglitis/Desktop/REFACTOR_ALL/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/ConstructAnnotations.txt"
+  vein_annotations_filename = "/idiap/home/teglitis/Desktop/REFACTOR_ALL/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/ConstructAnnotations.npy"
+  
+  image = bob.io.base.load( image_filename )
+  roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
+  roi_annotations =  [tuple([point[0], point[1]]) for point in roi_annotations]
+  fp = open(vein_annotations_filename, 'rt')
+  vein_annotations = np.load(fp)
+  vein_annotations = vein_annotations['arr_0'].tolist()
+  fp.close()
+  vein_annotations = [[tuple([point[0], point[1]]) for point in line] for line in vein_annotations]
+  
+  annotation_dictionary = {"image" : image, "roi_annotations" : roi_annotations, "vein_annotations" : vein_annotations}
+  from bob.bio.vein.preprocessors import ConstructAnnotations
+  preprocessor = ConstructAnnotations(center = True, rotate = True)
+  output = preprocessor(annotation_dictionary)
+  assert np.array_equal(output, image)

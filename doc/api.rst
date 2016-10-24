@@ -24,6 +24,11 @@ Pre-processors
 .. automodule:: bob.bio.vein.preprocessor
 
 
+Pre-processor utilities
+-----------------------
+
+.. automodule:: bob.bio.vein.preprocessor.utils
+
 Feature Extractors
 ------------------
 
