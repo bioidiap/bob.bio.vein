@@ -235,7 +235,7 @@ def test_ConstructAnnotations():
   image = bob.io.base.load( image_filename )
   roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
   roi_annotations =  [tuple([point[0], point[1]]) for point in roi_annotations]
-  fp = open(vein_annotations_filename, 'rt')
+  fp = open(vein_annotations_filename, 'rb')
   vein_annotations = np.load(fp)
   vein_annotations = vein_annotations['arr_0'].tolist()
   fp.close()
