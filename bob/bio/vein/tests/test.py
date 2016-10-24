@@ -189,7 +189,10 @@ def test_miura_match():
   assert numpy.isclose(score_imp, 0.172906739278421)
   
 def test_manualRoiCut():
-    from bob.bio.vein.preprocessors.utils.utils import ManualRoiCut
+    """
+    Test ManualRoitCut
+    """
+    from bob.bio.vein.preprocessor.utils import ManualRoiCut
     image_path      = F(('preprocessors', '0019_3_1_120509-160517.png'))
     annotation_path  = F(('preprocessors', '0019_3_1_120509-160517.txt'))
 
@@ -225,9 +228,9 @@ def test_ConstructAnnotations():
   """
   Test ConstructAnnotations preprocessor
   """
-  image_filename = "/idiap/home/teglitis/Desktop/REFACTOR_ALL/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/ConstructAnnotations.png"
-  roi_annotations_filename = "/idiap/home/teglitis/Desktop/REFACTOR_ALL/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/ConstructAnnotations.txt"
-  vein_annotations_filename = "/idiap/home/teglitis/Desktop/REFACTOR_ALL/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/ConstructAnnotations.npy"
+  image_filename = F( ( 'preprocessors', 'ConstructAnnotations.png' ) )
+  roi_annotations_filename = F( ( 'preprocessors', 'ConstructAnnotations.txt' ) )
+  vein_annotations_filename = F( ( 'preprocessors', 'ConstructAnnotations.npy' ) )
   
   image = bob.io.base.load( image_filename )
   roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
@@ -239,7 +242,12 @@ def test_ConstructAnnotations():
   vein_annotations = [[tuple([point[0], point[1]]) for point in line] for line in vein_annotations]
   
   annotation_dictionary = {"image" : image, "roi_annotations" : roi_annotations, "vein_annotations" : vein_annotations}
-  from bob.bio.vein.preprocessors import ConstructAnnotations
-  preprocessor = ConstructAnnotations(center = True, rotate = True)
-  output = preprocessor(annotation_dictionary)
+  from bob.bio.vein.preprocessor.utils import ConstructVeinImage
+  from bob.bio.vein.preprocessor.utils import RotateImage
+  output = ConstructVeinImage(annotation_dictionary, center = True).return_annotations()
+  output = RotateImage(output, dark_lines = False).rotate()
   assert np.array_equal(output, image)
+  
+  
+  
+  
