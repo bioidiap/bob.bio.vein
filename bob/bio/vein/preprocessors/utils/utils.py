@@ -52,19 +52,6 @@ class ManualRoiCut():
   """
 
   def __init__(self,annotation, image = None, sizes = (480, 480)):
-    if isinstance(annotation, six.string_types):
-        if os.path.exists(annotation):
-            with open(annotation,'r') as f:
-                retval = np.loadtxt(f, ndmin=2)
-            self.annotation = list([tuple([k[1], k[0]]) for k in retval])
-        else:
-            raise IOError("Doesn' t exist file: {}".format(annotation))
-            return 1
-    else :
-        # Convert from Bob format(x,y) to regular (y, x)
-        self.annotation = list([tuple([k[1], k[0]]) for k in annotation])
-    
-    #load image:
     if image is not None:
           if isinstance(image, six.string_types):
               if os.path.exists(image):
@@ -81,6 +68,23 @@ class ManualRoiCut():
         self.image = None
         self.size_y = sizes[1]
         self.size_x = sizes[0]
+    if isinstance(annotation, six.string_types):
+        if os.path.exists(annotation):
+            with open(annotation,'r') as f:
+                retval = np.loadtxt(f, ndmin=2)
+            self.annotation = list([tuple([self.__test_size__(k[1],self.size_y), self.__test_size__(k[0],self.size_x)]) for k in retval])
+        else:
+            raise IOError("Doesn' t exist file: {}".format(annotation))
+            return 1
+    else :
+        # Convert from Bob format(x,y) to regular (y, x)
+        self.annotation = list([tuple([self.__test_size__(k[1],self.size_y), self.__test_size__(k[0],self.size_x)]) for k in annotation])
+    
+  def __test_size__(self, test_value, max_value):
+    if test_value >= 0 and test_value < max_value:
+      return test_value
+    else:
+      return 0
   def roi_mask(self):
       """Method roi_mask - generates ROI mask.
         
