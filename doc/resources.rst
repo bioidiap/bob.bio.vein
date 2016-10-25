@@ -52,15 +52,12 @@ Biowave Test Database
 .. automodule:: bob.bio.vein.configurations.biowave_test
    :members:
  
-.. _bob.bio.vein.resources.database.biowave_v1:
  
 Biowave V1 Database
 =====================
  
 .. automodule:: bob.bio.vein.configurations.biowave_v1
    :members:
-
-.. _bob.bio.vein.resources.recognition:
 
 Recognition Systems
 -------------------

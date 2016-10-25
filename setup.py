@@ -37,6 +37,8 @@ setup(
         'utfvp = bob.bio.vein.configurations.utfvp',
         'biowave_test   = bob.bio.vein.configurations.biowave_test',
         'biowave_v1     = bob.bio.vein.configurations.biowave_v1',
+        'biowave_v1_a     = bob.bio.vein.configurations.biowave_v1_a',
+        'biowave_v1_e     = bob.bio.vein.configurations.biowave_v1_e',
 
         # baselines
         'mc = bob.bio.vein.configurations.maximum_curvature',
@@ -59,7 +61,10 @@ setup(
 #        'vera = bob.bio.vein.configurations.databases.vera:database',
 	'biowave_test = bob.bio.vein.configurations.databases.biowave_test:database',
         'biowave_v1 = bob.bio.vein.configurations.database.biowave_v1:database',
+        'biowave_v1_a     = bob.bio.vein.configurations.database.biowave_v1_a:database',
+        'biowave_v1_e     = bob.bio.vein.configurations.database.biowave_v1_e:database',
       ],
+
 
       # registered preprocessors
       'bob.bio.preprocessor': [
@@ -73,8 +78,8 @@ setup(
         'histeq = bob.bio.vein.configurations.preprocessors:he',
         'highfreq = bob.bio.vein.configurations.preprocessors:hfe',
         'circgabor = bob.bio.vein.configurations.preprocessors:circgabor',
-        'prenone = bob.bio.vein.configurations.preprocessors:prenone',
-        'prerotate = bob.bio.vein.configurations.preprocessors:prerotate',
+        'prenone = bob.bio.vein.configurations.preprocessors:prenone'
+        'constructannotations_center_rotate = bob.bio.vein.configurations.preprocessors:constructannotations_center_rotate',
         ],
 
       'bob.bio.extractor': [
