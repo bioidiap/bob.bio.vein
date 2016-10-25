@@ -13,7 +13,7 @@
 
 from bob.bio.base.preprocessor import Preprocessor
 from .utils import ConstructVeinImage
-from .utils import RotateImage
+from .utils import NormalizeImageRotation
 #from .. import utils
 
 
@@ -29,7 +29,7 @@ class ConstructAnnotations(Preprocessor):
   def __call__(self, annotation_dictionary, annotations=None):
     """An empty __call_method that returns the input image
     """
-    vein_image = ConstructVeinImage(annotation_dictionary, center = self.center).return_annotations()
+    vein_image = ConstructVeinImage(annotation_dictionary, center = self.center)
     if self.rotate == True:
-      vein_image = RotateImage(vein_image, dark_lines = False).rotate()
+      vein_image = NormalizeImageRotation(vein_image, dark_lines = False)
     return vein_image
