@@ -231,7 +231,7 @@ def test_ConstructAnnotations():
   image_filename = F( ( 'preprocessors', 'ConstructAnnotations.png' ) )
   roi_annotations_filename = F( ( 'preprocessors', 'ConstructAnnotations.txt' ) )
   vein_annotations_filename = F( ( 'preprocessors', 'ConstructAnnotations.npy' ) )
-  
+
   image = bob.io.base.load( image_filename )
   roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
   roi_annotations =  [tuple([point[0], point[1]]) for point in roi_annotations]
@@ -243,9 +243,9 @@ def test_ConstructAnnotations():
   
   annotation_dictionary = {"image" : image, "roi_annotations" : roi_annotations, "vein_annotations" : vein_annotations}
   from bob.bio.vein.preprocessor.utils import ConstructVeinImage
-  from bob.bio.vein.preprocessor.utils import RotateImage
-  output = ConstructVeinImage(annotation_dictionary, center = True).return_annotations()
-  output = RotateImage(output, dark_lines = False).rotate()
+  from bob.bio.vein.preprocessor.utils import NormalizeImageRotation
+  output = ConstructVeinImage(annotation_dictionary, center = True)
+  output = NormalizeImageRotation(output, dark_lines = False)
   assert np.array_equal(output, image)
   
   
