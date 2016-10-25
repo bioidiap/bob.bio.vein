@@ -6,6 +6,7 @@ from ..preprocessors import TopographyCutRoi
 from ..preprocessors import KMeansRoi
 from ..preprocessors import PreNone
 from ..preprocessors import PreRotate
+from ..preprocessors import ConstructAnnotations
 none = FingerCrop()
 he = FingerCrop(postprocessing='HE')
 hfe = FingerCrop(postprocessing='HFE')
@@ -50,5 +51,5 @@ kmeans_roi_conv_erode_40 = KMeansRoi( filter_name = "medianBlur",
 
 prenone = PreNone()
 
-prerotate = PreRotate()
+constructannotations_center_rotate = ConstructAnnotations(center = True, rotate = True)
 
