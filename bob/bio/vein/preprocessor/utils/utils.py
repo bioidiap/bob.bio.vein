@@ -78,7 +78,9 @@ class ManualRoiCut():
   def __test_size__(self, test_value, max_value):
     if test_value >= 0 and test_value < max_value:
       return test_value
-    else:
+    elif test_value >= 0 and test_value < 60000:
+      return max_value
+    else
       return 0
 
 
