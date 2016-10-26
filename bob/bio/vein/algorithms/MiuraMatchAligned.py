@@ -202,7 +202,7 @@ class MiuraMatchAligned( Algorithm ):
         
         if isinstance(model, np.ndarray):
             
-            model = list( model )
+            model = [ model ] # this is necessary for unit tests only
         
         for enroll in model:
             
