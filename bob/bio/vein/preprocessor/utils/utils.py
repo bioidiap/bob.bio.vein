@@ -80,7 +80,7 @@ class ManualRoiCut():
       return test_value
     elif test_value >= 0 and test_value < 60000:
       return max_value
-    else
+    else:
       return 0
 
 
