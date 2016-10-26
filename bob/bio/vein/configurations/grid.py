@@ -8,19 +8,19 @@ default = Grid(
     training_queue='32G',
 
     number_of_preprocessing_jobs=200,
-    preprocessing_queue='4G',
+    preprocessing_queue='4G-io-big',
 
     number_of_extraction_jobs=200,
-    extraction_queue='8G',
+    extraction_queue='8G-io-big',
 
     number_of_projection_jobs=200,
-    projection_queue='8G',
+    projection_queue='8G-io-big',
 
     number_of_enrollment_jobs=10,
-    enrollment_queue='8G',
+    enrollment_queue='8G-io-big',
 
     number_of_scoring_jobs=10,
-    scoring_queue='8G',
+    scoring_queue='8G-io-big',
     )
 
 
@@ -30,17 +30,17 @@ idiap_speedup_score = Grid(
     training_queue='32G',
 
     number_of_preprocessing_jobs=200,
-    preprocessing_queue='4G',
+    preprocessing_queue='4G-io-big',
 
     number_of_extraction_jobs=200,
-    extraction_queue='8G',
+    extraction_queue='8G-io-big',
 
     number_of_projection_jobs=200,
-    projection_queue='8G',
+    projection_queue='8G-io-big',
 
     number_of_enrollment_jobs=200,
-    enrollment_queue='8G',
+    enrollment_queue='8G-io-big',
 
     number_of_scoring_jobs=200,
-    scoring_queue='8G',
+    scoring_queue='8G-io-big',
     )

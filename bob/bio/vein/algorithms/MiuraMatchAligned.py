@@ -84,7 +84,7 @@ class MiuraMatchAligned( Algorithm ):
             The model enrolled from the ``enroll_features``.
             Must be writable with the :py:meth:`write_model` function and readable with the :py:meth:`read_model` function.
         """
-        
+
 #        return np.array(enroll_features) # Do nothing in our case
         return enroll_features # Do nothing in our case
 
@@ -186,7 +186,7 @@ class MiuraMatchAligned( Algorithm ):
         
         **Parameters:**
         
-        model : list of 2D :py:class:`numpy.ndarray`
+        model : 2D/3D :py:class:`numpy.ndarray`
             The model enrolled by the :py:meth:`enroll` function.
         
         probe : 2D :py:class:`numpy.ndarray`
@@ -202,8 +202,28 @@ class MiuraMatchAligned( Algorithm ):
         
         if isinstance(model, np.ndarray):
             
-            model = [ model ] # this is necessary for unit tests only
+            if len( model.shape ) == 2:
+                
+                model = [ model ] # this is necessary for unit tests only
+                
+            else:
+                
+                num_models = model.shape[0] # number of enroll samples
+                
+                model = np.split( model, num_models, 0 ) # split 3D array into a list of 2D arrays of dimensions: (1,H,W)
+                
+        model = [ np.squeeze( item ) for item in model ] # remove single-dimensional entries from the shape of an array
         
+        if self.alignment_flag: # if prealignment is allowed
+            
+            if self.alignment_method == "center_of_mass": # centering based on the center of mass of the image
+                
+                probe = self.center_image( probe )
+        
+        if self.dilation_flag:      
+            
+            probe = self.binary_dilation_with_ellipse( probe )
+            
         for enroll in model:
             
             if not( self.alignment_method in self.available_alignment_methods ):
@@ -216,15 +236,11 @@ class MiuraMatchAligned( Algorithm ):
                 
                 if self.alignment_method == "center_of_mass": # centering based on the center of mass of the image
                     
-                    probe = self.center_image( probe )
-                    
                     enroll = self.center_image( enroll )
             
             if self.dilation_flag:
                 
                 enroll = self.binary_dilation_with_ellipse( enroll )
-                
-                probe = self.binary_dilation_with_ellipse( probe )
             
             I = probe.astype( np.float64 )
             
