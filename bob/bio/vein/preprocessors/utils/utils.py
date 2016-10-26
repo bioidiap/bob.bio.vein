@@ -2,6 +2,7 @@
 """
 Created on Fri Aug  5 17:12:41 2016
 """
+
 # import what is needed:
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
@@ -10,6 +11,8 @@ from scipy.signal import convolve2d
 import scipy.ndimage.filters as fi
 import os
 import six
+
+
 class ManualRoiCut():
   """
   Class for manual roi extraction -- ``ManualRoiCut``.
@@ -70,11 +73,17 @@ class ManualRoiCut():
     else :
       # Convert from Bob format(x,y) to regular (y, x)
       self.annotation = list([tuple([self.__test_size__(k[1],self.size_y), self.__test_size__(k[0],self.size_x)]) for k in annotation])
+
+
   def __test_size__(self, test_value, max_value):
     if test_value >= 0 and test_value < max_value:
       return test_value
-    else:
+    elif test_value >= 0 and test_value < 60000:
+      return max_value
+    else
       return 0
+
+
   def roi_mask(self):
     """Method ``roi_mask`` - generates ROI mask.
     
@@ -88,6 +97,8 @@ class ManualRoiCut():
     mask = np.array(mask, dtype = np.uint8)
     mask = 0 < mask
     return mask
+
+
   def roi_image(self, pixel_value = 0):
     """Method roi_image - replaces outside ROI pixel values with ``pixel_value``
     (default - 0).
@@ -107,6 +118,8 @@ class ManualRoiCut():
     else:
         raise IOError("No input image given, can't perform non-ROI region removal")
         return 1
+
+
 def ConstructVeinImage(annotation_dictionary, center = False):
   """
   Constructs a binary image from manual annotations. The class is made to be used with
@@ -120,6 +133,7 @@ def ConstructVeinImage(annotation_dictionary, center = False):
       Such :py:class:`dict` can be returned by the high level ``bob.db.biowave_v1`` 
       implementation of the ``bob.db.biowave_v1`` database. It is supposed to contain
       fields (as can be returned by the ``bob.db.biowave_v1`` high level implementation):
+
       - ``image``
       - ``roi_annotations``
       - ``vein_annotations``
@@ -145,6 +159,7 @@ def ConstructVeinImage(annotation_dictionary, center = False):
   image            = annotation_dictionary["image"]
   #roi_annotations  = annotation_dictionary["roi_annotations"]
   vein_annotations = annotation_dictionary["vein_annotations"]
+
   im = Image.new('L', (image.shape[0], image.shape[1]), (0)) 
   draw = ImageDraw.Draw(im)
   if center == True:
@@ -164,6 +179,8 @@ def ConstructVeinImage(annotation_dictionary, center = False):
   im = im.filter(ImageFilter.MedianFilter(5))
   im = np.array(im, dtype = np.uint8)
   return im
+
+
 # help functions for the ``NormalizeImageRotation`` function
 def __rotate_point__(x,y, angle):
   """
@@ -182,15 +199,21 @@ def __rotate_point__(x,y, angle):
     yp = y * np.cos(np.radians(angle)) + x * np.sin(np.radians(angle))
   
   return int(np.round(xp)), int(np.round(yp))
+
+
 def __guss_mask__(guss_size=27, sigma=6):
     """Returns a 2D Gaussian kernel array."""
     inp = np.zeros((guss_size, guss_size))
     inp[guss_size//2, guss_size//2] = 1
     return fi.gaussian_filter(inp, sigma)
+
+
 def __ramp__(a):
   a = np.array(a)
   a[a < 0]=0 
   return a
+
+
 def __vein_filter__(image, a = 3, b = 4, sigma = 4, guss_size = 15, only_lines = True, dark_lines = True):
   """
   Vein filter
@@ -238,6 +261,7 @@ def __vein_filter__(image, a = 3, b = 4, sigma = 4, guss_size = 15, only_lines =
     
     [ap, bp] = __rotate_point__(+b, 1*a, angle)
     mask_9 = f2[padsize+ap:-padsize+ap,padsize+bp:-padsize+bp]
+
     [ap, bp] = __rotate_point__(+b, 2*a, angle)
     mask_10 = f2[padsize+ap:-padsize+ap,padsize+bp:-padsize+bp]
     
@@ -259,6 +283,8 @@ def __vein_filter__(image, a = 3, b = 4, sigma = 4, guss_size = 15, only_lines =
     
   result = np.abs(result) * np.exp(1j*np.angle(result)/2)
   return result
+
+
 def __get_rotatation_angle__(image, dark_lines = False):
   """
   angle = get_rotatation_angle(image)
@@ -270,6 +296,8 @@ def __get_rotatation_angle__(image, dark_lines = False):
   result_angle = np.angle(result_nonzero, deg=True)
   angle = result_angle.mean()
   return angle
+
+
 def __rotate_image__(image, angle):
   """
   image = rotate_image(image, angle)
@@ -278,6 +306,8 @@ def __rotate_image__(image, angle):
   image[image > 255] = 255
   image[image < 0]   = 0
   return image
+
+
 def __align_image__(image, precision = 0.5, iterations = 25, dark_lines = False):
   """
   [image, rotation_angle, angle_error] = align_image(image, precision = 0.5, iterations = 25)
@@ -293,6 +323,8 @@ def __align_image__(image, precision = 0.5, iterations = 25, dark_lines = False)
     #print(rotation_angle)
     if abs(angle_error) <= precision or k == iterations - 1:
       return image, rotation_angle, angle_error
+
+
 def NormalizeImageRotation(image, dark_lines = False):
   """
   function ``NormalizeImageRotation`` - automatically rotates image by a self-defined angle.
