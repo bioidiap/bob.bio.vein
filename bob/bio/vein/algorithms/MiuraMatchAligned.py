@@ -186,7 +186,7 @@ class MiuraMatchAligned( Algorithm ):
         
         **Parameters:**
         
-        model : 2D :py:class:`numpy.ndarray`
+        model : list of 2D :py:class:`numpy.ndarray`
             The model enrolled by the :py:meth:`enroll` function.
         
         probe : 2D :py:class:`numpy.ndarray`
@@ -194,57 +194,61 @@ class MiuraMatchAligned( Algorithm ):
         
         **Returns:**
         
-        score : float
+        score_mean : float
             The resulting similarity score.         
         """
         
-        if len( model.shape ) == 3 and model.shape[0] == 1:
-            model = np.squeeze(model) # remove single-dimensional entries from the shape of an array if needed
+        scores = []
         
-        if len( probe.shape ) == 3 and probe.shape[0] == 1:
-            probe = np.squeeze(probe) # remove single-dimensional entries from the shape of an array if needed
-        
-        if not( self.alignment_method in self.available_alignment_methods ):
-            raise Exception("Specified alignment method is not in the list of available_alignment_methods")
-        
-        if len( model.shape ) != 2 or len( probe.shape ) != 2: # check if input image is not of grayscale format
-            raise Exception("The image must be a 2D array / grayscale format")
+        if isinstance(model, np.ndarray):
             
-        if self.alignment_flag: # if prealignment is allowed
+            model = list( model )
+        
+        for enroll in model:
             
-            if self.alignment_method == "center_of_mass": # centering based on the center of mass of the image
+            if not( self.alignment_method in self.available_alignment_methods ):
+                raise Exception("Specified alignment method is not in the list of available_alignment_methods")
+            
+            if len( enroll.shape ) != 2 or len( probe.shape ) != 2: # check if input image is not of grayscale format
+                raise Exception("The image must be a 2D array / grayscale format")
                 
-                probe = self.center_image( probe )
+            if self.alignment_flag: # if prealignment is allowed
                 
-                model = self.center_image( model )
-        
-        if self.dilation_flag:
+                if self.alignment_method == "center_of_mass": # centering based on the center of mass of the image
+                    
+                    probe = self.center_image( probe )
+                    
+                    enroll = self.center_image( enroll )
             
-            model = self.binary_dilation_with_ellipse( model )
+            if self.dilation_flag:
+                
+                enroll = self.binary_dilation_with_ellipse( enroll )
+                
+                probe = self.binary_dilation_with_ellipse( probe )
             
-            probe = self.binary_dilation_with_ellipse( probe )
+            I = probe.astype( np.float64 )
+            
+            R = enroll.astype( np.float64 )
+            
+            h, w = R.shape
+            
+            crop_R = R[ self.ch: h-self.ch, self.cw: w-self.cw ]
+            
+            rotate_R = np.zeros( ( crop_R.shape[0], crop_R.shape[1] ) )
+            
+            bob.ip.base.rotate( crop_R, rotate_R, 180 )
+            
+            Nm = self.__convfft__( I, rotate_R )
+            
+            t0, s0 = np.unravel_index( Nm.argmax(), Nm.shape )
+            
+            Nmm = Nm[t0,s0]
+            
+            scores.append( Nmm / ( sum( sum( crop_R ) ) + sum( sum( I[ t0: t0 + h - 2 * self.ch, s0: s0 + w - 2 * self.cw ] ) ) ) )
+            
+        score_mean = np.mean( scores )
         
-        I = probe.astype( np.float64 )
-        
-        R = model.astype( np.float64 )
-        
-        h, w = R.shape
-        
-        crop_R = R[ self.ch: h-self.ch, self.cw: w-self.cw ]
-        
-        rotate_R = np.zeros( ( crop_R.shape[0], crop_R.shape[1] ) )
-        
-        bob.ip.base.rotate( crop_R, rotate_R, 180 )
-        
-        Nm = self.__convfft__( I, rotate_R )
-        
-        t0, s0 = np.unravel_index( Nm.argmax(), Nm.shape )
-        
-        Nmm = Nm[t0,s0]
-        
-        score = Nmm / ( sum( sum( crop_R ) ) + sum( sum( I[ t0: t0 + h - 2 * self.ch, s0: s0 + w - 2 * self.cw ] ) ) )
-        
-        return score
+        return score_mean
 
 
 

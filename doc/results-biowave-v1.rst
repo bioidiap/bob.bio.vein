@@ -24,9 +24,12 @@ The evaluation of verification pipe-lines is done in two steps:
   2. Once best parameters are selected the performance is comuted for 
      ``Idiap_1_1_R``, ``Idiap_1_5_R``, ``Idiap_5_5_R``, ``Idiap_1_1_L``, ``Idiap_1_5_L``, ``Idiap_5_5_L`` protocols of the `BioWave V1`_ database.
 
-**First evaluated verification pipe-line:**
+Maximum Curvature Features + Miura Matching Algorithm
+********************************************************
 
-  1. \{ ``KMeansRoi`` or ``TopographyCutRoi`` \} Preprocessor + ``MaximumCurvature`` Extractor + ``MiuraMatch`` Algorithm
+**Evaluated verification pipe-line:**
+
+  \{ ``KMeansRoi`` or ``TopographyCutRoi`` \} Preprocessor + ``MaximumCurvature`` Extractor + ``MiuraMatch`` Algorithm
 
 In the first sequence of experiments the best performing ``Preprocessor`` is selected. 
 The following options are iteratively passed to the verification algorithm (arguments for the ``verify.py`` script):
@@ -41,7 +44,7 @@ The results are summarized in the following Table:
 EER for the ``'dev'`` set, ``Idiap_1_1_R_a`` protocol of the `BioWave V1`_ database.
 
 +-----------------------------------+----------+
-|          ``Preprocessor``         | EER,\%   |
+|          ``Preprocessor``         |  EER,\%  |
 +===================================+==========+
 |           ``kmeans-roi``          |  24.375  |
 +-----------------------------------+----------+
@@ -59,6 +62,95 @@ EER for the ``'dev'`` set, ``Idiap_1_1_R_a`` protocol of the `BioWave V1`_ datab
 The ROC curves for the particular experiment can be downlooaded from here:
 
 :download:`ROC curve <img/ROC_verification_experiment_1.pdf>`
+
+Based on the inspection of ROC curves k-means-based ROI extraction algorithms outperform the topography-cut-based methods. 
+The lowest EER among k-means-based ROI approaches is obtained for ``kmeans-roi``, therefore upcoming experiments incorporate this method in the preprocessing stage. 
+
+
+In the second sequence of experiments the best performing ``Algorithm`` is selected. 
+The following options are iteratively passed to the verification algorithm (arguments for the ``verify.py`` script):
+
+  1. ``--preprocessor kmeans-roi``
+  2. ``--extractor maximumcurvature``
+  3. ``--algorithm`` \{ ``miura-match-wrist-20``, ``miura-match-wrist-40``, ``miura-match-wrist-60``, ``miura-match-wrist-80``, 
+     ``miura-match-wrist-100``, ``miura-match-wrist-120``, ``miura-match-wrist-140``, ``miura-match-wrist-160`` \}
+
+Options in the ``--algorithm`` stage represent the search region in the Miura matching algorithm, which is iteratively increased from 20 to 160 pixels in both X and Y directions.
+
+The results are summarized in the following Table:
+
+EER for the ``'dev'`` set, ``Idiap_1_1_R_a`` protocol of the `BioWave V1`_ database.
+
++------------------------------+----------+
+|         ``Algorithm``        |  EER,\%  |
++==============================+==========+
+|   ``miura-match-wrist-20``   |  37.812  |
++------------------------------+----------+
+|   ``miura-match-wrist-40``   |  34.062  |
++------------------------------+----------+
+|   ``miura-match-wrist-60``   |  29.375  |
++------------------------------+----------+
+|   ``miura-match-wrist-80``   |  25.312  |
++------------------------------+----------+
+|   ``miura-match-wrist-100``  |**24.375**|
++------------------------------+----------+
+|   ``miura-match-wrist-120``  |  24.688  |
++------------------------------+----------+
+|   ``miura-match-wrist-140``  |  25.938  |
++------------------------------+----------+
+|   ``miura-match-wrist-160``  |  28.438  |
++------------------------------+----------+
+
+The ROC curves for the particular experiment can be downlooaded from here:
+
+:download:`ROC curve <img/ROC_verification_experiment_2.pdf>`
+
+According to the above table the optimal search region in the Miura Matching algorithm is 100 pixels (both horizontal and vertical directions).
+This hyperparameter is now also fixed in the next sequence of grid-search experiments.
+
+In the third sequence of experiments the morphological dilation of the vein patterns is evaluated. 
+In this scenario the veins are first dilated with disk shaped kernel and then Miura matching is applied.
+The following options are iteratively passed to the verification algorithm (arguments for the ``verify.py`` script):
+
+  1. ``--preprocessor kmeans-roi``
+  2. ``--extractor maximumcurvature``
+  3. ``--algorithm`` \{ ``miura-match-wrist-dilation-5``, ``miura-match-wrist-dilation-7``, ``miura-match-wrist-dilation-9``, 
+     ``miura-match-wrist-dilation-11``, ``miura-match-wrist-dilation-13``, ``miura-match-wrist-dilation-15``, ``miura-match-wrist-dilation-17`` \}
+
+Number in the ``--algorithm`` names represents the value of the diameter (in pixels) of the disk shaped kernel used for the dilation of the veins.
+
+The results are summarized in the following Table:
+
+EER for the ``'dev'`` set, ``Idiap_1_1_R_a`` protocol of the `BioWave V1`_ database.
+
++--------------------------------------+----------+
+|         ``Algorithm``                |  EER,\%  |
++======================================+==========+
+|   ``miura-match-wrist-dilation-5``   |**24.083**|
++--------------------------------------+----------+
+|   ``miura-match-wrist-dilation-7``   |  24.367  |
++--------------------------------------+----------+
+|   ``miura-match-wrist-dilation-9``   |  24.724  |
++--------------------------------------+----------+
+|   ``miura-match-wrist-dilation-11``  |  25.625  |
++--------------------------------------+----------+
+|   ``miura-match-wrist-dilation-13``  |  26.562  |
++--------------------------------------+----------+
+|   ``miura-match-wrist-dilation-15``  |  28.125  |
++--------------------------------------+----------+
+|   ``miura-match-wrist-dilation-17``  |  30.000  |
++--------------------------------------+----------+
+
+The ROC curves for the particular experiment can be downlooaded from here:
+
+:download:`ROC curve <img/ROC_verification_experiment_3.pdf>`
+
+
+Based on the above results the best perfoming verification pipe-line is composed of the following modules:
+
+  ``kmeans-roi`` Preprocessor + ``maximumcurvature`` Extractor + ``miura-match-wrist-dilation-5`` Algorithm
+
+
 
 
 Annotation comparison
