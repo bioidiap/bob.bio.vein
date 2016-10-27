@@ -19,7 +19,7 @@ Fully-automated experiments
 The baseline verification results are summarized in this section. 
 The evaluation of verification pipe-lines is done in two steps:
 
-  1. First, the papameters of each algorithm are adjusted using the grid search on the ``Idiap_1_1_R_a`` protocol of the `BioWave V1`_ database. 
+  1. First, the papameters of each algorithm are adjusted using the grid search on the ``Idiap_1_1_R`` protocol of ``biowave_v1_a`` instance of the `BioWave V1`_ database. 
      Only ``'dev'`` set of the database is used in the grid search.
   2. Once best parameters are selected the performance is comuted for 
      ``Idiap_1_1_R``, ``Idiap_1_5_R``, ``Idiap_5_5_R``, ``Idiap_1_1_L``, ``Idiap_1_5_L``, ``Idiap_5_5_L`` protocols of the `BioWave V1`_ database.
@@ -41,7 +41,7 @@ The following options are iteratively passed to the verification algorithm (argu
 
 The results are summarized in the following Table:
 
-EER for the ``'dev'`` set, ``Idiap_1_1_R_a`` protocol of the `BioWave V1`_ database.
+EER for the ``'dev'`` set, ``Idiap_1_1_R`` protocol of ``biowave_v1_a`` instance of the `BioWave V1`_ database.
 
 +-----------------------------------+----------+
 |          ``Preprocessor``         |  EER,\%  |
@@ -79,7 +79,7 @@ Options in the ``--algorithm`` stage represent the search region in the Miura ma
 
 The results are summarized in the following Table:
 
-EER for the ``'dev'`` set, ``Idiap_1_1_R_a`` protocol of the `BioWave V1`_ database.
+EER for the ``'dev'`` set, ``Idiap_1_1_R`` protocol of ``biowave_v1_a`` instance of the `BioWave V1`_ database.
 
 +------------------------------+----------+
 |         ``Algorithm``        |  EER,\%  |
@@ -121,7 +121,7 @@ Number in the ``--algorithm`` names represents the value of the diameter (in pix
 
 The results are summarized in the following Table:
 
-EER for the ``'dev'`` set, ``Idiap_1_1_R_a`` protocol of the `BioWave V1`_ database.
+EER for the ``'dev'`` set, ``Idiap_1_1_R`` protocol of ``biowave_v1_a`` instance of the `BioWave V1`_ database.
 
 +--------------------------------------+----------+
 |         ``Algorithm``                |  EER,\%  |
