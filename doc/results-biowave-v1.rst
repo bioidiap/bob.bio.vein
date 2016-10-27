@@ -408,10 +408,76 @@ Algorithm - ``AnnotationMatch``, ``centred`` **and** ``rotated`` annotations.
 +-------------------------------------+---------------+--------------+---------------+
 
 
+
 ROI detection
 -------------
 
-TBD
+In this section the automatic ROI detection algorithms are compared to the manually annotated ROI data.
+For this purpose the annotated images of the `BioWave V1`_ database are used.
+
+Let's introduce the following notations: 
+
+  * :math:`ROI_a` - a set representing the automatically obtained ROI.
+  * :math:`ROI_m` - a set representing the manually annotated ROI.
+
+
+Three ROI evaluation metrices are used in our case:
+
+  1. :math:`m_1 = (ROI_a \cap ROI_m) / ROI_m` - how large area of manual ROI is coverd by automatic ROI,
+     relative to manual ROI
+  2. :math:`m_2 = (ROI_a - ROI_m) / ROI_m` - how large area of automatic ROI is located outside of manual ROI,
+     relative to manual ROI
+  3. :math:`m_3` - Euclidean distance between centers of mass of :math:`ROI_a` and :math:`ROI_m`
+
+
+K-means based ROI
+*******************
+
+Fisrt, the k-means based ROI detection approach is tested. 
+This approach is implemented in ``bob.bio.vein.preprocessors.KMeansRoi``.
+
+The arguments of the class are as follows:
+
+.. code-block:: sh
+  
+  KMeansRoi(filter_name = "medianBlur", mask_size = 7, erode_mask_flag = False, convexity_flag = False)
+
+The mean/average values of the above evaluation metrices over all annotated files are as follows:
+
+  1. :math:`\bar{m_1} = 0.5767`
+  2. :math:`\bar{m_2} = 0.0028`
+  3. :math:`\bar{m_3} = 16.096`
+
+The large values of :math:`m_2` are mostly caused by the ROI misdetections, which are displayed in the image below.
+In this image the ROI's satisfying the condition :math:`m_2 > 0.01` are displayed:
+
+.. image:: img/ROI_outliers_k_means.png
+
+
+Topography-cut based ROI
+**************************
+
+Second, the topography-cut based ROI detection approach is tested. 
+This approach is implemented in ``bob.bio.vein.preprocessors.TopographyCutRoi``.
+
+The arguments of the class are as follows:
+
+.. code-block:: sh
+  
+  TopographyCutRoi(blob_xywh_offsets = [ 1, 1, 1, 1 ], 
+                   filter_name = "medianBlur", 
+                   mask_size = 7, 
+                   topography_step = 20, 
+                   erode_mask_flag = False, 
+                   convexity_flag = False)
+
+The mean/average values of the above evaluation metrices over all annotated files are as follows:
+
+  1. :math:`\bar{m_1} = 0.7622`
+  2. :math:`\bar{m_2} = 0.0464`
+  3. :math:`\bar{m_3} = 16.279`
+
+
 
 Vein segmentation
 -----------------
@@ -421,3 +487,4 @@ TBD
 
 
 .. include:: links.rst
+
