@@ -22,7 +22,7 @@ The evaluation of verification pipe-lines is done in two steps:
   1. First, the papameters of each algorithm are adjusted using the grid search on the ``Idiap_1_1_R`` protocol of ``biowave_v1_a`` instance of the `BioWave V1`_ database. 
      Only ``'dev'`` set of the database is used in the grid search.
   2. Once best parameters are selected the performance is comuted for 
-     ``Idiap_1_1_R``, ``Idiap_1_5_R``, ``Idiap_5_5_R``, ``Idiap_1_1_L``, ``Idiap_1_5_L``, ``Idiap_5_5_L`` protocols of the `BioWave V1`_ database.
+     ``Idiap_1_1_R``, ``Idiap_1_5_R``, ``Idiap_5_5_R`` protocols of the `BioWave V1`_ database.
 
 Maximum Curvature Features + Miura Matching Algorithm
 ********************************************************
@@ -150,7 +150,25 @@ Based on the above results the best perfoming verification pipe-line is composed
 
   ``kmeans-roi`` Preprocessor + ``maximumcurvature`` Extractor + ``miura-match-wrist-dilation-5`` Algorithm
 
+The best performing combination of algorithms is next tested on ``Idiap_1_1_R``, ``Idiap_1_5_R``, ``Idiap_5_5_R`` protocols of the `BioWave V1`_ database.
 
+The results are summarized in the Table below.
+
+EER (``'dev'`` set), HTER (``'eval'`` set), different protocols of the `BioWave V1`_ database.
+
++---------------------+----------+----------+
+|      Protocol       |  EER,\%  |  HTER,\% |
++=====================+==========+==========+
+|   ``Idiap_1_1_R``   |  24.960  |  24.313  |
++---------------------+----------+----------+
+|   ``Idiap_1_5_R``   |  23.650  |  23.346  |
++---------------------+----------+----------+
+|   ``Idiap_5_5_R``   |**16.638**|**16.156**|
++---------------------+----------+----------+
+
+The ROC curves for the particular experiment can be downlooaded from here:
+
+:download:`ROC curve <img/ROC_verification_experiment_4.pdf>`
 
 
 Annotation comparison
