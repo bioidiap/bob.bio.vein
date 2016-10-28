@@ -24,6 +24,7 @@ The evaluation of verification pipe-lines is done in two steps:
   2. Once best parameters are selected the performance is comuted for 
      ``Idiap_1_1_R``, ``Idiap_1_5_R``, ``Idiap_5_5_R`` protocols of the `BioWave V1`_ database.
 
+
 Maximum Curvature Features + Miura Matching Algorithm
 ********************************************************
 
@@ -169,6 +170,48 @@ EER (``'dev'`` set), HTER (``'eval'`` set), different protocols of the `BioWave 
 The ROC curves for the particular experiment can be downlooaded from here:
 
 :download:`ROC curve <img/ROC_verification_experiment_4.pdf>`
+
+
+LBP/MCT histograms + histograms matching
+*****************************************
+
+**Evaluated verification pipe-line:**
+
+  ``KMeansRoi`` Preprocessor + ``MaskedLBPHistograms`` Extractor + ``HistogramsMatch`` Algorithm
+
+In the first sequence of experiments the best performing ``Extractor`` is selected. 
+The following options are iteratively passed to the verification algorithm (arguments for the ``verify.py`` script):
+
+  1. ``--preprocessor kmeans-roi``
+  2. ``--extractor`` { ``mct-histogram-n8r2``, ``mct-histogram-n8r3``, ``mct-histogram-n8r4``, ``mct-histogram-n8r5``, ``mct-histogram-n8r6``, ``mct-histogram-n8r7`` }
+  3. ``--algorithm chi-square``
+
+Digits in the ``--extractor`` names represent the parameters (number of neighbouring points and radius) of the LBP/MCT feature extractors.
+
+The results are summarized in the following Table:
+
+EER for the ``'dev'`` set, ``Idiap_1_1_R`` protocol of ``biowave_v1_a`` instance of the `BioWave V1`_ database.
+
++----------------------------+----------+
+|        ``Extractor``       |  EER,\%  |
++============================+==========+
+|   ``mct-histogram-n8r2``   |  32.432  |
++----------------------------+----------+
+|   ``mct-histogram-n8r3``   |  32.188  |
++----------------------------+----------+
+|   ``mct-histogram-n8r4``   |  31.174  |
++----------------------------+----------+
+|   ``mct-histogram-n8r5``   |  30.312  |
++----------------------------+----------+
+|   ``mct-histogram-n8r6``   |  29.688  |
++----------------------------+----------+
+|   ``mct-histogram-n8r7``   |**29.063**|
++----------------------------+----------+
+
+The ROC curves for the particular experiment can be downlooaded from here:
+
+:download:`ROC curve <img/ROC_verification_experiment_5.pdf>`
+
 
 
 Annotation comparison
