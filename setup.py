@@ -78,8 +78,9 @@ setup(
         'histeq = bob.bio.vein.configurations.preprocessors:he',
         'highfreq = bob.bio.vein.configurations.preprocessors:hfe',
         'circgabor = bob.bio.vein.configurations.preprocessors:circgabor',
-        'prenone = bob.bio.vein.configurations.preprocessors:prenone'
+        'prenone = bob.bio.vein.configurations.preprocessors:prenone',
         'constructannotations_center_rotate = bob.bio.vein.configurations.preprocessors:constructannotations_center_rotate',
+        'constructannotations_center = bob.bio.vein.configurations.preprocessors:constructannotations_center',
         ],
 
       'bob.bio.extractor': [
@@ -240,6 +241,10 @@ setup(
         'annotationmatch_5_mean = bob.bio.vein.configurations.algorithms:annotationmatch_5_mean',
         'annotationmatch_6_mean = bob.bio.vein.configurations.algorithms:annotationmatch_6_mean',
         'annotationmatch_7_mean = bob.bio.vein.configurations.algorithms:annotationmatch_7_mean',
+        'mm_t1 = bob.bio.vein.configurations.algorithms:mm_t1',
+        'mm_t2 = bob.bio.vein.configurations.algorithms:mm_t2',
+        'mm_t3 = bob.bio.vein.configurations.algorithms:mm_t3',
+        'mm_t4 = bob.bio.vein.configurations.algorithms:mm_t4',
         ],
 
       'bob.bio.grid': [

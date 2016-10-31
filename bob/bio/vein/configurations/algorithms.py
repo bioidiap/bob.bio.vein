@@ -41,6 +41,11 @@ miura_wrist_dilation_13 = MiuraMatchAligned( ch = 100, cw = 100, alignment_flag 
 miura_wrist_dilation_15 = MiuraMatchAligned( ch = 100, cw = 100, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 15 )
 miura_wrist_dilation_17 = MiuraMatchAligned( ch = 100, cw = 100, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 17 )
 
+
+mm_t1 = MiuraMatchAligned( ch = 140, cw = 140, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 9 )
+mm_t2 = MiuraMatchAligned( ch = 120, cw = 120, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 9 )
+mm_t3 = MiuraMatchAligned( ch = 100, cw = 100, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 13 )
+mm_t4 = MiuraMatchAligned( ch = 120, cw = 130, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 5 )
 chi_square = HistogramsMatch( similarity_metrics_name = "chi_square" )
 
 # Successfull parameters for the biowave_test DB:
