@@ -213,6 +213,30 @@ The ROC curves for the particular experiment can be downlooaded from here:
 :download:`ROC curve <img/ROC_verification_experiment_5.pdf>`
 
 
+Based on the above results the best perfoming verification pipe-line is composed of the following modules:
+
+  ``kmeans-roi`` Preprocessor + ``mct-histogram-n8r7`` Extractor + ``chi-square`` Algorithm
+
+The best performing combination of algorithms is next tested on ``Idiap_1_1_R``, ``Idiap_1_5_R``, ``Idiap_5_5_R`` protocols of the `BioWave V1`_ database.
+
+The results are summarized in the Table below.
+
+EER (``'dev'`` set), HTER (``'eval'`` set), different protocols of the `BioWave V1`_ database.
+
++---------------------+----------+----------+
+|      Protocol       |  EER,\%  |  HTER,\% |
++=====================+==========+==========+
+|   ``Idiap_1_1_R``   |  29.002  |  30.821  |
++---------------------+----------+----------+
+|   ``Idiap_1_5_R``   |  28.852  |  30.616  |
++---------------------+----------+----------+
+|   ``Idiap_5_5_R``   |**25.588**|**27.494**|
++---------------------+----------+----------+
+
+The ROC curves for the particular experiment can be downlooaded from here:
+
+:download:`ROC curve <img/ROC_verification_experiment_6.pdf>`
+
 
 Annotation comparison
 ---------------------
