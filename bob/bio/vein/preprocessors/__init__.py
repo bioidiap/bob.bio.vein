@@ -2,6 +2,7 @@ from .TopographyCutRoi import TopographyCutRoi
 from .KMeansRoi import KMeansRoi
 from .PreNone import PreNone
 from .ConstructAnnotations import ConstructAnnotations
+from .ManualRoi import ManualRoi
 
 # gets sphinx autodoc done right - don't remove it
 def __appropriate__(*args):
@@ -16,7 +17,8 @@ __appropriate__(
     TopographyCutRoi,
     KMeansRoi,
     PreNone,
-    ConstructAnnotations
+    ConstructAnnotations,
+    ManualRoi
     )
 
 # gets sphinx autodoc done right - don't remove it
