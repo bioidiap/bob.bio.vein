@@ -20,10 +20,7 @@ class ExtVeinsBiosig( Extractor ):
   Class to compute vein filter output on an given input image.
   
   **Parameters:**
-  
-  image :  2D :py:class:`numpy.ndarray`
-      Input image, data type will be converted to the py:type:`numpy.float`
-      
+     
   a : :py:class:`int`
       Filter parameter - defines distance between sparsified filter kernel 
       pixels in the direction perpendicular to the extrated line direction 
@@ -69,7 +66,6 @@ class ExtVeinsBiosig( Extractor ):
 
   """
   def __init__(self, 
-               image,
                a = 3,
                b = 4,
                sigma = 4,
@@ -81,7 +77,6 @@ class ExtVeinsBiosig( Extractor ):
                treshold = 0
                ):
     Extractor.__init__( self, 
-                       image = image,
                        a = a,
                        b = b,
                        sigma = sigma,
@@ -92,7 +87,6 @@ class ExtVeinsBiosig( Extractor ):
                        binarise = binarise,
                        treshold = treshold
                        )
-    self.image = image
     self.a = a
     self.b = b
     self.sigma = sigma
@@ -105,7 +99,7 @@ class ExtVeinsBiosig( Extractor ):
   #==========================================================================
     
     
-  def __rotate_point__(x,y, angle):
+  def __rotate_point__(self, x,y, angle):
     """
     [xp, yp] = __rotate_point__(x,y, angle)
     """
@@ -123,13 +117,13 @@ class ExtVeinsBiosig( Extractor ):
     
     return int(np.round(xp)), int(np.round(yp))
   
-  def __guss_mask__(guss_size=27, sigma=6):
+  def __guss_mask__(self, guss_size=27, sigma=6):
       """Returns a 2D Gaussian kernel array."""
       inp = np.zeros((guss_size, guss_size))
       inp[guss_size//2, guss_size//2] = 1
       return fi.gaussian_filter(inp, sigma)
   
-  def __ramp__(a):
+  def __ramp__(self, a):
     a = np.array(a)
     a[a < 0]=0
     return a
@@ -274,20 +268,22 @@ class ExtVeinsBiosig( Extractor ):
     Compute an array of normalized LBP (or MCT or LBP cancatenated with MCT) histograms for each pair of parameters: (radius, neighbors).
     The histograms are computed taking the binary mask / ROI into account.
     """
-    output = self.__vein_filter__(image     = input_data,
+    image    = input_data[0]
+    mask     = input_data[1]
+
+    output = self.__vein_filter__(image     = image,
                              a              = self.a,
                              b              = self.b,
                              sigma          = self.sigma,
                              guss_size      = self.guss_size,
                              only_lines     = self.only_lines,
                              dark_lines     = self.dark_lines,
-                             No_of_angles   = self.dark_lines)
+                             No_of_angles   = self.No_of_angles)
+    output = np.where(np.array(mask, dtype = np.uint8)>0, output, 0)
     if self.binarise == True:
-      output = np.where(output>self.threshold, 1, 0)
+      output = np.abs(output)
+      output = np.where(output>self.treshold, 1, 0)
 #TBD:
 #   * Maybe also enable to delete roi- outside object deletion?
 #   * maybe also line ``anti-erousion`` ?
     return output
-
-
-
