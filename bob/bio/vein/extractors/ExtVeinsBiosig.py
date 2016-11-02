@@ -31,11 +31,11 @@ class ExtVeinsBiosig( Extractor ):
       Filter parameter - defines distance between sparsified filter kernel 
       pixels in the direction paralel to the extrated line direction 
       (lengthwise):
-      
-          * When ``b`` is *bigger*, filter looses it's flexibility and can 
-          extract lines only under certain angles (defined below);
-          * When ``b`` is *smaller*, filter is more flexible and can extract
-          lines under different angles (also bowed lines);
+
+      - When ``b`` is *bigger*, filter looses it's flexibility and can 
+        extract lines only under certain angles (defined below);
+      - When ``b`` is *smaller*, filter is more flexible and can extract
+        lines under different angles (also bowed lines);
           
       Default value - 4.
   sigma : :py:class:`int`
