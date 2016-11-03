@@ -56,6 +56,6 @@ prenone = PreNone()
 constructannotations_center_rotate = ConstructAnnotations(center = True, rotate = True)
 constructannotations_center = ConstructAnnotations(center = True, rotate = False)
 
-manualroi = ManualRoi()
+manualroi = ManualRoi(erode_size = 0)
 manualroi33 = ManualRoi(erode_size = 33)
 

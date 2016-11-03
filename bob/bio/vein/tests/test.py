@@ -967,7 +967,13 @@ def test_ManualRoi():
   image_filename = F( ( 'preprocessors', 'ConstructAnnotations.png' ) )
   roi_annotations_filename = F( ( 'preprocessors', 'ConstructAnnotations.txt' ) )
   vein_annotations_filename = F( ( 'preprocessors', 'ConstructAnnotations.npy' ) )
-    
+  
+  
+#  image_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/ConstructAnnotations.png'
+#  roi_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/ConstructAnnotations.txt'
+#  vein_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/ConstructAnnotations.npy'
+  
+  
   image = bob.io.base.load( image_filename )
   roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
   roi_annotations =  [tuple([point[0], point[1]]) for point in roi_annotations]
@@ -979,7 +985,7 @@ def test_ManualRoi():
   
   annotation_dictionary = {"image" : image, "roi_annotations" : roi_annotations, "vein_annotations" : vein_annotations}
   from bob.bio.vein.preprocessors import ManualRoi
-  preprocessor = ManualRoi(erode_size = 0)
+  preprocessor = ManualRoi()
   output1 = preprocessor(annotation_dictionary)
   preprocessor = ManualRoi(erode_size = 33)
   output2 = preprocessor(annotation_dictionary)
