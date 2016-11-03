@@ -159,21 +159,23 @@ class MiuraMatchAligned( Algorithm ):
         image_dilated : 2D :py:class:`numpy.ndarray`
             Dilated image.
         """
-        
-        if self.ellipse_mask_size % 2 == 0:
-            self.ellipse_mask_size = np.uint( self.ellipse_mask_size + 1 ) # make the mask odd
-        
-        # Make the elliptical kernel
-        kernel = np.zeros( ( self.ellipse_mask_size, self.ellipse_mask_size ) )
-        radius = ( self.ellipse_mask_size - 1 )/2
-        y, x = np.ogrid[ -radius : radius + 1, -radius : radius + 1 ]
-        mask = x**2 + y**2 <= radius**2
-        kernel[ mask ] = 1
-        
-        # dilate the image
-        image_dilated = ndimage.binary_dilation( image, structure = kernel )
-        
-        return image_dilated.astype(np.float64)
+        if self.ellipse_mask_size == 0:
+            return np.array(image, dtype = np.float64)
+        else:
+            if self.ellipse_mask_size % 2 == 0:
+                self.ellipse_mask_size = np.uint( self.ellipse_mask_size + 1 ) # make the mask odd
+            
+            # Make the elliptical kernel
+            kernel = np.zeros( ( self.ellipse_mask_size, self.ellipse_mask_size ) )
+            radius = ( self.ellipse_mask_size - 1 )/2
+            y, x = np.ogrid[ -radius : radius + 1, -radius : radius + 1 ]
+            mask = x**2 + y**2 <= radius**2
+            kernel[ mask ] = 1
+            
+            # dilate the image
+            image_dilated = ndimage.binary_dilation( image, structure = kernel )
+            
+            return image_dilated.astype(np.float64)
 
 
     def score(self, model, probe):
