@@ -20,12 +20,12 @@ class BiowaveV1BioFile(VeinBioFile):
 
     def load(self, directory=None, extension='.png'):
       if self.extra_annotation_information == True:
-        image             = super(BiowaveV1BioFile, self).load(directory=directory, extension=extension)
+        image             = self.low_level_file.load(directory=directory, extension=extension)
         roi_annotations   = self.low_level_file.roi_annotations(directory=directory)
         vein_annotations  = self.low_level_file.vein_annotations(directory=directory)
         return {"image" : image, "roi_annotations" : roi_annotations, "vein_annotations" : vein_annotations}
       else:
-        return super(BiowaveV1BioFile, self).load(directory=directory, extension=extension)
+        return self.low_level_file.load(directory=directory, extension=extension)
 
 
 class BiowaveV1BioDatabase(BioDatabase):
