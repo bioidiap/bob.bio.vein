@@ -959,3 +959,29 @@ def test_ConstructAnnotations():
   output = preprocessor(annotation_dictionary)
   assert np.array_equal(output, image)
 
+
+def test_ManualRoi():
+  """
+  Test proprocessor ManualRoi and it's ability to erode ROI mask.
+  """
+  image_filename = F( ( 'preprocessors', 'ConstructAnnotations.png' ) )
+  roi_annotations_filename = F( ( 'preprocessors', 'ConstructAnnotations.txt' ) )
+  vein_annotations_filename = F( ( 'preprocessors', 'ConstructAnnotations.npy' ) )
+    
+  image = bob.io.base.load( image_filename )
+  roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
+  roi_annotations =  [tuple([point[0], point[1]]) for point in roi_annotations]
+  fp = open(vein_annotations_filename, 'rb')
+  vein_annotations = np.load(fp)
+  vein_annotations = vein_annotations['arr_0'].tolist()
+  fp.close()
+  vein_annotations = [[tuple([point[0], point[1]]) for point in line] for line in vein_annotations]
+  
+  annotation_dictionary = {"image" : image, "roi_annotations" : roi_annotations, "vein_annotations" : vein_annotations}
+  from bob.bio.vein.preprocessors import ManualRoi
+  preprocessor = ManualRoi(erode_size = 0)
+  output1 = preprocessor(annotation_dictionary)
+  preprocessor = ManualRoi(erode_size = 33)
+  output2 = preprocessor(annotation_dictionary)
+  assert output1[1].sum() > output2[1].sum()
+

@@ -57,3 +57,5 @@ constructannotations_center_rotate = ConstructAnnotations(center = True, rotate 
 constructannotations_center = ConstructAnnotations(center = True, rotate = False)
 
 manualroi = ManualRoi()
+manualroi33 = ManualRoi(erode_size = 33)
+

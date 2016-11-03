@@ -16,9 +16,11 @@ class ManualRoi(Preprocessor):
        needs to be used with entry-point ``biowave_v1_e`` (that returns ``dict``
        object insetead of image).
     """
-    def __init__(self, **kwargs):
+    def __init__(self, erode_size = 0, **kwargs):
   
-      Preprocessor.__init__(self, **kwargs)
+      Preprocessor.__init__(self, erode_size , **kwargs)
+      
+      self.erode_size = erode_size
 
     def __call__(self, annotation_dictionary, annotations = None):
         """
@@ -49,7 +51,7 @@ class ManualRoi(Preprocessor):
         """
         
         image            = annotation_dictionary["image"]
-        roi_mask = ManualRoiCut(annotation_dictionary["roi_annotations"]).roi_mask()
+        roi_mask = ManualRoiCut(annotation_dictionary["roi_annotations"]).roi_mask(erode_size = self.erode_size)
         return (image, roi_mask)
     
     #==========================================================================

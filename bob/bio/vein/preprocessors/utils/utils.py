@@ -84,7 +84,7 @@ class ManualRoiCut():
       return 0
 
 
-  def roi_mask(self):
+  def roi_mask(self, erode_size = 0):
     """Method ``roi_mask`` - generates ROI mask.
     
     Returns:
@@ -95,7 +95,8 @@ class ManualRoiCut():
     mask = Image.new('L', (self.size_x, self.size_y), 0)
     ImageDraw.Draw(mask).polygon(self.annotation, outline=1, fill=1)
     mask = np.array(mask, dtype = np.uint8)
-    mask = 0 < mask
+    if erode_size > 0:
+      mask = scipy.ndimage.grey_erosion(mask, size=(erode_size,erode_size))
     return mask
 
 

@@ -81,7 +81,8 @@ setup(
         'prenone = bob.bio.vein.configurations.preprocessors:prenone',
         'constructannotations_center_rotate = bob.bio.vein.configurations.preprocessors:constructannotations_center_rotate',
         'constructannotations_center = bob.bio.vein.configurations.preprocessors:constructannotations_center',
-        'manualroi = bob.bio.vein.configurations.preprocessors:manualroi'
+        'manualroi = bob.bio.vein.configurations.preprocessors:manualroi',
+        'manualroi33 = bob.bio.vein.configurations.preprocessors:manualroi33',
         ],
 
       'bob.bio.extractor': [
