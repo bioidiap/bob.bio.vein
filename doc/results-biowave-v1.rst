@@ -610,6 +610,26 @@ In this image the ROI's satisfying the condition :math:`m_2 > 0.01` are displaye
 
 .. image:: img/ROI_outliers_k_means.png
 
+In the above image we can see, that outliers are a common problem for the automatic ROI detection algorithm.
+This effect cen be minimized using the following settings in the ``bob.bio.vein.preprocessors.KMeansRoi`` class:
+
+.. code-block:: sh
+
+  KMeansRoi(filter_name = "median_filter", mask_size = 7, 
+            correct_mask_flag = True, correction_erosion_factor = 7,
+            erode_mask_flag = False, erosion_factor = 20, 
+            convexity_flag = False)
+
+With these settings the mean/average values of the evaluation metrices over all annotated files are as follows:
+
+  1. :math:`\bar{m_1} = 0.5718`
+  2. :math:`\bar{m_2} = 0.0006`
+  3. :math:`\bar{m_3} = 16.355`
+
+Again, the ROI's satisfying the condition :math:`m_2 > 0.01` are displayed in the image below:
+
+.. image:: img/ROI_outliers_k_means_corrected.png
+
 
 Topography-cut based ROI
 **************************
