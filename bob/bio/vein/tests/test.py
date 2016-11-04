@@ -93,7 +93,7 @@ def test_finger_crop():
   assert numpy.mean(numpy.abs(preproc - preproc_ref)) < 1.3e2
 
 
-def test_miuramax():
+def test_max_curvature():
 
   #Maximum Curvature method against Matlab reference
 
@@ -118,7 +118,7 @@ def test_miuramax():
   assert numpy.mean(numpy.abs(output_img - output_img_ref)) < 8e-3
 
 
-def test_miurarlt():
+def test_repeated_line_tracking():
 
   #Repeated Line Tracking method against Matlab reference
 
@@ -143,7 +143,7 @@ def test_miurarlt():
   assert numpy.mean(numpy.abs(output_img - output_img_ref)) < 0.5
 
 
-def test_huangwl():
+def test_wide_line_detector():
 
   #Wide Line Detector method against Matlab reference
 
@@ -187,67 +187,135 @@ def test_miura_match():
 
   score_imp = MM.score(template_vein, probe_imp_vein)
   assert numpy.isclose(score_imp, 0.172906739278421)
-  
-def test_manualRoiCut():
-    """
-    Test ManualRoitCut
-    """
-    from bob.bio.vein.preprocessor.utils import ManualRoiCut
-    image_path      = F(('preprocessors', '0019_3_1_120509-160517.png'))
-    annotation_path  = F(('preprocessors', '0019_3_1_120509-160517.txt'))
 
-    c = ManualRoiCut(annotation_path, image_path)
-    mask_1 = c.roi_mask()
-    image_1 = c.roi_image()
-    # create mask using size:
-    c = ManualRoiCut(annotation_path, sizes=(672,380))
-    mask_2 = c.roi_mask()
-    
-    # loading image:
-    image = bob.io.base.load(image_path)
-    c = ManualRoiCut(annotation_path, image)
-    mask_3 = c.roi_mask()
-    image_3 = c.roi_image()
-    # load text file:
-    with open(annotation_path,'r') as f:
-        retval = numpy.loadtxt(f, ndmin=2)
-        
-    # carefully -- this is BOB format --- (x,y)
-    annotation = list([tuple([k[0], k[1]]) for k in retval])
-    c = ManualRoiCut(annotation, image)
-    mask_4 = c.roi_mask()
-    image_4 = c.roi_image()
-    
-    assert (mask_1 == mask_2).all()
-    assert (mask_1 == mask_3).all()
-    assert (mask_1 == mask_4).all()
-    assert (image_1 == image_3).all()
-    assert (image_1 == image_4).all()
-    
-def test_ConstructAnnotations():
-  """
-  Test ConstructAnnotations preprocessor
-  """
-  image_filename = F( ( 'preprocessors', 'ConstructAnnotations.png' ) )
-  roi_annotations_filename = F( ( 'preprocessors', 'ConstructAnnotations.txt' ) )
-  vein_annotations_filename = F( ( 'preprocessors', 'ConstructAnnotations.npy' ) )
 
-  image = bob.io.base.load( image_filename )
-  roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
-  roi_annotations =  [tuple([point[0], point[1]]) for point in roi_annotations]
-  fp = open(vein_annotations_filename, 'rb')
-  vein_annotations = np.load(fp)
-  vein_annotations = vein_annotations['arr_0'].tolist()
-  fp.close()
-  vein_annotations = [[tuple([point[0], point[1]]) for point in line] for line in vein_annotations]
-  
-  annotation_dictionary = {"image" : image, "roi_annotations" : roi_annotations, "vein_annotations" : vein_annotations}
-  from bob.bio.vein.preprocessor.utils import ConstructVeinImage
-  from bob.bio.vein.preprocessor.utils import NormalizeImageRotation
-  output = ConstructVeinImage(annotation_dictionary, center = True)
-  output = NormalizeImageRotation(output, dark_lines = False)
-  assert np.array_equal(output, image)
-  
-  
-  
-  
+def test_assert_points():
+
+  # Tests that point assertion works as expected
+  from ..preprocessor import utils
+
+  area = (10, 5)
+  inside = [(0,0), (3,2), (9, 4)]
+  utils.assert_points(area, inside) #should not raise
+
+  def _check_outside(point):
+    # should raise, otherwise it is an error
+    try:
+      utils.assert_points(area, [point])
+    except AssertionError as e:
+      assert str(point) in str(e)
+    else:
+      raise AssertionError("Did not assert %s is outside of %s" % (point, area))
+
+  outside = [(-1, 0), (10, 0), (0, 5), (10, 5), (15,12)]
+  for k in outside: _check_outside(k)
+
+
+def test_fix_points():
+
+  # Tests that point clipping works as expected
+  from ..preprocessor import utils
+
+  area = (10, 5)
+  inside = [(0,0), (3,2), (9, 4)]
+  fixed = utils.fix_points(area, inside)
+  assert numpy.array_equal(inside, fixed), '%r != %r' % (inside, fixed)
+
+  fixed = utils.fix_points(area, [(-1, 0)])
+  assert numpy.array_equal(fixed, [(0, 0)])
+
+  fixed = utils.fix_points(area, [(10, 0)])
+  assert numpy.array_equal(fixed, [(9, 0)])
+
+  fixed = utils.fix_points(area, [(0, 5)])
+  assert numpy.array_equal(fixed, [(0, 4)])
+
+  fixed = utils.fix_points(area, [(10, 5)])
+  assert numpy.array_equal(fixed, [(9, 4)])
+
+  fixed = utils.fix_points(area, [(15, 12)])
+  assert numpy.array_equal(fixed, [(9, 4)])
+
+
+def test_poly_to_mask():
+
+  # Tests we can generate a mask out of a polygon correctly
+  from ..preprocessor import utils
+
+  area = (10, 9) #10 rows, 9 columns
+  polygon = [(2, 2), (2, 7), (7, 7), (7, 2)] #square shape, (y, x) format
+  mask = utils.poly_to_mask(area, polygon)
+  nose.tools.eq_(mask.dtype, numpy.bool)
+
+  # This should be the output:
+  expected = numpy.array([
+      [False, False, False, False, False, False, False, False, False],
+      [False, False, False, False, False, False, False, False, False],
+      [False, False, True,  True,  True,  True,  True,  True,  False],
+      [False, False, True,  True,  True,  True,  True,  True,  False],
+      [False, False, True,  True,  True,  True,  True,  True,  False],
+      [False, False, True,  True,  True,  True,  True,  True,  False],
+      [False, False, True,  True,  True,  True,  True,  True,  False],
+      [False, False, True,  True,  True,  True,  True,  True,  False],
+      [False, False, False, False, False, False, False, False, False],
+      [False, False, False, False, False, False, False, False, False],
+      ])
+  assert numpy.array_equal(mask, expected)
+
+  polygon = [(3, 2), (5, 7), (8, 7), (7, 3)] #trapezoid, (y, x) format
+  mask = utils.poly_to_mask(area, polygon)
+  nose.tools.eq_(mask.dtype, numpy.bool)
+
+  # This should be the output:
+  expected = numpy.array([
+      [False, False, False, False, False, False, False, False, False],
+      [False, False, False, False, False, False, False, False, False],
+      [False, False, False, False, False, False, False, False, False],
+      [False, False, True,  False, False, False, False, False, False],
+      [False, False, True,  True,  True,  False, False, False, False],
+      [False, False, False, True,  True,  True,  True,  True,  False],
+      [False, False, False, True,  True,  True,  True,  True,  False],
+      [False, False, False, True,  True,  True,  True,  True,  False],
+      [False, False, False, False, False, False, False, True,  False],
+      [False, False, False, False, False, False, False, False, False],
+      ])
+  assert numpy.array_equal(mask, expected)
+
+
+def test_mask_to_image():
+
+  # Tests we can correctly convert a boolean array into an image
+  # that makes sense according to the data types
+  from ..preprocessor import utils
+
+  sample = numpy.array([False, True])
+  nose.tools.eq_(sample.dtype, numpy.bool)
+
+  def _check_uint(n):
+    conv = utils.mask_to_image(sample, 'uint%d' % n)
+    nose.tools.eq_(conv.dtype, getattr(numpy, 'uint%d' % n))
+    target = [0, (2**n)-1]
+    assert numpy.array_equal(conv, target), '%r != %r' % (conv, target)
+
+  _check_uint(8)
+  _check_uint(16)
+  _check_uint(32)
+  _check_uint(64)
+
+  def _check_float(n):
+    conv = utils.mask_to_image(sample, 'float%d' % n)
+    nose.tools.eq_(conv.dtype, getattr(numpy, 'float%d' % n))
+    assert numpy.array_equal(conv, [0, 1.0]), '%r != %r' % (conv, target)
+
+  _check_float(32)
+  _check_float(64)
+  _check_float(128)
+
+
+  # This should be unsupported
+  try:
+    conv = utils.mask_to_image(sample, 'int16')
+  except TypeError as e:
+    assert 'int16' in str(e)
+  else:
+    raise AssertionError('Conversion to int16 did not trigger a TypeError')

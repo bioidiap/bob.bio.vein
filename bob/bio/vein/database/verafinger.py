@@ -3,8 +3,36 @@
 # Tue 27 Sep 2016 16:48:57 CEST
 
 
-from .database import VeinBioFile
-from bob.bio.base.database import BioDatabase
+from bob.bio.base.database import BioFile, BioDatabase
+from bob.bio.base.database.file import BioFile
+
+
+class VerafingerBioFile(BioFile):
+    """
+    Implements extra properties of vein files
+
+
+    Parameters:
+
+      f (object): Low-level file (or sample) object that is kept inside
+
+    """
+
+    def __init__(self, f):
+
+        super(VerafingerBioFile, self).__init__(
+            client_id=f.model_id,
+            path=f.path,
+            file_id=f.id,
+            )
+        self.f = f
+
+
+    def roi(self):
+        """Returns the binary mask from the ROI annotations available"""
+
+        points = self.f.roi()
+
 
 
 class VerafingerBioDatabase(BioDatabase):
@@ -45,4 +73,4 @@ class VerafingerBioDatabase(BioDatabase):
             self.low_level_group_names, self.high_level_group_names)
         retval = self.__db.objects(groups=groups, protocol=protocol,
             purposes=purposes, model_ids=model_ids, **kwargs)
-        return [VeinBioFile(client_id=f.model_id, path=f.path, file_id=f.id) for f in retval]
+        return [VeinBioFile(f) for f in retval]
