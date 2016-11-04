@@ -15,7 +15,15 @@ which can be used for vein experiments.
 Database Interfaces
 -------------------
 
-.. automodule:: bob.bio.vein.database
+Vera Fingervein Database
+========================
+
+.. automodule:: bob.bio.vein.database.verafinger
+
+UTFVP Database
+==============
+
+.. automodule:: bob.bio.vein.database.utfvp
 
 
 Pre-processors
