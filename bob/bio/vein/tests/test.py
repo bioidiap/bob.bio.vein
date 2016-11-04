@@ -166,9 +166,9 @@ def test_KMeansRoi():
     
     image = bob.io.base.load( input_filename )
     
-    extractor = KMeansRoi()
+    extractor = KMeansRoi(convexity_flag = True)
     
-    roi = extractor.get_ROI( image )
+    roi = extractor.get_roi( image )
     
     f = bob.io.base.HDF5File( output_filename )
     

@@ -12,6 +12,11 @@ hesshist_extractor_sigma5bins50 = MaskedHessianHistogram( sigma = 5, n_bins = 50
 hesshist_extractor_sigma10bins50 = MaskedHessianHistogram( sigma = 10, n_bins = 50 )
 hesshist_extractor_sigma15bins50 = MaskedHessianHistogram( sigma = 15, n_bins = 50 )
 
+hesshist_extractor_sigma5bins25 = MaskedHessianHistogram( sigma = 5, n_bins = 25 )
+hesshist_extractor_sigma6bins25 = MaskedHessianHistogram( sigma = 6, n_bins = 25 )
+hesshist_extractor_sigma6bins50 = MaskedHessianHistogram( sigma = 6, n_bins = 50 )
+hesshist_extractor_sigma7bins25 = MaskedHessianHistogram( sigma = 7, n_bins = 25 )
+
 hesshist_extractor_sigma10bins50pow05 = MaskedHessianHistogram( sigma = 10, n_bins = 50, power = 0.5 )
 hesshist_extractor_sigma10bins50pow2 = MaskedHessianHistogram( sigma = 10, n_bins = 50, power = 2 )
 hesshist_extractor_sigma10bins50pow5 = MaskedHessianHistogram( sigma = 10, n_bins = 50, power = 5 )

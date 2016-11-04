@@ -28,7 +28,7 @@ class TopographyCutRoi( Preprocessor ):
     
     #==========================================================================
     def __init__( self, blob_xywh_offsets = [1,1,1,1], 
-                 filter_name = "medianBlur", mask_size = 7, 
+                 filter_name = "median_filter", mask_size = 7, 
                  topography_step = 20, erode_mask_flag = False, erosion_factor = 20, 
                  convexity_flag = True, **kwargs ):
         """
@@ -39,7 +39,7 @@ class TopographyCutRoi( Preprocessor ):
             w_offset - defines the x ending position of the blob bounding box as follows: x_end = image_width - w_offset,
             h_offset - defines the y ending position of the blob bounding box as follows: y_end = image_hight - h_offset.
             Default value: [1,1,1,1],
-        filter_name - filter image before processing. Possible options: "GaussianBlur", "medianBlur",
+        filter_name - filter image before processing. Possible options: "gaussian_filter", "median_filter",
         mask_size - size of the filetr mask. Defaults value: 7,
         topography_step - thresholding step. Default value: 20,
         erode_mask_flag - reduce the area of the mask / erode it if flag set to True. Default value: False.
@@ -54,7 +54,7 @@ class TopographyCutRoi( Preprocessor ):
                               mask_size = mask_size, 
                               topography_step = topography_step, 
                               erode_mask_flag = erode_mask_flag, 
-			      erosion_factor = erosion_factor, 
+                              erosion_factor = erosion_factor, 
                               convexity_flag = convexity_flag, 
                               **kwargs )
         
@@ -110,17 +110,17 @@ class TopographyCutRoi( Preprocessor ):
     #==========================================================================    
     def __filter_image__( self, image ):
         """
-        Filter input image. Available filter options are GaussianBlur or medianBlur.
-        medianBlur is selected by default.
+        Filter input image. Available filter options are gaussian_filter or median_filter.
+        median_filter is selected by default.
         """
-        if self.filter_name == "GaussianBlur":
+        if self.filter_name == "gaussian_filter":
             
-#            self.filtered_image = cv2.GaussianBlur( image, (self.mask_size, self.mask_size), 1 ) # blur the image
+#            self.filtered_image = cv2.gaussian_filter( image, (self.mask_size, self.mask_size), 1 ) # blur the image
             self.filtered_image = ndimage.gaussian_filter( image, sigma = 1 )
                         
-        if self.filter_name == "medianBlur":
+        if self.filter_name == "median_filter":
             
-#            self.filtered_image = cv2.medianBlur( image, self.mask_size ) # filter the image
+#            self.filtered_image = cv2.median_filter( image, self.mask_size ) # filter the image
             self.filtered_image = ndimage.median_filter( image, self.mask_size )
             
         else:
