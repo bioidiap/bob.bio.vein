@@ -285,11 +285,11 @@ class FingerCrop (Preprocessor):
     img_h,img_w = image.shape
 
     # Determine lower half starting point
-    half_img_h = img_h/2
+    half_img_h = int(img_h/2)
 
     # Construct mask for filtering
     mask = numpy.ones((self.mask_h,self.mask_w), dtype='float64')
-    mask[(self.mask_h/2):,:] = -1.0
+    mask[int(self.mask_h/2):,:] = -1.0
 
     img_filt = utils.imfilter(image, mask)
 
