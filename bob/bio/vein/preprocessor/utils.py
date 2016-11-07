@@ -199,3 +199,110 @@ def show_mask_over_image(image, mask, color='red'):
   red = Image.new('RGBA', img.size, color=color)
   img.paste(red, mask=msk)
   img.show()
+
+
+def jaccard_index(a, b):
+  """Calculates the intersection over union for two masks
+
+  This function calculates the Jaccard index:
+
+  .. math::
+
+     J(A,B) = \frac{|A \cap B|}{|A \cup B|} =
+              \frac{|A \cap B|}{|A|+|B|-|A \cup B|}
+
+
+  Parameters:
+
+    a (numpy.ndarray): A 2D numpy array with dtype :py:obj:`bool`
+
+    b (numpy.ndarray): A 2D numpy array with dtype :py:obj:`bool`
+
+
+  Returns:
+
+    float: The floating point number that corresponds to the Jaccard index. The
+    float value lies inside the interval :math:`[0, 1]`. If ``a`` and ``b`` are
+    equal, then the similarity is maximum and the value output is ``1.0``. If
+    the areas are exclusive, then the value output by this function is ``0.0``.
+
+  """
+
+  return (a & b).sum().astype(float) / (a | b).sum().astype(float)
+
+
+def intersect_ratio(a, b):
+  """Calculates the intersection ratio between a probe and ground-truth
+
+  This function calculates the intersection ratio between a probe mask
+  (:math:`B`) and a ground-truth mask (:math:`A`; probably generated from an
+  annotation), and returns the ratio of overlap when the probe is compared to
+  the ground-truth data:
+
+  .. math::
+
+     R(A,B) = \frac{|A \cap B|}{|A|}
+
+  So, if the probe occupies the entirety of the ground-truth data, then the
+  output of this function is ``1.0``, otherwise, if areas are exclusive, then
+  this function returns ``0.0`. The output of this function should be analyzed
+  against the output of :py:func:`intersect_ratio_of_complement`, which
+  provides the complementary information about the intersection of the areas
+  being analyzed.
+
+
+  Parameters:
+
+    a (numpy.ndarray): A 2D numpy array with dtype :py:obj:`bool`
+
+    b (numpy.ndarray): A 2D numpy array with dtype :py:obj:`bool`
+
+
+  Returns:
+
+    float: The floating point number that corresponds to the overlap ratio. The
+    float value lies inside the interval :math:`[0, 1]`.
+
+  """
+
+  return (a & b).sum().astype(float) / a.sum().astype(float)
+
+
+def intersect_ratio_of_complement(a, b):
+  """Calculates the intersection ratio between a probe and the ground-truth
+  complement
+
+  This function calculates the intersection ratio between a probe mask
+  (:math:`B`) and *the complement* of a ground-truth mask (:math:`A`; probably
+  generated from an annotation), and returns the ratio of overlap when the
+  probe is compared to the ground-truth data:
+
+  .. math::
+
+     R(A,B) = \frac{|A^c \cap B|}{|A|} = B \\ A
+
+
+  So, if the probe is totally inside the ground-truth data, then the output of
+  this function is ``0.0``, otherwise, if areas are exclusive for example, then
+  this function outputs greater than zero. The output of this function should
+  be analyzed against the output of :py:func:`intersect_ratio`, which provides
+  the complementary information about the intersection of the areas being
+  analyzed.
+
+  Parameters:
+
+    a (numpy.ndarray): A 2D numpy array with dtype :py:obj:`bool`
+
+    b (numpy.ndarray): A 2D numpy array with dtype :py:obj:`bool`
+
+
+  Returns:
+
+    float: The floating point number that corresponds to the overlap ratio
+    between the probe area and the *complement* of the ground-truth area.
+    There are no bounds for the float value on the right side:
+    :math:`[0, +\inf]`.
+
+  """
+
+  return ((~a) & b).sum().astype(float) / a.sum().astype(float)

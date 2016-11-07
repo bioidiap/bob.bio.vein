@@ -277,3 +277,57 @@ def test_mask_to_image():
     assert 'int16' in str(e)
   else:
     raise AssertionError('Conversion to int16 did not trigger a TypeError')
+
+
+def test_jaccard_index():
+
+  # Tests to verify the Jaccard index calculation is accurate
+  a = numpy.array([
+    [False, False],
+    [True, True],
+    ])
+
+  b = numpy.array([
+    [True, True],
+    [True, False],
+    ])
+
+  nose.tools.eq_(utils.jaccard_index(a, b), 1.0/4.0)
+  nose.tools.eq_(utils.jaccard_index(a, a), 1.0)
+  nose.tools.eq_(utils.jaccard_index(b, b), 1.0)
+  nose.tools.eq_(utils.jaccard_index(a, numpy.ones(a.shape, dtype=bool)),
+      2.0/4.0)
+  nose.tools.eq_(utils.jaccard_index(a, numpy.zeros(a.shape, dtype=bool)), 0.0)
+  nose.tools.eq_(utils.jaccard_index(b, numpy.ones(b.shape, dtype=bool)),
+      3.0/4.0)
+  nose.tools.eq_(utils.jaccard_index(b, numpy.zeros(b.shape, dtype=bool)), 0.0)
+
+
+def test_intersection_ratio():
+
+  # Tests to verify the intersection ratio calculation is accurate
+  a = numpy.array([
+    [False, False],
+    [True, True],
+    ])
+
+  b = numpy.array([
+    [True, False],
+    [True, False],
+    ])
+
+  nose.tools.eq_(utils.intersect_ratio(a, b), 1.0/2.0)
+  nose.tools.eq_(utils.intersect_ratio(a, a), 1.0)
+  nose.tools.eq_(utils.intersect_ratio(b, b), 1.0)
+  nose.tools.eq_(utils.intersect_ratio(a, numpy.ones(a.shape, dtype=bool)), 1.0)
+  nose.tools.eq_(utils.intersect_ratio(a, numpy.zeros(a.shape, dtype=bool)), 0)
+  nose.tools.eq_(utils.intersect_ratio(b, numpy.ones(b.shape, dtype=bool)), 1.0)
+  nose.tools.eq_(utils.intersect_ratio(b, numpy.zeros(b.shape, dtype=bool)), 0)
+
+  nose.tools.eq_(utils.intersect_ratio_of_complement(a, b), 1.0/2.0)
+  nose.tools.eq_(utils.intersect_ratio_of_complement(a, a), 0.0)
+  nose.tools.eq_(utils.intersect_ratio_of_complement(b, b), 0.0)
+  nose.tools.eq_(utils.intersect_ratio_of_complement(a, numpy.ones(a.shape, dtype=bool)), 1.0)
+  nose.tools.eq_(utils.intersect_ratio_of_complement(a, numpy.zeros(a.shape, dtype=bool)), 0)
+  nose.tools.eq_(utils.intersect_ratio_of_complement(b, numpy.ones(b.shape, dtype=bool)), 1.0)
+  nose.tools.eq_(utils.intersect_ratio_of_complement(b, numpy.zeros(b.shape, dtype=bool)), 0)
