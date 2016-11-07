@@ -34,7 +34,8 @@ class KMeansRoi(Preprocessor):
     def __init__(self, filter_name = "median_filter", mask_size = 7, 
                  correct_mask_flag = False, correction_erosion_factor = 10,
                  erode_mask_flag = False, erosion_factor = 20, 
-                 convexity_flag = False):
+                 convexity_flag = False,
+                 rotation_centering_flag = False):
         """
         **Parameters:**
         
@@ -64,6 +65,9 @@ class KMeansRoi(Preprocessor):
             
         ``convexity_flag`` : :py:class:`bool`
             make mask convex if True. Default value: False.
+        
+        ``rotation_centering_flag`` : :py:class:`bool`
+            rotate and center the binary mask of the ROI and the input image if True. Default value: False.
         """
         
         Preprocessor.__init__(self,
@@ -73,7 +77,8 @@ class KMeansRoi(Preprocessor):
                                 correction_erosion_factor = correction_erosion_factor,
                                 erode_mask_flag = erode_mask_flag,
                                 erosion_factor = erosion_factor, 
-                                convexity_flag = convexity_flag)
+                                convexity_flag = convexity_flag,
+                                rotation_centering_flag = rotation_centering_flag)
         
         self.filter_name = filter_name
         self.mask_size = mask_size
@@ -83,6 +88,7 @@ class KMeansRoi(Preprocessor):
         self.erosion_factor = erosion_factor
         self.convexity_flag = convexity_flag
         self.available_filter_names = ["gaussian_filter", "median_filter"]
+        self.rotation_centering_flag = rotation_centering_flag
 
 
     #==========================================================================    
@@ -368,6 +374,64 @@ class KMeansRoi(Preprocessor):
         return mask_binary.astype( np.uint8 )
         
         
+    #==========================================================================
+    def rotate_and_center_roi_and_image(self, mask_binary, image):
+        """
+        Rotate and center the binary mask of the ROI and the input image.
+        The angle between eigenvector of the blob and the vertical axis defines the rotation.
+        The center of mass of the binary mask of the ROI is aligned with the 
+        center of the image. The same centering is applied to the original image.
+        
+        **Parameters:**
+        
+        ``mask_binary`` : 2D :py:class:`numpy.ndarray`
+            binary mask of the ROI
+        
+        ``image`` : 2D :py:class:`numpy.ndarray`
+            input image.
+        
+        **Returns:**
+        
+        ``mask_binary_transformed`` : 2D :py:class:`numpy.ndarray`
+            binary mask of the ROI after centering and rotation.
+        
+        ``image_transformed`` : 2D :py:class:`numpy.ndarray`
+            input image after centering and rotation.
+        """
+        
+        y, x = np.nonzero(mask_binary) # coordinates of ROI pixels.
+        x_mean = np.mean(x)
+        y_mean = np.mean(y)
+        x = x - x_mean # mean normalized coordinates.
+        y = y - y_mean
+        coords = np.vstack([x, y]) # 2D array of coordinates
+        # Covariance matrix and its eigenvectors and eigenvalues:
+        cov = np.cov(coords)
+        evals, evecs = np.linalg.eig(cov)
+        sort_indices = np.argsort(evals)[::-1] # Sort eigenvalues in decreasing order
+        evec1, evec2 = evecs[:, sort_indices]
+        x_v1, y_v1 = evec1  # Eigenvector with largest eigenvalue
+        x_v2, y_v2 = evec2
+        
+        theta = np.tanh((x_v1)/(y_v1)) # Orientation of the largest eigenvector
+        rotation_mat = np.matrix([[np.cos(theta), -np.sin(theta)],
+                                   [np.sin(theta), np.cos(theta)]]) # Transformation matrix
+        
+        # Offset to allign the center of mass and image center:
+        offset = np.array(ndimage.center_of_mass(mask_binary)).dot(rotation_mat) - np.array(mask_binary.shape)/2
+        
+        mask_binary_transformed = ndimage.affine_transform(mask_binary,
+                                                            rotation_mat, offset=(offset[0,0], offset[0,1]), 
+                                                            output_shape=None, output=None, 
+                                                            order=3, mode='constant', cval=0.0, prefilter=True)
+        
+        image_transformed = ndimage.affine_transform(image,
+                                                    rotation_mat, offset=(offset[0,0], offset[0,1]), 
+                                                    output_shape=None, output=None, 
+                                                    order=3, mode='constant', cval=0.0, prefilter=True)
+        
+        return (mask_binary_transformed, image_transformed)
+        
     #==========================================================================        
     def get_roi(self, image):
         """
@@ -422,14 +486,20 @@ class KMeansRoi(Preprocessor):
         
         **Returns:**
         
-        ``image`` : 2D :py:class:`numpy.ndarray`
-            original image.
+        ``image_transformed`` : 2D :py:class:`numpy.ndarray`
+            transformed image.
             
-        ``mask_binary`` : 2D :py:class:`numpy.ndarray`
+        ``mask_binary_transformed`` : 2D :py:class:`numpy.ndarray`
             binary mask of the ROI.
         """
         
-        return ( image, self.get_roi( image ) )
+        mask_binary = self.get_roi(image)
+        
+        if self.rotation_centering_flag:
+            
+            mask_binary_transformed, image_transformed = self.rotate_and_center_roi_and_image(mask_binary, image)
+        
+        return (image_transformed, mask_binary_transformed)
     
     #==========================================================================
     def write_data( self, data, file_name ):
