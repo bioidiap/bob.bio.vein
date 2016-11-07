@@ -442,7 +442,7 @@ class FingerCrop (Preprocessor):
     return retval
 
 
-  def __call__(self, data, annotations):
+  def __call__(self, data, annotations=None):
     """Reads the input image or (image, mask) and prepares for fex.
 
     Parameters:
