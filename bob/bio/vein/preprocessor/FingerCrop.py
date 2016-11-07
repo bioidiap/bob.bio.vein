@@ -6,10 +6,6 @@ import numpy
 from PIL import Image
 
 import bob.io.base
-import bob.io.image
-import bob.ip.base
-import bob.sp
-import bob.core
 
 from bob.bio.base.preprocessor import Preprocessor
 
