@@ -208,8 +208,8 @@ def jaccard_index(a, b):
 
   .. math::
 
-     J(A,B) = \frac{|A \cap B|}{|A \cup B|} =
-              \frac{|A \cap B|}{|A|+|B|-|A \cup B|}
+     J(A,B) &= \\frac{|A \cap B|}{|A \\cup B|} \\\\
+            &= \\frac{|A \cap B|}{|A|+|B|-|A \\cup B|}
 
 
   Parameters:
@@ -241,11 +241,11 @@ def intersect_ratio(a, b):
 
   .. math::
 
-     R(A,B) = \frac{|A \cap B|}{|A|}
+     R(A,B) = \\frac{|A \\cap B|}{|A|}
 
   So, if the probe occupies the entirety of the ground-truth data, then the
   output of this function is ``1.0``, otherwise, if areas are exclusive, then
-  this function returns ``0.0`. The output of this function should be analyzed
+  this function returns ``0.0``. The output of this function should be analyzed
   against the output of :py:func:`intersect_ratio_of_complement`, which
   provides the complementary information about the intersection of the areas
   being analyzed.
@@ -253,9 +253,11 @@ def intersect_ratio(a, b):
 
   Parameters:
 
-    a (numpy.ndarray): A 2D numpy array with dtype :py:obj:`bool`
+    a (numpy.ndarray): A 2D numpy array with dtype :py:obj:`bool`, that
+      corresponds to the **ground-truth object**
 
-    b (numpy.ndarray): A 2D numpy array with dtype :py:obj:`bool`
+    b (numpy.ndarray): A 2D numpy array with dtype :py:obj:`bool`, that
+      corresponds to the probe object that will be compared to the ground-truth
 
 
   Returns:
@@ -279,7 +281,7 @@ def intersect_ratio_of_complement(a, b):
 
   .. math::
 
-     R(A,B) = \frac{|A^c \cap B|}{|A|} = B \\ A
+     R(A,B) = \\frac{|A^c \\cap B|}{|A|} = B \\setminus A
 
 
   So, if the probe is totally inside the ground-truth data, then the output of
@@ -291,9 +293,11 @@ def intersect_ratio_of_complement(a, b):
 
   Parameters:
 
-    a (numpy.ndarray): A 2D numpy array with dtype :py:obj:`bool`
+    a (numpy.ndarray): A 2D numpy array with dtype :py:obj:`bool`, that
+      corresponds to the **ground-truth object**
 
-    b (numpy.ndarray): A 2D numpy array with dtype :py:obj:`bool`
+    b (numpy.ndarray): A 2D numpy array with dtype :py:obj:`bool`, that
+      corresponds to the probe object that will be compared to the ground-truth
 
 
   Returns:
@@ -301,7 +305,7 @@ def intersect_ratio_of_complement(a, b):
     float: The floating point number that corresponds to the overlap ratio
     between the probe area and the *complement* of the ground-truth area.
     There are no bounds for the float value on the right side:
-    :math:`[0, +\inf]`.
+    :math:`[0, +\\infty)`.
 
   """
 
