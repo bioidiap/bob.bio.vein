@@ -162,3 +162,40 @@ def mask_to_image(mask, dtype=numpy.uint8):
     raise TypeError("Data type %s is unsupported" % dtype)
 
   return retval
+
+
+def show_image(image):
+  """Shows a single image
+
+  Parameters:
+
+    image (numpy.ndarray): A 2D numpy.ndarray compose of 8-bit unsigned
+      integers containing the original image
+
+  """
+
+  from PIL import Image
+  img = Image.fromarray(image)
+  img.show()
+
+
+def show_mask_over_image(image, mask, color='red'):
+  """Plots the mask over the image of a finger, for debugging purposes
+
+  Parameters:
+
+    image (numpy.ndarray): A 2D numpy.ndarray compose of 8-bit unsigned
+      integers containing the original image
+
+    mask (numpy.ndarray): A 2D numpy.ndarray compose of boolean values
+      containing the calculated mask
+
+  """
+
+  from PIL import Image
+
+  img = Image.fromarray(image).convert(mode='RGBA')
+  msk = Image.fromarray((~mask).astype('uint8')*80)
+  red = Image.new('RGBA', img.size, color=color)
+  img.paste(red, mask=msk)
+  img.show()

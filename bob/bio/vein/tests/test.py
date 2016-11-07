@@ -23,47 +23,13 @@ import bob.io.base
 import bob.io.matlab
 import bob.io.image
 
+from ..preprocessor import utils
+
 
 def F(parts):
   """Returns the test file path"""
 
   return pkg_resources.resource_filename(__name__, os.path.join(*parts))
-
-
-def _show_image(image):
-  """Shows a single image
-
-  Parameters:
-
-    image (numpy.ndarray): A 2D numpy.ndarray compose of 8-bit unsigned
-      integers containing the original image
-
-  """
-
-  from PIL import Image
-  img = Image.fromarray(image)
-  img.show()
-
-
-def _show_mask_over_image(image, mask, color='red'):
-  """Plots the mask over the image of a finger, for debugging purposes
-
-  Parameters:
-
-    image (numpy.ndarray): A 2D numpy.ndarray compose of 8-bit unsigned
-      integers containing the original image
-
-    mask (numpy.ndarray): A 2D numpy.ndarray compose of boolean values
-      containing the calculated mask
-
-  """
-
-  from PIL import Image
-  img = Image.fromarray(image).convert(mode='RGBA')
-  msk = Image.fromarray((~mask).astype('uint8')*80)
-  red = Image.new('RGBA', img.size, color=color)
-  img.paste(red, mask=msk)
-  img.show()
 
 
 def test_finger_crop():
@@ -80,7 +46,7 @@ def test_finger_crop():
   preprocess = FingerCrop(fingercontour='leemaskMatlab', padding_width=0)
 
   preproc, mask = preprocess(img)
-  #_show_mask_over_image(preproc, mask)
+  #utils.show_mask_over_image(preproc, mask)
 
   mask_ref = bob.io.base.load(output_fvr_filename).astype('bool')
   preproc_ref = bob.core.convert(bob.io.base.load(output_img_filename),
@@ -89,7 +55,7 @@ def test_finger_crop():
   assert numpy.mean(numpy.abs(mask - mask_ref)) < 1e-2
 
   # Very loose comparison!
-  #_show_image(numpy.abs(preproc.astype('int16') - preproc_ref.astype('int16')).astype('uint8'))
+  #utils.show_image(numpy.abs(preproc.astype('int16') - preproc_ref.astype('int16')).astype('uint8'))
   assert numpy.mean(numpy.abs(preproc - preproc_ref)) < 1.3e2
 
 
@@ -192,8 +158,6 @@ def test_miura_match():
 def test_assert_points():
 
   # Tests that point assertion works as expected
-  from ..preprocessor import utils
-
   area = (10, 5)
   inside = [(0,0), (3,2), (9, 4)]
   utils.assert_points(area, inside) #should not raise
@@ -214,8 +178,6 @@ def test_assert_points():
 def test_fix_points():
 
   # Tests that point clipping works as expected
-  from ..preprocessor import utils
-
   area = (10, 5)
   inside = [(0,0), (3,2), (9, 4)]
   fixed = utils.fix_points(area, inside)
@@ -240,8 +202,6 @@ def test_fix_points():
 def test_poly_to_mask():
 
   # Tests we can generate a mask out of a polygon correctly
-  from ..preprocessor import utils
-
   area = (10, 9) #10 rows, 9 columns
   polygon = [(2, 2), (2, 7), (7, 7), (7, 2)] #square shape, (y, x) format
   mask = utils.poly_to_mask(area, polygon)
@@ -286,8 +246,6 @@ def test_mask_to_image():
 
   # Tests we can correctly convert a boolean array into an image
   # that makes sense according to the data types
-  from ..preprocessor import utils
-
   sample = numpy.array([False, True])
   nose.tools.eq_(sample.dtype, numpy.bool)
 
