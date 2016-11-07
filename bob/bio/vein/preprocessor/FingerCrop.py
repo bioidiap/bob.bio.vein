@@ -350,9 +350,9 @@ class FingerCrop (Preprocessor):
     img_h, img_w = image.shape
 
     # Calculates the mask edges along the columns
-    edges = numpy.zeros(2, img_w)
+    edges = numpy.zeros((2, img_w), dtype=int)
     edges[0,:] = mask.argmax(axis=0) # get upper edges
-    edges[1,:] = len(mask) - numpy.flipup(mask).argmax(axis=0) - 1
+    edges[1,:] = len(mask) - numpy.flipud(mask).argmax(axis=0) - 1
 
     bl = edges.mean(axis=0) #baseline
     x = numpy.arange(0,img_w)
@@ -442,7 +442,7 @@ class FingerCrop (Preprocessor):
     return retval
 
 
-  def __call__(self, data):
+  def __call__(self, data, annotations):
     """Reads the input image or (image, mask) and prepares for fex.
 
     Parameters:

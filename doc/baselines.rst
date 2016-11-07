@@ -107,10 +107,10 @@ protocol, do the following:
    submit your job for SGE execution, you can run it in parallel (using 4
    parallel tasks) by adding the options ``--parallel=4 --nice=10``.
 
-   Optionally, you may use the ``parallel` resource configuration which already
-   sets the number of parallel jobs to the number of hardware cores you have
-   installed on your machine (as with :py:func:`multiprocessing.cpu_count`) and
-   sets ``nice=10``. For example:
+   Optionally, you may use the ``parallel`` resource configuration which
+   already sets the number of parallel jobs to the number of hardware cores you
+   have installed on your machine (as with
+   :py:func:`multiprocessing.cpu_count`) and sets ``nice=10``. For example:
 
    .. code-block:: sh
 

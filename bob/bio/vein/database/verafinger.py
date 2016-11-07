@@ -64,7 +64,7 @@ class Database(BioDatabase):
 
 
   def client_id_from_model_id(self, model_id, group='dev'):
-      """Required as ``model_id != client_id`` on this database"""
+    """Required as ``model_id != client_id`` on this database"""
 
     return self.__db.finger_name_from_model_id(model_id)
 
