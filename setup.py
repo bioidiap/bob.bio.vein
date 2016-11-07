@@ -75,6 +75,7 @@ setup(
         'kmeans-roi                    = bob.bio.vein.configurations.preprocessors:kmeans_roi',
         'kmeans-roi-conv-erode-40      = bob.bio.vein.configurations.preprocessors:kmeans_roi_conv_erode_40',
         'kmeans-roi-corrected-eroded-40 = bob.bio.vein.configurations.preprocessors:kmeans_roi_corrected_eroded_40',
+        'kmeans-roi-corr-rot-eroded-40 = bob.bio.vein.configurations.preprocessors:kmeans_roi_corr_rot_eroded_40',
         'nopp = bob.bio.vein.configurations.preprocessors:none',
         'histeq = bob.bio.vein.configurations.preprocessors:he',
         'highfreq = bob.bio.vein.configurations.preprocessors:hfe',

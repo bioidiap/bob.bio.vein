@@ -498,6 +498,11 @@ class KMeansRoi(Preprocessor):
         if self.rotation_centering_flag:
             
             mask_binary_transformed, image_transformed = self.rotate_and_center_roi_and_image(mask_binary, image)
+            
+        else:
+            
+            image_transformed = image
+            mask_binary_transformed = mask_binary
         
         return (image_transformed, mask_binary_transformed)
     

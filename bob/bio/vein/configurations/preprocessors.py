@@ -56,6 +56,12 @@ kmeans_roi_corrected_eroded_40 = KMeansRoi(filter_name = "median_filter", mask_s
                                             erode_mask_flag = True, erosion_factor = 40, 
                                             convexity_flag = False)
 
+kmeans_roi_corr_rot_eroded_40 = KMeansRoi(filter_name = "median_filter", mask_size = 7, 
+                                            correct_mask_flag = True, correction_erosion_factor = 7,
+                                            erode_mask_flag = True, erosion_factor = 40, 
+                                            convexity_flag = False,
+                                            rotation_centering_flag = True)
+
 prenone = PreNone()
 
 constructannotations_center_rotate = ConstructAnnotations(center = True, rotate = True)
