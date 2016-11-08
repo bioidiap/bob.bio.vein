@@ -4,7 +4,6 @@
 import numpy
 import scipy.signal
 
-import bob.ip.base
 from bob.bio.base.algorithm import Algorithm
 
 
@@ -96,20 +95,25 @@ class MiuraMatch (Algorithm):
 
     scores = []
 
-    for i in range(n_models):
+    # iterate over all models for a given individual
+    for md in model:
 
       # erode model by (ch, cw)
-      R=model[i,:].astype(numpy.float64)
+      R = md.astype(numpy.float64)
       h, w = R.shape
       crop_R = R[self.ch:h-self.ch, self.cw:w-self.cw]
 
-      # rotate input image
-      rotate_R = numpy.zeros((crop_R.shape[0], crop_R.shape[1]))
-      bob.ip.base.rotate(crop_R, rotate_R, 180)
-
-      # convolve model and probe using FFT/IFFT.
-      #Nm = utils.convfft(I, rotate_R) #drop-in replacement for scipy method
-      Nm = scipy.signal.convolve2d(I, rotate_R, 'valid')
+      # correlates using scipy - fastest option available iff the self.ch and
+      # self.cw are height (>30). In this case, the number of components
+      # returned by the convolution is high and using an FFT-based method
+      # yields best results. Otherwise, you may try  the other options bellow
+      # -> check our test_correlation() method on the test units for more
+      # details and benchmarks.
+      Nm = scipy.signal.fftconvolve(I, numpy.rot90(crop_R, k=2), 'valid')
+      # 2nd best: use convolve2d or correlate2d directly;
+      # Nm = scipy.signal.convolve2d(I, numpy.rot90(crop_R, k=2), 'valid')
+      # 3rd best: use correlate2d
+      # Nm = scipy.signal.correlate2d(I, crop_R, 'valid')
 
       # figures out where the maximum is on the resulting matrix
       t0, s0 = numpy.unravel_index(Nm.argmax(), Nm.shape)
