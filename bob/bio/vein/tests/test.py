@@ -23,7 +23,8 @@ import bob.io.base
 import bob.io.matlab
 import bob.io.image
 
-from ..preprocessor import utils
+from ..preprocessor import utils as preprocessor_utils
+from ..algorithm import utils as algorithm_utils
 
 
 def F(parts):
@@ -46,7 +47,7 @@ def test_finger_crop():
   preprocess = FingerCrop(fingercontour='leemaskMatlab', padding_width=0)
 
   preproc, mask = preprocess(img)
-  #utils.show_mask_over_image(preproc, mask)
+  #preprocessor_utils.show_mask_over_image(preproc, mask)
 
   mask_ref = bob.io.base.load(output_fvr_filename).astype('bool')
   preproc_ref = bob.core.convert(bob.io.base.load(output_img_filename),
@@ -54,8 +55,8 @@ def test_finger_crop():
 
   assert numpy.mean(numpy.abs(mask - mask_ref)) < 1e-2
 
-  # Very loose comparison!
-  #utils.show_image(numpy.abs(preproc.astype('int16') - preproc_ref.astype('int16')).astype('uint8'))
+ # Very loose comparison!
+  #preprocessor_utils.show_image(numpy.abs(preproc.astype('int16') - preproc_ref.astype('int16')).astype('uint8'))
   assert numpy.mean(numpy.abs(preproc - preproc_ref)) < 1.3e2
 
 
@@ -160,12 +161,12 @@ def test_assert_points():
   # Tests that point assertion works as expected
   area = (10, 5)
   inside = [(0,0), (3,2), (9, 4)]
-  utils.assert_points(area, inside) #should not raise
+  preprocessor_utils.assert_points(area, inside) #should not raise
 
   def _check_outside(point):
     # should raise, otherwise it is an error
     try:
-      utils.assert_points(area, [point])
+      preprocessor_utils.assert_points(area, [point])
     except AssertionError as e:
       assert str(point) in str(e)
     else:
@@ -180,22 +181,22 @@ def test_fix_points():
   # Tests that point clipping works as expected
   area = (10, 5)
   inside = [(0,0), (3,2), (9, 4)]
-  fixed = utils.fix_points(area, inside)
+  fixed = preprocessor_utils.fix_points(area, inside)
   assert numpy.array_equal(inside, fixed), '%r != %r' % (inside, fixed)
 
-  fixed = utils.fix_points(area, [(-1, 0)])
+  fixed = preprocessor_utils.fix_points(area, [(-1, 0)])
   assert numpy.array_equal(fixed, [(0, 0)])
 
-  fixed = utils.fix_points(area, [(10, 0)])
+  fixed = preprocessor_utils.fix_points(area, [(10, 0)])
   assert numpy.array_equal(fixed, [(9, 0)])
 
-  fixed = utils.fix_points(area, [(0, 5)])
+  fixed = preprocessor_utils.fix_points(area, [(0, 5)])
   assert numpy.array_equal(fixed, [(0, 4)])
 
-  fixed = utils.fix_points(area, [(10, 5)])
+  fixed = preprocessor_utils.fix_points(area, [(10, 5)])
   assert numpy.array_equal(fixed, [(9, 4)])
 
-  fixed = utils.fix_points(area, [(15, 12)])
+  fixed = preprocessor_utils.fix_points(area, [(15, 12)])
   assert numpy.array_equal(fixed, [(9, 4)])
 
 
@@ -204,7 +205,7 @@ def test_poly_to_mask():
   # Tests we can generate a mask out of a polygon correctly
   area = (10, 9) #10 rows, 9 columns
   polygon = [(2, 2), (2, 7), (7, 7), (7, 2)] #square shape, (y, x) format
-  mask = utils.poly_to_mask(area, polygon)
+  mask = preprocessor_utils.poly_to_mask(area, polygon)
   nose.tools.eq_(mask.dtype, numpy.bool)
 
   # This should be the output:
@@ -223,7 +224,7 @@ def test_poly_to_mask():
   assert numpy.array_equal(mask, expected)
 
   polygon = [(3, 2), (5, 7), (8, 7), (7, 3)] #trapezoid, (y, x) format
-  mask = utils.poly_to_mask(area, polygon)
+  mask = preprocessor_utils.poly_to_mask(area, polygon)
   nose.tools.eq_(mask.dtype, numpy.bool)
 
   # This should be the output:
@@ -250,7 +251,7 @@ def test_mask_to_image():
   nose.tools.eq_(sample.dtype, numpy.bool)
 
   def _check_uint(n):
-    conv = utils.mask_to_image(sample, 'uint%d' % n)
+    conv = preprocessor_utils.mask_to_image(sample, 'uint%d' % n)
     nose.tools.eq_(conv.dtype, getattr(numpy, 'uint%d' % n))
     target = [0, (2**n)-1]
     assert numpy.array_equal(conv, target), '%r != %r' % (conv, target)
@@ -261,7 +262,7 @@ def test_mask_to_image():
   _check_uint(64)
 
   def _check_float(n):
-    conv = utils.mask_to_image(sample, 'float%d' % n)
+    conv = preprocessor_utils.mask_to_image(sample, 'float%d' % n)
     nose.tools.eq_(conv.dtype, getattr(numpy, 'float%d' % n))
     assert numpy.array_equal(conv, [0, 1.0]), '%r != %r' % (conv, target)
 
@@ -272,7 +273,7 @@ def test_mask_to_image():
 
   # This should be unsupported
   try:
-    conv = utils.mask_to_image(sample, 'int16')
+    conv = preprocessor_utils.mask_to_image(sample, 'int16')
   except TypeError as e:
     assert 'int16' in str(e)
   else:
@@ -292,15 +293,13 @@ def test_jaccard_index():
     [True, False],
     ])
 
-  nose.tools.eq_(utils.jaccard_index(a, b), 1.0/4.0)
-  nose.tools.eq_(utils.jaccard_index(a, a), 1.0)
-  nose.tools.eq_(utils.jaccard_index(b, b), 1.0)
-  nose.tools.eq_(utils.jaccard_index(a, numpy.ones(a.shape, dtype=bool)),
-      2.0/4.0)
-  nose.tools.eq_(utils.jaccard_index(a, numpy.zeros(a.shape, dtype=bool)), 0.0)
-  nose.tools.eq_(utils.jaccard_index(b, numpy.ones(b.shape, dtype=bool)),
-      3.0/4.0)
-  nose.tools.eq_(utils.jaccard_index(b, numpy.zeros(b.shape, dtype=bool)), 0.0)
+  nose.tools.eq_(preprocessor_utils.jaccard_index(a, b), 1.0/4.0)
+  nose.tools.eq_(preprocessor_utils.jaccard_index(a, a), 1.0)
+  nose.tools.eq_(preprocessor_utils.jaccard_index(b, b), 1.0)
+  nose.tools.eq_(preprocessor_utils.jaccard_index(a, numpy.ones(a.shape, dtype=bool)), 2.0/4.0)
+  nose.tools.eq_(preprocessor_utils.jaccard_index(a, numpy.zeros(a.shape, dtype=bool)), 0.0)
+  nose.tools.eq_(preprocessor_utils.jaccard_index(b, numpy.ones(b.shape, dtype=bool)), 3.0/4.0)
+  nose.tools.eq_(preprocessor_utils.jaccard_index(b, numpy.zeros(b.shape, dtype=bool)), 0.0)
 
 
 def test_intersection_ratio():
@@ -316,18 +315,73 @@ def test_intersection_ratio():
     [True, False],
     ])
 
-  nose.tools.eq_(utils.intersect_ratio(a, b), 1.0/2.0)
-  nose.tools.eq_(utils.intersect_ratio(a, a), 1.0)
-  nose.tools.eq_(utils.intersect_ratio(b, b), 1.0)
-  nose.tools.eq_(utils.intersect_ratio(a, numpy.ones(a.shape, dtype=bool)), 1.0)
-  nose.tools.eq_(utils.intersect_ratio(a, numpy.zeros(a.shape, dtype=bool)), 0)
-  nose.tools.eq_(utils.intersect_ratio(b, numpy.ones(b.shape, dtype=bool)), 1.0)
-  nose.tools.eq_(utils.intersect_ratio(b, numpy.zeros(b.shape, dtype=bool)), 0)
+  nose.tools.eq_(preprocessor_utils.intersect_ratio(a, b), 1.0/2.0)
+  nose.tools.eq_(preprocessor_utils.intersect_ratio(a, a), 1.0)
+  nose.tools.eq_(preprocessor_utils.intersect_ratio(b, b), 1.0)
+  nose.tools.eq_(preprocessor_utils.intersect_ratio(a, numpy.ones(a.shape, dtype=bool)), 1.0)
+  nose.tools.eq_(preprocessor_utils.intersect_ratio(a, numpy.zeros(a.shape, dtype=bool)), 0)
+  nose.tools.eq_(preprocessor_utils.intersect_ratio(b, numpy.ones(b.shape, dtype=bool)), 1.0)
+  nose.tools.eq_(preprocessor_utils.intersect_ratio(b, numpy.zeros(b.shape, dtype=bool)), 0)
 
-  nose.tools.eq_(utils.intersect_ratio_of_complement(a, b), 1.0/2.0)
-  nose.tools.eq_(utils.intersect_ratio_of_complement(a, a), 0.0)
-  nose.tools.eq_(utils.intersect_ratio_of_complement(b, b), 0.0)
-  nose.tools.eq_(utils.intersect_ratio_of_complement(a, numpy.ones(a.shape, dtype=bool)), 1.0)
-  nose.tools.eq_(utils.intersect_ratio_of_complement(a, numpy.zeros(a.shape, dtype=bool)), 0)
-  nose.tools.eq_(utils.intersect_ratio_of_complement(b, numpy.ones(b.shape, dtype=bool)), 1.0)
-  nose.tools.eq_(utils.intersect_ratio_of_complement(b, numpy.zeros(b.shape, dtype=bool)), 0)
+  nose.tools.eq_(preprocessor_utils.intersect_ratio_of_complement(a, b), 1.0/2.0)
+  nose.tools.eq_(preprocessor_utils.intersect_ratio_of_complement(a, a), 0.0)
+  nose.tools.eq_(preprocessor_utils.intersect_ratio_of_complement(b, b), 0.0)
+  nose.tools.eq_(preprocessor_utils.intersect_ratio_of_complement(a, numpy.ones(a.shape, dtype=bool)), 1.0)
+  nose.tools.eq_(preprocessor_utils.intersect_ratio_of_complement(a, numpy.zeros(a.shape, dtype=bool)), 0)
+  nose.tools.eq_(preprocessor_utils.intersect_ratio_of_complement(b, numpy.ones(b.shape, dtype=bool)), 1.0)
+  nose.tools.eq_(preprocessor_utils.intersect_ratio_of_complement(b, numpy.zeros(b.shape, dtype=bool)), 0)
+
+
+def test_convolution():
+
+  # A test for convolution performance. Convolutions are used on the Miura
+  # Match algorithm, therefore we want to make sure we can perform them as fast
+  # as possible.
+  import scipy.signal
+
+  Y = 250
+  X = 600
+  CH = 1
+  CW = 1
+
+  def gen_ab():
+    a = numpy.random.randint(256, size=(Y, X)).astype(float)
+    b = numpy.random.randint(256, size=(Y-CH, X-CW)).astype(float)
+    return a, b
+
+  def utils_function(a, b):
+    return algorithm_utils.convfft(a, b)
+
+  def scipy_function(a, b):
+    return scipy.signal.convolve2d(a, b, 'valid')
+
+  def scipy2_function(a, b):
+    return scipy.signal.fftconvolve(a, b, 'valid')
+
+  a, b = gen_ab()
+  assert numpy.allclose(utils_function(a, b), scipy_function(a, b))
+  assert numpy.allclose(scipy_function(a, b), scipy2_function(a, b))
+
+  import time
+
+  start = time.clock()
+  N = 10
+  for i in range(N):
+    a, b = gen_ab()
+    utils_function(a, b)
+  total = time.clock() - start
+  print('utils, %d iterations - %.2e per iteration' % (N, total/N))
+
+  start = time.clock()
+  for i in range(N):
+    a, b = gen_ab()
+    scipy_function(a, b)
+  total = time.clock() - start
+  print('scipy, %d iterations - %.2e per iteration' % (N, total/N))
+
+  start = time.clock()
+  for i in range(N):
+    a, b = gen_ab()
+    scipy2_function(a, b)
+  total = time.clock() - start
+  print('scipy2, %d iterations - %.2e per iteration' % (N, total/N))
