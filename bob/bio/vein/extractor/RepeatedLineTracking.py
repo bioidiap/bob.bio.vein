@@ -85,10 +85,11 @@ class RepeatedLineTracking (Extractor):
     hWo = numpy.round(hW*math.sqrt(2)/2)       # half width for oblique directions
 
     # Omit unreachable borders
-    finger_mask[0:self.r+hW,:] = 0
-    finger_mask[finger_mask.shape[0]-(self.r+hW):,:] = 0
-    finger_mask[:,0:self.r+hW] = 0
-    finger_mask[:,finger_mask.shape[1]-(self.r+hW):] = 0
+    border = int(self.r+hW)
+    finger_mask[0:border,:] = 0
+    finger_mask[finger_mask.shape[0]-border:,:] = 0
+    finger_mask[:,0:border] = 0
+    finger_mask[:,finger_mask.shape[1]-border:] = 0
 
     ## Uniformly distributed starting points
     aux = numpy.argwhere( (finger_mask > 0) == True )
@@ -153,7 +154,7 @@ class RepeatedLineTracking (Extractor):
                     else:
                         # Left direction
                         xp = Nc[i,0] - self.r
-                    Vdepths[i] = finger_image[yp + hW, xp] - 2*finger_image[yp,xp] + finger_image[yp - hW, xp]
+                    Vdepths[i] = finger_image[int(yp + hW), int(xp)] - 2*finger_image[int(yp),int(xp)] + finger_image[int(yp - hW), int(xp)]
                 elif (Nc[i,0] == xc):
                     # Vertical plane
                     xp = Nc[i,0]
@@ -163,7 +164,7 @@ class RepeatedLineTracking (Extractor):
                     else:
                         # Up direction
                         yp = Nc[i,1] - self.r
-                    Vdepths[i] = finger_image[yp, xp + hW] - 2*finger_image[yp,xp] + finger_image[yp, xp - hW]
+                    Vdepths[i] = finger_image[int(yp), int(xp + hW)] - 2*finger_image[int(yp),int(xp)] + finger_image[int(yp), int(xp - hW)]
 
                 ## Oblique directions
                 if ( (Nc[i,0] > xc) and (Nc[i,1] < yc) ) or ( (Nc[i,0] < xc) and (Nc[i,1] > yc) ):
@@ -176,7 +177,7 @@ class RepeatedLineTracking (Extractor):
                         # Bottom left
                         xp = Nc[i,0] - ro
                         yp = Nc[i,1] + ro
-                    Vdepths[i] = finger_image[yp - hWo, xp - hWo] - 2*finger_image[yp,xp] + finger_image[yp + hWo, xp + hWo]
+                    Vdepths[i] = finger_image[int(yp - hWo), int(xp - hWo)] - 2*finger_image[int(yp),int(xp)] + finger_image[int(yp + hWo), int(xp + hWo)]
                 else:
                     # Diagonal, down \
                     if (Nc[i,0] < xc and Nc[i,1] < yc):
@@ -187,7 +188,7 @@ class RepeatedLineTracking (Extractor):
                         # Bottom right
                         xp = Nc[i,0] + ro
                         yp = Nc[i,1] + ro
-                    Vdepths[i] = finger_image[yp + hWo, xp - hWo] - 2*finger_image[yp,xp] + finger_image[yp - hWo, xp + hWo]
+                    Vdepths[i] = finger_image[int(yp + hWo), int(xp - hWo)] - 2*finger_image[int(yp),int(xp)] + finger_image[int(yp - hWo), int(xp + hWo)]
             # End search of candidates
             index = numpy.argmax(Vdepths)  #Determine best candidate
             # Register tracking information

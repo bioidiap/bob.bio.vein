@@ -6,10 +6,6 @@ import numpy
 from PIL import Image
 
 import bob.io.base
-import bob.io.image
-import bob.ip.base
-import bob.sp
-import bob.core
 
 from bob.bio.base.preprocessor import Preprocessor
 
@@ -18,57 +14,70 @@ from .. import utils
 
 class FingerCrop (Preprocessor):
   """
-  Extracts the mask and pre-processes fingervein images.
+  Extracts the mask heuristically and pre-processes fingervein images.
 
   Based on the implementation: E.C. Lee, H.C. Lee and K.R. Park. Finger vein
   recognition using minutia-based alignment and local binary pattern-based
   feature extraction. International Journal of Imaging Systems and
   Technology. Vol. 19, No. 3, pp. 175-178, September 2009.
 
+  Finger orientation is based on B. Huang, Y. Dai, R. Li, D. Tang and W. Li,
+  Finger-vein authentication based on wide line detector and pattern
+  normalization, Proceedings on 20th International Conference on Pattern
+  Recognition (ICPR), 2010.
+
+  The ``konomask`` option is based on the work of M. Kono, H. Ueki and S.
+  Umemura. Near-infrared finger vein patterns for personal identification,
+  Applied Optics, Vol. 41, Issue 35, pp. 7429-7436 (2002).
+
   In this implementation, the finger image is (in this order):
 
-    1. Padded
-    2. The mask is extracted
-    3. The finger is normalized (made horizontal)
-    4. (optionally) Post processed
+    1. The mask is extracted (if ``annotation`` is not chosen as a parameter to
+       ``fingercontour``). Other mask extraction options correspond to
+       heuristics developed by Lee et al. (2009) or Kono et al. (2002)
+    2. The finger is normalized (made horizontal), via a least-squares
+       normalization procedure concerning the center of the annotated area,
+       width-wise. Before normalization, the image is padded to avoid loosing
+       pixels corresponding to veins during the rotation
+    3. (optionally) Post processed with histogram-equalization to enhance vein
+       information. Notice that only the area inside the mask is used for
+       normalization. Areas outside of the mask (where the mask is ``False``
+       are set to black)
 
 
-  **Parameters:**
+  Parameters:
 
-  mask_h : :py:class:`int`
-      Optional,  Height of contour mask in pixels, must be an even
-      number
+    mask_h (:py:obj:`int`, optional): Height of contour mask in pixels, must
+      be an even number (used by the methods ``leemaskMod`` or
+      ``leemaskMatlab``)
 
-  mask_w : :py:class:`int`
-      Optional,  Width of the contour mask in pixels
+    mask_w (:py:obj:`int`, optional): Width of the contour mask in pixels
+      (used by the methods ``leemaskMod`` or ``leemaskMatlab``)
 
-  padding_width : :py:class:`int`
-      Optional,  How much padding (in pixels) to add around
-      the borders of the input image. We normally always keep this value on its
-      default (5 pixels).
+    padding_width (:py:obj:`int`, optional): How much padding (in pixels) to
+      add around the borders of the input image. We normally always keep this
+      value on its default (5 pixels). This parameter is always used before
+      normalizing the finger orientation.
 
-  padding_constant : :py:class:`int`
-      Optional,  What is the value of the pixels added
-      to the padding. This number should be a value between 0 and 255. (From
-      Pedro Tome: for UTFVP (high-quality samples), use 0. For the VERA
+    padding_constant (:py:obj:`int`, optional): What is the value of the pixels
+      added to the padding. This number should be a value between 0 and 255.
+      (From Pedro Tome: for UTFVP (high-quality samples), use 0. For the VERA
       Fingervein database (low-quality samples), use 51 (that corresponds to
-      0.2 in a float image with values between 0 and 1).
+      0.2 in a float image with values between 0 and 1). This parameter is
+      always used before normalizing the finger orientation.
 
-  fingercontour : :py:class:`str`
-      Optional,  Select between three finger contour
-      implementations: ``"leemaskMod"``, ``"leemaskMatlab"`` or ``"konomask"``.
-      (From Pedro Tome: the option ``leemaskMatlab`` was just implemented for
-      testing purposes so we could compare with MAT files generated from Matlab
-      code of other authors. He only used it with the UTFVP database, using
-      ``leemaskMod`` with that database yields slight worse results.)
+    fingercontour (:py:obj:`str`, optional): Select between three finger
+      contour implementations: ``"leemaskMod"``, ``"leemaskMatlab"``,
+      ``"konomask"`` or ``annotation``. (From Pedro Tome: the option
+      ``leemaskMatlab`` was just implemented for testing purposes so we could
+      compare with MAT files generated from Matlab code of other authors. He
+      only used it with the UTFVP database, using ``leemaskMod`` with that
+      database yields slight worse results.)
 
-  postprocessing : :py:class:`str`
-      Optional,  Select between ``HE`` (histogram
-      equalization, as with :py:func:`bob.ip.base.histogram_equalization`),
-      ``HFE`` (high-frequency emphasis filter, with hard-coded parameters - see
-      implementation) or ``CircGabor`` (circular Gabor filter with band-width
-      1.12 octaves and standard deviation of 5 pixels (this is hard-coded)). By
-      default, no postprocessing is applied on the image.
+    postprocessing (:py:obj:`str`, optional): Select between ``HE`` (histogram
+      equalization, as with :py:func:`skimage.exposure.equalize_hist`) or
+      ``None`` (the default).
+
   """
 
 
@@ -106,8 +115,11 @@ class FingerCrop (Preprocessor):
 
     """
 
+    padded_image = numpy.pad(image, self.padding_width, 'constant',
+        constant_values = self.padding_constant)
+
     sigma = 5
-    img_h,img_w = image.shape
+    img_h,img_w = padded_image.shape
 
     # Determine lower half starting point
     if numpy.mod(img_h,2) == 0:
@@ -125,7 +137,7 @@ class FingerCrop (Preprocessor):
     hy = (-Y/(2*math.pi*sigma**4))*numpy.exp(-(X**2 + Y**2)/(2*sigma**2))
 
     # Filter the image with the directional kernel
-    fy = utils.imfilter(image, hy)
+    fy = utils.imfilter(padded_image, hy)
 
     # Upper part of filtred image
     img_filt_up = fy[0:half_img_h,:]
@@ -136,18 +148,17 @@ class FingerCrop (Preprocessor):
     y_lo = img_filt_lo.argmin(axis=0)
 
     # Fill region between upper and lower edges
-    finger_mask = numpy.ndarray(image.shape, numpy.bool)
+    finger_mask = numpy.ndarray(padded_image.shape, numpy.bool)
     finger_mask[:,:] = False
 
     for i in range(0,img_w):
-      finger_mask[y_up[i]:y_lo[i]+image.shape[0]-half_img_h+2,i] = True
+      finger_mask[y_up[i]:y_lo[i]+padded_image.shape[0]-half_img_h+2,i] = True
 
-    # Extract y-position of finger edges
-    edges = numpy.zeros((2,img_w))
-    edges[0,:] = y_up
-    edges[1,:] = y_lo + image.shape[0] - half_img_h + 1
-
-    return (finger_mask, edges)
+    if not self.padding_width:
+      return finger_mask
+    else:
+      w = self.padding_width
+      return finger_mask[w:-w,w:-w]
 
 
   def __leemaskMod__(self, image):
@@ -168,7 +179,7 @@ class FingerCrop (Preprocessor):
     a horizontal filter is also applied on the vertical axis.
 
 
-    **Parameters:**
+    Parameters:
 
     image (numpy.ndarray): raw image to use for finding the mask, as 2D array
         of unsigned 8-bit integers
@@ -186,8 +197,10 @@ class FingerCrop (Preprocessor):
 
     """
 
+    padded_image = numpy.pad(image, self.padding_width, 'constant',
+        constant_values = self.padding_constant)
 
-    img_h,img_w = image.shape
+    img_h,img_w = padded_image.shape
 
     # Determine lower half starting point
     half_img_h = img_h/2
@@ -195,29 +208,29 @@ class FingerCrop (Preprocessor):
 
     # Construct mask for filtering (up-bottom direction)
     mask = numpy.ones((self.mask_h, self.mask_w), dtype='float64')
-    mask[(self.mask_h/2):,:] = -1.0
+    mask[int(self.mask_h/2):,:] = -1.0
 
-    img_filt = utils.imfilter(image, mask)
+    img_filt = utils.imfilter(padded_image, mask)
 
     # Upper part of filtred image
-    img_filt_up = img_filt[:half_img_h,:]
+    img_filt_up = img_filt[:int(half_img_h),:]
     y_up = img_filt_up.argmax(axis=0)
 
     # Lower part of filtred image
-    img_filt_lo = img_filt[half_img_h:,:]
+    img_filt_lo = img_filt[int(half_img_h):,:]
     y_lo = img_filt_lo.argmin(axis=0)
 
-    img_filt = utils.imfilter(image, mask.T)
+    img_filt = utils.imfilter(padded_image, mask.T)
 
     # Left part of filtered image
-    img_filt_lf = img_filt[:,:half_img_w]
+    img_filt_lf = img_filt[:,:int(half_img_w)]
     y_lf = img_filt_lf.argmax(axis=1)
 
     # Right part of filtred image
-    img_filt_rg = img_filt[:,half_img_w:]
+    img_filt_rg = img_filt[:,int(half_img_w):]
     y_rg = img_filt_rg.argmin(axis=1)
 
-    finger_mask = numpy.zeros(image.shape, dtype='bool')
+    finger_mask = numpy.zeros(padded_image.shape, dtype='bool')
 
     for i in range(0,y_up.size):
         finger_mask[y_up[i]:y_lo[i]+img_filt_lo.shape[0]+1,i] = True
@@ -230,15 +243,11 @@ class FingerCrop (Preprocessor):
     # meadian
     finger_mask[:,int(numpy.median(y_rg)+img_filt_rg.shape[1]):] = False
 
-    # Extract y-position of finger edges
-    edges = numpy.zeros((2,img_w))
-    edges[0,:] = y_up
-    edges[0,0:int(round(numpy.mean(y_lf))+1)] = edges[0,int(round(numpy.mean(y_lf))+1)]
-
-    edges[1,:] = numpy.round(y_lo + img_filt_lo.shape[0])
-    edges[1,0:int(round(numpy.mean(y_lf))+1)] = edges[1,int(round(numpy.mean(y_lf))+1)]
-
-    return finger_mask, edges
+    if not self.padding_width:
+      return finger_mask
+    else:
+      w = self.padding_width
+      return finger_mask[w:-w,w:-w]
 
 
   def __leemaskMatlab__(self, image):
@@ -282,16 +291,19 @@ class FingerCrop (Preprocessor):
 
     """
 
-    img_h,img_w = image.shape
+    padded_image = numpy.pad(image, self.padding_width, 'constant',
+        constant_values = self.padding_constant)
+
+    img_h,img_w = padded_image.shape
 
     # Determine lower half starting point
-    half_img_h = img_h/2
+    half_img_h = int(img_h/2)
 
     # Construct mask for filtering
     mask = numpy.ones((self.mask_h,self.mask_w), dtype='float64')
-    mask[(self.mask_h/2):,:] = -1.0
+    mask[int(self.mask_h/2):,:] = -1.0
 
-    img_filt = utils.imfilter(image, mask)
+    img_filt = utils.imfilter(padded_image, mask)
 
     # Upper part of filtered image
     img_filt_up = img_filt[:half_img_h,:]
@@ -304,19 +316,18 @@ class FingerCrop (Preprocessor):
     # Translation: for all columns of the input image, set to True all pixels
     # of the mask from index where the maxima occurred in the upper part until
     # the index where the minima occurred in the lower part.
-    finger_mask = numpy.zeros(image.shape, dtype='bool')
+    finger_mask = numpy.zeros(padded_image.shape, dtype='bool')
     for i in range(img_filt.shape[1]):
       finger_mask[y_up[i]:(y_lo[i]+img_filt_lo.shape[0]+1), i] = True
 
-    # Extract y-position of finger edges
-    edges = numpy.zeros((2,img_w), dtype='float64')
-    edges[0,:] = y_up
-    edges[1,:] = numpy.round(y_lo + img_filt_lo.shape[0])
+    if not self.padding_width:
+      return finger_mask
+    else:
+      w = self.padding_width
+      return finger_mask[w:-w,w:-w]
 
-    return finger_mask, edges
 
-
-  def __huangnormalization__(self, image, mask, edges):
+  def __huangnormalization__(self, image, mask):
     """
     Simple finger normalization.
 
@@ -342,10 +353,6 @@ class FingerCrop (Preprocessor):
 
     mask (numpy.ndarray): mask to normalize as 2D array of booleans
 
-    edges (numpy.ndarray): edges of the mask, 2D array with 2 rows and as
-        many columns as the input image, containing the start of the mask and
-        the end of the mask.
-
 
     **Returns:**
 
@@ -354,12 +361,19 @@ class FingerCrop (Preprocessor):
 
     numpy.ndarray: A 2D boolean array with the same shape and data type of
         the input mask representing the newly aligned mask.
+
     """
 
     img_h, img_w = image.shape
 
+    # Calculates the mask edges along the columns
+    edges = numpy.zeros((2, mask.shape[1]), dtype=int)
+
+    edges[0,:] = mask.argmax(axis=0) # get upper edges
+    edges[1,:] = len(mask) - numpy.flipud(mask).argmax(axis=0) - 1
+
     bl = edges.mean(axis=0) #baseline
-    x = numpy.arange(0,img_w)
+    x = numpy.arange(0, edges.shape[1])
     A = numpy.vstack([x, numpy.ones(len(x))]).T
 
     # Fit a straight line through the base line points
@@ -395,18 +409,23 @@ class FingerCrop (Preprocessor):
     Tinv = numpy.linalg.inv(T)
     Tinvtuple = (Tinv[0,0],Tinv[0,1], Tinv[0,2], Tinv[1,0],Tinv[1,1],Tinv[1,2])
 
-    img=Image.fromarray(image)
-    image_norm = img.transform(img.size, Image.AFFINE, Tinvtuple, resample=Image.BICUBIC)
-    image_norm = numpy.array(image_norm)
+    def _afftrans(img):
+      '''Applies the affine transform on the resulting image'''
 
-    finger_mask = numpy.zeros(mask.shape)
-    finger_mask[mask] = 1
+      t = Image.fromarray(img.astype('uint8'))
+      w, h = t.size #pillow image is encoded w, h
+      w += 2*self.padding_width
+      h += 2*self.padding_width
+      t = t.transform(
+          (w,h),
+          Image.AFFINE,
+          Tinvtuple,
+          resample=Image.BICUBIC,
+          fill=self.padding_constant)
 
-    img_mask=Image.fromarray(finger_mask)
-    mask_norm = img_mask.transform(img_mask.size, Image.AFFINE, Tinvtuple, resample=Image.BICUBIC)
-    mask_norm = numpy.array(mask_norm).astype('bool')
+      return numpy.array(t).astype(img.dtype)
 
-    return (image_norm, mask_norm)
+    return _afftrans(image), _afftrans(mask)
 
 
   def __HE__(self, image, mask):
@@ -416,7 +435,7 @@ class FingerCrop (Preprocessor):
     In this implementation, only the pixels that lie inside the mask will be
     used to calculate the histogram equalization parameters. Because of this
     particularity, we don't use Bob's implementation for histogram equalization
-    and have one based exclusively on NumPy.
+    and have one based exclusively on scikit-image.
 
 
     **Parameters:**
@@ -434,142 +453,65 @@ class FingerCrop (Preprocessor):
     numpy.ndarray: normalized image as a 2D array of unsigned 8-bit integers
 
     """
+    from skimage.exposure import equalize_hist
 
-    image_histogram, bins = numpy.histogram(image[mask], 256, normed=True)
-    cdf = image_histogram.cumsum() # cumulative distribution function
-    cdf = 255 * cdf / cdf[-1] # normalize
+    retval = equalize_hist(image, mask=mask)
 
-    # use linear interpolation of cdf to find new pixel values
-    image_equalized = numpy.interp(image.flatten(), bins[:-1], cdf)
-    image_equalized = image_equalized.reshape(image.shape)
-
-    # normalized image to be returned is a composition of the original image
-    # (background) and the equalized image (finger area)
-    retval = image.copy()
-    retval[mask] = image_equalized[mask]
+    # make the parts outside the mask totally black
+    retval[~mask] = 0
 
     return retval
 
 
-  def __circularGabor__(self, image, bw, sigma):
-    """
-    Applies a circular gabor filter on the input image, with parameters.
+  def __call__(self, data, annotations=None):
+    """Reads the input image or (image, mask) and prepares for fex.
+
+    Parameters:
+
+      data (numpy.ndarray, tuple): Either a :py:class:`numpy.ndarray`
+        containing a gray-scaled image with dtype ``uint8`` or a 2-tuple
+        containing both the gray-scaled image and a mask, with the same size of
+        the image, with dtype ``bool`` containing the points which should be
+        considered part of the finger
 
 
-    **Parameters:**
+    Returns:
 
-    image (numpy.ndarray): raw image to be filtered, as 2D array of
-          unsigned 8-bit integers
+      numpy.ndarray: The image, preprocessed and normalized
 
-    bw (float): bandwidth (1.12 octave)
+      numpy.ndarray: A mask, of the same size of the image, indicating where
+      the valid data for the object is.
 
-    sigma (int): standard deviation (5  pixels)
-
-
-    **Returns:**
-
-    numpy.ndarray: normalized image as a 2D array of unsigned 8-bit integers
-    """
-
-    # Converts image to doubles
-    image_new = bob.core.convert(image,numpy.float64,(0,1),(0,255))
-    img_h, img_w = image_new.shape
-
-    fc = (1/math.pi * math.sqrt(math.log(2)/2) * (2**bw+1)/(2**bw-1))/sigma
-
-    sz = numpy.fix(8*numpy.max([sigma,sigma]))
-
-    if numpy.mod(sz,2) == 0: sz = sz+1
-
-    #Constructs filter kernel
-    winsize = numpy.fix(sz/2)
-
-    x = numpy.arange(-winsize, winsize+1)
-    y = numpy.arange(winsize, numpy.fix(-sz/2)-1, -1)
-    X, Y = numpy.meshgrid(x, y)
-    # X (right +)
-    # Y (up +)
-
-    gaborfilter = numpy.exp(-0.5*(X**2/sigma**2+Y**2/sigma**2))*numpy.cos(2*math.pi*fc*numpy.sqrt(X**2+Y**2))*(1/(2*math.pi*sigma))
-
-    # Without normalisation
-    #gaborfilter = numpy.exp(-0.5*(X**2/sigma**2+Y**2/sigma**2))*numpy.cos(2*math.pi*fc*numpy.sqrt(X**2+Y**2))
-
-    imageEnhance = utils.imfilter(image, gaborfilter)
-    imageEnhance = numpy.abs(imageEnhance)
-
-    return bob.core.convert(imageEnhance,numpy.uint8, (0,255),
-        (imageEnhance.min(),imageEnhance.max()))
-
-
-  def __HFE__(self,image):
-    """
-    High Frequency Emphasis Filtering (HFE).
     """
 
-    ### Hard-coded parameters for the HFE filtering
-    D0 = 0.025
-    a = 0.6
-    b = 1.2
-    n = 2.0
-
-    # converts image to doubles
-    image_new = bob.core.convert(image,numpy.float64, (0,1), (0,255))
-    img_h, img_w = image_new.shape
-
-    # DFT
-    Ffreq = bob.sp.fftshift(bob.sp.fft(image_new.astype(numpy.complex128))/math.sqrt(img_h*img_w))
-
-    row = numpy.arange(1,img_w+1)
-    x = (numpy.tile(row,(img_h,1)) - (numpy.fix(img_w/2)+1)) /img_w
-    col = numpy.arange(1,img_h+1)
-    y =  (numpy.tile(col,(img_w,1)).T - (numpy.fix(img_h/2)+1))/img_h
-
-    # D  is  the  distance  from  point  (u,v)  to  the  centre  of the
-    # frequency rectangle.
-    radius = numpy.sqrt(x**2 + y**2)
-
-    f = a + b / (1.0 + (D0 / radius)**(2*n))
-    Ffreq = Ffreq * f
-
-    # implements the inverse DFT
-    imageEnhance = bob.sp.ifft(bob.sp.ifftshift(Ffreq))
-
-    # skips complex part
-    imageEnhance = numpy.abs(imageEnhance)
-
-    # renormalizes and returns
-    return bob.core.convert(imageEnhance, numpy.uint8, (0, 255),
-        (imageEnhance.min(), imageEnhance.max()))
-
-
-  def __call__(self, image, annotations=None):
-    """
-    Reads the input image, extract the mask of the fingervein, postprocesses.
-    """
-
-    # 1. Pads the input image if any padding should be added
-    image = numpy.pad(image, self.padding_width, 'constant',
-        constant_values = self.padding_constant)
+    if isinstance(data, numpy.ndarray):
+      image = data
+      mask = None
+    else:
+      image, mask = data
 
     ## Finger edges and contour extraction:
     if self.fingercontour == 'leemaskMatlab':
-      mask, edges = self.__leemaskMatlab__(image) #for UTFVP
+      mask = self.__leemaskMatlab__(image) #for UTFVP
     elif self.fingercontour == 'leemaskMod':
-      mask, edges = self.__leemaskMod__(image) #for VERA
+      mask = self.__leemaskMod__(image) #for VERA
     elif self.fingercontour == 'konomask':
-      mask, edges = self.__konomask__(image, sigma=5)
+      mask = self.__konomask__(image, sigma=5)
+    elif self.fingercontour == 'annotation':
+      if mask is None:
+        raise RuntimeError("Cannot use fingercontour=annotation - the " \
+            "current sample being processed does not provide a mask")
+    else:
+      raise RuntimeError("Please choose between leemaskMod, leemaskMatlab, " \
+          "konomask or annotation for parameter 'fingercontour'. %s is not " \
+          "valid" % self.fingercontour)
 
     ## Finger region normalization:
-    image_norm, mask_norm = self.__huangnormalization__(image, mask, edges)
+    image_norm, mask_norm = self.__huangnormalization__(image, mask)
 
     ## veins enhancement:
     if self.postprocessing == 'HE':
       image_norm = self.__HE__(image_norm, mask_norm)
-    elif self.postprocessing == 'HFE':
-      image_norm = self.__HFE__(image_norm)
-    elif self.postprocessing == 'CircGabor':
-      image_norm = self.__circularGabor__(image_norm, 1.12, 5)
 
     ## returns the normalized image and the finger mask
     return image_norm, mask_norm
@@ -580,13 +522,11 @@ class FingerCrop (Preprocessor):
 
     f = bob.io.base.HDF5File(filename, 'w')
     f.set('image', data[0])
-    f.set('finger_mask', data[1])
+    f.set('mask', data[1])
 
 
   def read_data(self, filename):
     '''Overrides the default method implementation to handle our tuple'''
 
     f = bob.io.base.HDF5File(filename, 'r')
-    image = f.read('image')
-    finger_mask = f.read('finger_mask')
-    return (image, finger_mask)
+    return f.read('image'), f.read('mask')

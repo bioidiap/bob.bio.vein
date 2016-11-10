@@ -243,6 +243,11 @@ if os.path.exists(sphinx_requirements):
 else:
     intersphinx_mapping = link_documentation()
 
+# Add scikit-image link
+skimage_version = pkg_resources.require('scikit-image')[0].version
+skimage_version = '.'.join(skimage_version.split('.')[:2])
+intersphinx_mapping['http://scikit-image.org/docs/%s.x' % skimage_version] = \
+    None
 
 # We want to remove all private (i.e. _. or __.__) members
 # that are not in the list of accepted functions
