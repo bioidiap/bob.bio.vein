@@ -115,8 +115,11 @@ class FingerCrop (Preprocessor):
 
     """
 
+    padded_image = numpy.pad(image, self.padding_width, 'constant',
+        constant_values = self.padding_constant)
+
     sigma = 5
-    img_h,img_w = image.shape
+    img_h,img_w = padded_image.shape
 
     # Determine lower half starting point
     if numpy.mod(img_h,2) == 0:
@@ -134,7 +137,7 @@ class FingerCrop (Preprocessor):
     hy = (-Y/(2*math.pi*sigma**4))*numpy.exp(-(X**2 + Y**2)/(2*sigma**2))
 
     # Filter the image with the directional kernel
-    fy = utils.imfilter(image, hy)
+    fy = utils.imfilter(padded_image, hy)
 
     # Upper part of filtred image
     img_filt_up = fy[0:half_img_h,:]
@@ -145,13 +148,17 @@ class FingerCrop (Preprocessor):
     y_lo = img_filt_lo.argmin(axis=0)
 
     # Fill region between upper and lower edges
-    finger_mask = numpy.ndarray(image.shape, numpy.bool)
+    finger_mask = numpy.ndarray(padded_image.shape, numpy.bool)
     finger_mask[:,:] = False
 
     for i in range(0,img_w):
-      finger_mask[y_up[i]:y_lo[i]+image.shape[0]-half_img_h+2,i] = True
+      finger_mask[y_up[i]:y_lo[i]+padded_image.shape[0]-half_img_h+2,i] = True
 
-    return finger_mask
+    if not self.padding_width:
+      return finger_mask
+    else:
+      w = self.padding_width
+      return finger_mask[w:-w,w:-w]
 
 
   def __leemaskMod__(self, image):
@@ -190,8 +197,10 @@ class FingerCrop (Preprocessor):
 
     """
 
+    padded_image = numpy.pad(image, self.padding_width, 'constant',
+        constant_values = self.padding_constant)
 
-    img_h,img_w = image.shape
+    img_h,img_w = padded_image.shape
 
     # Determine lower half starting point
     half_img_h = img_h/2
@@ -199,29 +208,29 @@ class FingerCrop (Preprocessor):
 
     # Construct mask for filtering (up-bottom direction)
     mask = numpy.ones((self.mask_h, self.mask_w), dtype='float64')
-    mask[(self.mask_h/2):,:] = -1.0
+    mask[int(self.mask_h/2):,:] = -1.0
 
-    img_filt = utils.imfilter(image, mask)
+    img_filt = utils.imfilter(padded_image, mask)
 
     # Upper part of filtred image
-    img_filt_up = img_filt[:half_img_h,:]
+    img_filt_up = img_filt[:int(half_img_h),:]
     y_up = img_filt_up.argmax(axis=0)
 
     # Lower part of filtred image
-    img_filt_lo = img_filt[half_img_h:,:]
+    img_filt_lo = img_filt[int(half_img_h):,:]
     y_lo = img_filt_lo.argmin(axis=0)
 
-    img_filt = utils.imfilter(image, mask.T)
+    img_filt = utils.imfilter(padded_image, mask.T)
 
     # Left part of filtered image
-    img_filt_lf = img_filt[:,:half_img_w]
+    img_filt_lf = img_filt[:,:int(half_img_w)]
     y_lf = img_filt_lf.argmax(axis=1)
 
     # Right part of filtred image
-    img_filt_rg = img_filt[:,half_img_w:]
+    img_filt_rg = img_filt[:,int(half_img_w):]
     y_rg = img_filt_rg.argmin(axis=1)
 
-    finger_mask = numpy.zeros(image.shape, dtype='bool')
+    finger_mask = numpy.zeros(padded_image.shape, dtype='bool')
 
     for i in range(0,y_up.size):
         finger_mask[y_up[i]:y_lo[i]+img_filt_lo.shape[0]+1,i] = True
@@ -234,7 +243,11 @@ class FingerCrop (Preprocessor):
     # meadian
     finger_mask[:,int(numpy.median(y_rg)+img_filt_rg.shape[1]):] = False
 
-    return finger_mask
+    if not self.padding_width:
+      return finger_mask
+    else:
+      w = self.padding_width
+      return finger_mask[w:-w,w:-w]
 
 
   def __leemaskMatlab__(self, image):
@@ -278,7 +291,10 @@ class FingerCrop (Preprocessor):
 
     """
 
-    img_h,img_w = image.shape
+    padded_image = numpy.pad(image, self.padding_width, 'constant',
+        constant_values = self.padding_constant)
+
+    img_h,img_w = padded_image.shape
 
     # Determine lower half starting point
     half_img_h = int(img_h/2)
@@ -287,7 +303,7 @@ class FingerCrop (Preprocessor):
     mask = numpy.ones((self.mask_h,self.mask_w), dtype='float64')
     mask[int(self.mask_h/2):,:] = -1.0
 
-    img_filt = utils.imfilter(image, mask)
+    img_filt = utils.imfilter(padded_image, mask)
 
     # Upper part of filtered image
     img_filt_up = img_filt[:half_img_h,:]
@@ -300,11 +316,15 @@ class FingerCrop (Preprocessor):
     # Translation: for all columns of the input image, set to True all pixels
     # of the mask from index where the maxima occurred in the upper part until
     # the index where the minima occurred in the lower part.
-    finger_mask = numpy.zeros(image.shape, dtype='bool')
+    finger_mask = numpy.zeros(padded_image.shape, dtype='bool')
     for i in range(img_filt.shape[1]):
       finger_mask[y_up[i]:(y_lo[i]+img_filt_lo.shape[0]+1), i] = True
 
-    return finger_mask
+    if not self.padding_width:
+      return finger_mask
+    else:
+      w = self.padding_width
+      return finger_mask[w:-w,w:-w]
 
 
   def __huangnormalization__(self, image, mask):
@@ -346,22 +366,14 @@ class FingerCrop (Preprocessor):
 
     img_h, img_w = image.shape
 
-    if self.padding_width:
-      mask_consider = mask[self.padding_width:-self.padding_width,
-          self.padding_width:-self.padding_width]
-    else:
-      mask_consider = mask
-
-    n_edges = mask_consider.shape[1]
-
     # Calculates the mask edges along the columns
-    edges = numpy.zeros((2, n_edges), dtype=int)
+    edges = numpy.zeros((2, mask.shape[1]), dtype=int)
 
-    edges[0,:] = mask_consider.argmax(axis=0) # get upper edges
-    edges[1,:] = len(mask) - numpy.flipud(mask_consider).argmax(axis=0) - 1
+    edges[0,:] = mask.argmax(axis=0) # get upper edges
+    edges[1,:] = len(mask) - numpy.flipud(mask).argmax(axis=0) - 1
 
     bl = edges.mean(axis=0) #baseline
-    x = numpy.arange(0, n_edges)
+    x = numpy.arange(0, edges.shape[1])
     A = numpy.vstack([x, numpy.ones(len(x))]).T
 
     # Fit a straight line through the base line points
@@ -397,20 +409,23 @@ class FingerCrop (Preprocessor):
     Tinv = numpy.linalg.inv(T)
     Tinvtuple = (Tinv[0,0],Tinv[0,1], Tinv[0,2], Tinv[1,0],Tinv[1,1],Tinv[1,2])
 
-    img=Image.fromarray(image)
-    image_norm = img.transform(img.size, Image.AFFINE, Tinvtuple,
-        resample=Image.BICUBIC)
-    image_norm = numpy.array(image_norm)
+    def _afftrans(img):
+      '''Applies the affine transform on the resulting image'''
 
-    finger_mask = numpy.zeros(mask.shape)
-    finger_mask[mask] = 1
+      t = Image.fromarray(img.astype('uint8'))
+      w, h = t.size #pillow image is encoded w, h
+      w += 2*self.padding_width
+      h += 2*self.padding_width
+      t = t.transform(
+          (w,h),
+          Image.AFFINE,
+          Tinvtuple,
+          resample=Image.BICUBIC,
+          fill=self.padding_constant)
 
-    img_mask=Image.fromarray(finger_mask)
-    mask_norm = img_mask.transform(img_mask.size, Image.AFFINE, Tinvtuple,
-        resample=Image.BICUBIC)
-    mask_norm = numpy.array(mask_norm).astype('bool')
+      return numpy.array(t).astype(img.dtype)
 
-    return (image_norm, mask_norm)
+    return _afftrans(image), _afftrans(mask)
 
 
   def __HE__(self, image, mask):
@@ -475,10 +490,6 @@ class FingerCrop (Preprocessor):
     else:
       image, mask = data
 
-    # 1. Pads the input image if any padding should be added
-    image = numpy.pad(image, self.padding_width, 'constant',
-        constant_values = self.padding_constant)
-
     ## Finger edges and contour extraction:
     if self.fingercontour == 'leemaskMatlab':
       mask = self.__leemaskMatlab__(image) #for UTFVP
@@ -490,9 +501,6 @@ class FingerCrop (Preprocessor):
       if mask is None:
         raise RuntimeError("Cannot use fingercontour=annotation - the " \
             "current sample being processed does not provide a mask")
-      # Pads the mask to ensure both things are the same in size
-      mask = numpy.pad(mask, self.padding_width, 'constant',
-          constant_values = self.padding_constant)
     else:
       raise RuntimeError("Please choose between leemaskMod, leemaskMatlab, " \
           "konomask or annotation for parameter 'fingercontour'. %s is not " \
