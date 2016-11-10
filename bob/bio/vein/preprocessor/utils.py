@@ -179,6 +179,34 @@ def show_image(image):
   img.show()
 
 
+def draw_mask_over_image(image, mask, color='red'):
+  """Plots the mask over the image of a finger, for debugging purposes
+
+  Parameters:
+
+    image (numpy.ndarray): A 2D numpy.ndarray compose of 8-bit unsigned
+      integers containing the original image
+
+    mask (numpy.ndarray): A 2D numpy.ndarray compose of boolean values
+      containing the calculated mask
+
+
+  Returns:
+
+    PIL.Image: An image in PIL format
+
+  """
+
+  from PIL import Image
+
+  img = Image.fromarray(image).convert(mode='RGBA')
+  msk = Image.fromarray((~mask).astype('uint8')*80)
+  red = Image.new('RGBA', img.size, color=color)
+  img.paste(red, mask=msk)
+
+  return img
+
+
 def show_mask_over_image(image, mask, color='red'):
   """Plots the mask over the image of a finger, for debugging purposes
 
@@ -192,13 +220,7 @@ def show_mask_over_image(image, mask, color='red'):
 
   """
 
-  from PIL import Image
-
-  img = Image.fromarray(image).convert(mode='RGBA')
-  msk = Image.fromarray((~mask).astype('uint8')*80)
-  red = Image.new('RGBA', img.size, color=color)
-  img.paste(red, mask=msk)
-  img.show()
+  draw_mask_over_image(image, mask, color).show()
 
 
 def jaccard_index(a, b):

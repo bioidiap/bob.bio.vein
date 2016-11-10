@@ -45,6 +45,10 @@ setup(
         'parallel = bob.bio.vein.configurations.parallel',
         ],
 
+      'console_scripts': [
+        'compare_rois.py = bob.bio.vein.script.compare_rois:main',
+        'view_mask.py = bob.bio.vein.script.view_mask:main',
+        ]
       },
 
     classifiers = [
