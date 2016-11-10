@@ -361,7 +361,7 @@ class FingerCrop (Preprocessor):
     edges[1,:] = len(mask) - numpy.flipud(mask_consider).argmax(axis=0) - 1
 
     bl = edges.mean(axis=0) #baseline
-    x = numpy.arange(0,img_w)
+    x = numpy.arange(0, n_edges)
     A = numpy.vstack([x, numpy.ones(len(x))]).T
 
     # Fit a straight line through the base line points
