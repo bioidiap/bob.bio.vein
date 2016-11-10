@@ -341,10 +341,17 @@ class FingerCrop (Preprocessor):
 
     numpy.ndarray: A 2D boolean array with the same shape and data type of
         the input mask representing the newly aligned mask.
+
     """
 
     img_h, img_w = image.shape
-    mask_consider = mask[self.padding_width:-self.padding_width]
+
+    if self.padding_width:
+      mask_consider = mask[self.padding_width:-self.padding_width,
+          self.padding_width:-self.padding_width]
+    else:
+      mask_consider = mask
+
     n_edges = mask_consider.shape[1]
 
     # Calculates the mask edges along the columns
