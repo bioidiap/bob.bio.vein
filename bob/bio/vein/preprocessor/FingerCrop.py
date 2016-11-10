@@ -344,11 +344,14 @@ class FingerCrop (Preprocessor):
     """
 
     img_h, img_w = image.shape
+    mask_consider = mask[self.padding_width:-self.padding_width]
+    n_edges = mask_consider.shape[1]
 
     # Calculates the mask edges along the columns
-    edges = numpy.zeros((2, img_w), dtype=int)
-    edges[0,:] = mask.argmax(axis=0) # get upper edges
-    edges[1,:] = len(mask) - numpy.flipud(mask).argmax(axis=0) - 1
+    edges = numpy.zeros((2, n_edges), dtype=int)
+
+    edges[0,:] = mask_consider.argmax(axis=0) # get upper edges
+    edges[1,:] = len(mask) - numpy.flipud(mask_consider).argmax(axis=0) - 1
 
     bl = edges.mean(axis=0) #baseline
     x = numpy.arange(0,img_w)
@@ -480,6 +483,9 @@ class FingerCrop (Preprocessor):
       if mask is None:
         raise RuntimeError("Cannot use fingercontour=annotation - the " \
             "current sample being processed does not provide a mask")
+      # Pads the mask to ensure both things are the same in size
+      mask = numpy.pad(mask, self.padding_width, 'constant',
+          constant_values = self.padding_constant)
     else:
       raise RuntimeError("Please choose between leemaskMod, leemaskMatlab, " \
           "konomask or annotation for parameter 'fingercontour'. %s is not " \
