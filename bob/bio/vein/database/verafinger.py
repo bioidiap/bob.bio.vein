@@ -19,7 +19,7 @@ class File(BioFile):
 
   def __init__(self, f):
 
-    super(File, self).__init__(client_id=f.model_id, path=f.path,
+    super(File, self).__init__(client_id=f.unique_finger_name, path=f.path,
         file_id=f.id)
     self.__f = f
 
