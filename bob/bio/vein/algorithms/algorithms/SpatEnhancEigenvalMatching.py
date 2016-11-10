@@ -22,7 +22,8 @@ class SpatEnhancEigenvalMatching( AlgorithmBase ):
     **Parameters:**
     
     ``similarity_metrics_name`` : :py:class:`str`
-        The name of the similarity metrics to use for matching. Possible values: "shift_std", "error_mean".
+        The name of the similarity metrics to use for matching. 
+        Possible values: "shift_std", "error_mean", "mean_precision_to_dist_ratio", "median_precision_to_dist_ratio".
     """
 
 
@@ -31,7 +32,7 @@ class SpatEnhancEigenvalMatching( AlgorithmBase ):
         AlgorithmBase.__init__( self )
         
         self.similarity_metrics_name = similarity_metrics_name
-        self.available_similarity_metrics = [ "shift_std", "error_mean" ]
+        self.available_similarity_metrics = [ "shift_std", "error_mean", "mean_precision_to_dist_ratio", "median_precision_to_dist_ratio" ]
 
     #==========================================================================
     def score(self, enroll, probe):
@@ -81,6 +82,22 @@ class SpatEnhancEigenvalMatching( AlgorithmBase ):
             score = np.mean( error_list )
             
             score = - score
+            
+        if self.similarity_metrics_name == "mean_precision_to_dist_ratio":
+            
+            dist_vec = np.sqrt(np.sum(shift_array**2,1))
+            
+            error_list = np.array(error_list)
+            
+            score = np.mean( (1 - error_list)/(dist_vec+1) )
+            
+        if self.similarity_metrics_name == "median_precision_to_dist_ratio":
+            
+            dist_vec = np.sqrt(np.sum(shift_array**2,1))
+            
+            error_list = np.array(error_list)
+            
+            score = np.median( (1 - error_list)/(dist_vec+1) )
         
         return score
 

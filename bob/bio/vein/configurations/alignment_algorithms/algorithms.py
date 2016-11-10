@@ -7,9 +7,11 @@ from ...algorithms.extractors import HessianHistMasked
 from ...algorithms.extractors import SpatEnhancHessianHistMasked
 from ...algorithms.extractors import SpatEnhancLBPHistMasked
 from ...algorithms.extractors import SpatEnhancEigenvalMasked
+from ...algorithms.extractors import EigenvalAnglesMasked
 # Available matching algorithms:
 from ...algorithms.algorithms import HistogramsMatching
 from ...algorithms.algorithms import SpatEnhancEigenvalMatching
+from ...algorithms.algorithms import EigenvalAnglesMatching
 # main matching algorithm class:
 from ...algorithms import AlignedMatching
 
@@ -393,15 +395,128 @@ matcher_align_magn_spat_enh_eigenval_similarity_shift_std = matcher_dict[ "match
 #    
 #    subdir_string = subdir_string + ' "' + item + '/"'
 
+#==============================================================================
+def set_matcher5( data_name_to_align, features_name ):
+    """
+    Set the parameters of the matching algorithm.
+    The following pipeline is set with this function:
+    
+    1. aligner = HessianCrossCorrAlignment
+    2. extractor = EigenvalAnglesMasked
+    3. algorithm = EigenvalAnglesMatching
+    
+    4. matcher = AlignedMatching
+    """
+    # Set up the aligner:
+    align_power = 1 # we keep this parameter fixed:
+    aligner = HessianCrossCorrAlignment( align_power = align_power, data_name_to_align = data_name_to_align )
+    #==============================================================================
+    # Set up the transformer:
+    transformer = ShiftEnrollProbeMasked()
+    #==============================================================================
+    # Set up the extractor:
+    extractor = EigenvalAnglesMasked( )
+    #==============================================================================
+    # Set up the algorithm:
+    algorithm = EigenvalAnglesMatching( features_name = features_name )
+    #==============================================================================
+    # Set up matching algorithm:
+    matcher = AlignedMatching( aligner, transformer, extractor, algorithm )
+    
+    return matcher
+
+#==============================================================================
+# Define parameters we want to test here:
+params_dict = {}
+params_dict["data_name_to_align"] = [ "eigenvectors_magnitude", "eigenvectors_angles" ]
+params_dict["features_name"] = ["eigenvalues", "angles"]
+possible_combinations = combinations( params_dict )
+
+matcher_dict = {}
+
+for idx, item in enumerate( possible_combinations ):
+    
+    matcher_name = 'matcher_align_{}_cross_corelate_{}'.format( item['data_name_to_align'][13:17], 
+                    item['features_name'] )
+    
+    matcher_dict[ matcher_name ] = set_matcher5( **item )
+
+
+## Use this to print the bottom text:
+#for item in matcher_dict.keys():
+#    print item + ' = matcher_dict[ "{}" ]'.format( item ) 
+
+matcher_align_angl_cross_corelate_eigenvalues = matcher_dict[ "matcher_align_angl_cross_corelate_eigenvalues" ]
+matcher_align_angl_cross_corelate_angles = matcher_dict[ "matcher_align_angl_cross_corelate_angles" ]
+matcher_align_magn_cross_corelate_eigenvalues = matcher_dict[ "matcher_align_magn_cross_corelate_eigenvalues" ]
+matcher_align_magn_cross_corelate_angles = matcher_dict[ "matcher_align_magn_cross_corelate_angles" ]
+
+## Use this loop to generate the entry points for the setup.py
+#for item in matcher_dict.keys():    
+#    print "        '" + item.replace("_", "-") + ' = bob.bio.vein.configurations.alignment_algorithms.algorithms:'+ item + "',"
 
 
 
 
+#==============================================================================
+def set_matcher6( data_name_to_align, similarity_metrics_name ):
+    """
+    Set the parameters of the matching algorithm.
+    The following pipeline is set with this function:
+    
+    1. aligner = HessianCrossCorrAlignment
+    2. transformer = ShiftEnrollProbeMasked()
+    3. extractor = SpatEnhancEigenvalMasked
+    4. algorithm = EigenvalAnglesMatching
+    
+    5. matcher = AlignedMatching
+    """
+    # Set up the aligner:
+    align_power = 1 # we keep this parameter fixed:
+    aligner = HessianCrossCorrAlignment( align_power = align_power, data_name_to_align = data_name_to_align )
+    #==============================================================================
+    # Set up the transformer:
+    transformer = ShiftEnrollProbeMasked(center_data_flag = True)
+    #==============================================================================
+    # Set up the extractor:
+    extractor = SpatEnhancEigenvalMasked( )
+    #==============================================================================
+    # Set up the algorithm:
+    algorithm = SpatEnhancEigenvalMatching( similarity_metrics_name = similarity_metrics_name )
+    #==============================================================================
+    # Set up matching algorithm:
+    matcher = AlignedMatching( aligner, transformer, extractor, algorithm )
+    
+    return matcher
+
+#==============================================================================
+# Define parameters we want to test here:
+params_dict = {}
+params_dict["data_name_to_align"] = [ "eigenvectors_magnitude", "eigenvectors_angles" ]
+params_dict["similarity_metrics_name"] = ["mean_precision_to_dist_ratio", "median_precision_to_dist_ratio"]
+possible_combinations = combinations( params_dict )
+
+matcher_dict = {}
+
+for idx, item in enumerate( possible_combinations ):
+    
+    matcher_name = 'matcher_align_{}_spat_enh_eigenval_similarity_{}'.format( item['data_name_to_align'][13:17], 
+                    item['similarity_metrics_name'] )
+    
+    matcher_dict[ matcher_name ] = set_matcher6( **item )
 
 
+## Use this to print the bottom text:
+#for item in matcher_dict.keys():
+#    print item + ' = matcher_dict[ "{}" ]'.format( item ) 
 
+matcher_align_angl_spat_enh_eigenval_similarity_mean_precision_to_dist_ratio = matcher_dict[ "matcher_align_angl_spat_enh_eigenval_similarity_mean_precision_to_dist_ratio" ]
+matcher_align_magn_spat_enh_eigenval_similarity_median_precision_to_dist_ratio = matcher_dict[ "matcher_align_magn_spat_enh_eigenval_similarity_median_precision_to_dist_ratio" ]
+matcher_align_magn_spat_enh_eigenval_similarity_mean_precision_to_dist_ratio = matcher_dict[ "matcher_align_magn_spat_enh_eigenval_similarity_mean_precision_to_dist_ratio" ]
+matcher_align_angl_spat_enh_eigenval_similarity_median_precision_to_dist_ratio = matcher_dict[ "matcher_align_angl_spat_enh_eigenval_similarity_median_precision_to_dist_ratio" ]
 
-
-
+## Use this loop to generate the entry points for the setup.py
+#for item in matcher_dict.keys():    
+#    print "        '" + item.replace("_", "-") + ' = bob.bio.vein.configurations.alignment_algorithms.algorithms:'+ item + "',"
 
 

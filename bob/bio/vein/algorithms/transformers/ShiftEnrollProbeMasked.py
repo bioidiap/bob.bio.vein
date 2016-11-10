@@ -11,6 +11,8 @@ from . import TransformerBase
 
 from scipy import ndimage
 
+import numpy as np
+
 #==========================================================================
 # Main body of the class:
 
@@ -21,9 +23,20 @@ class ShiftEnrollProbeMasked( TransformerBase ):
     This class is able to compensate the translation only.
     """
     
-    def __init__( self ):
+    def __init__( self, center_data_flag = False ):
+        """
+        
+        **Parameters:**
+        
+        ``center_data_flag`` : :py:class:`bool`
+            If set to True the images/data representing the enroll and probe will
+            be centered based on the centers of mass of the binary masks of the ROIs.
+            Default value: False.
+        """
         
         TransformerBase.__init__( self )
+        
+        self.center_data_flag = center_data_flag
 
     #==========================================================================
     def check_the_data( self, enroll, probe, M ):
@@ -79,6 +92,53 @@ class ShiftEnrollProbeMasked( TransformerBase ):
             features_masked.append( item * mask )
             
         return features_masked
+        
+        
+    #==========================================================================
+    def center_the_data( self, data ):
+        """
+        Center the images stored in the input ``data`` tuple based on the center
+        of mass of the binary mask of the ROI. The ROI mask is the last element in the 
+        input ``data`` tuple.
+        
+        **Parameters:**
+        
+        ``data`` : :py:class:`list`
+            A tuple representing the enroll or probe. The following data is stored in the tuple:
+            (eigenvalue, angles, roi_mask).
+            
+        **Returns:**
+        
+        ``data_centered`` : :py:class:`list`
+            A tuple representing the enroll or probe after centering. The following data is stored in the tuple:
+            (eigenvalue, angles, roi_mask).
+        """
+        
+        mask_binary = data[-1]
+        
+        mask_center = np.round(np.array(ndimage.center_of_mass(mask_binary)))
+        
+        offset = np.array(data[0].shape)/2 - mask_center
+        
+        data_centered = []
+        
+        for item in data:
+            
+            data_centered.append(ndimage.interpolation.shift( item, ( offset[0], offset[1] ), cval = 0 ))
+            
+        data_centered[-1] = data_centered[-1].astype(np.uint8)
+        
+        for idx, item in enumerate(data_centered[:-1]):
+            
+            data_centered[idx] = item * data_centered[-1]
+        
+        data_centered[1][data_centered[1] > np.pi/2] = np.pi/2
+        
+        data_centered[1][data_centered[1] < -np.pi/2] = -np.pi/2
+            
+        return data_centered
+        
+        
         
         
     #==========================================================================
@@ -144,6 +204,11 @@ class ShiftEnrollProbeMasked( TransformerBase ):
         
         enroll_updated = tuple( features_enroll_updated )
         probe_updated = tuple( features_probe_updated )
+        
+        if self.center_data_flag:
+            
+            enroll_updated = self.center_the_data(enroll_updated)
+            probe_updated = self.center_the_data(probe_updated)
         
         return ( enroll_updated, probe_updated )
 

@@ -11,6 +11,8 @@ from ..algorithms import HessianHistMatchAligned
 
 from ..algorithms import AnnotationMatch
 
+from ..algorithms import MatchTemplate
+
 huangwl = MiuraMatch(ch=18, cw=28)
 miuramax = MiuraMatch(ch=80, cw=90)
 miurarlt = MiuraMatch(ch=65, cw=55)
@@ -40,6 +42,12 @@ miura_wrist_dilation_11 = MiuraMatchAligned( ch = 100, cw = 100, alignment_flag 
 miura_wrist_dilation_13 = MiuraMatchAligned( ch = 100, cw = 100, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 13 )
 miura_wrist_dilation_15 = MiuraMatchAligned( ch = 100, cw = 100, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 15 )
 miura_wrist_dilation_17 = MiuraMatchAligned( ch = 100, cw = 100, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 17 )
+
+miura_wrist_chw_120_dilation_5 = MiuraMatchAligned( ch = 120, cw = 120, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 5 )
+miura_wrist_chw_120_dilation_7 = MiuraMatchAligned( ch = 120, cw = 120, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 7 )
+miura_wrist_chw_120_dilation_9 = MiuraMatchAligned( ch = 120, cw = 120, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 9 )
+miura_wrist_chw_120_dilation_11 = MiuraMatchAligned( ch = 120, cw = 120, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 11 )
+miura_wrist_chw_120_dilation_13 = MiuraMatchAligned( ch = 120, cw = 100, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 13 )
 
 
 mm_t1 = MiuraMatchAligned( ch = 140, cw = 140, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 9 )
@@ -119,3 +127,13 @@ annotationmatch_4_mean = AnnotationMatch(sigma=4, score_method='mean')
 annotationmatch_5_mean = AnnotationMatch(sigma=5, score_method='mean')
 annotationmatch_6_mean = AnnotationMatch(sigma=6, score_method='mean')
 annotationmatch_7_mean = AnnotationMatch(sigma=7, score_method='mean')
+
+match_template_dilation_0 = MatchTemplate(dilation_flag = False, ellipse_mask_size = 5)
+match_template_dilation_5 = MatchTemplate(dilation_flag = True, ellipse_mask_size = 5)
+match_template_dilation_7 = MatchTemplate(dilation_flag = True, ellipse_mask_size = 7)
+match_template_dilation_9 = MatchTemplate(dilation_flag = True, ellipse_mask_size = 9)
+match_template_dilation_11 = MatchTemplate(dilation_flag = True, ellipse_mask_size = 11)
+
+
+
+

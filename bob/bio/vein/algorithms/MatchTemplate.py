@@ -1,18 +1,15 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
-import bob.sp
-import bob.ip.base
-
 import numpy as np
 
 from bob.bio.base.algorithm import Algorithm
 
 from scipy import ndimage
 
-import scipy.signal
+from skimage.feature import match_template
 
-class MiuraMatchAligned( Algorithm ):
+class MatchTemplate(Algorithm):
     """
     Vein matching: match ratio
     
@@ -48,22 +45,12 @@ class MiuraMatchAligned( Algorithm ):
     """
 
 
-    def __init__( self, ch = 10, cw = 10, alignment_flag = True, alignment_method = "center_of_mass",
-                 dilation_flag = False, ellipse_mask_size = 5 ):
+    def __init__(self, dilation_flag = False, ellipse_mask_size = 5):
 
-        Algorithm.__init__( self, 
-                           ch = ch,
-                           cw = cw,
-                           alignment_flag = alignment_flag,
-                           alignment_method = alignment_method,
+        Algorithm.__init__(self, 
                            dilation_flag = dilation_flag,
-                           ellipse_mask_size = ellipse_mask_size )
-
-        self.ch = ch
-        self.cw = cw
-        self.alignment_flag = alignment_flag
-        self.alignment_method = alignment_method
-        self.available_alignment_methods = ["center_of_mass"]
+                           ellipse_mask_size = ellipse_mask_size)
+        
         self.dilation_flag = dilation_flag
         self.ellipse_mask_size = ellipse_mask_size
 
@@ -89,62 +76,8 @@ class MiuraMatchAligned( Algorithm ):
 
 #        return np.array(enroll_features) # Do nothing in our case
         return enroll_features # Do nothing in our case
-
-
-
-    def __convfft__( self, t, a ):
-        # Determine padding size in x and y dimension
-        size_t  = np.array(t.shape)
-        size_a  = np.array(a.shape)
-        outsize = size_t + size_a - 1
         
-        # Determine 2D cross correlation in Fourier domain
-        taux = np.zeros(outsize)
-        taux[0:size_t[0],0:size_t[1]] = t
-        Ft = bob.sp.fft(taux.astype(np.complex128))
-        aaux = np.zeros(outsize)
-        aaux[0:size_a[0],0:size_a[1]] = a
-        Fa = bob.sp.fft(aaux.astype(np.complex128))
         
-        convta = np.real(bob.sp.ifft(Ft*Fa))
-        
-        [w, h] = size_t-size_a+1
-        output = convta[size_a[0]-1:size_a[0]-1+w, size_a[1]-1:size_a[1]-1+h]
-        
-        return output
-
-    def center_image( self, input_array ):
-        """
-        This function shifts the image so as center of mass of the image and image center are alligned.
-        
-        **Parameters:**
-        
-        input_array : 2D :py:class:`numpy.ndarray`
-            Input image to be shifted.
-            
-        **Returns:**
-        
-        shifted_array : 2D :py:class:`numpy.ndarray`
-            Shifted image.
-        """
-        
-        # center of mass of the input image:s
-        coords = np.round( ndimage.measurements.center_of_mass( input_array ) )
-        
-        # center of the image
-        center_location = np.round( np.array( input_array.shape )/2 )
-        
-        # resulting displacement:
-        displacement = center_location - coords
-        
-        shifted_array = ndimage.interpolation.shift( input_array, displacement, cval = 0 )
-        
-        shifted_array[shifted_array<0.5] = 0
-        shifted_array[shifted_array>=0.5] = 1
-        
-        return shifted_array
-
-
     def binary_dilation_with_ellipse( self, image ):
         """
         binary_dilation_with_ellipse( image, ellipse_mask_size ) -> image_dilated
@@ -218,54 +151,25 @@ class MiuraMatchAligned( Algorithm ):
                 
         model = [ np.squeeze( item ) for item in model ] # remove single-dimensional entries from the shape of an array
         
-        if self.alignment_flag: # if prealignment is allowed
-            
-            if self.alignment_method == "center_of_mass": # centering based on the center of mass of the image
-                
-                probe = self.center_image( probe )
-        
         if self.dilation_flag:      
             
             probe = self.binary_dilation_with_ellipse( probe )
             
         for enroll in model:
             
-            if not( self.alignment_method in self.available_alignment_methods ):
-                raise Exception("Specified alignment method is not in the list of available_alignment_methods")
-            
             if len( enroll.shape ) != 2 or len( probe.shape ) != 2: # check if input image is not of grayscale format
                 raise Exception("The image must be a 2D array / grayscale format")
-                
-            if self.alignment_flag: # if prealignment is allowed
-                
-                if self.alignment_method == "center_of_mass": # centering based on the center of mass of the image
-                    
-                    enroll = self.center_image( enroll )
             
             if self.dilation_flag:
                 
                 enroll = self.binary_dilation_with_ellipse( enroll )
             
-            I = probe.astype( np.float64 )
+            match_result = match_template(enroll.astype(np.uint8), probe.astype(np.uint8), pad_input=True, mode='constant', constant_values=0)
             
-            R = enroll.astype( np.float64 )
+            score = np.max(match_result)
             
-            h, w = R.shape
+            scores.append(score)
             
-            crop_R = R[ self.ch: h-self.ch, self.cw: w-self.cw ]
-            
-            rotate_R = np.zeros( ( crop_R.shape[0], crop_R.shape[1] ) )
-            
-            bob.ip.base.rotate( crop_R, rotate_R, 180 )
-            
-            #Nm = self.__convfft__( I, rotate_R )
-            Nm = scipy.signal.convolve2d(I, rotate_R, 'valid')
-            
-            t0, s0 = np.unravel_index( Nm.argmax(), Nm.shape )
-            
-            Nmm = Nm[t0,s0]
-            
-            scores.append( Nmm / ( sum( sum( crop_R ) ) + sum( sum( I[ t0: t0 + h - 2 * self.ch, s0: s0 + w - 2 * self.cw ] ) ) ) )
             
         score_mean = np.mean( scores )
         

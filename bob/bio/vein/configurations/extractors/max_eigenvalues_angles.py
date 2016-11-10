@@ -16,3 +16,5 @@ max_eigenvalues_angles_extractor_s6p1 = MaxEigenvaluesAngles(sigma = 6, power = 
 max_eigenvalues_angles_extractor_s65p1 = MaxEigenvaluesAngles(sigma = 6.5, power = 1)
 
 max_eigenvalues_angles_extractor_s7p1 = MaxEigenvaluesAngles(sigma = 7, power = 1)
+
+max_eigenvalues_mean_norm_angles_extractor_s5p1 = MaxEigenvaluesAngles(sigma = 5, power = 1, mean_normalization_flag = True)

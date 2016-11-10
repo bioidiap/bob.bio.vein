@@ -34,19 +34,23 @@ class MaxEigenvaluesAngles( Extractor ):
         Standard deviation used for the Gaussian kernel, which is used as weighting function for the auto-correlation matrix.
     power : float
         Raise the weights to the specified power. Default value: 1.
+    mean_normalization_flag : float
+        Normalize the image of eigenvalues to it's mean value if set to True.
     """
     
-    def __init__( self, sigma, power = 1 ):
+    def __init__( self, sigma, power = 1, mean_normalization_flag = False ):
         
         Extractor.__init__( self,
                            sigma = sigma,
-                           power = power )
+                           power = power,
+                           mean_normalization_flag = mean_normalization_flag)
         
         self.sigma = sigma
         self.power = power
+        self.mean_normalization_flag = mean_normalization_flag
 
     #==========================================================================
-    def get_max_eigenvalues_and_angles( self, image, mask, sigma, power = 1 ):
+    def get_max_eigenvalues_and_angles( self, image, mask, sigma, power = 1, mean_normalization_flag = False ):
         """
         Compute Hessian matrices and perform their eigendecomposition:
         
@@ -68,6 +72,8 @@ class MaxEigenvaluesAngles( Extractor ):
             Standard deviation used for the Gaussian kernel, which is used as weighting function for the auto-correlation matrix.
         power : float
             Raise the weights to the specified power. Default value: 1.
+        mean_normalization_flag : float
+            Normalize the image of eigenvalues to it's mean value if set to True.
         
         **Returns:**
         
@@ -111,7 +117,13 @@ class MaxEigenvaluesAngles( Extractor ):
         
         max_eigenvalues = ( max_eigenvalues + np.abs( np.min(max_eigenvalues) ) ) * mask # make the values positive and mask again
         
-        max_eigenvalues = max_eigenvalues / np.max( max_eigenvalues ) # normalize the values to 1.
+        if mean_normalization_flag:
+            
+            max_eigenvalues = max_eigenvalues / np.average(max_eigenvalues, weights = mask)
+            
+        else:
+            
+            max_eigenvalues = max_eigenvalues / np.max( max_eigenvalues ) # normalize the values to 1.
         
         max_eigenvalues = max_eigenvalues ** power # raise eigenvalues to the power
         
@@ -152,7 +164,8 @@ class MaxEigenvaluesAngles( Extractor ):
         
         mask = input_data[1] # binary mask of the ROI
         
-        max_eigenvalues, angles = self.get_max_eigenvalues_and_angles( image, mask, self.sigma, self.power )
+        max_eigenvalues, angles = self.get_max_eigenvalues_and_angles(image, mask, self.sigma, self.power,
+                                                                      self.mean_normalization_flag)
         
         return ( max_eigenvalues, angles, mask )
 
