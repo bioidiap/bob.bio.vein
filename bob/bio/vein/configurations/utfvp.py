@@ -17,7 +17,7 @@ You can download the raw data of the `UTFVP`_ database by following the link.
 .. include:: links.rst
 """
 
-from bob.bio.vein.database.utfvp import Database
+from ..database.utfvp import Database
 
 utfvp_directory = "[YOUR_UTFVP_DIRECTORY]"
 """Value of ``~/.bob_bio_databases.txt`` for this database"""
