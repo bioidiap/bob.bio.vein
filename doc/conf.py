@@ -249,6 +249,12 @@ skimage_version = '.'.join(skimage_version.split('.')[:2])
 intersphinx_mapping['http://scikit-image.org/docs/%s.x' % skimage_version] = \
     None
 
+# Add PIL link
+pil_version = pkg_resources.require('pillow')[0].version
+pil_version = '.'.join(pil_version.split('.')[:2])
+intersphinx_mapping['http://pillow.readthedocs.io/en/%s.x' % pil_version] = \
+    None
+
 # We want to remove all private (i.e. _. or __.__) members
 # that are not in the list of accepted functions
 accepted_private_functions = ['__array__']

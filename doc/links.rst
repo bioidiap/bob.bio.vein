@@ -24,3 +24,4 @@
 .. _dependencies: https://gitlab.idiap.ch/bob/bob/wikis/Dependencies
 .. _mailing list: https://groups.google.com/forum/?fromgroups#!forum/bob-devel
 .. _bob.bio.base: https://pypi.python.org/pypi/bob.bio.base
+.. _jaccard index: https://en.wikipedia.org/wiki/Jaccard_index

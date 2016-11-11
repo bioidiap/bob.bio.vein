@@ -15,7 +15,7 @@ the link.
 """
 
 
-from bob.bio.vein.database.verafinger import Database
+from ..database.verafinger import Database
 
 verafinger_directory = "[YOUR_VERAFINGER_DIRECTORY]"
 """Value of ``~/.bob_bio_databases.txt`` for this database"""
