@@ -165,7 +165,12 @@ def mask_to_image(mask, dtype=numpy.uint8):
 
 
 def show_image(image):
-  """Shows a single image
+  """Shows a single image using :py:meth:`PIL.Image.Image.show`
+
+  .. warning::
+
+     This function opens a new window. You must be operating interactively in a
+     windowing system for it to work properly.
 
   Parameters:
 
@@ -208,7 +213,12 @@ def draw_mask_over_image(image, mask, color='red'):
 
 
 def show_mask_over_image(image, mask, color='red'):
-  """Plots the mask over the image of a finger, for debugging purposes
+  """Plots the mask over the image of a finger using :py:meth:`PIL.Image.Image.show`
+
+  .. warning::
+
+     This function opens a new window. You must be operating interactively in a
+     windowing system for it to work properly.
 
   Parameters:
 
@@ -254,12 +264,12 @@ def jaccard_index(a, b):
 
 
 def intersect_ratio(a, b):
-  """Calculates the intersection ratio between a probe and ground-truth
+  """Calculates the intersection ratio between the ground-truth and a probe
 
-  This function calculates the intersection ratio between a probe mask
-  (:math:`B`) and a ground-truth mask (:math:`A`; probably generated from an
-  annotation), and returns the ratio of overlap when the probe is compared to
-  the ground-truth data:
+  This function calculates the intersection ratio between a ground-truth mask
+  (:math:`A`; probably generated from an annotation) and a probe mask
+  (:math:`B`), returning the ratio of overlap when the probe is compared to the
+  ground-truth data:
 
   .. math::
 
@@ -293,13 +303,12 @@ def intersect_ratio(a, b):
 
 
 def intersect_ratio_of_complement(a, b):
-  """Calculates the intersection ratio between a probe and the ground-truth
-  complement
+  """Calculates the intersection ratio between the complement of ground-truth and a probe
 
-  This function calculates the intersection ratio between a probe mask
-  (:math:`B`) and *the complement* of a ground-truth mask (:math:`A`; probably
-  generated from an annotation), and returns the ratio of overlap when the
-  probe is compared to the ground-truth data:
+  This function calculates the intersection ratio between *the complement* of a
+  ground-truth mask (:math:`A`; probably generated from an annotation) and a
+  probe mask (:math:`B`), returning the ratio of overlap when the probe is
+  compared to the ground-truth data:
 
   .. math::
 
