@@ -11,36 +11,24 @@ from skimage.feature import match_template
 
 class MatchTemplate(Algorithm):
     """
-    Vein matching: match ratio
-    
-    Based on N. Miura, A. Nagasaka, and T. Miyatake. Feature extraction of finger
-    vein patterns based on repeated line tracking and its application to personal
-    identification. Machine Vision and Applications, Vol. 15, Num. 4, pp.
-    194--203, 2004
-    
-    The pre-alignment step is added to this class. The following alignment methods are implemented:
-    
-    1. image centering based on the center of mass. Both enroll and probe images are centered independently before Miura matching.
+    This class is designed for matching and computing of the similarity score of two binary images. 
+    The matching is composed of the following steps:
+        
+        1. First the ``enroll`` and ``probe`` images are aligned using the ``skimage.feature.match_template``.
+        
+        2. Once ``probe`` is aligned to the ``enroll`` the data in both images is masked 
+           using the rectangular binary mask of the joint ROI.
+           
+    Once matching/alignment is done the similarity score is computed as follows:
+        
+        score = 2 * (intersection of ``enroll`` and ``probe``) / (area of ``enroll`` + area of ``probe``)
     
     **Parameters:**
     
-    ch : uint
-        Maximum search displacement in y-direction. Default value: 10.
-    
-    cw : uint
-        Maximum search displacement in x-direction. Default value: 10.
-    
-    alignment_flag : bool
-        If set to "True" pre-alignment of the images is done before the matching. Default value: True.
-    
-    alignment_method : str
-        Name of the prealignment method. Possible values: "center_of_mass".
-        "center_of_mass" - image centering based on the center of mass.
-    
-    dilation_flag : bool
+    ``dilation_flag`` : :py:class:`bool`
         If set to "True" binary dilation of the images is done before the matching. Default value: False.
     
-    ellipse_mask_size : uint
+    ``ellipse_mask_size`` : :py:class:`int`
         Diameter of the elliptical kernel in pixels. Default value: 5. 
     """
 
@@ -64,17 +52,16 @@ class MatchTemplate(Algorithm):
         
         **Parameters:**
         
-        enroll_features : [object]
+        ``enroll_features`` : [object]
             A list of features used for the enrollment of one model.
         
         **Returns:**
         
-        model : object
+        ``model`` : object
             The model enrolled from the ``enroll_features``.
             Must be writable with the :py:meth:`write_model` function and readable with the :py:meth:`read_model` function.
         """
-
-#        return np.array(enroll_features) # Do nothing in our case
+        
         return enroll_features # Do nothing in our case
         
         
@@ -86,12 +73,12 @@ class MatchTemplate(Algorithm):
         
         **Parameters:**
         
-        image : 2D :py:class:`numpy.ndarray`
+        ``image`` : 2D :py:class:`numpy.ndarray`
             Input binary image.
             
         **Returns:**
         
-        image_dilated : 2D :py:class:`numpy.ndarray`
+        ``image_dilated`` : 2D :py:class:`numpy.ndarray`
             Dilated image.
         """
         if self.ellipse_mask_size == 0:
@@ -111,28 +98,114 @@ class MatchTemplate(Algorithm):
             image_dilated = ndimage.binary_dilation( image, structure = kernel )
             
             return image_dilated.astype(np.float64)
+            
+            
+    def generate_mask(self, image):
+        """
+        Generate the binary mask for the input binary image based on the coordinates
+        of the non-zero elements in the input.
+        
+        **Parameters:**
+        
+        ``image`` : 2D :py:class:`numpy.ndarray`
+            Input binary image.
+            
+        **Returns:**
+        
+        ``mask`` : 2D :py:class:`numpy.ndarray`
+            A rectangular binary mask covering non-zero elements in the input image.
+        """
+        y, x = np.nonzero(image.astype(np.uint8)) 
+        
+        y_min = np.min(y)
+        y_max = np.max(y)
+        
+        x_min = np.min(x)
+        x_max = np.max(x)
+        
+        mask = np.zeros(image.shape)
+        
+        mask[y_min:y_max, x_min:x_max] = 1
+        
+        return mask
+        
+        
+    def align_and_mask_enroll_probe(self, enroll, probe):
+        """
+        This function aligns two binary images using cross-corelation approach 
+        implemented in ``skimage.feature.match_template``. ``probe`` is aligned/shifted to 
+        the ``enroll``. The data/veins in the binary images are also masked after the alignment
+        using the rectangular binary mask of the joint ROI.
+        
+        **Parameters:**
+        
+        ``image`` : 2D :py:class:`numpy.ndarray`
+            Input binary image.
+            
+        **Returns:**
+        
+        ``enroll_masked`` : 2D :py:class:`numpy.ndarray`
+            Masked enroll image.
+        
+        ``probe_shifted_masked`` : 2D :py:class:`numpy.ndarray`
+            Masked and shifted (aligned to the enroll) probe image.
+        """
+        
+        if enroll.dtype != np.uint8:
+            enroll = enroll.astype(np.uint8)
+            probe = probe.astype(np.uint8)
+            
+        match_result = match_template(enroll, probe, pad_input=True, mode='constant', constant_values=0)
+        
+        shift = np.array(np.unravel_index(match_result.argmax(), match_result.shape)) - np.array(match_result.shape)/2
+        
+        shift = shift.astype(np.int)
+        
+        probe_shifted = ndimage.interpolation.shift( probe, shift, cval = 0 )
+        
+        mask_enroll = self.generate_mask(enroll) # rectangular mask
+        
+        mask_probe = self.generate_mask(probe) # rectangular mask
+        
+        mask_probe_shifted = ndimage.interpolation.shift( mask_probe, shift, cval = 0 )
+        
+        mask_probe_shifted[mask_probe_shifted>0.5] = 1
+        mask_probe_shifted[mask_probe_shifted!=1] = 0
+        
+        mask_overlap = mask_enroll * mask_probe_shifted
+        
+        enroll_masked = enroll*mask_overlap
+        
+        probe_shifted_masked = probe_shifted*mask_overlap
+        
+        enroll_masked[enroll_masked>0.5] = 1
+        enroll_masked[enroll_masked!=1] = 0
 
-
+        probe_shifted_masked[probe_shifted_masked>0.5] = 1
+        probe_shifted_masked[probe_shifted_masked!=1] = 0
+        
+        return (enroll_masked.astype(np.uint8), probe_shifted_masked.astype(np.uint8))
+        
+        
     def score(self, model, probe):
         """
         score(model, probe) -> score
         
-        Computes the score of the probe and the model using Miura matching algorithm.
-        Prealignment with selected method is performed before matching if "alignment_flag = True".
-        Score has a value between 0 and 0.5, larger value is better match.
+        Computes the score of the probe and the model.
+        Score has a value between 0 and 1, larger value is better match.
         
         **Parameters:**
         
-        model : 2D/3D :py:class:`numpy.ndarray`
+        ``model`` : 2D/3D :py:class:`numpy.ndarray`
             The model enrolled by the :py:meth:`enroll` function.
         
-        probe : 2D :py:class:`numpy.ndarray`
+        ``probe`` : 2D :py:class:`numpy.ndarray`
             The probe read by the :py:meth:`read_probe` function.
         
         **Returns:**
         
-        score_mean : float
-            The resulting similarity score.         
+        ``score_mean`` : :py:class:`float`
+            The resulting similarity score.       
         """
         
         scores = []
@@ -164,12 +237,13 @@ class MatchTemplate(Algorithm):
                 
                 enroll = self.binary_dilation_with_ellipse( enroll )
             
-            match_result = match_template(enroll.astype(np.uint8), probe.astype(np.uint8), pad_input=True, mode='constant', constant_values=0)
+            (enroll_masked, probe_shifted_masked) = self.align_and_mask_enroll_probe(enroll, probe)
             
-            score = np.max(match_result)
+            score = 2.0*np.sum( enroll_masked * probe_shifted_masked ) / ( np.sum(enroll_masked) + np.sum(probe_shifted_masked) )
             
-            scores.append(score)
+#            match_result = match_template(enroll_masked, probe_shifted_masked, pad_input=True, mode='constant', constant_values=0)
             
+            scores.append( score )
             
         score_mean = np.mean( scores )
         
