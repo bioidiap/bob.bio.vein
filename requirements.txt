@@ -15,4 +15,3 @@ bob.db.putvein
 bob.db.biowave_v1
 bob.db.biowave_test
 scikit-image
-bob.db.vera

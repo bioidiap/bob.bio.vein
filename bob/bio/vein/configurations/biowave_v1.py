@@ -33,7 +33,7 @@ There are 3 ways how database can be used, for each of them there is a separate 
 - ``biowave_v1_a`` -- (``a`` denotes ``annotations``)  only annotated files. E.g., by default, for each *hand* there are ``3x25`` images (3 sessions, 25 images in each), then the number of annotated images for each hand are ``3x2`` images;
 - ``biowave_v1_e`` -- (``a`` denotes ``extra``) this time also only data for images with annotations are returned, but this time not only original image is returned, but interface returns :py:class:`dict` object containing original image, ROI annotations and vein annotations; Note that when this database configuration is used, the ``preprocessor`` class needs to act accordingly. Currently there is implemented class :py:class:`bob.bio.vein.preprocessors.ConstructAnnotations` that works with such objects and can return constructed annotation image.
 
-**This is default** ``bob.db.biowave_v1`` **database configuration. More information -** :py:class:`bob.bio.vein.database.BiowaveV1BioDatabase()`.
+**This is default** ``bob.db.biowave_v1`` **database configuration. More information -** :py:class:`bob.bio.vein.database.BiowaveV1BioDatabase`.
 
 .. include:: links.rst
 """

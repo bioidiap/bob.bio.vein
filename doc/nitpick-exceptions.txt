@@ -2,3 +2,5 @@
 py:exc TypeError
 py:exc ValueError
 py:exc AssertionError
+#After one hour I don't know how to solve this one
+py:class bob.bio.vein.database.BiowaveV1BioDatabase
