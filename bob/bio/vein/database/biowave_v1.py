@@ -1,45 +1,38 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
+from bob.bio.base.database import BioFile, BioDatabase
 
-from .database import VeinBioFile
-from bob.bio.base.database import BioDatabase
-
-
-class BiowaveV1BioFile(VeinBioFile):
+class BiowaveV1BioFile(BioFile):
     def __init__(self,
-                 low_level_file,
-                 client_id, path,
-                 file_id, protocol,
+                 f,
+                 protocol,
                  extra_annotation_information):
         """
         Initializes this File object with an File equivalent from the low level
         implementation. The load function depends on the low level database
         protocol.
         """
-        super(BiowaveV1BioFile, self).__init__(client_id=client_id,
-                                               path=path,
-                                               file_id=file_id)
+        super(BiowaveV1BioFile, self).__init__(client_id=f.client_id,
+                                               path=f.path,
+                                               file_id=f.id)
         self.protocol = protocol
-        self.low_level_file = low_level_file
+        self.f = f
         self.extra_annotation_information = extra_annotation_information
 
     def load(self, directory=None, extension='.png'):
       if self.extra_annotation_information == True:
-        image = self.low_level_file.load(directory=directory,
+        image = self.f.load(directory=directory,
                                          extension=extension)
-        roi_annotations = self.low_level_file.\
-            roi_annotations(directory=directory)
-        vein_annotations = self.low_level_file.\
-            vein_annotations(directory=directory)
-        alignment_annotations = self.low_level_file.\
-            alignment_annotations(directory=directory)
+        roi_annotations=self.f.roi_annotations(directory=directory)
+        vein_annotations=self.f.vein_annotations(directory=directory)
+        alignment_annotations=self.f.alignment_annotations(directory=directory)
         return {"image": image,
                 "roi_annotations": roi_annotations,
                 "vein_annotations": vein_annotations,
                 "alignment_annotations": alignment_annotations}
       else:
-        return self.low_level_file.load(directory=directory,
+        return self.f.load(directory=directory,
                                         extension=extension)
 
 
@@ -151,9 +144,6 @@ class BiowaveV1BioDatabase(BioDatabase):
                                    annotated_images=self.annotated_images,
                                    imagedir = self.original_directory)
         return [BiowaveV1BioFile(f,
-                                 client_id=f.client_id,
-                                 path=f.path,
-                                 file_id=f.id,
                                  protocol=protocol,
                                  extra_annotation_information=
                                    self.extra_annotation_information)

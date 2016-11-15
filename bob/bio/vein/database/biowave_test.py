@@ -9,8 +9,25 @@
   verification experiments (good to use in bob.bio.base framework).
 """
 
-from .database import VeinBioFile
-from bob.bio.base.database import BioDatabase
+from bob.bio.base.database import BioFile, BioDatabase
+
+
+class File(BioFile):
+  """
+  Implements extra properties of vein files for the BIOWAVE V1 database
+
+
+  Parameters:
+
+    f (object): Low-level file (or sample) object that is kept inside
+
+  """
+
+  def __init__(self, f):
+
+    super(File, self).__init__(client_id=f.client_id, path=f.path, file_id=f.id)
+    self.__f = f
+
 
 
 class BiowaveTestBioDatabase(BioDatabase):
@@ -22,14 +39,6 @@ class BiowaveTestBioDatabase(BioDatabase):
             self,
             **kwargs
     ):
-        # before it was also "name" in the init.
-        #
-        # the BioDatabase class is defined in:
-        # bob.bio.db/bob/bio/db/database.py
-        #
-        # In this -- the high level implementation we call base class constructors to
-        # open a session to the database. We use **kwargs so that we could pass
-        # the arguments later, e.g. from the default database configuration.
 
         super(BiowaveTestBioDatabase, self).__init__(name='biowave_test', **kwargs)
 
@@ -45,18 +54,5 @@ class BiowaveTestBioDatabase(BioDatabase):
 
     def objects(self, protocol=None, groups=None, purposes=None, model_ids=None, **kwargs):
         retval = self.__db.objects(protocol=protocol, groups=groups, purposes=purposes, model_ids=model_ids)
-        return [VeinBioFile(client_id=f.client_id, path=f.path, file_id=f.id) for f in retval]
+        return [File(f) for f in retval]
 
-    # the methodes are derived from:
-    # bob.bio.db/bob/bio/db/database.py
-    # this means that methodes defined there need to have certain arguments, e.g.:
-    # model_ids_with_protocol:
-    #    groups;
-    #    protocol;
-    # objects:
-    #    groups;
-    #    protocol;
-    #    purposes;
-    #    model_ids;
-    # If you have some other arguments to pass, use **kwargs, if your methods doesn't have some
-    # arguments, just don't pass them (e.g. see the model_ids).
