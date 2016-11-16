@@ -13,6 +13,8 @@ from ..algorithms import AnnotationMatch
 
 from ..algorithms import MatchTemplate
 
+from ..algorithms import KeypointsMatcher
+
 huangwl = MiuraMatch(ch=18, cw=28)
 miuramax = MiuraMatch(ch=80, cw=90)
 miurarlt = MiuraMatch(ch=65, cw=55)
@@ -133,6 +135,8 @@ match_template_dilation_5 = MatchTemplate(dilation_flag = True, ellipse_mask_siz
 match_template_dilation_7 = MatchTemplate(dilation_flag = True, ellipse_mask_size = 7)
 match_template_dilation_9 = MatchTemplate(dilation_flag = True, ellipse_mask_size = 9)
 match_template_dilation_11 = MatchTemplate(dilation_flag = True, ellipse_mask_size = 11)
+
+akaze_keypoints_matcher_075 = KeypointsMatcher(ratio_to_match = 0.75)
 
 
 

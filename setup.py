@@ -134,6 +134,7 @@ setup(
         'max-eigenvalues-angles-s7p1 = bob.bio.vein.configurations.extractors.max_eigenvalues_angles:max_eigenvalues_angles_extractor_s7p1',
         'max-eigenvalues-mean-norm-angles-extractor-s5p1 = bob.bio.vein.configurations.extractors.max_eigenvalues_angles:max_eigenvalues_mean_norm_angles_extractor_s5p1',
         'extnone = bob.bio.vein.configurations.extractors.extnone:extnone',
+        'hessian-akaze-feature-extractor = bob.bio.vein.configurations.extractors.hessian_akaze_features:hessian_akaze_feature_extractor',
         ],
 
       'bob.bio.algorithm': [
@@ -272,6 +273,7 @@ setup(
         'matcher-align-magn-spat-enh-eigenval-similarity-precision-to-dist-ratio-median = bob.bio.vein.configurations.alignment_algorithms.algorithms:matcher_align_magn_spat_enh_eigenval_similarity_median_precision_to_dist_ratio',
         'matcher-align-magn-spat-enh-eigenval-similarity-mean-precision-to-dist-ratio = bob.bio.vein.configurations.alignment_algorithms.algorithms:matcher_align_magn_spat_enh_eigenval_similarity_mean_precision_to_dist_ratio',
         'matcher-align-angl-spat-enh-eigenval-similarity-precision-to-dist-ratio-median = bob.bio.vein.configurations.alignment_algorithms.algorithms:matcher_align_angl_spat_enh_eigenval_similarity_median_precision_to_dist_ratio',
+        'akaze-keypoints-matcher-075 = bob.bio.vein.configurations.algorithms:akaze_keypoints_matcher_075',
         ],
 
       'bob.bio.grid': [
