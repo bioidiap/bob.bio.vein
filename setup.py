@@ -274,6 +274,9 @@ setup(
         'matcher-align-magn-spat-enh-eigenval-similarity-mean-precision-to-dist-ratio = bob.bio.vein.configurations.alignment_algorithms.algorithms:matcher_align_magn_spat_enh_eigenval_similarity_mean_precision_to_dist_ratio',
         'matcher-align-angl-spat-enh-eigenval-similarity-precision-to-dist-ratio-median = bob.bio.vein.configurations.alignment_algorithms.algorithms:matcher_align_angl_spat_enh_eigenval_similarity_median_precision_to_dist_ratio',
         'akaze-keypoints-matcher-075 = bob.bio.vein.configurations.algorithms:akaze_keypoints_matcher_075',
+        'miura-match-fusion1-120-max = bob.bio.vein.configurations.algorithms:miura_match_fusion_120_max',
+        'miura-match-fusion2-120-median = bob.bio.vein.configurations.algorithms:miura_match_fusion_120_median',
+        'miura-match-fusion3-120-adaptive-mean = bob.bio.vein.configurations.algorithms:miura_match_fusion_120_adaptive_mean',
         ],
 
       'bob.bio.grid': [

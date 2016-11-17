@@ -97,8 +97,16 @@ class KeypointsMatcher(Algorithm):
             Must be writable with the :py:meth:`write_model` function and readable with the :py:meth:`read_model` function.
         """
 
-#        return np.array(enroll_features) # Do nothing in our case
-        return enroll_features # Do nothing in our case
+        # Find the height of the largest array of features:
+        height_max = np.max([item.shape[0] for item in enroll_features])
+
+        # Pad the array of features with zeros in the bootom to make them of the same shape:
+        enroll_features_padded = [np.vstack( [ item, np.zeros( (height_max-item.shape[0], item.shape[1]) ) ] ) for item in enroll_features]
+
+        if isinstance(enroll_features_padded, list):
+            enroll_features_padded = np.array(enroll_features_padded)
+
+        return enroll_features_padded # Do nothing in our case
 
 
     #==========================================================================
@@ -138,6 +146,11 @@ class KeypointsMatcher(Algorithm):
                 model = np.split( model, num_models, 0 ) # split 3D array into a list of 2D arrays of dimensions: (1,H,W)
 
         model = [ np.squeeze( item ) for item in model ] # remove single-dimensional entries from the shape of an array
+
+        # Remove vectors of zeros, which were substituted in the enroll() function:
+        model = [ item[0: item.shape[0]-np.argwhere(np.sum(item, 1)==0).shape[0], :] for item in model ]
+
+        model = [ np.uint8(item) for item in model ] # Convert to the proper data type
 
         for enroll in model:
 

@@ -4,3 +4,12 @@ py:exc ValueError
 py:exc AssertionError
 #After one hour I don't know how to solve this one
 py:class bob.bio.vein.database.BiowaveV1BioDatabase
+py:class bob.bio.base.database.BioFile
+py:class bob.bio.base.database.BioDatabase
+py:class BioFile
+py:class bob.bio.base.database.database.BioDatabase
+py:class BioFileSet
+py:class bob.bio.base.database.file.BioFile
+py:class bob.bio.base.preprocessor.Preprocessor.Preprocessor
+py:class bob.bio.base.extractor.Extractor.Extractor
+py:class bob.bio.base.algorithm.Algorithm.Algorithm

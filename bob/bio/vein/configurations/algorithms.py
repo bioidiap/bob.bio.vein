@@ -15,6 +15,8 @@ from ..algorithms import MatchTemplate
 
 from ..algorithms import KeypointsMatcher
 
+from ..algorithms import MiuraMatchFusion
+
 huangwl = MiuraMatch(ch=18, cw=28)
 miuramax = MiuraMatch(ch=80, cw=90)
 miurarlt = MiuraMatch(ch=65, cw=55)
@@ -137,6 +139,44 @@ match_template_dilation_9 = MatchTemplate(dilation_flag = True, ellipse_mask_siz
 match_template_dilation_11 = MatchTemplate(dilation_flag = True, ellipse_mask_size = 11)
 
 akaze_keypoints_matcher_075 = KeypointsMatcher(ratio_to_match = 0.75)
+
+miura_match_fusion_120_max = MiuraMatchFusion(ch = 120, cw = 120, score_fusion_method = 'max')
+miura_match_fusion_120_median = MiuraMatchFusion(ch = 120, cw = 120, score_fusion_method = 'median')
+miura_match_fusion_120_adaptive_mean = MiuraMatchFusion(ch = 120, cw = 120, score_fusion_method = 'adaptive_mean')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
