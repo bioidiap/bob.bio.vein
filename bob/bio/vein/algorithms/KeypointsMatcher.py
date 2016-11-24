@@ -43,7 +43,7 @@ class KeypointsMatcher(Algorithm):
         Match two sets of keypoints. The matching score is ratio of selected/stable
         keypoints to the total number of keypoints in both sets.
 
-        **Returns:**
+        **Parameters:**
 
         ``descriptors1`` : 2D :py:class:`numpy.ndarray`
             Array conatining the AKAZE features for the enroll. The dimensionality of the array:
