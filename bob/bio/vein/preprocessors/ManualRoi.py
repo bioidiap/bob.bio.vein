@@ -18,7 +18,9 @@ class ManualRoi(Preprocessor):
     """
     def __init__(self, erode_size = 0, **kwargs):
   
-      Preprocessor.__init__(self, erode_size , **kwargs)
+      Preprocessor.__init__(self, 
+                            erode_size=erode_size,
+                            **kwargs)
       
       self.erode_size = erode_size
 

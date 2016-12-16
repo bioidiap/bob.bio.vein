@@ -57,125 +57,125 @@ def test_AlignedMatching():
     """
     Test the AlignedMatching class, which is a matching Algorithm with alignment.
     """
-    
+
     #==========================================================================
     # 1) Test the pipeline based on Masked Spatially Enhanced Hessian Histograms:
-    
+
     from bob.bio.vein.algorithms.aligners import HessianCrossCorrAlignment
     from bob.bio.vein.algorithms.transformers import ShiftEnrollProbeMasked
     from bob.bio.vein.algorithms.extractors import SpatEnhancHessianHistMasked
     from bob.bio.vein.algorithms.algorithms import HistogramsMatching
     from bob.bio.vein.algorithms import AlignedMatching
-    
+
     enroll_filename = F( ( 'algorithms', 'AlignedMatching_test_data_1.hdf5' ) ) # filename with enroll data
-    
+
     probe_filename = F( ( 'algorithms', 'AlignedMatching_test_data_2.hdf5' ) ) # filename with probe data
-    
+
     # Initialize the aligner, which alignes the magnitudes of eigenvectors of Hessian matrices
     align_power = 1
     data_name_to_align = "eigenvectors_magnitude"
     aligner = HessianCrossCorrAlignment( align_power = align_power, data_name_to_align = data_name_to_align )
-    
+
     # Initialize the transformer, which updates the enroll and probe
     transformer = ShiftEnrollProbeMasked()
-    
+
     # Initialize the extractor, which extracts the Spatially Enhanced Hessian Histogram
     n_bins = 25
     eigenval_power = 1
     extractor = SpatEnhancHessianHistMasked( n_bins = n_bins, eigenval_power = eigenval_power )
-    
+
     # Initialize the matching algorithm, which matches histograms using chi_square metrics
-    algorithm = HistogramsMatching()    
-    
+    algorithm = HistogramsMatching()
+
     # Initialize the instance of the AlignedMatching class:
     matcher = AlignedMatching( aligner, transformer, extractor, algorithm )
-    
-    
+
+
     enroll = matcher.read_probe( enroll_filename )
     probe = matcher.read_probe( probe_filename )
-        
+
     model = [enroll]
-    
+
     score = matcher.score( model, probe )
-    
+
     #==========================================================================
     # 2) Test the pipeline based on Masked Hessian Histograms:
 
     from bob.bio.vein.algorithms.extractors import HessianHistMasked
-    
+
     # Initialize the extractor, which extracts the Hessian Histogram
     n_bins = 50
     eigenval_power = 1
     extractor = HessianHistMasked( n_bins = n_bins, eigenval_power = eigenval_power )
-    
+
     matcher = AlignedMatching( aligner, transformer, extractor, algorithm )
-    
+
     score_hessian_hist = matcher.score( model, probe )
-    
+
     #==========================================================================
     # 3) Test the pipeline based on Spatially Enhanced LBP Histograms applied to Hessian images:
-    
+
     from bob.bio.vein.algorithms.extractors import SpatEnhancLBPHistMasked
-    
+
     neighbors = 8
     radius = 4
     to_average = False
     add_average_bit = False
-    
+
     extractor = SpatEnhancLBPHistMasked( neighbors = neighbors, radius = radius, to_average = to_average, add_average_bit = add_average_bit )
-    
+
     matcher = AlignedMatching( aligner, transformer, extractor, algorithm )
-    
+
     score_spat_enh_lbp_hist = matcher.score( model, probe )
-        
+
     #==========================================================================
     # 4) Test the pipeline based on Re-Alignment of Spatially Enhanced Hessian Images:
-    
+
     from bob.bio.vein.algorithms.extractors import SpatEnhancEigenvalMasked
     from bob.bio.vein.algorithms.algorithms import SpatEnhancEigenvalMatching
-    
+
     # Initialize the extractor, which splits the image of eigenvalues into 4 sub-regions
     extractor = SpatEnhancEigenvalMasked()
-    
+
     # Initialize the matching algorithm, which 4 subregions computed by above extractor
     similarity_metrics_name = "error_mean"
     algorithm = SpatEnhancEigenvalMatching( similarity_metrics_name = similarity_metrics_name )
-    
+
     # Initialize the instance of the AlignedMatching class:
     matcher = AlignedMatching( aligner, transformer, extractor, algorithm )
-    
+
     score_spat_enh_eigenvalues = matcher.score( model, probe )
-    
+
     #==========================================================================
-    
+
     assert ( (score + 0.35447476151901641) < 1e-10 ) # Test the score value
     assert ( (score_hessian_hist + 0.019778549180568854) < 1e-10 ) # Test the score produced by the second pipeline
     assert ( (score_spat_enh_lbp_hist + 0.86723861364068888) < 1e-10 ) # Test the score produced by the third pipeline
     assert ( (score_spat_enh_eigenvalues + 0.47366791419007259) < 1e-10 ) # Test the score produced by the last pipeline
-    
-    
+
+
 #==============================================================================
 def test_KMeansRoi():
     """
     Test the ROI extraction algorithm namely KMeansRoi.
     """
-    
+
     input_filename = F( ( 'preprocessors', 'TopographyCutRoi_test_image.png' ) ) # the same image is used for testing of TopographyCutRoi and KMeansRoi algorithms
-    
+
     output_filename = F( ( 'preprocessors', 'KMeansRoi_result_image.hdf5' ) )
-    
+
     image = bob.io.base.load( input_filename )
-    
+
     extractor = KMeansRoi(convexity_flag = True)
-    
+
     roi = extractor.get_roi( image )
-    
+
     f = bob.io.base.HDF5File( output_filename )
-    
+
     roi_loaded = f.read('data')
-    
+
     del f
-    
+
     assert ( ( np.sum( np.abs( roi - roi_loaded ) ) ) < 100 ) # the conditions are not strict, because the behaviour of the k-means module may vary slightly
 
 
@@ -184,51 +184,51 @@ def test_TopographyCutRoi():
     """
     Test the ROI extraction algorithm namely TopographyCutRoi.
     """
-    
+
     input_filename = F( ( 'preprocessors', 'TopographyCutRoi_test_image.png' ) )
-    
+
     output_filename = F( ( 'preprocessors', 'TopographyCutRoi_result_image.hdf5' ) )
-    
+
     image = bob.io.base.load( input_filename )
-    
+
     extractor = TopographyCutRoi()
-    
+
     roi = extractor.get_ROI( image )
-    
+
     f = bob.io.base.HDF5File( output_filename )
-    
+
     roi_loaded = f.read('data')
-    
+
     del f
-    
+
     assert (roi == roi_loaded).all()
-    
+
 #==============================================================================
 def test_MiuraMatchAligned():
     """
     Test the vein matching algorithm namely MiuraMatchAligned.
     """
-    
+
     model_filename = F( ( 'algorithms', 'MiuraMatchAligned_test_data_1.hdf5' ) )
-    
+
     probe_filename = F( ( 'algorithms', 'MiuraMatchAligned_test_data_2.hdf5' ) )
-    
+
     f = bob.io.base.HDF5File( model_filename )
-    
+
     model = f.read('data')
-    
+
     del f
-    
+
     f = bob.io.base.HDF5File( probe_filename )
-    
+
     probe = f.read('data')
-    
+
     del f
-    
+
     miura_matcher = MiuraMatchAligned( ch = 10, cw = 10, alignment_flag = False, alignment_method = "center_of_mass" )
 
     score = miura_matcher.score( model, probe )
-    
+
     assert np.abs( score - 0.040135929463629753 ) < 0.000001
 
 #==============================================================================
@@ -236,28 +236,28 @@ def test_MaskedLBPHistograms():
     """
     Test the feature extraction algorithm namely MaskedLBPHistograms.
     """
-    
+
     input_filename = F( ( 'extractors', 'MaskedLBPHistograms_test_image.png' ) )
-    
+
     results_filename = F( ( 'extractors', 'MaskedLBPHistograms_test_data.hdf5' ) )
-    
+
     image = bob.io.base.load( input_filename )
-    
+
     mask = np.ones( image.shape )
-    
+
     radius = [4, 5, 6]
     neighbors = [4, 8, 8]
-    
+
     lbp_extractor_instance = MaskedLBPHistograms( neighbors, radius )
-    
+
     computed = lbp_extractor_instance.masked_lbp_histograms( image, mask )
-    
+
     f = bob.io.base.HDF5File( results_filename )
-    
+
     downloaded = f.read('data')
-    
+
     del f
-    
+
     assert np.abs( np.sum( computed - downloaded ) ) < 0.000001
 
 #==============================================================================
@@ -302,14 +302,14 @@ def test_manualRoiCut():
   from bob.bio.vein.preprocessors.utils.utils import ManualRoiCut
   image_path      = F(('preprocessors', '0019_3_1_120509-160517.png'))
   annotation_path  = F(('preprocessors', '0019_3_1_120509-160517.txt'))
-  
+
   c = ManualRoiCut(annotation_path, image_path)
   mask_1 = c.roi_mask()
   image_1 = c.roi_image()
   # create mask using size:
   c = ManualRoiCut(annotation_path, sizes=(672,380))
   mask_2 = c.roi_mask()
-  
+
   # loading image:
   image = bob.io.base.load(image_path)
   c = ManualRoiCut(annotation_path, image)
@@ -323,7 +323,7 @@ def test_manualRoiCut():
   c = ManualRoiCut(annotation, image)
   mask_4 = c.roi_mask()
   image_4 = c.roi_image()
-  
+
   assert (mask_1 == mask_2).all()
   assert (mask_1 == mask_3).all()
   assert (mask_1 == mask_4).all()
@@ -898,7 +898,7 @@ def test_AnnotationMatch():
   assert np.isclose(AM.score(test_pattern, test_pattern), 1)
   AM = AnnotationMatch(sigma=5, score_method='max')
   assert np.isclose(AM.score(test_pattern, test_pattern), 1)
-  
+
   AM = AnnotationMatch(sigma=0, score_method='mean')
   assert not np.isclose(AM.score(test_pattern, test_pattern2), 1)
   AM = AnnotationMatch(sigma=5, score_method='mean')
@@ -911,7 +911,7 @@ def test_AnnotationMatch():
   assert not np.isclose(AM.score(test_pattern, test_pattern2), 1)
   AM = AnnotationMatch(sigma=5, score_method='max')
   assert not np.isclose(AM.score(test_pattern, test_pattern2), 1)
-  
+
 def test_PreNone():
   """
   Test empty prepocesor - PreNone
@@ -943,7 +943,7 @@ def test_ConstructAnnotations():
   image_filename = F( ( 'preprocessors', 'ConstructAnnotations.png' ) )
   roi_annotations_filename = F( ( 'preprocessors', 'ConstructAnnotations.txt' ) )
   vein_annotations_filename = F( ( 'preprocessors', 'ConstructAnnotations.npy' ) )
-  
+
   image = bob.io.base.load( image_filename )
   roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
   roi_annotations =  [tuple([point[0], point[1]]) for point in roi_annotations]
@@ -952,8 +952,11 @@ def test_ConstructAnnotations():
   vein_annotations = vein_annotations['arr_0'].tolist()
   fp.close()
   vein_annotations = [[tuple([point[0], point[1]]) for point in line] for line in vein_annotations]
-  
-  annotation_dictionary = {"image" : image, "roi_annotations" : roi_annotations, "vein_annotations" : vein_annotations}
+
+  annotation_dictionary = {"image" : image,
+                           "roi_annotations" : roi_annotations,
+                           "vein_annotations" : vein_annotations}
+
   from bob.bio.vein.preprocessors import ConstructAnnotations
   preprocessor = ConstructAnnotations(center = True, rotate = True)
   output = preprocessor(annotation_dictionary)
@@ -967,13 +970,13 @@ def test_ManualRoi():
   image_filename = F( ( 'preprocessors', 'ConstructAnnotations.png' ) )
   roi_annotations_filename = F( ( 'preprocessors', 'ConstructAnnotations.txt' ) )
   vein_annotations_filename = F( ( 'preprocessors', 'ConstructAnnotations.npy' ) )
-  
-  
+
+
 #  image_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/ConstructAnnotations.png'
 #  roi_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/ConstructAnnotations.txt'
 #  vein_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/ConstructAnnotations.npy'
-  
-  
+
+
   image = bob.io.base.load( image_filename )
   roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
   roi_annotations =  [tuple([point[0], point[1]]) for point in roi_annotations]
@@ -982,7 +985,7 @@ def test_ManualRoi():
   vein_annotations = vein_annotations['arr_0'].tolist()
   fp.close()
   vein_annotations = [[tuple([point[0], point[1]]) for point in line] for line in vein_annotations]
-  
+
   annotation_dictionary = {"image" : image, "roi_annotations" : roi_annotations, "vein_annotations" : vein_annotations}
   from bob.bio.vein.preprocessors import ManualRoi
   preprocessor = ManualRoi()
@@ -991,3 +994,79 @@ def test_ManualRoi():
   output2 = preprocessor(annotation_dictionary)
   assert output1[1].sum() > output2[1].sum()
 
+def test_Threshold():
+  image_filename = F( ( 'preprocessors', '023_F_R_S01_A02_3.png' ) )
+  roi_annotations_filename = F( ( 'preprocessors', '023_F_R_S01_A02_3.txt' ) )
+  vein_annotations_filename = F( ( 'preprocessors', '023_F_R_S01_A02_3.npy' ) )
+
+  # image_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.png'
+  # roi_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.txt'
+  # vein_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.npy'
+
+  image = bob.io.base.load( image_filename )
+  roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
+  roi_annotations =  [tuple([point[0], point[1]]) for point in roi_annotations]
+  fp = open(vein_annotations_filename, 'rb')
+  vein_annotations = np.load(fp)
+  vein_annotations = vein_annotations['arr_0'].tolist()
+  fp.close()
+  vein_annotations = [[tuple([point[0], point[1]]) for point in line] for line in vein_annotations]
+  annotation_dictionary = {"image" : image, "roi_annotations" : roi_annotations, "vein_annotations" : vein_annotations}
+
+  from bob.bio.vein.preprocessors import ManualRoi
+  preprocessor = ManualRoi()
+  data = preprocessor(annotation_dictionary)
+  from bob.bio.vein.extractors import Threshold
+  extractor = Threshold(name="Adaptive_ski_25_3_50",
+                        median=True,
+                        size=5)
+  output = extractor(data)
+  assert np.sum(output) == 22524
+#  import matplotlib.pyplot as plt
+#  fig = plt.figure()
+#  ax = plt.subplot(131)
+#  ax.imshow(data[0], cmap='Greys_r', interpolation='none')
+#  ax = plt.subplot(132)
+#  ax.imshow(data[1], cmap='Greys_r', interpolation='none')
+#  ax = plt.subplot(133)
+#  ax.imshow(output, cmap='Greys_r', interpolation='none')
+#  plt.show(fig)
+
+
+def test_Learn():
+  image_filename = F( ( 'preprocessors', '023_F_R_S01_A02_3.png' ) )
+  roi_annotations_filename = F( ( 'preprocessors', '023_F_R_S01_A02_3.txt' ) )
+  vein_annotations_filename = F( ( 'preprocessors', '023_F_R_S01_A02_3.npy' ) )
+
+  image_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.png'
+  roi_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.txt'
+  vein_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.npy'
+
+  image = bob.io.base.load( image_filename )
+  roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
+  roi_annotations =  [tuple([point[0], point[1]]) for point in roi_annotations]
+  fp = open(vein_annotations_filename, 'rb')
+  vein_annotations = np.load(fp)
+  vein_annotations = vein_annotations['arr_0'].tolist()
+  fp.close()
+  vein_annotations = [[tuple([point[0], point[1]]) for point in line] for line in vein_annotations]
+  annotation_dictionary = {"image" : image, "roi_annotations" : roi_annotations, "vein_annotations" : vein_annotations}
+
+  from bob.bio.vein.preprocessors import ManualRoi
+  preprocessor = ManualRoi()
+  data = preprocessor(annotation_dictionary)
+  from bob.bio.vein.extractors import Learn
+  extractor = Learn(name="raw_19_8",
+                        median=True,
+                        size=5)
+  output = extractor(data)
+  assert np.sum(output) == 14496
+#  import matplotlib.pyplot as plt
+#  fig = plt.figure()
+#  ax = plt.subplot(131)
+#  ax.imshow(data[0], cmap='Greys_r', interpolation='none')
+#  ax = plt.subplot(132)
+#  ax.imshow(data[1], cmap='Greys_r', interpolation='none')
+#  ax = plt.subplot(133)
+#  ax.imshow(output, cmap='Greys_r', interpolation='none')
+#  plt.show(fig)
