@@ -1021,9 +1021,8 @@ def test_Threshold():
                         median=True,
                         size=5)
   output = extractor(data)
-  assert np.sum(output) > 22500
-  assert np.sum(output) < 22550
-# assert np.sum(output) == 22524
+  print(np.sum(output))
+  assert np.isclose(np.sum(output),22524, atol=100)
 #  import matplotlib.pyplot as plt
 #  fig = plt.figure()
 #  ax = plt.subplot(131)
@@ -1062,9 +1061,8 @@ def test_Learn():
                         median=True,
                         size=5)
   output = extractor(data)
-  assert np.sum(output) > 14400
-  assert np.sum(output) < 14550
-#  assert np.sum(output) == 14496
+  print(np.sum(output))
+  assert np.isclose(np.sum(output),14496, atol=100)  
 #  import matplotlib.pyplot as plt
 #  fig = plt.figure()
 #  ax = plt.subplot(131)
