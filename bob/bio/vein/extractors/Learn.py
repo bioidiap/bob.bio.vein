@@ -4,8 +4,8 @@
 import numpy as np
 from bob.bio.base.extractor import Extractor
 import bob.ip.base
-import bob.io.base
-import bob.learn.libsvm
+# import bob.io.base
+# import bob.learn.libsvm
 import bob.io.base
 from skimage.morphology import disk
 from skimage.filters.rank import median

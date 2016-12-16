@@ -6,8 +6,8 @@ from bob.bio.base.extractor import Extractor
 import bob.ip.base
 import bob.io.base
 import cv2
-import bob.learn.libsvm
-import bob.io.base
+# import bob.learn.libsvm
+# import bob.io.base
 from skimage.filters.rank import mean_percentile
 from skimage.morphology import disk
 from skimage import exposure
@@ -60,7 +60,7 @@ class Threshold(Extractor):
         elif self.name.startswith("Adaptive") and not \
             self.name.startswith("Adaptive_h") and not \
             self.name.startswith("Adaptive_c") and not \
-            self.name.startswith("Adaptive_ski") :
+            self.name.startswith("Adaptive_ski"):
 
             params = self.name.split("_")
             p1 = int(params[1])
