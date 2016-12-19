@@ -62,8 +62,8 @@ class Learn(Extractor):
         block_overlap = tuple(i - 1 for i in block_size)
         if len(image.shape) == 2:
             image = np.pad(image,
-                           ((self.block_y/2, self.block_y/2),
-                            (self.block_x/2, self.block_x/2)),
+                           ((int(np.floor(self.block_y/2)), int(np.floor(self.block_y/2))),
+                            (int(np.floor(self.block_x/2)), int(np.floor(self.block_x/2)))),
                            mode='edge')
             image_patches = \
                 bob.ip.base.block(image,

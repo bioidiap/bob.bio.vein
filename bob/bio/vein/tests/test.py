@@ -1042,9 +1042,9 @@ def test_Learn():
   roi_annotations_filename = F( ( 'preprocessors', '023_F_R_S01_A02_3.txt' ) )
   vein_annotations_filename = F( ( 'preprocessors', '023_F_R_S01_A02_3.npy' ) )
 
-  # image_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.png'
-  # roi_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.txt'
-  # vein_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.npy'
+#   image_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.png'
+#   roi_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.txt'
+#   vein_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.npy'
 
   image = bob.io.base.load( image_filename )
   roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
