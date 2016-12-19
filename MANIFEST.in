@@ -1,3 +1,4 @@
 include README.rst bootstrap-buildout.py buildout.cfg COPYING
 recursive-include doc *.py *.rst
 recursive-include bob/bio/vein/tests *.png *.mat *.txt *.hdf5 *.npy
+recursive-include bob/bio/vein/extractors/machines *.hdf5 *.p
