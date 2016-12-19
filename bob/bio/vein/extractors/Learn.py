@@ -64,7 +64,7 @@ class Learn(Extractor):
             image = np.pad(image,
                            ((self.block_y/2, self.block_y/2),
                             (self.block_x/2, self.block_x/2)),
-                           'edge')
+                           mode='edge')
             image_patches = \
                 bob.ip.base.block(image,
                                   block_size=block_size,

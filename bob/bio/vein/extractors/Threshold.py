@@ -118,7 +118,10 @@ class Threshold(Extractor):
             image = np.float32(image)
             image -= local_mean
             image = exposure.rescale_intensity(image, out_range=(0, 1))
-            image = exposure.equalize_adapthist(image, clip_limit=0.05)
+            import warnings
+            with warnings.catch_warnings(record=True) as w:
+                image = exposure.equalize_adapthist(image, clip_limit=0.05)
+
             image = image * 255
             image = np.array(image, dtype=np.uint8)
             image = cv2.medianBlur(image, 5)
@@ -151,6 +154,7 @@ class Threshold(Extractor):
         image = np.where(mask < 1,
                          min_ROI_value,
                          image)
+        #import ipdb; ipdb.sset_trace()
         image = self.__apply_baseline__(image)
 
         if self.median:

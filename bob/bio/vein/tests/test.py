@@ -857,7 +857,7 @@ def test_manualRoiCut():
     # create mask using size:
     c = ManualRoiCut(annotation_path, sizes=(672,380))
     mask_2 = c.roi_mask()
-    
+
     # loading image:
     image = bob.io.base.load(image_path)
     c = ManualRoiCut(annotation_path, image)
@@ -866,13 +866,13 @@ def test_manualRoiCut():
     # load text file:
     with open(annotation_path,'r') as f:
         retval = numpy.loadtxt(f, ndmin=2)
-        
+
     # carefully -- this is BOB format --- (x,y)
     annotation = list([tuple([k[0], k[1]]) for k in retval])
     c = ManualRoiCut(annotation, image)
     mask_4 = c.roi_mask()
     image_4 = c.roi_image()
-    
+
     assert (mask_1 == mask_2).all()
     assert (mask_1 == mask_3).all()
     assert (mask_1 == mask_4).all()
@@ -995,23 +995,26 @@ def test_ManualRoi():
   assert output1[1].sum() > output2[1].sum()
 
 def test_Threshold():
-  image_filename = F( ( 'preprocessors', '023_F_R_S01_A02_3.png' ) )
-  roi_annotations_filename = F( ( 'preprocessors', '023_F_R_S01_A02_3.txt' ) )
-  vein_annotations_filename = F( ( 'preprocessors', '023_F_R_S01_A02_3.npy' ) )
+  image_filename = F(('preprocessors', '023_F_R_S01_A02_3.png'))
+  roi_annotations_filename = F(('preprocessors', '023_F_R_S01_A02_3.txt'))
+  vein_annotations_filename = F(('preprocessors', '023_F_R_S01_A02_3.npy'))
 
-  # image_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.png'
-  # roi_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.txt'
-  # vein_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.npy'
+#   image_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.png'
+#   roi_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.txt'
+#   vein_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.npy'
 
-  image = bob.io.base.load( image_filename )
+  image = bob.io.base.load(image_filename)
   roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
-  roi_annotations =  [tuple([point[0], point[1]]) for point in roi_annotations]
+  roi_annotations = [tuple([point[0], point[1]]) for point in roi_annotations]
   fp = open(vein_annotations_filename, 'rb')
   vein_annotations = np.load(fp)
   vein_annotations = vein_annotations['arr_0'].tolist()
   fp.close()
-  vein_annotations = [[tuple([point[0], point[1]]) for point in line] for line in vein_annotations]
-  annotation_dictionary = {"image" : image, "roi_annotations" : roi_annotations, "vein_annotations" : vein_annotations}
+  vein_annotations = [[tuple([point[0], point[1]]) for point in line]
+                       for line in vein_annotations]
+  annotation_dictionary = {"image" : image,
+                           "roi_annotations" : roi_annotations,
+                           "vein_annotations" : vein_annotations}
 
   from bob.bio.vein.preprocessors import ManualRoi
   preprocessor = ManualRoi()
@@ -1062,7 +1065,7 @@ def test_Learn():
                         size=5)
   output = extractor(data)
   print(np.sum(output))
-  assert np.isclose(np.sum(output),14496, atol=100)  
+  assert np.isclose(np.sum(output),14496, atol=100)
 #  import matplotlib.pyplot as plt
 #  fig = plt.figure()
 #  ax = plt.subplot(131)
