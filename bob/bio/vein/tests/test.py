@@ -994,49 +994,6 @@ def test_ManualRoi():
   output2 = preprocessor(annotation_dictionary)
   assert output1[1].sum() > output2[1].sum()
 
-def test_Threshold():
-  image_filename = F(('preprocessors', '023_F_R_S01_A02_3.png'))
-  roi_annotations_filename = F(('preprocessors', '023_F_R_S01_A02_3.txt'))
-  vein_annotations_filename = F(('preprocessors', '023_F_R_S01_A02_3.npy'))
-
-#   image_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.png'
-#   roi_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.txt'
-#   vein_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.npy'
-
-  image = bob.io.base.load(image_filename)
-  roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
-  roi_annotations = [tuple([point[0], point[1]]) for point in roi_annotations]
-  fp = open(vein_annotations_filename, 'rb')
-  vein_annotations = np.load(fp)
-  vein_annotations = vein_annotations['arr_0'].tolist()
-  fp.close()
-  vein_annotations = [[tuple([point[0], point[1]]) for point in line]
-                       for line in vein_annotations]
-  annotation_dictionary = {"image" : image,
-                           "roi_annotations" : roi_annotations,
-                           "vein_annotations" : vein_annotations}
-
-  from bob.bio.vein.preprocessors import ManualRoi
-  preprocessor = ManualRoi()
-  data = preprocessor(annotation_dictionary)
-  from bob.bio.vein.extractors import Threshold
-  extractor = Threshold(name="Adaptive_ski_25_3_50",
-                        median=True,
-                        size=5)
-  output = extractor(data)
-  print(np.sum(output))
-  assert np.isclose(np.sum(output),22524, atol=100)
-#  import matplotlib.pyplot as plt
-#  fig = plt.figure()
-#  ax = plt.subplot(131)
-#  ax.imshow(data[0], cmap='Greys_r', interpolation='none')
-#  ax = plt.subplot(132)
-#  ax.imshow(data[1], cmap='Greys_r', interpolation='none')
-#  ax = plt.subplot(133)
-#  ax.imshow(output, cmap='Greys_r', interpolation='none')
-#  plt.show(fig)
-
-
 def test_Learn():
   image_filename = F( ( 'preprocessors', '023_F_R_S01_A02_3.png' ) )
   roi_annotations_filename = F( ( 'preprocessors', '023_F_R_S01_A02_3.txt' ) )
