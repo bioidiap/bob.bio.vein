@@ -6,6 +6,7 @@ from .ExtVeinsBiosig import ExtVeinsBiosig
 from .HessianAkazeFeatures import HessianAkazeFeatures
 from .Threshold import Threshold
 from .Learn import Learn
+from .MaxEigenvalues import MaxEigenvalues
 
 
 # gets sphinx autodoc done right - don't remove it

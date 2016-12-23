@@ -135,6 +135,8 @@ setup(
         'max-eigenvalues-mean-norm-angles-extractor-s5p1 = bob.bio.vein.configurations.extractors.max_eigenvalues_angles:max_eigenvalues_mean_norm_angles_extractor_s5p1',
         'extnone = bob.bio.vein.configurations.extractors.extnone:extnone',
         'hessian-akaze-feature-extractor = bob.bio.vein.configurations.extractors.hessian_akaze_features:hessian_akaze_feature_extractor',
+        'max-eigenvalues-non-zero-neg-mean-norm-s5 = bob.bio.vein.configurations.extractors.max_eigenvalues:max_eigenvalues_non_zero_neg_mean_norm_s5',
+        'max-eigenvalues-zero-neg-mean-norm-s5 = bob.bio.vein.configurations.extractors.max_eigenvalues:max_eigenvalues_zero_neg_mean_norm_s5',
         ],
 
       'bob.bio.algorithm': [
