@@ -85,7 +85,7 @@ class MiuraMatch (Algorithm):
 
     Returns:
 
-      score (float): Value between 0 and 0.5, larger value means a better match
+      float: Value between 0 and 0.5, larger value means a better match
 
     """
 
