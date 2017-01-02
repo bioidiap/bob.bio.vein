@@ -172,7 +172,9 @@ class CrossCorrelationMatch(Algorithm):
         probe_rotated = tf.rotate(image_probe, angle = angle,  preserve_range = True)
 
         probe_mask_rotated = tf.rotate(probe_mask, angle = angle, preserve_range = True)
-        probe_mask_rotated = probe_mask_rotated.astype(np.uint)
+
+        probe_mask_rotated[probe_mask_rotated>0.1] = 1
+        probe_mask_rotated = probe_mask_rotated.astype(np.uint8)
 
         image_product = np.fft.fft2(image_enroll) * np.fft.fft2(probe_rotated).conj()
         cc_image = np.fft.fftshift(np.fft.ifft2(image_product)).real
@@ -184,13 +186,28 @@ class CrossCorrelationMatch(Algorithm):
 
         probe_mask_rotated_translated = tf.warp(probe_mask_rotated, tform, preserve_range = True)
 
-        joint_roi = np.uint8(probe_mask_rotated_translated*enroll_mask)
+        probe_mask_rotated_translated[probe_mask_rotated_translated>0.1] = 1
+        probe_mask_rotated_translated = probe_mask_rotated_translated.astype(np.uint8)
 
-        enroll_updated = self.mean_std_normalization(image_enroll, joint_roi)
+        joint_roi = probe_mask_rotated_translated*enroll_mask
 
-        probe_updated = self.mean_std_normalization(probe_rotated_translated, joint_roi)
+        joint_roi = joint_roi.astype(np.uint8)
 
-        score = np.average( enroll_updated * probe_updated, weights = joint_roi)
+        if np.sum(joint_roi) > 100:
+
+            enroll_updated = self.mean_std_normalization(image_enroll, joint_roi)
+
+            probe_updated = self.mean_std_normalization(probe_rotated_translated, joint_roi)
+
+            score = np.average( enroll_updated * probe_updated, weights = joint_roi)
+
+        else:
+
+            enroll_updated = image_enroll
+
+            probe_updated = probe_rotated_translated
+
+            score = 0
 
         return score, enroll_updated, probe_updated, cc_image
 
