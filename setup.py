@@ -279,6 +279,7 @@ setup(
         'miura-match-fusion1-120-max = bob.bio.vein.configurations.algorithms:miura_match_fusion_120_max',
         'miura-match-fusion2-120-median = bob.bio.vein.configurations.algorithms:miura_match_fusion_120_median',
         'miura-match-fusion3-120-adaptive-mean = bob.bio.vein.configurations.algorithms:miura_match_fusion_120_adaptive_mean',
+        'cross-correlation-match-mean1-fusion = bob.bio.vein.configurations.algorithms:cross_correlation_match_mean1_fusion',
         ],
 
       'bob.bio.grid': [

@@ -17,6 +17,8 @@ from ..algorithms import KeypointsMatcher
 
 from ..algorithms import MiuraMatchFusion
 
+from ..algorithms import CrossCorrelationMatch
+
 huangwl = MiuraMatch(ch=18, cw=28)
 miuramax = MiuraMatch(ch=80, cw=90)
 miurarlt = MiuraMatch(ch=65, cw=55)
@@ -144,6 +146,7 @@ miura_match_fusion_120_max = MiuraMatchFusion(ch = 120, cw = 120, score_fusion_m
 miura_match_fusion_120_median = MiuraMatchFusion(ch = 120, cw = 120, score_fusion_method = 'median')
 miura_match_fusion_120_adaptive_mean = MiuraMatchFusion(ch = 120, cw = 120, score_fusion_method = 'adaptive_mean')
 
+cross_correlation_match_mean1_fusion = CrossCorrelationMatch(is_mean_normalize_flag = False, score_fusion_method = 'mean')
 
 
 
