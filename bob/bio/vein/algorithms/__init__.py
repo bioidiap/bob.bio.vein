@@ -9,6 +9,7 @@ from .MatchTemplate import MatchTemplate
 from .KeypointsMatcher import KeypointsMatcher
 from .MiuraMatchFusion import MiuraMatchFusion
 from .CrossCorrelationMatch import CrossCorrelationMatch
+from .MMManual import MMManual
 
 # gets sphinx autodoc done right - don't remove it
 __all__ = [_ for _ in dir() if not _.startswith('_')]

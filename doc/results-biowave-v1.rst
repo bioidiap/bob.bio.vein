@@ -888,21 +888,41 @@ Summary
 Vein pattern is extracted from input images, if necessary, binarized. Outside-ROI area are deleted. After same metrics as in ROI detection are used - metric [1] is called as *correct*, but [2] -- as *incorrect*. These metrics are calculated using dilating the ground-truth mask using parameters - ``0`` (no dilation performed), ``5``, ``7``, ``9``, and ``11`` pixels. *Best* and *Worst* examples are shown with no dilation used.
 
 
-+------------------------------------+---------------------+---------------------+
-|        Algorithm                   |      Correct, %     |      Incorrect, %   |
-+====================================+=====================+=====================+
-|    Vein Filter (Biosig 2015)       |         13.7 %      |       33.1 %        |
-+------------------------------------+---------------------+---------------------+
-|        Maximum Curvature           |         37.4 %      |       120.1 %       | 
-+------------------------------------+---------------------+---------------------+
-|     Repeated Line Tracking         |         72.4 %      |      1258.3 %       |
-+------------------------------------+---------------------+---------------------+
-|        Wide Line Detector          |         21.8 %      |       315.0 %       |
-+------------------------------------+---------------------+---------------------+
++------------------------------------+---------------------+---------------------+--------------------+--------------------+-----------------------------------+-------------------------+
+|                                    |                       all data (666 images)                    |          recognition, DEV data set                     |  ``EVAL``               |
++------------------------------------+---------------------+---------------------+--------------------+--------------------+-----------------------------------+-------------------------+
+|        Algorithm                   |   Veins found %     | Background find, %  |   Average, %       |   ``EER`` (best)   |  ``FRR`` @ ``FAR`` = 0.1% (best)  | ``FRR`` on ``eval`` set |
++====================================+=====================+=====================+====================+====================+===================================+=========================+
+|          manual                    |        100.00%      |     100.00%         |     100.00%        |        21.278%     |     65.312% [1] / **70.000%**     | 62.813% [1] / 68.125%   |
++------------------------------------+---------------------+---------------------+--------------------+--------------------+-----------------------------------+-------------------------+
+|   LR, best, with median            |         84.02%      |      87.54%         |      85.78%        |        23.125%     |          **67.812%**              |        60.625%          |
++------------------------------------+---------------------+---------------------+--------------------+--------------------+-----------------------------------+-------------------------+
+|   LR, best, no median              |         84.92%      |      85.72%         |      85.32%        |        23.125%     |            70.000%                |        63.750%          |
++------------------------------------+---------------------+---------------------+--------------------+--------------------+-----------------------------------+-------------------------+
+|   SKY, with median                 |         86.39%      |      82.52%         |      84.45%        |      **20.938%**   |            71.250%                |        63.750%          |
++------------------------------------+---------------------+---------------------+--------------------+--------------------+-----------------------------------+-------------------------+
+|   CLAHE, with median               |         79.64%      |      75.88%         |      77.76%        |        30.645%     |            93.750%                |        87.188%          |
++------------------------------------+---------------------+---------------------+--------------------+--------------------+-----------------------------------+-------------------------+
+|   SKY, no median                   |         81.19%      |      74.04%         |      77.61%        |        22.548%     |            75.312%                |        62.500%          |
++------------------------------------+---------------------+---------------------+--------------------+--------------------+-----------------------------------+-------------------------+
+|   CLAHE, no median                 |         76.12%      |      68.90%         |      72.51%        |        28.121%     |            92.500%                |        87.188%          |
++------------------------------------+---------------------+---------------------+--------------------+--------------------+-----------------------------------+-------------------------+
+|   Maximum Curvature                |         36.58%      |      96.01%         |      66.29%        |        23.125%     |            71.875%                |        67.500%          |
++------------------------------------+---------------------+---------------------+--------------------+--------------------+-----------------------------------+-------------------------+
+|   Vein Filter (Biosig 2015)        |         13.71%      |      98.63%         |      56.17%        |        29.375%     |            83.750%                |        80.625%          |
++------------------------------------+---------------------+---------------------+--------------------+--------------------+-----------------------------------+-------------------------+
+|   Repeated Line Tracking           |                     |                     |                    |        27.812%     |            96.250%                |        96.875%          |
++------------------------------------+---------------------+---------------------+--------------------+--------------------+-----------------------------------+-------------------------+
+|   Wide Line Detector               |         21.81%      |      87.12%         |      54.46%        |        26.627%     |            ~98%                   |          ~99%           |
++------------------------------------+---------------------+---------------------+--------------------+--------------------+-----------------------------------+-------------------------+
+
+
+[1] - these results are obtained with centred annotations and thus can't directly be compared with the rest of the table where data weren't centred.
+
+Baseline parameters used:
 
 
 Vein Filter (Biosig 2015)
-*************************
 Parameters::
     
     from bob.bio.vein.extractors import ExtVeinsBiosig
@@ -916,21 +936,17 @@ Parameters::
                                binarise     = True,
                                threshold    = 0)
 
-.. image:: img/vein_filter_3_4.png
+#.. image:: img/vein_filter_3_4.png
 
 Maximum Curvature
-*****************
-
 Parameters::
     
     from bob.bio.vein.extractor import MaximumCurvature
     extractor = MaximumCurvature(sigma = 5)
 
-.. image:: img/MaximumCurvature_sigma_5.png
+#.. image:: img/MaximumCurvature_sigma_5.png
 
 Repeated Line Tracking
-**********************
-
 Parameters::
     
     from bob.bio.vein.extractor import RepeatedLineTracking
@@ -942,12 +958,10 @@ Parameters::
         seed       = 0, #Sets numpy.random.seed() to this value
         )
 
-.. image:: img/Repeated_Line_Tracking.png
+# .. image:: img/Repeated_Line_Tracking.png
 
 
 Wide Line Detector
-******************
-
 Parameters::
     
     from bob.bio.vein.extractor import WideLineDetector
@@ -959,7 +973,103 @@ Parameters::
         )
 
 
-.. image:: img/Wide_Line_Detector.png
+# .. image:: img/Wide_Line_Detector.png
+
+Fully manual alignment
+======================
+
+After also annotation points were annotated it was possible to acquire results using a fully manual pipeline.
+
+First, lets look at alignment annotation. For each person's hand 3-5 points were annotated (such points that can be found in all 6 hand's images - e.g. vein endings, cross-points, etc)). This enables to transform one of the images (also ROI and vein annotations) to match the other one, if the wrist images belong to a single hand. As an example - following image's first row. Notice, that the enroll image is transform to match the probe.
+
+On the other hand, if the probe image is an **impostor** than it is likely that the enroll image will be transformed so that there is no matching with the enroll and probe (see the following image's second row), because when annotated, the points were selected for each hand images separately (in contrast one could search for some common points between all images, as is done with the eye positions in the face recognition).
+
+
+.. image:: img/Example-orig.png
+
+The same can be demonstrated on the annotations (that we are actually using):
+
+
+.. image:: img/Example-veins.png
+
+results on the full data set
+----------------------------
+
+To acquire these results 8x4 parameter combinations used.
+``ch=cw`` values tested: 
+
+- 0;
+- 2;
+- 5;
+- 10;
+- 20;
+- 40;
+- 80;
+- 100;
+
+
+Dilation values:
+
+- 0;
+- 5;
+- 9;
+- 13;
+
+Protocol ``Idiap_1_1_R``:
+
+Using ``skimage.transform.SimilarityTransform`` (rotation, translation, single scaling):
+
+
++---------+--------------------+------------------------+------------------+
+|  Metric |              DEV data set                   |    EVAL data set |
++---------+--------------------+------------------------+------------------+
+|         |   Result           | Parameters used        |     Result       |
++---------+--------------------+------------------------+------------------+
+|``EER``  |   6.562%           |   S5;M5 (also S0;M5)   |      tbd         |
++---------+--------------------+------------------------+------------------+
+|``FAR``  |   21.562%          |   S5;M5                |      tbd         |
++---------+--------------------+------------------------+------------------+
+
+Using Affine Transformation (rotation, translation, scaling, shear):
+
++---------+--------------------+------------------------+------------------+
+|  Metric |              DEV data set                   |    EVAL data set |
++---------+--------------------+------------------------+------------------+
+|         |   Result           | Parameters used        |     Result       |
++---------+--------------------+------------------------+------------------+
+|``EER``  |   5.929%           |   S2;M0                |      tbd         |
++---------+--------------------+------------------------+------------------+
+|``FAR``  |   24.688%          |   S5;M5 (also S10/M0)  |      tbd         |
++---------+--------------------+------------------------+------------------+
+
+
+Protocol ``Idiap_5_5_R``:
+
+Using ``skimage.transform.SimilarityTransform`` (rotation, translation, single scaling):
+
++---------+--------------------+------------------------+------------------+
+|  Metric |              DEV data set                   |    EVAL data set |
++---------+--------------------+------------------------+------------------+
+|         |   Result           | Parameters used        |     Result       |
++---------+--------------------+------------------------+------------------+
+|``EER``  |   4.375%           |   S5;M5                |      tbd         |
++---------+--------------------+------------------------+------------------+
+|``FAR``  |   13.125%          |   S2;M0                |      tbd         |
++---------+--------------------+------------------------+------------------+
+
+Using Affine Transformation (rotation, translation, scaling, shear):
+
++---------+--------------------+------------------------+------------------+
+|  Metric |              DEV data set                   |    EVAL data set |
++---------+--------------------+------------------------+------------------+
+|         |   Result           | Parameters used        |     Result       |
++---------+--------------------+------------------------+------------------+
+|``EER``  |   4.375%           |   S2;M0                |      tbd         |
++---------+--------------------+------------------------+------------------+
+|``FAR``  |   19.375%          |   S5;M0                |      tbd         |
++---------+--------------------+------------------------+------------------+
+
+
 
 .. include:: links.rst
 

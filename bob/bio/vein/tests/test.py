@@ -960,7 +960,7 @@ def test_ConstructAnnotations():
   from bob.bio.vein.preprocessors import ConstructAnnotations
   preprocessor = ConstructAnnotations(center = True, rotate = True)
   output = preprocessor(annotation_dictionary)
-  assert np.array_equal(output, image)
+  assert np.array_equal(output[0], image)
 
 
 def test_ManualRoi():
