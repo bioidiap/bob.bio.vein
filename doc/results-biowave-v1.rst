@@ -919,6 +919,29 @@ Vein pattern is extracted from input images, if necessary, binarized. Outside-RO
 
 [1] - these results are obtained with centred annotations and thus can't directly be compared with the rest of the table where data weren't centred.
 
+For algorythms:
+-- SKY, with median;
+-- SKY, NO median;
+-- LR, with median;
+-- fully manual (no center);
+Best FRR @ FAR=0.1% were fixed and results recalculated on the full data set. Results:
+
++------------------------------------+----------------------------+----------------------------+----------------------------+
+|                                    |                            |    ``DEV`` data set        |  ``EVAL`` data set         |
++------------------------------------+----------------------------+----------------------------+----------------------------+
+|        Algorithm                   |    parameters used         |  ``FRR`` @ ``FAR`` = 0.1%  |  ``FRR`` @ ``FAR`` = 0.1%  |
++====================================+============================+============================+============================+
+|  SKY, with median                  |   ch=cw=80, dilation=5     |                            |                            |
++------------------------------------+----------------------------+----------------------------+----------------------------+
+|  SKY, NO median                    |                            |                            |                            |
++------------------------------------+----------------------------+----------------------------+----------------------------+
+|  LR, with median                   |                            |                            |                            |
++------------------------------------+----------------------------+----------------------------+----------------------------+
+
+Manual - used only annotations; For others - used K-means-ROI CORRECTED + corresponding extractor.
+
+
+
 Baseline parameters used:
 
 
@@ -976,26 +999,26 @@ Parameters::
 # .. image:: img/Wide_Line_Detector.png
 
 Fully manual alignment
-======================
+----------------------
 
-After also annotation points were annotated it was possible to acquire results using a fully manual pipeline.
+After alignment points were annotated it was possible to acquire results using vein annotations, that are aligned using alignment points, thus establishing a new  fully manual pipeline.
 
-First, lets look at alignment annotation. For each person's hand 3-5 points were annotated (such points that can be found in all 6 hand's images - e.g. vein endings, cross-points, etc)). This enables to transform one of the images (also ROI and vein annotations) to match the other one, if the wrist images belong to a single hand. As an example - following image's first row. Notice, that the enroll image is transform to match the probe.
+First, lets look at the alignment annotations. For each person's hand 3-5 points were annotated (points that a human can find in all 6 hand's images - e.g. vein endings, cross-points, etc)). This enables to match 2 images by first transform one of them (also ROI and vein annotations can be transformed) to match the other one, if the wrist images belong to a single hand. See example below - both image first row. Notice, that the enroll image is transformed to match the probe.
 
-On the other hand, if the probe image is an **impostor** than it is likely that the enroll image will be transformed so that there is no matching with the enroll and probe (see the following image's second row), because when annotated, the points were selected for each hand images separately (in contrast one could search for some common points between all images, as is done with the eye positions in the face recognition).
+On the other hand, if the probe image is an **impostor** than it is likely that the enroll image will be transformed so that there is no matching between the enroll and probe (see following 2 image 2nd row) because when annotated, the points were selected for each hand images separately (in contrast one could search for some common points between all images, as is done with the eye positions in the face recognition).
 
 
 .. image:: img/Example-orig.png
 
-The same can be demonstrated on the annotations (that we are actually using):
+The same can be demonstrated using the annotations:
 
 
 .. image:: img/Example-veins.png
 
-results on the full data set
-----------------------------
+Results on the full data set
+****************************
 
-To acquire these results 8x4 parameter combinations used.
+Results are produced using only the vein annotations and their alignment information. For all entries ``FRR`` value is calculated @ ``FAR`` = 0.1%. To acquire these results 8x4 ``MuiraMatch`` parameter combinations used:
 ``ch=cw`` values tested: 
 
 - 0;
@@ -1025,9 +1048,9 @@ Using ``skimage.transform.SimilarityTransform`` (rotation, translation, single s
 +---------+--------------------+------------------------+------------------+
 |         |   Result           | Parameters used        |     Result       |
 +---------+--------------------+------------------------+------------------+
-|``EER``  |   6.562%           |   S5;M5 (also S0;M5)   |      tbd         |
+|``EER``  |   6.562%           |   S5;M5 (also S0;M5)   |     4.046%       |
 +---------+--------------------+------------------------+------------------+
-|``FAR``  |   21.562%          |   S5;M5                |      tbd         |
+|``FRR``  |   21.562%          |   S5;M5                |     20.938%      |
 +---------+--------------------+------------------------+------------------+
 
 Using Affine Transformation (rotation, translation, scaling, shear):
@@ -1037,9 +1060,9 @@ Using Affine Transformation (rotation, translation, scaling, shear):
 +---------+--------------------+------------------------+------------------+
 |         |   Result           | Parameters used        |     Result       |
 +---------+--------------------+------------------------+------------------+
-|``EER``  |   5.929%           |   S2;M0                |      tbd         |
+|``EER``  |   5.929%           |   S2;M0                |     6.218%       |
 +---------+--------------------+------------------------+------------------+
-|``FAR``  |   24.688%          |   S5;M5 (also S10/M0)  |      tbd         |
+|``FRR``  |   24.688%          |   S5;M5 (also S10/M0)  |     25.938%      |
 +---------+--------------------+------------------------+------------------+
 
 
@@ -1052,9 +1075,9 @@ Using ``skimage.transform.SimilarityTransform`` (rotation, translation, single s
 +---------+--------------------+------------------------+------------------+
 |         |   Result           | Parameters used        |     Result       |
 +---------+--------------------+------------------------+------------------+
-|``EER``  |   4.375%           |   S5;M5                |      tbd         |
+|``EER``  |   4.375%           |   S5;M5                |     2.003%       |
 +---------+--------------------+------------------------+------------------+
-|``FAR``  |   13.125%          |   S2;M0                |      tbd         |
+|``FRR``  |   13.125%          |   S2;M0                |     13.125%      |
 +---------+--------------------+------------------------+------------------+
 
 Using Affine Transformation (rotation, translation, scaling, shear):
@@ -1064,12 +1087,114 @@ Using Affine Transformation (rotation, translation, scaling, shear):
 +---------+--------------------+------------------------+------------------+
 |         |   Result           | Parameters used        |     Result       |
 +---------+--------------------+------------------------+------------------+
-|``EER``  |   4.375%           |   S2;M0                |      tbd         |
+|``EER``  |   4.375%           |   S2;M0                |      5.048%      |
 +---------+--------------------+------------------------+------------------+
-|``FAR``  |   19.375%          |   S5;M0                |      tbd         |
+|``FRR``  |   19.375%          |   S5;M0                |      16.875%     |
++---------+--------------------+------------------------+------------------+
+
+**We can see, that in all cases the rotation, translation, single scaling performs better than the full affine transform**
+
+ROC graphs showed for the pipelines with parameters, that produces the best ``FRR`` results for protocols ``Idiap_1_1_R`` and ``Idiap_5_5_R``:
+
+* protocol ``Idiap_1_1_R`` - alignment using ``skimage.transform.SimilarityTransform``, matching with ``MuiraMatch`` parameters ``S5;M5``;
+* protocol ``Idiap_5_5_R`` - alignment using ``skimage.transform.SimilarityTransform``, matching with ``MuiraMatch`` parameters ``S5;M0``.
+
+.. image:: img/ROC-manual_alignment_dev.jpg
+.. image:: img/ROC-manual_alignment_eval.jpg
+
+
+Results on the "limited" data set
+*********************************
+
+As before, 8x4 parameter combinations were used to find parameters with best recognition results.
+
+
+Protocol ``Idiap_1_1_R``:
+
+Using ``skimage.transform.SimilarityTransform`` (rotation, translation, single scaling):
+
+
++---------+--------------------+------------------------+------------------+
+|  Metric |              DEV data set                   |    EVAL data set |
++---------+--------------------+------------------------+------------------+
+|         |   Result           | Parameters used        |     Result       |
++---------+--------------------+------------------------+------------------+
+|``EER``  |    4.115%          |    S2/M5               |    3.133%        |
++---------+--------------------+------------------------+------------------+
+|``FRR``  |    18.243%         |    S5/M5               |    20.192%       |
++---------+--------------------+------------------------+------------------+
+
+Using Affine Transformation (rotation, translation, scaling, shear):
+
++---------+--------------------+------------------------+------------------+
+|  Metric |              DEV data set                   |    EVAL data set |
++---------+--------------------+------------------------+------------------+
+|         |   Result           | Parameters used        |     Result       |
++---------+--------------------+------------------------+------------------+
+|``EER``  |    4.082%          |     S10/M5             |      5.090%      |
++---------+--------------------+------------------------+------------------+
+|``FRR``  |    20.608%         |      S5/M5             |      24.038%     |
++---------+--------------------+------------------------+------------------+
+
+
+
+Protocol ``Idiap_5_5_R``:
+
+Using ``skimage.transform.SimilarityTransform`` (rotation, translation, single scaling):
+
++---------+--------------------+------------------------+------------------+
+|  Metric |              DEV data set                   |    EVAL data set |
++---------+--------------------+------------------------+------------------+
+|         |   Result           | Parameters used        |     Result       |
++---------+--------------------+------------------------+------------------+
+|``EER``  |   2.703%           | S0/M5 & S10/M5 & S5/M5 |       0.945%     |
++---------+--------------------+------------------------+------------------+
+|``FRR``  |   10.135%          |        S10/M0          |       11.538%    |
++---------+--------------------+------------------------+------------------+
+
+
+Using Affine Transformation (rotation, translation, scaling, shear):
+
++---------+--------------------+------------------------+------------------+
+|  Metric |              DEV data set                   |    EVAL data set |
++---------+--------------------+------------------------+------------------+
+|         |   Result           | Parameters used        |     Result       |
++---------+--------------------+------------------------+------------------+
+|``EER``  |   2.834%           |      S5/M0             |     3.559%       |
++---------+--------------------+------------------------+------------------+
+|``FRR``  |   14.865%          |      S5/M0             |     16.026%      |
 +---------+--------------------+------------------------+------------------+
 
 
 
 .. include:: links.rst
+
+
+
+Manual experiment, using BIOWATCH pipeline
+******************************************
+Using ``keypoints-alignment-crosscorrelation-mean``.
+
+1)  manual ROI + hessian-mask-akaze-feature-extractor (automatic) + keypoints-alignment-crosscorrelation-mean:
+
+* EER :                   14.375%
+* FRR at FAR=0.100%:      51.250%
+
+2) manual ROI + hessian-mask-akaze-feature-extractor (just alignment points) + keypoints-alignment-crosscorrelation-mean:
+
+* EER                     47.672%
+* FRR at FAR=0.100%:      95.312%
+
+Using ``KeypointsMatcher(ratio_to_match=0.75)``.
+Automatic:
+
+* EER :                   18.770%
+* FRR at FAR=0.100%:      50.938%
+
+Manual:
+
+* EER :                   17.800%
+* FRR at FAR=0.100%:      48.750%
+
+
 
