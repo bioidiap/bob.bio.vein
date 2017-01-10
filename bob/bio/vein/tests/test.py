@@ -23,10 +23,8 @@ import bob.io.base
 import bob.io.matlab
 import bob.io.image
 
+
 from ..preprocessor import utils as preprocessor_utils
-
-import numpy as np
-
 # import bob.ip.color
 
 # for the TopographyCutRoi tests:
@@ -943,6 +941,9 @@ def test_ConstructAnnotations():
   image_filename = F( ( 'preprocessors', 'ConstructAnnotations.png' ) )
   roi_annotations_filename = F( ( 'preprocessors', 'ConstructAnnotations.txt' ) )
   vein_annotations_filename = F( ( 'preprocessors', 'ConstructAnnotations.npy' ) )
+  # we actually aren't usint the annotatationsP:
+  alignment_annotations_filename = F(('preprocessors', '023_F_R_S01_A02_3_alignment.txt'))
+
 
   image = bob.io.base.load( image_filename )
   roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
@@ -953,9 +954,13 @@ def test_ConstructAnnotations():
   fp.close()
   vein_annotations = [[tuple([point[0], point[1]]) for point in line] for line in vein_annotations]
 
+  alignment_annotations = np.loadtxt(alignment_annotations_filename, dtype='uint16')
+  alignment_annotations = [tuple([point[0], point[1]]) for point in alignment_annotations]
+
   annotation_dictionary = {"image" : image,
                            "roi_annotations" : roi_annotations,
-                           "vein_annotations" : vein_annotations}
+                           "vein_annotations" : vein_annotations,
+                           "alignment_annotations" : alignment_annotations}
 
   from bob.bio.vein.preprocessors import ConstructAnnotations
   preprocessor = ConstructAnnotations(center = True, rotate = True)
@@ -1032,3 +1037,97 @@ def test_Learn():
 #  ax = plt.subplot(133)
 #  ax.imshow(output, cmap='Greys_r', interpolation='none')
 #  plt.show(fig)
+
+
+
+def test_MMManual():
+    from bob.bio.vein.preprocessors import ConstructAnnotations
+    preprocessor = ConstructAnnotations(center = False, rotate = False)
+
+    image_filename = F(('preprocessors', '023_F_R_S01_A02_3.png'))
+    roi_annotations_filename = F(('preprocessors', '023_F_R_S01_A02_3.txt'))
+    vein_annotations_filename = F(('preprocessors', '023_F_R_S01_A02_3.npy'))
+    alignment_annotations_filename = F(('preprocessors', '023_F_R_S01_A02_3_alignment.txt'))
+
+#    image_filename = '/idiap/home/teglitis/Desktop/BOB/VEINS_LEARN/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.png'
+#    roi_annotations_filename = '/idiap/home/teglitis/Desktop/BOB/VEINS_LEARN/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.txt'
+#    vein_annotations_filename = '/idiap/home/teglitis/Desktop/BOB/VEINS_LEARN/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.npy'
+#    alignment_annotations_filename = '/idiap/home/teglitis/Desktop/BOB/VEINS_LEARN/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3_alignment.txt'
+
+    image = bob.io.base.load( image_filename )
+    roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
+    roi_annotations =  [tuple([point[0], point[1]]) for point in roi_annotations]
+    fp = open(vein_annotations_filename, 'rb')
+    vein_annotations = np.load(fp)
+    vein_annotations = vein_annotations['arr_0'].tolist()
+    fp.close()
+    vein_annotations = [[tuple([point[0], point[1]]) for point in line] for line in vein_annotations]
+
+    alignment_annotations = np.loadtxt(alignment_annotations_filename, dtype='uint16')
+    alignment_annotations = [tuple([point[0], point[1]]) for point in alignment_annotations]
+
+    annotation_dictionary = {"image" : image,
+                             "roi_annotations" : roi_annotations,
+                             "vein_annotations" : vein_annotations,
+                             "alignment_annotations" : alignment_annotations}
+    enroll = preprocessor(annotation_dictionary)
+
+    image_filename = F(('preprocessors', '023_F_R_S03_A04_3.png'))
+    roi_annotations_filename = F(('preprocessors', '023_F_R_S03_A04_3.txt'))
+    vein_annotations_filename = F(('preprocessors', '023_F_R_S03_A04_3.npy'))
+    alignment_annotations_filename = F(('preprocessors', '023_F_R_S03_A04_3_alignment.txt'))
+
+#    image_filename = '/idiap/home/teglitis/Desktop/BOB/VEINS_LEARN/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S03_A04_3.png'
+#    roi_annotations_filename = '/idiap/home/teglitis/Desktop/BOB/VEINS_LEARN/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S03_A04_3.txt'
+#    vein_annotations_filename = '/idiap/home/teglitis/Desktop/BOB/VEINS_LEARN/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S03_A04_3.npy'
+#    alignment_annotations_filename = '/idiap/home/teglitis/Desktop/BOB/VEINS_LEARN/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S03_A04_3_alignment.txt'
+
+    image = bob.io.base.load( image_filename )
+    roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
+    roi_annotations =  [tuple([point[0], point[1]]) for point in roi_annotations]
+    fp = open(vein_annotations_filename, 'rb')
+    vein_annotations = np.load(fp)
+    vein_annotations = vein_annotations['arr_0'].tolist()
+    fp.close()
+    vein_annotations = [[tuple([point[0], point[1]]) for point in line] for line in vein_annotations]
+
+    alignment_annotations = np.loadtxt(alignment_annotations_filename, dtype='uint16')
+    alignment_annotations = [tuple([point[0], point[1]]) for point in alignment_annotations]
+
+    annotation_dictionary = {"image" : image,
+                             "roi_annotations" : roi_annotations,
+                             "vein_annotations" : vein_annotations,
+                             "alignment_annotations" : alignment_annotations}
+    probe = preprocessor(annotation_dictionary)
+
+    from bob.bio.vein.algorithms import MMManual
+
+    alignment_parameters = [[False, False, False, False, False],
+                            [False, False, False, False, True],
+                            [False, False, False, True, False],
+                            [False, False, False, True, True],
+                            [False, False, True, True, True],
+                            [False, True, True, True, True],
+                            [True, True, True, True, True]]
+    results = []
+    for n in alignment_parameters:
+        algorithm = MMManual(ch=10,
+                             cw=10,
+                             alignment_flag=True,
+                             dilation_flag=False,
+                             ellipse_mask_size=5,
+                             allow_affine=n[0],
+                             allow_scale=n[1],
+                             allow_rotation=n[2],
+                             allow_translation_x=n[3],
+                             allow_translation_y=n[4]
+                             )
+        score = algorithm.score(enroll, probe)
+        # print(score)
+        results.append(score)
+    # 2 things we can assume - with no transformations / only translation in
+    # one axis the score should be low, wereas other transformations should
+    # generate higher score:
+    assert np.mean(results[0:3]) < np.mean(results[3:])
+    # no 2 results should be equal:
+    assert len(set(results)) == 7

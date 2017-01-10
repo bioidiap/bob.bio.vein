@@ -45,31 +45,41 @@ class MMManual(Algorithm):
     ellipse_mask_size : uint
         Diameter of the elliptical kernel in pixels. Default value: 5.
     """
+    def __init__(self,
+                 ch=10,
+                 cw=10,
+                 alignment_flag=True,
+                 dilation_flag=False,
+                 ellipse_mask_size=5,
+                 allow_affine=False,
+                 allow_scale=False,
+                 allow_rotation=False,
+                 allow_translation_x=False,
+                 allow_translation_y=False
+                 ):
 
-
-    def __init__( self,
-                 ch = 10, cw = 10,
-                 alignment_flag = True,
-                 alignment_method = "manual_alignment",
-                 dilation_flag = False,
-                 ellipse_mask_size = 5):
-
-        Algorithm.__init__( self,
-                           ch = ch,
-                           cw = cw,
-                           alignment_flag = alignment_flag,
-                           alignment_method = alignment_method,
-                           dilation_flag = dilation_flag,
-                           ellipse_mask_size = ellipse_mask_size )
+        Algorithm.__init__(self,
+                           ch=ch,
+                           cw=cw,
+                           alignment_flag=alignment_flag,
+                           dilation_flag=dilation_flag,
+                           ellipse_mask_size=ellipse_mask_size,
+                           allow_affine=allow_affine,
+                           allow_scale=allow_scale,
+                           allow_rotation=allow_rotation,
+                           allow_translation_x=allow_translation_x,
+                           allow_translation_y=allow_translation_y)
 
         self.ch = ch
         self.cw = cw
         self.alignment_flag = alignment_flag
-        self.alignment_method = alignment_method
-        self.available_alignment_methods = ["manual_alignment_c", "manual_alignment"]
         self.dilation_flag = dilation_flag
         self.ellipse_mask_size = ellipse_mask_size
-
+        self.allow_affine = allow_affine
+        self.allow_scale = allow_scale
+        self.allow_rotation = allow_rotation
+        self.allow_translation_x = allow_translation_x
+        self.allow_translation_y = allow_translation_y
 
     def enroll(self, enroll_features):
         """
@@ -129,36 +139,36 @@ class MMManual(Algorithm):
 
         return output
 
-    def center_image( self, input_array ):
-        """
-        This function shifts the image so as center of mass of the image and image center are alligned.
-
-        **Parameters:**
-
-        input_array : 2D :py:class:`numpy.ndarray`
-            Input image to be shifted.
-
-        **Returns:**
-
-        shifted_array : 2D :py:class:`numpy.ndarray`
-            Shifted image.
-        """
-
-        # center of mass of the input image:s
-        coords = np.round( ndimage.measurements.center_of_mass( input_array ) )
-
-        # center of the image
-        center_location = np.round( np.array( input_array.shape )/2 )
-
-        # resulting displacement:
-        displacement = center_location - coords
-
-        shifted_array = ndimage.interpolation.shift( input_array, displacement, cval = 0 )
-
-        shifted_array[shifted_array<0.5] = 0
-        shifted_array[shifted_array>=0.5] = 1
-
-        return shifted_array
+#    def center_image( self, input_array ):
+#        """
+#        This function shifts the image so as center of mass of the image and image center are alligned.
+#
+#        **Parameters:**
+#
+#        input_array : 2D :py:class:`numpy.ndarray`
+#            Input image to be shifted.
+#
+#        **Returns:**
+#
+#        shifted_array : 2D :py:class:`numpy.ndarray`
+#            Shifted image.
+#        """
+#
+#        # center of mass of the input image:s
+#        coords = np.round( ndimage.measurements.center_of_mass( input_array ) )
+#
+#        # center of the image
+#        center_location = np.round( np.array( input_array.shape )/2 )
+#
+#        # resulting displacement:
+#        displacement = center_location - coords
+#
+#        shifted_array = ndimage.interpolation.shift( input_array, displacement, cval = 0 )
+#
+#        shifted_array[shifted_array<0.5] = 0
+#        shifted_array[shifted_array>=0.5] = 1
+#
+#        return shifted_array
 
 
     def binary_dilation_with_ellipse( self, image ):
@@ -208,104 +218,115 @@ class MMManual(Algorithm):
 
 
 
-    def compute_transformation(self, keypoints1, keypoints2):
-        """
-        Compute the affine transformation occurring between the keypoints 1 and keypoints 2. First, determine the
-        inliers set by a RANSAC strategy. Then, estimate the affine transformation with a regression approach.
+#    def compute_transformation(self, keypoints1, keypoints2):
+#        """
+#        Compute the affine transformation occurring between the keypoints 1 and keypoints 2. First, determine the
+#        inliers set by a RANSAC strategy. Then, estimate the affine transformation with a regression approach.
+#
+#        **Parameters:**
+#
+#        ``keypoints1`` : 2D :py:class:`numpy.ndarray`
+#            Keypoints set in correspondence in template 1
+#
+#        ``keypoints2`` : 2D :py:class:`numpy.ndarray`
+#            Keypoints set in correspondence in template 2
+#
+#        **Returns:**
+#
+#        ``affine_transformation`` : :py:class:`skimage.transform.AffineTransform`
+#            Estimated affine transformation that fits the best the both sets of keypoints
+#
+#        """
+#
+#        # Construction of the matrix X and the vector y
+#        n = keypoints1.shape[0]
+#        X = np.hstack((keypoints1, np.ones((n, 1))))  # shape: (n x 3) with [x1, x2, 1]
+#        y = keypoints2  # shape: (n x 2) with [y1, y2]
+#
+#        # Selection of the inliers set with a RANSAC strategy
+#        # X, y = select_RANSAC_model(X, y)
+#
+#        if X.shape[0] < 3:
+#            return None
+#
+#        # Resolution of the system XW = y where the unknown variable is the transformation W with shape: (3 x 2)
+#        W = self.solve_least_squares(X, y)
+#        # W = self.solve_least_euclidean_distance(X, y)
+#        # W = self.solve_linprog_LAD(X, y)
+#        # W = self.solve_iterative_LAD(X, y)
+#
+#        if W is None:
+#            return None
+#
+#        # Construction of the square affine transformation matrix A
+#        # where A = [[w1, w2, w3], [w4, w5, w6], [0.0, 0.0, 1.0]]
+#        A = np.vstack((W.T, np.array([0.0, 0.0, 1.0])))
+#        affine_transformation = transform.AffineTransform(matrix=A)
+#
+#        return affine_transformation
 
-        **Parameters:**
+#    def solve_least_squares(self, X, y):
+#        """
+#        Solve a (Total) Least Squares regression on the equation XW = y using the closed form:
+#        W = (X^T * X)^(-1) * X^T * y
+#
+#        **Parameters:**
+#
+#        ``X`` : 2D :py:class:`numpy.ndarray` (shape: n x 3)
+#            First putative set of correspondence keypoints with the additional constant column
+#
+#        ``y`` : 2D :py:class:`numpy.ndarray` (shape: n x 2)
+#            Second putative set of correspondence keypoints
+#
+#        **Returns:**
+#
+#        ``W`` : 2D :py:class:`numpy.ndarray` (shape: 3 x 2)
+#            Affine transformation matrix that solves the (Total) Least Squares problem
+#
+#        """
+#
+#        W = np.dot(np.linalg.pinv(np.dot(X.T, X)), np.dot(X.T, y))
+#
+#        return W
 
-        ``keypoints1`` : 2D :py:class:`numpy.ndarray`
-            Keypoints set in correspondence in template 1
+#    def manual_align_image_c(self, image, enroll_alignment, probe_alignment):
+#        enroll_alignment, probe_alignment = \
+#            self.__min_point_count__(enroll_alignment, probe_alignment)
+#
+#        probe_alignment = np.array(probe_alignment)
+#        enroll_alignment = np.array(enroll_alignment)
+#
+#        keypoints_1 = []
+#        keypoints_2 = []
+#        for point in probe_alignment:
+#            keypoints_1.append([point[1], point[0]])
+#
+#        for point in enroll_alignment:
+#            keypoints_2.append([point[1], point[0]])
+#
+#        keypoints_1 = np.array(keypoints_1)
+#        keypoints_2 = np.array(keypoints_2)
+#
+#        transformation = self.compute_transformation(keypoints_1,
+#                                                     keypoints_2)
+#
+#        image = transform.warp(np.float64(image),
+#                               transformation,
+#                               order=3,
+#                               preserve_range=True)
+#
+#        return image
 
-        ``keypoints2`` : 2D :py:class:`numpy.ndarray`
-            Keypoints set in correspondence in template 2
 
-        **Returns:**
+    def mass_center(self, keypoints_1, keypoints_2):
+        transformation = skimage.transform.SimilarityTransform()
+        translation = np.mean(keypoints_2 - keypoints_1, axis=0)
+        if self.allow_translation_x is True:
+            transformation.params[0, -1] = translation[0]
+        if self.allow_translation_y is True:
+            transformation.params[1, -1] = translation[1]
+        return transformation
 
-        ``affine_transformation`` : :py:class:`skimage.transform.AffineTransform`
-            Estimated affine transformation that fits the best the both sets of keypoints
-
-        """
-
-        # Construction of the matrix X and the vector y
-        n = keypoints1.shape[0]
-        X = np.hstack((keypoints1, np.ones((n, 1))))  # shape: (n x 3) with [x1, x2, 1]
-        y = keypoints2  # shape: (n x 2) with [y1, y2]
-
-        # Selection of the inliers set with a RANSAC strategy
-        # X, y = select_RANSAC_model(X, y)
-
-        if X.shape[0] < 3:
-            return None
-
-        # Resolution of the system XW = y where the unknown variable is the transformation W with shape: (3 x 2)
-        W = self.solve_least_squares(X, y)
-        # W = self.solve_least_euclidean_distance(X, y)
-        # W = self.solve_linprog_LAD(X, y)
-        # W = self.solve_iterative_LAD(X, y)
-
-        if W is None:
-            return None
-
-        # Construction of the square affine transformation matrix A
-        # where A = [[w1, w2, w3], [w4, w5, w6], [0.0, 0.0, 1.0]]
-        A = np.vstack((W.T, np.array([0.0, 0.0, 1.0])))
-        affine_transformation = transform.AffineTransform(matrix=A)
-
-        return affine_transformation
-
-    def solve_least_squares(self, X, y):
-        """
-        Solve a (Total) Least Squares regression on the equation XW = y using the closed form:
-        W = (X^T * X)^(-1) * X^T * y
-
-        **Parameters:**
-
-        ``X`` : 2D :py:class:`numpy.ndarray` (shape: n x 3)
-            First putative set of correspondence keypoints with the additional constant column
-
-        ``y`` : 2D :py:class:`numpy.ndarray` (shape: n x 2)
-            Second putative set of correspondence keypoints
-
-        **Returns:**
-
-        ``W`` : 2D :py:class:`numpy.ndarray` (shape: 3 x 2)
-            Affine transformation matrix that solves the (Total) Least Squares problem
-
-        """
-
-        W = np.dot(np.linalg.pinv(np.dot(X.T, X)), np.dot(X.T, y))
-
-        return W
-
-    def manual_align_image_c(self, image, enroll_alignment, probe_alignment):
-        enroll_alignment, probe_alignment = \
-            self.__min_point_count__(enroll_alignment, probe_alignment)
-
-        probe_alignment = np.array(probe_alignment)
-        enroll_alignment = np.array(enroll_alignment)
-
-        keypoints_1 = []
-        keypoints_2 = []
-        for point in probe_alignment:
-            keypoints_1.append([point[1], point[0]])
-
-        for point in enroll_alignment:
-            keypoints_2.append([point[1], point[0]])
-
-        keypoints_1 = np.array(keypoints_1)
-        keypoints_2 = np.array(keypoints_2)
-
-        transformation = self.compute_transformation(keypoints_1,
-                                                     keypoints_2)
-
-        image = transform.warp(np.float64(image),
-                               transformation,
-                               order=3,
-                               preserve_range=True)
-
-        return image
 
     def manual_align_image(self, image, enroll_alignment, probe_alignment):
         enroll_alignment, probe_alignment = \
@@ -322,12 +343,40 @@ class MMManual(Algorithm):
         for point in enroll_alignment:
             keypoints_2.append([point[1], point[0]])
 
-        keypoints_1 = np.array(keypoints_1)
-        keypoints_2 = np.array(keypoints_2)
+        keypoints_1 = np.array(keypoints_1, dtype=np.float64)
+        keypoints_2 = np.array(keypoints_2, dtype=np.float64)
 
-        transformation = skimage.transform.SimilarityTransform()
-        transformation.estimate(keypoints_1,
-                                keypoints_2)
+        if self.allow_affine is True and self.allow_scale is True and \
+          self.allow_rotation is True and self.allow_translation_x is True \
+          and self.allow_translation_y is True:
+            transformation = skimage.transform.AffineTransform()
+            transformation.estimate(keypoints_1, keypoints_2)
+
+        elif self.allow_affine is False and self.allow_scale is True and\
+          self.allow_rotation is True and self.allow_translation_x is True \
+          and self.allow_translation_y is True:
+            transformation = skimage.transform.SimilarityTransform()
+            transformation.estimate(keypoints_1, keypoints_2)
+
+        elif self.allow_affine is False and self.allow_scale is False and\
+          self.allow_rotation is True and self.allow_translation_x is True \
+          and self.allow_translation_y is True:
+            transformation = skimage.transform.EuclideanTransform()
+            transformation.estimate(keypoints_1, keypoints_2)
+
+        elif self.allow_affine is False and self.allow_scale is False and \
+          self.allow_rotation is False and (self.allow_translation_x is True or
+                                            self.allow_translation_y is True):
+            transformation = self.mass_center(keypoints_1, keypoints_2)
+
+        elif self.allow_affine is False and self.allow_scale is False and \
+          self.allow_rotation is False and self.allow_translation_x is False \
+          and self.allow_translation_y is False:
+            # no transformation is performed
+            transformation = skimage.transform.SimilarityTransform()
+
+        else:
+            raise IOError("transformation parameters are set incorrectly")
 
         image = transform.warp(np.float64(image),
                                transformation,
@@ -359,62 +408,28 @@ class MMManual(Algorithm):
         """
 
         scores = []
-
-
-
-
-#        if isinstance(model, np.ndarray):
-
-#            if len( model.shape ) == 2:
-#
-#                model = [ model ] # this is necessary for unit tests only
-#
-#            else:
-#
-#                num_models = model.shape[0] # number of enroll samples
-#
-#                model = np.split( model, num_models, 0 ) # split 3D array into a list of 2D arrays of dimensions: (1,H,W)
-#
-#        model = [ np.squeeze( item ) for item in model ] # remove single-dimensional entries from the shape of an array
-
         model_alignment = model[1]
         model = model[0]
         probe_alignment = probe[1]
         probe = probe[0]
 
-        if len( model.shape ) == 2:
+        if len(model.shape) == 2:
             model = [model]
             model_alignment = [model_alignment]
-
-        #import ipdb; ipdb.sset_trace()
-
-#        if self.alignment_flag: # if prealignment is allowed
-#            if self.alignment_method == "center_of_mass": # centering based on the center of mass of the image
-#                probe = self.center_image( probe )
 
         if self.dilation_flag:
             probe = self.binary_dilation_with_ellipse( probe )
 
         for nr, enroll in enumerate(model):
 
-            if not( self.alignment_method in self.available_alignment_methods ):
-                raise Exception("Specified alignment method is not in the list of available_alignment_methods")
-
             if len( enroll.shape ) != 2 or len( probe.shape ) != 2: # check if input image is not of grayscale format
                 raise Exception("The image must be a 2D array / grayscale format")
-
+            # make a copy of the enroll image, so that if after transformation
+            # image is blank, we can recover the original.
             enroll_ = enroll
-            if self.alignment_flag: # if prealignment is allowed
-                if self.alignment_method == "manual_alignment_c":
-                    enroll = \
-                    self.manual_align_image_c(image=enroll,
-                                            enroll_alignment=model_alignment[nr],
-                                            probe_alignment=probe_alignment)
-                elif self.alignment_method == "manual_alignment":
-                    enroll = \
-                    self.manual_align_image(image=enroll,
-                                            enroll_alignment=model_alignment[nr],
-                                            probe_alignment=probe_alignment)
+            enroll = self.manual_align_image(image=enroll,
+                                             enroll_alignment=model_alignment[nr],
+                                             probe_alignment=probe_alignment)
 
             if np.sum(enroll) == 0:
                 enroll = enroll_
@@ -422,6 +437,7 @@ class MMManual(Algorithm):
             if self.dilation_flag:
                 enroll = self.binary_dilation_with_ellipse(enroll)
 
+            ###################################################################
 #            import matplotlib.pyplot as plt
 #            fig = plt.figure()
 #            ax = plt.subplot(121)
@@ -429,6 +445,7 @@ class MMManual(Algorithm):
 #            ax = plt.subplot(122)
 #            ax.imshow(enroll+probe, cmap='Greys_r', interpolation='none')
 #            plt.show(fig)
+            ###################################################################
 
             I = probe.astype( np.float64 )
 
