@@ -11,7 +11,7 @@ class ExtNone( Extractor ):
     An empty extracror class that returns an input image
     """
 
-    def __init__( self):
+    def __init__(self):
 
         Extractor.__init__( self)
 

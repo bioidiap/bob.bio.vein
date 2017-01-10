@@ -3,6 +3,7 @@ from .KMeansRoi import KMeansRoi
 from .PreNone import PreNone
 from .ConstructAnnotations import ConstructAnnotations
 from .ManualRoi import ManualRoi
+from .ManualData import ManualData
 
 # gets sphinx autodoc done right - don't remove it
 def __appropriate__(*args):
@@ -18,7 +19,8 @@ __appropriate__(
     KMeansRoi,
     PreNone,
     ConstructAnnotations,
-    ManualRoi
+    ManualRoi,
+    ManualData
     )
 
 # gets sphinx autodoc done right - don't remove it
