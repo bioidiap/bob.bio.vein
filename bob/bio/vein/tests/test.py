@@ -1113,7 +1113,6 @@ def test_MMManual():
     for n in alignment_parameters:
         algorithm = MMManual(ch=10,
                              cw=10,
-                             alignment_flag=True,
                              dilation_flag=False,
                              ellipse_mask_size=5,
                              allow_affine=n[0],

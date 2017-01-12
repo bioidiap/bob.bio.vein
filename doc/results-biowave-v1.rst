@@ -1201,8 +1201,8 @@ Transformation impact on performance
 ************************************
 
 (Using annotations).
-First - I should rerun also fully manual pipeline, because before I was using prealigned (centered) annotations.
-Also I should rerun Affine transformation, because I changed the code from Christopher (BIOWATCH) implementation to the ``skimage`` for consistancy.
+First - I should rerun also fully manual pipeline, because before I was using pre-aligned (centered) annotations.
+Also I should rerun Affine transformation, because I changed the code from Christopher (BIOWATCH) implementation to the ``skimage`` for consistency.
 
 Will be used ``Idiap_1_1_R`` protocol, only annotations.
 

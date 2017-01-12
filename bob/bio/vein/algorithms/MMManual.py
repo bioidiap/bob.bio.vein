@@ -48,7 +48,6 @@ class MMManual(Algorithm):
     def __init__(self,
                  ch=10,
                  cw=10,
-                 alignment_flag=True,
                  dilation_flag=False,
                  ellipse_mask_size=5,
                  allow_affine=False,
@@ -61,7 +60,6 @@ class MMManual(Algorithm):
         Algorithm.__init__(self,
                            ch=ch,
                            cw=cw,
-                           alignment_flag=alignment_flag,
                            dilation_flag=dilation_flag,
                            ellipse_mask_size=ellipse_mask_size,
                            allow_affine=allow_affine,
@@ -72,7 +70,6 @@ class MMManual(Algorithm):
 
         self.ch = ch
         self.cw = cw
-        self.alignment_flag = alignment_flag
         self.dilation_flag = dilation_flag
         self.ellipse_mask_size = ellipse_mask_size
         self.allow_affine = allow_affine
