@@ -12,14 +12,20 @@ class ManualData(Preprocessor):
     """
     ManualData preprocessor.
     Preprocessor is an improvement over preprocesors:
+    
         * ConstructAnnotations;
         * ManualRoi;
         * PreNone.
+        
     These preprocesors should be excluded from bob.bio.vein.
     Preprocesor returns:
+        
         [original image or manual veins] + ROI mask
+        
     or:
+        
         [original image or manual veins] + ROI mask + alignment annotations
+        
     """
     def __init__(self,
                  vein_annotations=False,

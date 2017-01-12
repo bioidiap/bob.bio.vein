@@ -75,7 +75,7 @@ class FingerCrop (Preprocessor):
       database yields slight worse results.)
 
     postprocessing (:py:obj:`str`, optional): Select between ``HE`` (histogram
-      equalization, as with :py:func:`skimage.exposure.equalize_hist`) or
+      equalization, as with function ``skimage.exposure.equalize_hist``) or
       ``None`` (the default).
 
   """
