@@ -51,7 +51,7 @@ import operator
 import numpy
 
 import bob.core
-logger = bob.core.log.setup("bob.measure")
+logger = bob.core.log.setup("bob.bio.vein")
 
 import bob.io.base
 
