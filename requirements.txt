@@ -12,4 +12,5 @@ bob.bio.base
 bob.db.utfvp
 bob.db.verafinger
 bob.db.putvein
+bob.db.fv3d
 scikit-image
