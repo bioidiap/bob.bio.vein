@@ -19,7 +19,7 @@ class File(BioFile):
     def __init__(self, f):
 
         super(File, self).__init__(client_id=f.client_id, path=f.path,
-            file_id=f.id)
+                                   file_id=f.id)
         self.__f = f
 
 
@@ -32,18 +32,19 @@ class Database(BioDatabase):
 
         super(Database, self).__init__(name='utfvp', **kwargs)
         from bob.db.utfvp.query import Database as LowLevelDatabase
-        self.__db = LowLevelDatabase()
-
+        self._db = LowLevelDatabase()
 
     def model_ids_with_protocol(self, groups=None, protocol=None, **kwargs):
         protocol = protocol if protocol is not None else self.protocol
-        return self.__db.model_ids(groups=groups, protocol=protocol)
-
+        return self._db.model_ids(groups=groups, protocol=protocol)
 
     def objects(self, groups=None, protocol=None, purposes=None,
-        model_ids=None, **kwargs):
+                model_ids=None, **kwargs):
 
-        retval = self.__db.objects(groups=groups, protocol=protocol,
-            purposes=purposes, model_ids=model_ids, **kwargs)
+        retval = self._db.objects(groups=groups, protocol=protocol,
+                                  purposes=purposes, model_ids=model_ids, **kwargs)
 
         return [File(f) for f in retval]
+
+    def annotations(self, file):
+        return None
