@@ -9,9 +9,9 @@
    :target: https://gitlab.idiap.ch/bob/bob.bio.vein/commits/v2.1.0
 .. image:: https://img.shields.io/badge/gitlab-project-0000c0.svg
    :target: https://gitlab.idiap.ch/bob/bob.bio.vein
-.. image:: http://img.shields.io/pypi/v/bob.bio.vein.png
+.. image:: http://img.shields.io/pypi/v/bob.bio.vein.svg
    :target: https://pypi.python.org/pypi/bob.bio.vein
-.. image:: http://img.shields.io/pypi/dm/bob.bio.vein.png
+.. image:: http://img.shields.io/pypi/dm/bob.bio.vein.svg
    :target: https://pypi.python.org/pypi/bob.bio.vein
 
 
