@@ -77,3 +77,7 @@ class Database(BioDatabase):
         purposes=purposes, model_ids=model_ids, **kwargs)
 
     return [File(f) for f in retval]
+
+
+  def annotations(self, file):
+    return None
