@@ -17,6 +17,6 @@
 .. _put: http://biometrics.put.poznan.pl/vein-dataset/
 .. _installation: https://www.idiap.ch/software/bob/install
 .. _dependencies: https://gitlab.idiap.ch/bob/bob/wikis/Dependencies
-.. _mailing list: https://groups.google.com/forum/?fromgroups#!forum/bob-devel
+.. _mailing list: https://www.idiap.ch/software/bob/discuss
 .. _bob.bio.base: https://pypi.python.org/pypi/bob.bio.base
 .. _jaccard index: https://en.wikipedia.org/wiki/Jaccard_index
