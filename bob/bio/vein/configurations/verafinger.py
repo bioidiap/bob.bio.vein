@@ -10,8 +10,6 @@ Occidentale in Sion, in Switzerland. The reference citation is [TVM14]_.
 
 You can download the raw data of the `VERA Fingervein`_ database by following
 the link.
-
-.. include:: links.rst
 """
 
 
