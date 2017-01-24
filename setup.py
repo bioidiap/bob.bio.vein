@@ -287,6 +287,7 @@ setup(
         'idiap-fast = bob.bio.vein.configurations.grid:idiap_speedup_score',
         'idiap-user-machines-fast = bob.bio.vein.configurations.grid:idiap_user_machines_speedup_score',
         'idiap-q-all = bob.bio.vein.configurations.grid:idiap_q_all',
+        "idiap_q_all_modest = bob.bio.vein.configurations.grid:idiap_q_all_modest",
         ],
 
       },
