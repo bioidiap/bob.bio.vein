@@ -7,6 +7,10 @@ from .HessianAkazeFeatures import HessianAkazeFeatures
 from .Threshold import Threshold
 from .Learn import Learn
 from .MaxEigenvalues import MaxEigenvalues
+from .MaximumCurvatureAndMask import MaximumCurvatureAndMask
+from .MaximumCurvatureScaleRotation import MaximumCurvatureScaleRotation
+from .ThresholdExtractor import ThresholdExtractor
+from .MaximumCurvatureThresholdFusion import MaximumCurvatureThresholdFusion
 
 
 # gets sphinx autodoc done right - don't remove it

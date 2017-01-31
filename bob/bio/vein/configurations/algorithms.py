@@ -19,6 +19,12 @@ from ..algorithms import MiuraMatchFusion
 
 from ..algorithms import CrossCorrelationMatch
 
+from ..algorithms import MiuraMatchMaxEigenvalues
+
+from ..algorithms import MiuraMatchRotation
+
+from ..algorithms import MiuraMatchRotationFast
+
 huangwl = MiuraMatch(ch=18, cw=28)
 miuramax = MiuraMatch(ch=80, cw=90)
 miurarlt = MiuraMatch(ch=65, cw=55)
@@ -147,6 +153,31 @@ miura_match_fusion_120_median = MiuraMatchFusion(ch = 120, cw = 120, score_fusio
 miura_match_fusion_120_adaptive_mean = MiuraMatchFusion(ch = 120, cw = 120, score_fusion_method = 'adaptive_mean')
 
 cross_correlation_match_mean1_fusion = CrossCorrelationMatch(is_mean_normalize_flag = False, score_fusion_method = 'mean')
+cross_correlation_match_mean1_fusion_mean_norm = CrossCorrelationMatch(is_mean_normalize_flag = True, score_fusion_method = 'mean')
+
+miura_match_max_eigenvalues_120_mean1 = MiuraMatchMaxEigenvalues(ch = 120, cw = 120, score_fusion_method = 'mean')
+
+miura_match_120_rotation_10_step_1_max1 = MiuraMatchRotation(ch = 120, cw = 120, angle_limit = 10, angle_step = 1, score_fusion_method = 'max')
+
+miura_match_fast_120_rotation_10_step_1_pert_1_max1 = MiuraMatchRotationFast(ch = 120, cw = 120, angle_limit = 10, angle_step = 1, perturbation_matching_flag = True, kernel_radius = 1, score_fusion_method = 'max')
+
+miura_match_fast_120_rotation_10_step_1_pert_2_max1 = MiuraMatchRotationFast(ch = 120, cw = 120, angle_limit = 10, angle_step = 1, perturbation_matching_flag = True, kernel_radius = 2, score_fusion_method = 'max')
+
+miura_match_fast_120_rotation_10_step_1_pert_3_max1 = MiuraMatchRotationFast(ch = 120, cw = 120, angle_limit = 10, angle_step = 1, perturbation_matching_flag = True, kernel_radius = 3, score_fusion_method = 'max')
+
+
+miura_match_fast_70_rotation_10_step_1_max1 = MiuraMatchRotationFast(ch = 70, cw = 70, angle_limit = 10, angle_step = 1, score_fusion_method = 'max')
+miura_match_fast_80_rotation_10_step_1_max1 = MiuraMatchRotationFast(ch = 80, cw = 80, angle_limit = 10, angle_step = 1, score_fusion_method = 'max')
+miura_match_fast_90_rotation_10_step_1_max1 = MiuraMatchRotationFast(ch = 90, cw = 90, angle_limit = 10, angle_step = 1, score_fusion_method = 'max')
+miura_match_fast_100_rotation_10_step_1_max1 = MiuraMatchRotationFast(ch = 100, cw = 100, angle_limit = 10, angle_step = 1, score_fusion_method = 'max')
+miura_match_fast_110_rotation_10_step_1_max1 = MiuraMatchRotationFast(ch = 110, cw = 110, angle_limit = 10, angle_step = 1, score_fusion_method = 'max')
+miura_match_fast_120_rotation_10_step_1_max1 = MiuraMatchRotationFast(ch = 120, cw = 120, angle_limit = 10, angle_step = 1, score_fusion_method = 'max')
+miura_match_fast_130_rotation_10_step_1_max1 = MiuraMatchRotationFast(ch = 130, cw = 130, angle_limit = 10, angle_step = 1, score_fusion_method = 'max')
+
+miura_match_fast_120_rotation_15_step_1_max1 = MiuraMatchRotationFast(ch = 120, cw = 120, angle_limit = 15, angle_step = 1, score_fusion_method = 'max')
+
+miura_match_fast_120_rotation_10_step_1_5_max1 = MiuraMatchRotationFast(ch = 120, cw = 120, angle_limit = 10, angle_step = 1.5, score_fusion_method = 'max')
+miura_match_fast_120_rotation_10_step_2_max1 = MiuraMatchRotationFast(ch = 120, cw = 120, angle_limit = 10, angle_step = 2, score_fusion_method = 'max')
 
 
 

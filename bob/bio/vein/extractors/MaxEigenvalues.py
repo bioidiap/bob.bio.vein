@@ -17,6 +17,8 @@ import bob.io.base
 
 from scipy import ndimage
 
+from skimage import exposure
+
 #==============================================================================
 # Class implementation:
 
@@ -29,9 +31,11 @@ class MaxEigenvalues( Extractor ):
     1. Compute Hessian matrix H for each pixel in the input image. The Hessian matrix is computed by convolving the image with
        the second derivatives of the Gaussian kernel in the respective x- and y-directions.
     2. Perfom eigendecomposition of H finding the largest eigenvalue of the corresponding eigenvector.
-    3. It is possible to set negative eigenvalues to zero if ``set_negatives_to_zero`` set to ``True``
+    3. It is possible to set negative eigenvalues to zero if ``set_negatives_to_zero`` set to ``True``.
     4. The image of max eigenvalues can be mean-normalized if ``mean_normalization_flag`` is set to ``True``.
-    5. Eigenvalues outside the ROI are set to zero.
+    5. The image can be binarized if ``binarization_flag`` is set to ``True``.
+       Only valid when ``set_negatives_to_zero`` is set to ``True``.
+    6. Eigenvalues outside the ROI are set to zero.
 
     **Parameters:**
 
@@ -45,18 +49,32 @@ class MaxEigenvalues( Extractor ):
 
     ``mean_normalization_flag`` : :py:class:`bool`
         Perform mean normalization of the output image of eigenvalues if set to ``True``.
+
+    ``binarization_flag`` : :py:class:`bool`
+        Binarize the output image if set to ``True``. Default value: ``False``.
+        Only valid when ``set_negatives_to_zero`` is set to ``True``.
+
+    ``equalize_adapthist_flag`` : :py:class:`bool`
+        Enhance the contrast of the output image if set to True.
+        Default value: ``False``.
     """
 
-    def __init__( self, sigma, set_negatives_to_zero, mean_normalization_flag ):
+    def __init__( self, sigma, set_negatives_to_zero, mean_normalization_flag,
+                 binarization_flag = False,
+                 equalize_adapthist_flag = False):
 
         Extractor.__init__( self,
                            sigma = sigma,
                            set_negatives_to_zero = set_negatives_to_zero,
-                           mean_normalization_flag = mean_normalization_flag )
+                           mean_normalization_flag = mean_normalization_flag,
+                           binarization_flag = binarization_flag,
+                           equalize_adapthist_flag = equalize_adapthist_flag )
 
         self.sigma = sigma
         self.set_negatives_to_zero = set_negatives_to_zero
         self.mean_normalization_flag = mean_normalization_flag
+        self.binarization_flag = binarization_flag
+        self.equalize_adapthist_flag = equalize_adapthist_flag
 
 
     #==========================================================================
@@ -158,7 +176,40 @@ class MaxEigenvalues( Extractor ):
 
 
     #==========================================================================
-    def get_max_eigenvalues( self, image, mask, sigma, set_negatives_to_zero, mean_normalization_flag ):
+    def equalize_adapthist(self, image):
+        """
+        Enhance local contrast of the input image using
+        Contrast Limited Adaptive Histogram Equalization (CLAHE) method.
+
+        **Parameters:**
+
+        ``image`` : 2D :py:class:`numpy.ndarray`
+            Input image.
+
+        **Returns:**
+
+        ``image_norm`` : 2D :py:class:`numpy.ndarray`
+            Image after contrast enhancement.
+        """
+
+        image = image + np.abs( np.min( image ) )
+
+        image = exposure.rescale_intensity(image, out_range = np.uint8)
+
+        image = image.astype(np.uint8)
+
+        image_norm = exposure.equalize_adapthist(image)
+
+        image_norm = exposure.rescale_intensity(image_norm, out_range = np.uint8)
+
+        image_norm = image_norm.astype(np.float64)
+
+        return image_norm
+
+
+    #==========================================================================
+    def get_max_eigenvalues( self, image, mask, sigma, set_negatives_to_zero, mean_normalization_flag, binarization_flag,
+                            equalize_adapthist_flag ):
         """
         Compute the maximum eigenvalues of the Hessian matrices
         for each pixel in the input image.
@@ -167,9 +218,11 @@ class MaxEigenvalues( Extractor ):
         1. Compute Hessian matrix H for each pixel in the input image. The Hessian matrix is computed by convolving the image with
            the second derivatives of the Gaussian kernel in the respective x- and y-directions.
         2. Perfom eigendecomposition of H finding the largest eigenvalue of the corresponding eigenvector.
-        3. It is possible to set negative eigenvalues to zero if ``set_negatives_to_zero`` set to ``True``
+        3. It is possible to set negative eigenvalues to zero if ``set_negatives_to_zero`` set to ``True``.
         4. The image of max eigenvalues can be mean-normalized if ``mean_normalization_flag`` is set to ``True``.
-        5. Eigenvalues outside the ROI are set to zero.
+        5. The image can be binarized if ``binarization_flag`` is set to ``True``.
+           Only valid when ``set_negatives_to_zero`` is set to ``True``.
+        6. Eigenvalues outside the ROI are set to zero.
 
         **Parameters:**
 
@@ -189,6 +242,13 @@ class MaxEigenvalues( Extractor ):
         ``mean_normalization_flag`` : :py:class:`bool`
             Normalize the image of eigenvalues to it's mean value if set to ``True``.
 
+        ``binarization_flag`` : :py:class:`bool`
+            Binarize the output image if set to ``True``.
+            Only valid when ``set_negatives_to_zero`` is set to ``True``.
+
+        ``equalize_adapthist_flag`` : :py:class:`bool`
+            Enhance the contrast of the output image if set to True.
+
         **Returns:**
 
         ``max_eigenvalues`` : 2D :py:class:`numpy.ndarray`
@@ -204,7 +264,15 @@ class MaxEigenvalues( Extractor ):
 
         max_eigenvalues = T/2 + np.sqrt(T**2/4 - D)
 
+        max_eigenvalues[np.isnan(max_eigenvalues)] = 0
+
         max_eigenvalues = max_eigenvalues * mask
+
+        if equalize_adapthist_flag:
+
+            max_eigenvalues = self.equalize_adapthist(max_eigenvalues)
+
+            max_eigenvalues = max_eigenvalues * mask
 
         if mean_normalization_flag and not(set_negatives_to_zero):
 
@@ -217,6 +285,14 @@ class MaxEigenvalues( Extractor ):
             max_eigenvalues[max_eigenvalues < 0] = 0
 
             max_eigenvalues = self.mean_normalization(max_eigenvalues, mask)
+
+            if binarization_flag:
+
+                max_eigenvalues[max_eigenvalues>0] = 1
+
+                max_eigenvalues[max_eigenvalues<1] = 0
+
+                max_eigenvalues = max_eigenvalues.astype(np.uint8)
 
         return max_eigenvalues
 
@@ -231,9 +307,11 @@ class MaxEigenvalues( Extractor ):
         1. Compute Hessian matrix H for each pixel in the input image. The Hessian matrix is computed by convolving the image with
            the second derivatives of the Gaussian kernel in the respective x- and y-directions.
         2. Perfom eigendecomposition of H finding the largest eigenvalue of the corresponding eigenvector.
-        3. It is possible to set negative eigenvalues to zero if ``set_negatives_to_zero`` set to ``True``
+        3. It is possible to set negative eigenvalues to zero if ``set_negatives_to_zero`` set to ``True``.
         4. The image of max eigenvalues can be mean-normalized if ``mean_normalization_flag`` is set to ``True``.
-        5. Eigenvalues outside the ROI are set to zero.
+        5. The image can be binarized if ``binarization_flag`` is set to ``True``.
+           Only valid when ``set_negatives_to_zero`` is set to ``True``.
+        6. Eigenvalues outside the ROI are set to zero.
 
         **Parameters:**
 
@@ -252,8 +330,9 @@ class MaxEigenvalues( Extractor ):
 
         mask = input_data[1] # binary mask of the ROI
 
-        max_eigenvalues = self.get_max_eigenvalues( image, mask, self.sigma, self.set_negatives_to_zero,
-                                                   self.mean_normalization_flag )
+        max_eigenvalues = self.get_max_eigenvalues(image, mask, self.sigma, self.set_negatives_to_zero,
+                                                   self.mean_normalization_flag, self.binarization_flag,
+                                                   self.equalize_adapthist_flag)
 
         return max_eigenvalues, mask
 
@@ -273,8 +352,16 @@ class MaxEigenvalues( Extractor ):
         """
 
         f = bob.io.base.HDF5File( file_name, 'w' )
-        f.set( 'max_eigenvalues', data[ 0 ] )
-        f.set( 'mask', data[ 1 ] )
+
+        if self.binarization_flag:
+
+            f.set( 'array', data[ 0 ] )
+
+        else:
+
+            f.set( 'image', data[ 0 ] )
+            f.set( 'mask', data[ 1 ] )
+
         del f
 
 
@@ -294,16 +381,26 @@ class MaxEigenvalues( Extractor ):
         ``max_eigenvalues`` : 2D :py:class:`numpy.ndarray`
             Maximum eigenvalues of Hessian matrices.
 
-        ``max_eigenvalues`` : 2D :py:class:`numpy.ndarray`
+        ``mask`` : 2D :py:class:`numpy.ndarray`
             Binary mask of the ROI.
         """
 
         f = bob.io.base.HDF5File( file_name, 'r' )
-        max_eigenvalues = f.read( 'max_eigenvalues' )
-        mask = f.read( 'mask' )
+
+        if self.binarization_flag:
+
+            return_data = f.read( 'array' )
+
+        else:
+
+            max_eigenvalues = f.read( 'image' )
+            mask = f.read( 'mask' )
+
+            return_data = (max_eigenvalues, mask)
+
         del f
 
-        return max_eigenvalues, mask
+        return return_data
 
 
 

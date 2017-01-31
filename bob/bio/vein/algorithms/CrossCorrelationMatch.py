@@ -179,6 +179,10 @@ class CrossCorrelationMatch(Algorithm):
         image_product = np.fft.fft2(image_enroll) * np.fft.fft2(probe_rotated).conj()
         cc_image = np.fft.fftshift(np.fft.ifft2(image_product)).real
 
+#        crop = 120
+#        cc_image_crop = cc_image[crop:-crop, crop:-crop]
+#        cc_image = np.lib.pad(cc_image_crop, crop, 'constant', constant_values = 0)
+
         offset = np.array(cc_image.shape)/2 - np.unravel_index(cc_image.argmax(), cc_image.shape)
         tform = tf.SimilarityTransform(scale=1, rotation=0, translation=(offset[1], offset[0]))
 
@@ -199,7 +203,13 @@ class CrossCorrelationMatch(Algorithm):
 
             probe_updated = self.mean_std_normalization(probe_rotated_translated, joint_roi)
 
-            score = np.average( enroll_updated * probe_updated, weights = joint_roi)
+#            score = np.average( enroll_updated * probe_updated, weights = joint_roi)
+
+            numerator = np.sum(enroll_updated * probe_updated)
+
+            denominator = np.sum(probe_mask_rotated_translated) + np.sum(enroll_mask)
+
+            score = numerator / denominator
 
         else:
 
@@ -362,12 +372,12 @@ class CrossCorrelationMatch(Algorithm):
         ``max_eigenvalues`` : 2D :py:class:`numpy.ndarray`
             Maximum eigenvalues of Hessian matrices.
 
-        ``max_eigenvalues`` : 2D :py:class:`numpy.ndarray`
+        ``mask`` : 2D :py:class:`numpy.ndarray`
             Binary mask of the ROI.
         """
 
         f = bob.io.base.HDF5File( probe_file, 'r' )
-        max_eigenvalues = f.read( 'max_eigenvalues' )
+        max_eigenvalues = f.read( 'image' )
         mask = f.read( 'mask' )
         del f
 
