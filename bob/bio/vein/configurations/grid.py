@@ -106,9 +106,21 @@ idiap_q_all_modest = Grid(
     )
 
 
+week = Grid(
+    training_queue='Week',
+    
+    number_of_preprocessing_jobs=32,
+    preprocessing_queue='Week',
 
+    number_of_extraction_jobs=32,
+    extraction_queue='Week',
 
+    number_of_projection_jobs=32,
+    projection_queue='Week',
 
+    number_of_enrollment_jobs=32,
+    enrollment_queue='Week',
 
-
-
+    number_of_scoring_jobs=32,
+    scoring_queue='Week',
+    )

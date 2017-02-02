@@ -4,7 +4,7 @@
 from .biowave_v1 import BiowaveV1BioFile
 from .biowave_v1 import BiowaveV1BioDatabase
 from .biowave_test import BiowaveTestBioDatabase
-
+from .putvein import PutveinBioDatabase
 
 # gets sphinx autodoc done right - don't remove it
 def __appropriate__(*args):
@@ -24,6 +24,7 @@ __appropriate__(
     BiowaveV1BioFile,
     BiowaveTestBioDatabase,
     BiowaveV1BioDatabase,
+    PutveinBioDatabase,
     )
 
 __all__ = [_ for _ in dir() if not _.startswith('_')]
