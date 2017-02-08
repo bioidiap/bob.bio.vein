@@ -39,6 +39,7 @@ setup(
         'biowave_v1     = bob.bio.vein.configurations.biowave_v1',
         'biowave_v1_a     = bob.bio.vein.configurations.biowave_v1_a',
         'biowave_v1_e     = bob.bio.vein.configurations.biowave_v1_e',
+        'putvein     = bob.bio.vein.configurations.putvein',
 
         # baselines
         'mc = bob.bio.vein.configurations.maximum_curvature',
@@ -58,11 +59,11 @@ setup(
       'bob.bio.database': [
         'verafinger = bob.bio.vein.configurations.database.verafinger:database',
         'utfvp = bob.bio.vein.configurations.databases.utfvp:database',
-#        'vera = bob.bio.vein.configurations.databases.vera:database',
-	'biowave_test = bob.bio.vein.configurations.databases.biowave_test:database',
+        'biowave_test = bob.bio.vein.configurations.databases.biowave_test:database',
         'biowave_v1 = bob.bio.vein.configurations.database.biowave_v1:database',
-        'biowave_v1_a     = bob.bio.vein.configurations.database.biowave_v1_a:database',
-        'biowave_v1_e     = bob.bio.vein.configurations.database.biowave_v1_e:database',
+        'biowave_v1_a = bob.bio.vein.configurations.database.biowave_v1_a:database',
+        'biowave_v1_e = bob.bio.vein.configurations.database.biowave_v1_e:database',
+        'putvein = bob.bio.vein.configurations.database.putvein:database',
       ],
 
 

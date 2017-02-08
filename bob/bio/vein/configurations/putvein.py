@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 """
-Putvein Database. 
+Putvein Database.
 
-**This is default** ``bob.db.putvein`` **database configuration. More information -** :py:class:`bob.bio.vein.database.PutveinV1BioDatabase`.
+**This is default** ``bob.db.putvein`` **database configuration.
+More information -** :py:class:`bob.bio.vein.database.PutveinV1BioDatabase`.
 
 .. include:: links.rst
 """
@@ -14,11 +15,11 @@ putvein_image_directory = "[YOUR_PUTVEIN_IMAGE_DIRECTORY]"
 
 """Value of ``~/.bob_bio_databases.txt`` for this database"""
 
-database = PutveinDatabase(
+database = PutveinBioDatabase(
            original_directory=putvein_image_directory,
-           original_extension = '.bmp',
+           original_extension='.bmp',
            )
-"""The :py:class:`bob.bio.base.database.BioDatabase` derivative with 
+"""The :py:class:`bob.bio.base.database.BioDatabase` derivative with
 PUTVEIN settings
 
 .. warning::
@@ -32,7 +33,7 @@ You must make sure to create ``${HOME}/.bob_bio_databases.txt`` setting this
 value to the place where you actually installed the Verafinger Database, as
 explained in the section :ref:`bob.bio.vein.baselines`.
 """
-protocol='L'
+protocol = 'wrist-R_4'
 """The default protocol to use for tests
 
 You may modify this at runtime by specifying the option ``--protocol`` on the

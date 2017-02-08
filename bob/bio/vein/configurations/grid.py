@@ -7,19 +7,19 @@ from bob.bio.base.grid import Grid
 default = Grid(
     training_queue='32G',
 
-    number_of_preprocessing_jobs=200,
-    preprocessing_queue='4G-io-big',
+    number_of_preprocessing_jobs=32,
+    preprocessing_queue='8G-io-big',
 
-    number_of_extraction_jobs=200,
+    number_of_extraction_jobs=32,
     extraction_queue='8G-io-big',
 
-    number_of_projection_jobs=200,
+    number_of_projection_jobs=32,
     projection_queue='8G-io-big',
 
-    number_of_enrollment_jobs=10,
+    number_of_enrollment_jobs=32,
     enrollment_queue='8G-io-big',
 
-    number_of_scoring_jobs=10,
+    number_of_scoring_jobs=32,
     scoring_queue='8G-io-big',
     )
 
