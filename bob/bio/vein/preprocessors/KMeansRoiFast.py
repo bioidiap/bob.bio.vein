@@ -249,9 +249,11 @@ class KMeansRoiFast(Preprocessor):
 
         data = data.reshape( data.shape[ 0 ], 1 )
 
+        step = len(data)/10000
+
         if speedup_flag:
 
-            data = data[::50]
+            data = data[::step] # select ~10000 data points
 
         data = data.astype( np.float64 ) # must be float64 for the bob k-means
 
