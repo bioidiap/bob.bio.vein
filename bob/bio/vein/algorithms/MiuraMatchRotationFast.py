@@ -10,6 +10,7 @@ import numpy as np
 import scipy.signal
 from scipy import ndimage
 from skimage import morphology
+from skimage import transform as tf
 
 from bob.bio.base.algorithm import Algorithm
 
@@ -77,6 +78,9 @@ class MiuraMatchRotationFast (Algorithm):
         Score fusion method.
         Default value: 'mean'.
         Possible options: 'mean', 'max', 'median'.
+
+    ``gray_scale_input_flag`` : :py:class:`bool`
+        Set this flag to ``True`` if image is grayscale. Defaults: ``False``.
     """
 
 
@@ -85,7 +89,8 @@ class MiuraMatchRotationFast (Algorithm):
                  angle_limit = 10, angle_step = 1,
                  perturbation_matching_flag = False,
                  kernel_radius = 3,
-                 score_fusion_method = 'mean'):
+                 score_fusion_method = 'mean',
+                 gray_scale_input_flag = False):
 
         # call base class constructor
         Algorithm.__init__(self,
@@ -96,6 +101,7 @@ class MiuraMatchRotationFast (Algorithm):
                             perturbation_matching_flag = perturbation_matching_flag,
                             kernel_radius = kernel_radius,
                             score_fusion_method = score_fusion_method,
+                            gray_scale_input_flag = gray_scale_input_flag,
                             multiple_model_scoring = None,
                             multiple_probe_scoring = None)
 
@@ -106,6 +112,7 @@ class MiuraMatchRotationFast (Algorithm):
         self.perturbation_matching_flag = perturbation_matching_flag
         self.kernel_radius = kernel_radius
         self.score_fusion_method = score_fusion_method
+        self.gray_scale_input_flag = gray_scale_input_flag
 
 
     #==========================================================================
@@ -261,7 +268,7 @@ class MiuraMatchRotationFast (Algorithm):
 
 
     #==========================================================================
-    def sum_of_rotated_images(self, image, angle_limit, angle_step):
+    def sum_of_rotated_images(self, image, angle_limit, angle_step, gray_scale_input_flag):
         """
         Generate the output image, which is the sum of input images rotated
         in the specified range with the defined step.
@@ -277,12 +284,15 @@ class MiuraMatchRotationFast (Algorithm):
         ``angle_step`` : :py:class:`float`
             Rotate the image with this step in degrees.
 
+        ``gray_scale_input_flag`` : :py:class:`bool`
+            Set this flag to ``True`` if image is grayscale. Defaults: ``False``.
+
         **Returns:**
 
         ``output_image`` : 2D :py:class:`numpy.ndarray`
             Sum of rotated images.
 
-        ``output_image`` : 3D :py:class:`numpy.ndarray`
+        ``rotated_images`` : 3D :py:class:`numpy.ndarray`
             A stack of rotated images. Array size:
             (N_images, Height, Width)
         """
@@ -292,6 +302,10 @@ class MiuraMatchRotationFast (Algorithm):
         h, w = image.shape
 
         image_coords = np.argwhere(image) - offset # centered coordinates of the vein (non-zero) pixels
+
+        if gray_scale_input_flag:
+
+            image_val = image[image>0]
 
         angles = np.arange(-angle_limit, angle_limit + 1, angle_step) / 180. * np.pi # angles in the radians
 
@@ -308,7 +322,13 @@ class MiuraMatchRotationFast (Algorithm):
             rotated_coords[:, 0][rotated_coords[:, 0] >= h] = h-1
             rotated_coords[:, 1][rotated_coords[:, 1] >= w] = w-1
 
-            rotated_images[idx, rotated_coords[:,0], rotated_coords[:,1]] = 1
+            if gray_scale_input_flag:
+
+                rotated_images[idx, rotated_coords[:,0], rotated_coords[:,1]] = image_val
+
+            else:
+
+                rotated_images[idx, rotated_coords[:,0], rotated_coords[:,1]] = 1
 
         output_image = np.sum(rotated_images, axis = 0)
 
@@ -338,13 +358,16 @@ class MiuraMatchRotationFast (Algorithm):
 
         scores = []
 
+        angles = np.arange(-self.angle_limit, self.angle_limit + 1, self.angle_step)
+
         # iterate over all models for a given individual
         for enroll in model:
 
             if enroll.dtype != np.float64:
                 enroll = enroll.astype(np.float64)
 
-            sum_of_rotated_img_enroll, rotated_images_enroll = self.sum_of_rotated_images(enroll, self.angle_limit, self.angle_step)
+            sum_of_rotated_img_enroll, rotated_images_enroll = self.sum_of_rotated_images(enroll, self.angle_limit, self.angle_step,
+                                                                                          self.gray_scale_input_flag)
 
             h, w = enroll.shape
 
@@ -360,9 +383,21 @@ class MiuraMatchRotationFast (Algorithm):
 
             idx_selected = np.argmax(scores_internal) # the index of the rotated enroll image having the best match
 
-            score = self.miura_match(rotated_images_enroll[ idx_selected ], probe, self.ch, self.cw, compute_score_flag = True,
-                                     perturbation_matching_flag = self.perturbation_matching_flag,
+            if self.gray_scale_input_flag:
+
+                angle = angles[idx_selected]
+
+                enroll_rotated =tf.rotate(enroll, angle = -angle, preserve_range = True)
+
+                score = self.miura_match(enroll_rotated, probe, self.ch, self.cw, compute_score_flag = True,
+                                     perturbation_matching_flag = False,
                                      kernel_radius = self.kernel_radius)[0]
+
+            else:
+
+                score = self.miura_match(rotated_images_enroll[ idx_selected ], probe, self.ch, self.cw, compute_score_flag = True,
+                                         perturbation_matching_flag = self.perturbation_matching_flag,
+                                         kernel_radius = self.kernel_radius)[0]
 
             scores.append( score )
 

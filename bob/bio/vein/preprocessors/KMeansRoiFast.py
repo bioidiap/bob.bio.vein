@@ -41,6 +41,7 @@ class KMeansRoiFast(Preprocessor):
                  erode_mask_flag = False, erosion_factor = 20,
                  convexity_flag = False,
                  rotation_centering_flag = False,
+                 centering_flag = False,
                  normalize_scale_flag = False,
                  mask_to_image_area_ratio = 0.2,
                  equalize_adapthist_flag = False,
@@ -78,6 +79,9 @@ class KMeansRoiFast(Preprocessor):
         ``rotation_centering_flag`` : :py:class:`bool`
             Rotate and center the binary mask of the ROI and the input image if True. Default value: False.
 
+        ``centering_flag`` : :py:class:`bool`
+            Just center the binary mask of the ROI and the input image if True. Default value: False.
+
         ``normalize_scale_flag`` : :py:class:`bool`
             Normalize the scale of the ROI and of the image if True. Default value: False.
 
@@ -102,6 +106,7 @@ class KMeansRoiFast(Preprocessor):
                                 erosion_factor = erosion_factor,
                                 convexity_flag = convexity_flag,
                                 rotation_centering_flag = rotation_centering_flag,
+                                centering_flag = centering_flag,
                                 normalize_scale_flag = normalize_scale_flag,
                                 mask_to_image_area_ratio = mask_to_image_area_ratio,
                                 equalize_adapthist_flag = equalize_adapthist_flag,
@@ -116,6 +121,7 @@ class KMeansRoiFast(Preprocessor):
         self.convexity_flag = convexity_flag
         self.available_filter_names = ["gaussian_filter", "median_filter"]
         self.rotation_centering_flag = rotation_centering_flag
+        self.centering_flag = centering_flag
         self.normalize_scale_flag = normalize_scale_flag
         self.mask_to_image_area_ratio = mask_to_image_area_ratio
         self.equalize_adapthist_flag = equalize_adapthist_flag
@@ -497,6 +503,49 @@ class KMeansRoiFast(Preprocessor):
 
 
     #==========================================================================
+    def center_roi_and_image(self, mask_binary, image):
+        """
+        Center the binary mask of the ROI and the input image.
+        The center of mass of the binary mask of the ROI is aligned with the
+        center of the image. The same centering is applied to the original image.
+
+        **Parameters:**
+
+        ``mask_binary`` : 2D :py:class:`numpy.ndarray`
+            binary mask of the ROI
+
+        ``image`` : 2D :py:class:`numpy.ndarray`
+            input image.
+
+        **Returns:**
+
+        ``mask_binary_transformed`` : 2D :py:class:`numpy.ndarray`
+            binary mask of the ROI after centering.
+
+        ``image_transformed`` : 2D :py:class:`numpy.ndarray`
+            input image after centering.
+        """
+
+        matrix = [[1,0],
+                  [0,1]]
+
+        # Offset to allign the center of mass and image center:
+        offset = np.array(ndimage.center_of_mass(mask_binary)) - np.array(mask_binary.shape)/2
+
+        mask_binary_transformed = ndimage.affine_transform(mask_binary, matrix,
+                                                            offset=(offset[0], offset[1]),
+                                                            output_shape=None, output=None,
+                                                            order=0, mode='constant', cval=0.0, prefilter=True) # was order=3
+
+        image_transformed = ndimage.affine_transform(image, matrix,
+                                                    offset=(offset[0], offset[1]),
+                                                    output_shape=None, output=None,
+                                                    order=2, mode='constant', cval=0.0, prefilter=True) # was order=3
+
+        return (mask_binary_transformed, image_transformed)
+
+
+    #==========================================================================
     def normalize_scale(self, image, mask, mask_to_image_area_ratio):
         """
         This function normalizes the scale of the ROI and of the input image.
@@ -641,6 +690,11 @@ class KMeansRoiFast(Preprocessor):
 
             mask_binary_transformed, image_transformed = self.rotate_and_center_roi_and_image(mask_binary_transformed,
                                                                                               image_transformed)
+
+        if self.centering_flag:
+
+            mask_binary_transformed, image_transformed = self.center_roi_and_image(mask_binary_transformed,
+                                                                                   image_transformed)
 
         if self.equalize_adapthist_flag:
 

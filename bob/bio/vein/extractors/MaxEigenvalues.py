@@ -13,11 +13,17 @@ from bob.bio.base.extractor import Extractor
 
 import numpy as np
 
-import bob.io.base
-
 from scipy import ndimage
 
 from skimage import exposure
+
+from skimage.transform import rotate
+
+from skimage import morphology
+
+from scipy.spatial.distance import pdist, squareform
+
+from skimage.morphology import binary_closing
 
 #==============================================================================
 # Class implementation:
@@ -31,11 +37,7 @@ class MaxEigenvalues( Extractor ):
     1. Compute Hessian matrix H for each pixel in the input image. The Hessian matrix is computed by convolving the image with
        the second derivatives of the Gaussian kernel in the respective x- and y-directions.
     2. Perfom eigendecomposition of H finding the largest eigenvalue of the corresponding eigenvector.
-    3. It is possible to set negative eigenvalues to zero if ``set_negatives_to_zero`` set to ``True``.
-    4. The image of max eigenvalues can be mean-normalized if ``mean_normalization_flag`` is set to ``True``.
-    5. The image can be binarized if ``binarization_flag`` is set to ``True``.
-       Only valid when ``set_negatives_to_zero`` is set to ``True``.
-    6. Eigenvalues outside the ROI are set to zero.
+    3. It is possible to set non-vein pixels to zero if ``segment_veins_flag`` is set to True.
 
     **Parameters:**
 
@@ -43,38 +45,69 @@ class MaxEigenvalues( Extractor ):
         Standard deviation used for the Gaussian kernel, which is used as
         weighting function for the auto-correlation matrix.
 
-    ``set_negatives_to_zero`` : :py:class:`bool`
-        Set negative eigenvalues to zero if set to ``True``. This is done before
-        normalization, which takes place if ``mean_normalization_flag`` is ``True``.
-
-    ``mean_normalization_flag`` : :py:class:`bool`
-        Perform mean normalization of the output image of eigenvalues if set to ``True``.
-
-    ``binarization_flag`` : :py:class:`bool`
-        Binarize the output image if set to ``True``. Default value: ``False``.
-        Only valid when ``set_negatives_to_zero`` is set to ``True``.
-
-    ``equalize_adapthist_flag`` : :py:class:`bool`
-        Enhance the contrast of the output image if set to True.
+    ``segment_veins_flag`` : :py:class:`bool`
+        Set non-vein pixels to zero is set to ``True``.
         Default value: ``False``.
+
+    ``amplify_segmented_veins_flag`` : :py:class:`bool`
+        Make the intensity of the veins even if set to ``True``. Only valid, when
+        ``segment_veins_flag`` is set to ``True``.
+        Default value: ``False``.
+
+    ``two_layer_segmentation_flag`` : :py:class:`bool`
+        Apply the segmentation algorithm twice if set to ``True``. Only valid, when
+        ``segment_veins_flag`` is set to ``True``.
+        Default value: ``False``.
+
+    ``binarize_flag`` : :py:class:`bool`
+        Binarize the resulting image.
+        Only valid, when ``segment_veins_flag`` and ``amplify_segmented_veins_flag``
+        are set to ``True``.
+        Default value: ``False``.
+
+    ``kernel_size`` : :py:class:`float`
+        Erode the veins skeleton with kernel of this size. Only valid, when
+        ``binarize_flag`` is set to ``True``.
+        Default value: 3.
+
+    ``norm_p2p_dist_flag`` : :py:class:`bool`
+        If ``True`` normalize the mean distance between the point pairs in the
+        input binary image to the ``selected_mean_dist`` value.
+        Only valis when ``binarize_flag`` is set to ``True``.
+        Default: ``False``.
+
+    ``selected_mean_dist`` : :py:class:`float`
+        Normalize the mean distance between the point pairs in the
+        input binary image to this value.
+        Default: 100.
     """
 
-    def __init__( self, sigma, set_negatives_to_zero, mean_normalization_flag,
-                 binarization_flag = False,
-                 equalize_adapthist_flag = False):
+    def __init__( self, sigma, segment_veins_flag = False,
+                 amplify_segmented_veins_flag = False,
+                 two_layer_segmentation_flag = False,
+                 binarize_flag = False,
+                 kernel_size = 3,
+                 norm_p2p_dist_flag = False,
+                 selected_mean_dist = 100):
 
-        Extractor.__init__( self,
+        Extractor.__init__(self,
                            sigma = sigma,
-                           set_negatives_to_zero = set_negatives_to_zero,
-                           mean_normalization_flag = mean_normalization_flag,
-                           binarization_flag = binarization_flag,
-                           equalize_adapthist_flag = equalize_adapthist_flag )
+                           segment_veins_flag = segment_veins_flag,
+                           amplify_segmented_veins_flag = amplify_segmented_veins_flag,
+                           two_layer_segmentation_flag = two_layer_segmentation_flag,
+                           binarize_flag = binarize_flag,
+                           kernel_size = kernel_size,
+                           norm_p2p_dist_flag = norm_p2p_dist_flag,
+                           selected_mean_dist = 100)
 
         self.sigma = sigma
-        self.set_negatives_to_zero = set_negatives_to_zero
-        self.mean_normalization_flag = mean_normalization_flag
-        self.binarization_flag = binarization_flag
-        self.equalize_adapthist_flag = equalize_adapthist_flag
+        self.segment_veins_flag = segment_veins_flag
+        self.amplify_segmented_veins_flag = amplify_segmented_veins_flag
+        self.two_layer_segmentation_flag = two_layer_segmentation_flag
+        self.binarize_flag = binarize_flag
+        self.kernel_size = kernel_size
+        self.norm_p2p_dist_flag = norm_p2p_dist_flag
+        self.selected_mean_dist = selected_mean_dist
 
 
     #==========================================================================
@@ -148,11 +181,71 @@ class MaxEigenvalues( Extractor ):
         return Hxx, Hxy, Hyy
 
 
+#    #==========================================================================
+#    def mean_normalization(self, image, mask):
+#        """
+#        Perform mean normalization of the input image given weights in the mask
+#        array.
+#
+#        **Parameters:**
+#
+#        ``image`` : 2D :py:class:`numpy.ndarray`
+#            Input image.
+#
+#        ``mask`` : 2D :py:class:`numpy.ndarray`
+#            Array with weights.
+#
+#        **Returns:**
+#
+#        ``image_normalized`` : 2D :py:class:`numpy.ndarray`
+#            Normalized image.
+#        """
+#
+#        image_average = np.average(image, weights = mask)
+#
+#        image_normalized = ( image - image_average ) * mask
+#
+#        return image_normalized
+
+
+#    #==========================================================================
+#    def equalize_adapthist(self, image):
+#        """
+#        Enhance local contrast of the input image using
+#        Contrast Limited Adaptive Histogram Equalization (CLAHE) method.
+#
+#        **Parameters:**
+#
+#        ``image`` : 2D :py:class:`numpy.ndarray`
+#            Input image.
+#
+#        **Returns:**
+#
+#        ``image_norm`` : 2D :py:class:`numpy.ndarray`
+#            Image after contrast enhancement.
+#        """
+#
+#        image = image + np.abs( np.min( image ) )
+#
+#        image = exposure.rescale_intensity(image, out_range = np.uint8)
+#
+#        image = image.astype(np.uint8)
+#
+#        image_norm = exposure.equalize_adapthist(image)
+#
+#        image_norm = exposure.rescale_intensity(image_norm, out_range = np.uint8)
+#
+#        image_norm = image_norm.astype(np.float64)
+#
+#        return image_norm
+
+
     #==========================================================================
-    def mean_normalization(self, image, mask):
+    def segment_veins(self, image, mask):
         """
-        Perform mean normalization of the input image given weights in the mask
-        array.
+        In this function pixels considered as non-vein objects (less then
+        threshold) are set to zero. The threshold is defined as a mean of all pixels
+        in the ROI.
 
         **Parameters:**
 
@@ -160,69 +253,38 @@ class MaxEigenvalues( Extractor ):
             Input image.
 
         ``mask`` : 2D :py:class:`numpy.ndarray`
-            Array with weights.
+            Binary mask of the ROI.
 
         **Returns:**
 
-        ``image_normalized`` : 2D :py:class:`numpy.ndarray`
-            Normalized image.
+        ``output_image`` : 2D :py:class:`numpy.ndarray`
+            Maximum eigenvalues of Hessian matrices.
         """
 
-        image_average = np.average(image, weights = mask)
+        image_coords = np.argwhere(mask==1) # Coordinates of the pixels in the ROI
 
-        image_normalized = ( image - image_average ) * mask
+        data_points = image[mask==1] # Values of the pixels in the ROI
 
-        return image_normalized
+        threshold = np.mean(data_points) # Threshold to distinguish veins from non-veins
+
+        data_points[data_points<=threshold] = threshold # Set non-vein pixels to threshold value
+
+        data_points = data_points - threshold # Set non-vein pixels to zero
+
+        output_image = np.zeros(image.shape) # Output image
+
+        output_image[image_coords[:,0], image_coords[:,1]] = data_points # Set vein pixels
+
+        output_image = exposure.rescale_intensity(output_image, out_range = np.uint8)
+
+        return output_image.astype(np.float)/255.
 
 
     #==========================================================================
-    def equalize_adapthist(self, image):
-        """
-        Enhance local contrast of the input image using
-        Contrast Limited Adaptive Histogram Equalization (CLAHE) method.
-
-        **Parameters:**
-
-        ``image`` : 2D :py:class:`numpy.ndarray`
-            Input image.
-
-        **Returns:**
-
-        ``image_norm`` : 2D :py:class:`numpy.ndarray`
-            Image after contrast enhancement.
-        """
-
-        image = image + np.abs( np.min( image ) )
-
-        image = exposure.rescale_intensity(image, out_range = np.uint8)
-
-        image = image.astype(np.uint8)
-
-        image_norm = exposure.equalize_adapthist(image)
-
-        image_norm = exposure.rescale_intensity(image_norm, out_range = np.uint8)
-
-        image_norm = image_norm.astype(np.float64)
-
-        return image_norm
-
-
-    #==========================================================================
-    def get_max_eigenvalues( self, image, mask, sigma, set_negatives_to_zero, mean_normalization_flag, binarization_flag,
-                            equalize_adapthist_flag ):
+    def get_max_eigenvalues(self, image, mask, sigma):
         """
         Compute the maximum eigenvalues of the Hessian matrices
         for each pixel in the input image.
-        The algorithm is composed of the following steps:
-
-        1. Compute Hessian matrix H for each pixel in the input image. The Hessian matrix is computed by convolving the image with
-           the second derivatives of the Gaussian kernel in the respective x- and y-directions.
-        2. Perfom eigendecomposition of H finding the largest eigenvalue of the corresponding eigenvector.
-        3. It is possible to set negative eigenvalues to zero if ``set_negatives_to_zero`` set to ``True``.
-        4. The image of max eigenvalues can be mean-normalized if ``mean_normalization_flag`` is set to ``True``.
-        5. The image can be binarized if ``binarization_flag`` is set to ``True``.
-           Only valid when ``set_negatives_to_zero`` is set to ``True``.
-        6. Eigenvalues outside the ROI are set to zero.
 
         **Parameters:**
 
@@ -234,20 +296,6 @@ class MaxEigenvalues( Extractor ):
 
         ``sigma`` : :py:class:`float`
             Standard deviation used for the Gaussian kernel, which is used as weighting function for the auto-correlation matrix.
-
-        ``set_negatives_to_zero`` : :py:class:`bool`
-            Set negative eigenvalues to zero if set to ``True``. This is done before
-            normalization, which takes place if ``mean_normalization_flag`` is ``True``.
-
-        ``mean_normalization_flag`` : :py:class:`bool`
-            Normalize the image of eigenvalues to it's mean value if set to ``True``.
-
-        ``binarization_flag`` : :py:class:`bool`
-            Binarize the output image if set to ``True``.
-            Only valid when ``set_negatives_to_zero`` is set to ``True``.
-
-        ``equalize_adapthist_flag`` : :py:class:`bool`
-            Enhance the contrast of the output image if set to True.
 
         **Returns:**
 
@@ -268,50 +316,257 @@ class MaxEigenvalues( Extractor ):
 
         max_eigenvalues = max_eigenvalues * mask
 
-        if equalize_adapthist_flag:
-
-            max_eigenvalues = self.equalize_adapthist(max_eigenvalues)
-
-            max_eigenvalues = max_eigenvalues * mask
-
-        if mean_normalization_flag and not(set_negatives_to_zero):
-
-            max_eigenvalues = self.mean_normalization(max_eigenvalues, mask)
-
-        if set_negatives_to_zero:
-
-            max_eigenvalues = self.mean_normalization(max_eigenvalues, mask)
-
-            max_eigenvalues[max_eigenvalues < 0] = 0
-
-            max_eigenvalues = self.mean_normalization(max_eigenvalues, mask)
-
-            if binarization_flag:
-
-                max_eigenvalues[max_eigenvalues>0] = 1
-
-                max_eigenvalues[max_eigenvalues<1] = 0
-
-                max_eigenvalues = max_eigenvalues.astype(np.uint8)
-
         return max_eigenvalues
 
 
     #==========================================================================
-    def __call__( self, input_data ):
+    def amplify_segmented_veins_1d(self, image):
+        """
+        This function amplifies the segmented veins in one diamension
+
+        **Parameters:**
+
+        ``image`` : 2D :py:class:`numpy.ndarray`
+            Input image with segmented veins.
+
+        **Returns:**
+
+        ``result`` : 2D :py:class:`numpy.ndarray`
+            Output image with amplified veins in 1D.
+        """
+
+        result = np.zeros(image.shape)
+
+        threshold = 1/20. * np.max(image)
+
+        for vec_num, vec in enumerate(image):
+
+            vec[vec < threshold] = 0
+
+            zeros_coords = np.squeeze(np.argwhere(vec==0))
+
+            peaks = zeros_coords[np.argwhere( (zeros_coords[1:] - zeros_coords[:-1])>1 )]
+
+            peaks = peaks.tolist()
+            peaks = [item[0] for item in peaks]
+            peaks.append(len(vec))
+            peaks = [0] + peaks
+
+            ampl = np.zeros(len(vec))
+
+            for idx, start in enumerate(peaks[:-1]):
+
+                end = peaks[idx + 1]
+
+                if np.sum(vec[start:end]):
+
+                    ampl[start:end] = 1/np.max(vec[start:end])
+
+            vec_ampl = ampl*vec
+
+            result[vec_num, :] = vec_ampl
+
+        return result
+
+
+    #==========================================================================
+    def amplify_segmented_veins(self, image):
+        """
+        This function amplifies segmented veins in both horizontal and vertical
+        directions using ``amplify_segmented_veins_1d()`` function.
+
+        **Parameters:**
+
+        ``image`` : 2D :py:class:`numpy.ndarray`
+            Input image with segmented veins.
+
+        **Returns:**
+
+        ``veins`` : 2D :py:class:`numpy.ndarray`
+            Output image with amplified veins in 2D.
+        """
+
+        hor_result = self.amplify_segmented_veins_1d(image)
+
+        vert_result = np.transpose(self.amplify_segmented_veins_1d(np.transpose(image)))
+
+        diag_result_1 = rotate(self.amplify_segmented_veins_1d(rotate(image, 45, preserve_range = True)), -45, preserve_range = True)
+
+        diag_result_2 = rotate(self.amplify_segmented_veins_1d(rotate(image, -45, preserve_range = True)), 45, preserve_range = True)
+
+#        veins = np.max(np.dstack([vert_result, hor_result]), axis = 2)
+
+        veins = np.max(np.dstack([vert_result, hor_result, diag_result_1, diag_result_2]), axis = 2)
+
+        return veins
+
+
+    #==========================================================================
+    def two_layer_segmentation(self, max_eigenvalues, mask, sigma):
+        """
+        In this method ``get_max_eigenvalues`` method is applied for the second
+        time to the modified ``max_eigenvalues`` image.
+        Non-vein objects (negative values) are then set to zero.
+
+        **Parameters:**
+
+        ``max_eigenvalues`` : 2D :py:class:`numpy.ndarray`
+            Input image - maximum eigenvalues of Hessian matrices.
+
+        ``mask`` : 2D :py:class:`numpy.ndarray`
+            Binary mask of the ROI.
+
+        ``sigma`` : :py:class:`float`
+            Standard deviation used for the Gaussian kernel, which is used as
+            weighting function for the auto-correlation matrix.
+
+        **Returns:**
+
+        ``output_image`` : 2D :py:class:`numpy.ndarray`
+            Output image with segmented veins.
+        """
+
+        max_eigenvalues = np.max(max_eigenvalues) - max_eigenvalues # make veins dark with this operation
+
+        features_2 = self.get_max_eigenvalues(max_eigenvalues, mask, sigma) # apply filtering for the second time
+
+        features_2[features_2<0] = 0 # set negatives to zero
+
+        output_image = exposure.rescale_intensity(features_2, out_range = np.uint8)
+
+        return output_image.astype(np.float)/255.
+
+
+    #==========================================================================
+    def binarize_image(self, image, kernel_size):
+        """
+        Binarize and erode the input image.
+
+        **Parameters:**
+
+        ``image`` : 2D :py:class:`numpy.ndarray`
+            Image with segmented and amplified veins.
+
+        ``kernel_size`` : :py:class:`float`
+            Size of the square kernel for binary erosion and closing.
+
+        **Returns:**
+
+        ``output_image`` : 2D :py:class:`numpy.ndarray`
+            Resulting binary image.
+        """
+
+        image_binary = np.zeros(image.shape)
+
+        image_binary[image == 1] = 1
+
+        kernel = np.ones((kernel_size, kernel_size))
+
+        image_dilated = morphology.binary_dilation(image_binary, selem = kernel).astype(np.float)
+
+        output_image = morphology.binary_closing(image_dilated, selem = kernel).astype(np.float)
+
+        return output_image
+
+
+    #==========================================================================
+    def find_scale(self, binary_image, selected_mean_dist):
+        """
+        Find the scale normalizing the mean distance between the point pairs in the
+        input binary image to the ``selected_mean_dist`` value.
+
+        **Parameters:**
+
+        ``binary_image`` : 2D :py:class:`numpy.ndarray`
+            Input binary image.
+
+        ``selected_mean_dist`` : :py:class:`float`
+            Normalize the mean distance to this value.
+
+        **Returns:**
+
+        ``scale`` : :py:class:`float`
+            The scale to be applied to the input binary image to
+            normalize the mean distance between the point pairs.
+        """
+
+        X = np.argwhere(binary_image == 1)[::10,:]
+
+        dist_mat = squareform(pdist(X, metric='euclidean'))
+
+        dist_mat_mean = np.mean(dist_mat)
+
+#        scale = dist_mat_mean / selected_mean_dist
+
+        scale = selected_mean_dist / dist_mat_mean
+
+        return scale
+
+
+    #==========================================================================
+    def scale_binary_image(self, image, scale):
+        """
+        Scale the input binary image. The center of mass of the scaled/output binary
+        image is aligned with the center of the input image.
+
+        **Parameters:**
+
+        ``image`` : 2D :py:class:`numpy.ndarray`
+            Input binary image.
+
+        ``scale`` : :py:class:`float`
+            The scale to be applied to the input binary image.
+
+        **Returns:**
+
+        ``image_scaled_translated`` : 2D :py:class:`numpy.ndarray`
+            The scaled image.
+        """
+
+        h, w = image.shape
+
+        image_coords = np.argwhere(image) # centered coordinates of the vein (non-zero) pixels
+
+        offset = np.mean(image_coords, axis=0)
+
+        image_coords = image_coords - offset
+
+        scale_matrix = np.array([[scale, 0],
+                                 [0, scale]]) # scaling matrix
+
+        center_offset = np.array(image.shape)/2.
+
+        coords_scaled = np.round( np.dot( image_coords, scale_matrix ) ) + center_offset
+
+        coords_scaled = coords_scaled.astype(np.int)
+
+        coords_scaled[coords_scaled < 0] = 0
+        coords_scaled[:, 0][coords_scaled[:, 0] >= h] = h-1
+        coords_scaled[:, 1][coords_scaled[:, 1] >= w] = w-1
+
+        image_scaled_centerd = np.zeros((h, w))
+
+        image_scaled_centerd[coords_scaled[:,0], coords_scaled[:,1]] = 1
+
+        image_scaled_centerd = binary_closing(image_scaled_centerd, selem = np.ones((2,2)))
+
+        image_scaled_centerd[0, : ] = 0
+        image_scaled_centerd[-1, :] = 0
+        image_scaled_centerd[:, 0 ] = 0
+        image_scaled_centerd[:, -1] = 0
+
+        return image_scaled_centerd.astype(np.float64)
+
+
+
+    #==========================================================================
+    def __call__(self, input_data):
         """
         Compute the maximum eigenvalues of the Hessian matrices
-        for each pixel in the input image.
-        The algorithm is composed of the following steps:
+        for each pixel in the input image. Also, the non-vein pixels
+        (less then threshold) are set to zero in the
+        output matrix if corresponding flag is set to ``True``.
 
-        1. Compute Hessian matrix H for each pixel in the input image. The Hessian matrix is computed by convolving the image with
-           the second derivatives of the Gaussian kernel in the respective x- and y-directions.
-        2. Perfom eigendecomposition of H finding the largest eigenvalue of the corresponding eigenvector.
-        3. It is possible to set negative eigenvalues to zero if ``set_negatives_to_zero`` set to ``True``.
-        4. The image of max eigenvalues can be mean-normalized if ``mean_normalization_flag`` is set to ``True``.
-        5. The image can be binarized if ``binarization_flag`` is set to ``True``.
-           Only valid when ``set_negatives_to_zero`` is set to ``True``.
-        6. Eigenvalues outside the ROI are set to zero.
 
         **Parameters:**
 
@@ -321,86 +576,112 @@ class MaxEigenvalues( Extractor ):
 
         **Returns:**
 
-        ( ``max_eigenvalues``, ``mask`` ) : tuple
-            max_eigenvalues - 2D `numpy.ndarray` containing the maximum eigenvalues of Hessian matrices.
-            mask - 2D `numpy.ndarray` containing the binary mask of the ROI.
+        ``max_eigenvalues`` : 2D :py:class:`numpy.ndarray`
+            Maximum eigenvalues of Hessian matrices with optional vein
+            segmentation if ``segment_veins_flag`` is set to ``True``.
         """
 
         image = input_data[0] # Input image
 
         mask = input_data[1] # binary mask of the ROI
 
-        max_eigenvalues = self.get_max_eigenvalues(image, mask, self.sigma, self.set_negatives_to_zero,
-                                                   self.mean_normalization_flag, self.binarization_flag,
-                                                   self.equalize_adapthist_flag)
+        max_eigenvalues = self.get_max_eigenvalues(image, mask, self.sigma)
 
-        return max_eigenvalues, mask
+#        max_eigenvalues = self.get_max_eigenvalues(image, mask, self.sigma, self.set_negatives_to_zero,
+#                                                   self.mean_normalization_flag, self.binarization_flag,
+#                                                   self.equalize_adapthist_flag)
 
-    #==========================================================================
-    def write_feature( self, data, file_name ):
-        """
-        Writes the given data (that has been generated using the __call__ function of this class) to file.
-        This method overwrites the write_feature() method of the Extractor class.
+        if self.segment_veins_flag:
 
-        **Parameters:**
+            if self.two_layer_segmentation_flag:
 
-        ``data`` : obj
-            Data returned by the __call__ method of the class.
+                max_eigenvalues = self.two_layer_segmentation(max_eigenvalues, mask, self.sigma)
 
-        ``file_name`` : :py:class:`str`
-            Name of the file.
-        """
+            else:
 
-        f = bob.io.base.HDF5File( file_name, 'w' )
+                max_eigenvalues = self.segment_veins(max_eigenvalues, mask)
 
-        if self.binarization_flag:
+            if self.amplify_segmented_veins_flag:
 
-            f.set( 'array', data[ 0 ] )
+                max_eigenvalues = self.amplify_segmented_veins(max_eigenvalues)
 
-        else:
+                if self.binarize_flag:
 
-            f.set( 'image', data[ 0 ] )
-            f.set( 'mask', data[ 1 ] )
+                    max_eigenvalues = self.binarize_image(max_eigenvalues, self.kernel_size) # the output is binary image
 
-        del f
+                    if self.norm_p2p_dist_flag:
 
+                        scale = self.find_scale(max_eigenvalues, self.selected_mean_dist)
 
-    #==========================================================================
-    def read_feature( self, file_name ):
-        """
-        Reads the preprocessed data from file.
-        This method overwrites the read_feature() method of the Extractor class.
+                        max_eigenvalues = self.scale_binary_image(max_eigenvalues, scale) # the output is binary image
 
-        **Parameters:**
+        return max_eigenvalues
 
-        ``file_name`` : :py:class:`str`
-            Name of the file.
-
-        **Returns:**
-
-        ``max_eigenvalues`` : 2D :py:class:`numpy.ndarray`
-            Maximum eigenvalues of Hessian matrices.
-
-        ``mask`` : 2D :py:class:`numpy.ndarray`
-            Binary mask of the ROI.
-        """
-
-        f = bob.io.base.HDF5File( file_name, 'r' )
-
-        if self.binarization_flag:
-
-            return_data = f.read( 'array' )
-
-        else:
-
-            max_eigenvalues = f.read( 'image' )
-            mask = f.read( 'mask' )
-
-            return_data = (max_eigenvalues, mask)
-
-        del f
-
-        return return_data
+#    #==========================================================================
+#    def write_feature( self, data, file_name ):
+#        """
+#        Writes the given data (that has been generated using the __call__ function of this class) to file.
+#        This method overwrites the write_feature() method of the Extractor class.
+#
+#        **Parameters:**
+#
+#        ``data`` : obj
+#            Data returned by the __call__ method of the class.
+#
+#        ``file_name`` : :py:class:`str`
+#            Name of the file.
+#        """
+#
+#        f = bob.io.base.HDF5File( file_name, 'w' )
+#
+#        if self.binarization_flag:
+#
+#            f.set( 'array', data[ 0 ] )
+#
+#        else:
+#
+#            f.set( 'image', data[ 0 ] )
+#            f.set( 'mask', data[ 1 ] )
+#
+#        del f
+#
+#
+#    #==========================================================================
+#    def read_feature( self, file_name ):
+#        """
+#        Reads the preprocessed data from file.
+#        This method overwrites the read_feature() method of the Extractor class.
+#
+#        **Parameters:**
+#
+#        ``file_name`` : :py:class:`str`
+#            Name of the file.
+#
+#        **Returns:**
+#
+#        ``max_eigenvalues`` : 2D :py:class:`numpy.ndarray`
+#            Maximum eigenvalues of Hessian matrices.
+#
+#        ``mask`` : 2D :py:class:`numpy.ndarray`
+#            Binary mask of the ROI.
+#        """
+#
+#        f = bob.io.base.HDF5File( file_name, 'r' )
+#
+#        if self.binarization_flag:
+#
+#            return_data = f.read( 'array' )
+#
+#        else:
+#
+#            max_eigenvalues = f.read( 'image' )
+#            mask = f.read( 'mask' )
+#
+#            return_data = (max_eigenvalues, mask)
+#
+#        del f
+#
+#        return return_data
 
 
 

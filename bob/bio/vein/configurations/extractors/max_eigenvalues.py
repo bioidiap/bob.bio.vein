@@ -3,13 +3,31 @@
 
 from ...extractors import MaxEigenvalues
 
-max_eigenvalues_non_zero_neg_mean_norm_s5 = MaxEigenvalues(sigma = 5, set_negatives_to_zero = False, mean_normalization_flag = True)
+max_eigenvalues_s9_segment_veins = MaxEigenvalues(sigma = 9, segment_veins_flag=True)
 
-max_eigenvalues_zero_neg_mean_norm_s5 = MaxEigenvalues(sigma = 5, set_negatives_to_zero = True, mean_normalization_flag = True)
+max_eigenvalues_s9_segment_veins_amplified = MaxEigenvalues(sigma = 9, segment_veins_flag=True, amplify_segmented_veins_flag = True)
 
-max_eigenvalues_s5 = MaxEigenvalues(sigma = 5, set_negatives_to_zero = False, mean_normalization_flag = False)
+max_eigenvalues_s7_segment_veins_amplified = MaxEigenvalues(sigma = 7, segment_veins_flag=True, amplify_segmented_veins_flag = True)
 
-max_eigenvalues_zero_neg_mean_norm_s5_binary = MaxEigenvalues(sigma = 5, set_negatives_to_zero = True, mean_normalization_flag = True, binarization_flag = True)
+max_eigenvalues_s11_segment_veins_amplified = MaxEigenvalues(sigma = 11, segment_veins_flag=True, amplify_segmented_veins_flag = True)
 
-max_eigenvalues_s5_hist_eqlz = MaxEigenvalues(sigma = 5, set_negatives_to_zero = False, mean_normalization_flag = False, equalize_adapthist_flag = True)
 
+
+max_eigenvalues_s9_two_layer_segment_veins_amplified = MaxEigenvalues(sigma = 9, segment_veins_flag=True, amplify_segmented_veins_flag = True, two_layer_segmentation_flag = True)
+
+max_eigenvalues_s5_two_layer_segment_veins_amplified = MaxEigenvalues(sigma = 5, segment_veins_flag=True, amplify_segmented_veins_flag = True, two_layer_segmentation_flag = True)
+
+max_eigenvalues_s9_two_layer_segment_veins_amplified_binary = MaxEigenvalues(sigma = 9, segment_veins_flag=True, amplify_segmented_veins_flag = True, two_layer_segmentation_flag = True,
+																			 binarize_flag = True, kernel_size = 3)
+
+max_eigenvalues_s5_two_layer_segment_veins_amplified_binary = MaxEigenvalues(sigma = 5, segment_veins_flag=True, amplify_segmented_veins_flag = True, two_layer_segmentation_flag = True,
+																			 binarize_flag = True, kernel_size = 3)
+
+max_eigenvalues_s5_two_layer_segment_veins_amplified_binary_p2p_norm = MaxEigenvalues(sigma = 5, segment_veins_flag=True, amplify_segmented_veins_flag = True, two_layer_segmentation_flag = True,
+																			 binarize_flag = True, kernel_size = 3, norm_p2p_dist_flag = True, selected_mean_dist = 100)
+
+max_eigenvalues_s7_two_layer_segment_veins_amplified_binary = MaxEigenvalues(sigma = 7, segment_veins_flag=True, amplify_segmented_veins_flag = True, two_layer_segmentation_flag = True,
+																			 binarize_flag = True, kernel_size = 3)
+
+max_eigenvalues_s7_two_layer_segment_veins_amplified_binary_p2p_norm = MaxEigenvalues(sigma = 7, segment_veins_flag=True, amplify_segmented_veins_flag = True, two_layer_segmentation_flag = True,
+																			 binarize_flag = True, kernel_size = 3, norm_p2p_dist_flag = True, selected_mean_dist = 100)

@@ -90,14 +90,14 @@ kmeans_roi_corrected_eroded_rotated_40_scaled_eqlzd = KMeansRoi(filter_name = "m
                                                                 equalize_adapthist_flag = True)
 
 kmeans_roi_corrected_eroded_rotated_40_scaled_fast = KMeansRoiFast(filter_name = "gaussian_filter", mask_size = 7,
-						                   correct_mask_flag = True, correction_erosion_factor = 7,
-						                   erode_mask_flag = True, erosion_factor = 40,
-						                   convexity_flag = False,
-						                   rotation_centering_flag = True,
-						                   normalize_scale_flag = True,
-								   mask_to_image_area_ratio = 0.2,
-								   equalize_adapthist_flag = False,
-						                   speedup_flag = True)
+                                                                    correct_mask_flag = True, correction_erosion_factor = 7,
+                                                                    erode_mask_flag = True, erosion_factor = 40,
+                                                                    convexity_flag = False,
+                                                                    rotation_centering_flag = True,
+                                                                    normalize_scale_flag = True,
+                                                                    mask_to_image_area_ratio = 0.2,
+                                                                    equalize_adapthist_flag = False,
+                                                                    speedup_flag = True)
 
 
 kmeans_roi_corrected_eroded_rotated_30_scaled_fast = KMeansRoiFast(filter_name = "gaussian_filter", mask_size = 7,
@@ -109,6 +109,23 @@ kmeans_roi_corrected_eroded_rotated_30_scaled_fast = KMeansRoiFast(filter_name =
 								   mask_to_image_area_ratio = 0.2,
 								   equalize_adapthist_flag = False,
 						                   speedup_flag = True)
+
+
+putvein_kmeans_roi_centered_scaled_fast = KMeansRoiFast(erosion_factor=100, normalize_scale_flag=True,
+						        correction_erosion_factor=7, erode_mask_flag=False,
+						        mask_size=7, equalize_adapthist_flag=False, mask_to_image_area_ratio=0.2,
+						        speedup_flag=True, rotation_centering_flag=False,
+						        filter_name='gaussian_filter', correct_mask_flag=False, convexity_flag=False,
+						        centering_flag = True)
+
+
+putvein_kmeans_roi_centered_scaled_corrected_fast = KMeansRoiFast(erosion_factor=100, normalize_scale_flag=True,
+                                correction_erosion_factor=7, erode_mask_flag=False,
+                                mask_size=7, equalize_adapthist_flag=False, mask_to_image_area_ratio=0.2,
+                                speedup_flag=True, rotation_centering_flag=False,
+                                filter_name='gaussian_filter', correct_mask_flag=True, convexity_flag=False,
+                                centering_flag = True)
+
 
 prenone = PreNone()
 

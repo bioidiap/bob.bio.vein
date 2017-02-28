@@ -49,19 +49,19 @@ idiap_speedup_score = Grid(
 idiap_user_machines_speedup_score = Grid(
     training_queue='32G',
 
-    number_of_preprocessing_jobs=200,
+    number_of_preprocessing_jobs=32,
     preprocessing_queue='4G',
 
-    number_of_extraction_jobs=200,
+    number_of_extraction_jobs=32,
     extraction_queue='8G',
 
-    number_of_projection_jobs=200,
+    number_of_projection_jobs=32,
     projection_queue='8G',
 
-    number_of_enrollment_jobs=200,
+    number_of_enrollment_jobs=32,
     enrollment_queue='8G',
 
-    number_of_scoring_jobs=200,
+    number_of_scoring_jobs=50,
     scoring_queue='8G',
     )
 

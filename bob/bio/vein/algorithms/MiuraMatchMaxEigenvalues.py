@@ -127,7 +127,7 @@ class MiuraMatchMaxEigenvalues (Algorithm):
 
         mask_probe = probe[1]
 
-        image_probe = self.mean_std_normalization(image_probe, mask_probe)
+#        image_probe = self.mean_std_normalization(image_probe, mask_probe)
 
         if not isinstance(model, list):
 
@@ -148,7 +148,7 @@ class MiuraMatchMaxEigenvalues (Algorithm):
 
             crop_mask_enroll = mask_enroll[self.ch:h-self.ch, self.cw:w-self.cw]
 
-            crop_image_enroll = self.mean_std_normalization(crop_image_enroll, crop_mask_enroll)
+#            crop_image_enroll = self.mean_std_normalization(crop_image_enroll, crop_mask_enroll)
 
             Nm = scipy.signal.fftconvolve(image_probe, np.rot90(crop_image_enroll, k=2), 'valid')
 
@@ -156,7 +156,7 @@ class MiuraMatchMaxEigenvalues (Algorithm):
 
             Nmm = Nm[t0,s0]
 
-            scores.append( Nmm / ( np.sum( crop_mask_enroll ) + np.sum( mask_probe[t0:t0+h-2*self.ch, s0:s0+w-2*self.cw] ) ) )
+            scores.append( Nmm / ( np.sum( crop_image_enroll ) + np.sum( image_probe[t0:t0+h-2*self.ch, s0:s0+w-2*self.cw] ) ) )
 
         score_fused = getattr( np, self.score_fusion_method )(scores)
 
