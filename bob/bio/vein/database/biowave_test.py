@@ -56,3 +56,6 @@ class BiowaveTestBioDatabase(BioDatabase):
         retval = self.__db.objects(protocol=protocol, groups=groups, purposes=purposes, model_ids=model_ids)
         return [File(f) for f in retval]
 
+    def annotations(self, file):
+        return None
+
