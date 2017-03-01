@@ -167,14 +167,14 @@ class MiuraMatchRotation(Algorithm):
 
         Parameters:
 
-          model (numpy.ndarray): The model of the user to test the probe agains
+          ``model`` (numpy.ndarray): The model of the user to test the probe agains
 
-          probe (numpy.ndarray): The probe to test
+          ``probe`` (numpy.ndarray): The probe to test
 
 
         Returns:
 
-          score (float): Value between 0 and 0.5, larger value means a better match
+          ``score`` (float): Value between 0 and 0.5, larger value means a better match
 
         """
 

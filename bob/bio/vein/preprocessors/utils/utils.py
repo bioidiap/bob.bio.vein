@@ -18,18 +18,22 @@ class ManualRoiCut():
   Class for manual roi extraction -- ``ManualRoiCut``.
   
   Args:
+
     annotation (``File``, :py:class:`list`): The name of annotation file, with full path containing 
       ROI annotation data (``Bob`` format, ``(x, y)``) **or** the list of annotation 
       points (tuples) in ``Bob`` format -- ``(x, y)``. A *fail-safe* operation is implemented
       ensuring that the annotation points are inside the image to be annotated.
+
     image (``File``, :py:class:`numpy.ndarray`), optional: The name of the image to be annotation -  
       full path or image data as :py:class:`numpy.ndarray`. Image is an optional parameter
       because it isn't needed to generate ROI binary mask.
-    sizes (``tuple``): optional - a tuple of image size in ``Bob`` format ``(x,y)``.
+
+    sizes (``tuple``), optional: a tuple of image size in ``Bob`` format (``x``,``y``).
       This parameter is used **if** no image is given to generate binary mask.
   
   Returns:
-    A ``uint8`` :py:class:`numpy.ndarray` 2D array (image) containing ROI mask.
+
+    ``uint8`` :py:class:`numpy.ndarray` 2D array (image) containing ROI mask.
     Value ``1`` determines ROI area, value ``0`` -- outside ROI area. ``uint8``
     is chosen so that annotations could be used in the ``bob.bio.vein`` platform
     (there seems to be problems when saving / loading ``bool`` objects).
