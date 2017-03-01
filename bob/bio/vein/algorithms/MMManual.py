@@ -11,6 +11,70 @@ import skimage
 from skimage import transform
 import scipy
 
+
+import math
+
+class EuclideanTransform(transform._geometric.ProjectiveTransform):
+    """2D Euclidean transformation of the form:
+        X = a0 * x - b0 * y + a1 =
+          = x * cos(rotation) - y * sin(rotation) + a1
+        Y = b0 * x + a0 * y + b1 =
+          = x * sin(rotation) + y * cos(rotation) + b1
+    where the homogeneous transformation matrix is::
+        [[a0  b0  a1]
+         [b0  a0  b1]
+         [0   0    1]]
+    The Euclidean transformation is a rigid transformation with rotation and
+    translation parameters. The similarity transformation extends the Euclidean
+    transformation with a single scaling factor.
+    Parameters
+    ----------
+    matrix : (3, 3) array, optional
+        Homogeneous transformation matrix.
+    rotation : float, optional
+        Rotation angle in counter-clockwise direction as radians.
+    translation : (tx, ty) as array, list or tuple, optional
+        x, y translation parameters.
+    Attributes
+    ----------
+    params : (3, 3) array
+        Homogeneous transformation matrix.
+    """
+
+    def __init__(self, matrix=None):
+
+        rotation=None
+        translation=None
+
+        params = any(param is not None
+                     for param in (rotation, translation))
+
+        if params and matrix is not None:
+            raise ValueError("You cannot specify the transformation matrix and"
+                             " the implicit parameters at the same time.")
+        elif matrix is not None:
+            if matrix.shape != (3, 3):
+                raise ValueError("Invalid shape of transformation matrix.")
+            self.params = matrix
+        elif params:
+            if rotation is None:
+                rotation = 0
+            if translation is None:
+                translation = (0, 0)
+
+            self.params = np.array([
+                [math.cos(rotation), - math.sin(rotation), 0],
+                [math.sin(rotation),   math.cos(rotation), 0],
+                [                 0,                    0, 1]
+            ])
+            self.params[0:2, 2] = translation
+        else:
+            # default to an identity transform
+            self.params = np.eye(3)
+
+
+
+
 class MMManual(Algorithm):
     """
     Vein matching: match ratio
@@ -358,7 +422,8 @@ class MMManual(Algorithm):
         elif self.allow_affine is False and self.allow_scale is False and\
           self.allow_rotation is True and self.allow_translation_x is True \
           and self.allow_translation_y is True:
-            transformation = skimage.transform.EuclideanTransform()
+#            transformation = skimage.transform.EuclideanTransform()
+            transformation = EuclideanTransform()
             transformation.estimate(keypoints_1, keypoints_2)
 
         elif self.allow_affine is False and self.allow_scale is False and \
