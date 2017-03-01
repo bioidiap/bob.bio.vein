@@ -148,3 +148,6 @@ class BiowaveV1BioDatabase(BioDatabase):
                                  extra_annotation_information=
                                    self.extra_annotation_information)
                 for f in retval]
+
+    def annotations(self, file):
+        return None

@@ -169,3 +169,9 @@ class PutveinBioDatabase(BioDatabase):
                                    model_ids=model_ids,
                                    kinds=kind)
         return [File(f) for f in retval]
+
+
+    def annotations(self, file):
+        return None
+
+
