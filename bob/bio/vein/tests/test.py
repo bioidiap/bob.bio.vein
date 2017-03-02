@@ -39,6 +39,7 @@ from bob.bio.vein.algorithms import MiuraMatchAligned
 # for the MaskedLBPHistograms class tests:
 from bob.bio.vein.extractors import MaskedLBPHistograms
 
+from bob.bio.vein.extractors import MaxEigenvalues
 
 
 
@@ -1130,3 +1131,34 @@ def test_MMManual():
     assert np.mean(results[0:3]) < np.mean(results[3:])
     # no 2 results should be equal:
     assert len(set(results)) == 7
+
+
+#==============================================================================
+def test_MaxEigenvalues():
+    """
+    Test the MaxEigenvalues vein segmentation algorithm.
+    """
+
+    input_filename = F( ( 'preprocessors', 'TopographyCutRoi_test_image.png' ) ) # test image filename
+
+    mask_filename = F( ( 'preprocessors', 'KMeansRoi_result_image.hdf5' ) ) # file with roi
+
+    image = bob.io.base.load( input_filename ) # load test image
+
+    f = bob.io.base.HDF5File( mask_filename )
+
+    roi = f.read('data') # load roi
+
+    del f
+
+    # extractor to be tested with all options turned on:
+    extractor = MaxEigenvalues(sigma = 5, segment_veins_flag=True,
+                               amplify_segmented_veins_flag = True,
+                               two_layer_segmentation_flag = True,
+                               binarize_flag = True, kernel_size = 3,
+                               norm_p2p_dist_flag = True, selected_mean_dist = 100)
+
+    result = extractor( [ image, roi ] ) # resulting vein pattern
+
+    assert ( np.sum(result) == 4614. ) # check the sum of the image
+
