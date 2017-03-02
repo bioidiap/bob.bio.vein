@@ -1,12 +1,8 @@
 from .AlignedMatching import AlignedMatching
-
-from .HessianAlignment import HessianAlignment
-from .HessianHistMatchAligned import HessianHistMatchAligned
 from .HistogramsMatch import HistogramsMatch
 from .MiuraMatchAligned import MiuraMatchAligned
 from .AnnotationMatch import AnnotationMatch
 from .MatchTemplate import MatchTemplate
-from .KeypointsMatcher import KeypointsMatcher
 from .MiuraMatchFusion import MiuraMatchFusion
 from .CrossCorrelationMatch import CrossCorrelationMatch
 from .MMManual import MMManual

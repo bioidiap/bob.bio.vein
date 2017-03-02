@@ -5,15 +5,9 @@ from ..algorithm import MiuraMatch
 from ..algorithms import MiuraMatchAligned
 from ..algorithms import HistogramsMatch
 
-# HessianAlignment - supportive class (returns transformation matrix for the alignment of enroll and probe) for the HessianHistMatchAligned class
-from ..algorithms import HessianAlignment
-from ..algorithms import HessianHistMatchAligned
-
 from ..algorithms import AnnotationMatch
 
 from ..algorithms import MatchTemplate
-
-from ..algorithms import KeypointsMatcher
 
 from ..algorithms import MiuraMatchFusion
 
@@ -68,51 +62,6 @@ mm_t3 = MiuraMatchAligned( ch = 100, cw = 100, alignment_flag = False, alignment
 mm_t4 = MiuraMatchAligned( ch = 120, cw = 130, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 5 )
 chi_square = HistogramsMatch( similarity_metrics_name = "chi_square" )
 
-# Successfull parameters for the biowave_test DB:
-window_size = 20
-enroll_center_method = "largest_vector_magnitude"
-N_points = 15
-gap = 10
-step = 7
-align_power = 4
-
-aligner = HessianAlignment( window_size = window_size, N_points = N_points, gap = gap, step = step, align_power = align_power, 
-                           enroll_center_method = enroll_center_method )
-
-
-hessian_hist_match_aligned_nb50p1 = HessianHistMatchAligned( aligner = aligner, n_bins = 50, eigenval_power = 1, 
-								binarize_weights = False, 
-								similarity_metrics_name = "chi_square", 
-								alignment_method_name = "max_dot_product" )
-
-hessian_hist_match_aligned_nb50p2 = HessianHistMatchAligned( aligner = aligner, n_bins = 50, eigenval_power = 2, 
-								binarize_weights = False, 
-								similarity_metrics_name = "chi_square", 
-								alignment_method_name = "max_dot_product" )
-
-hessian_hist_match_aligned_nb20p1 = HessianHistMatchAligned( aligner = aligner, n_bins = 20, eigenval_power = 1, 
-								binarize_weights = False, 
-								similarity_metrics_name = "chi_square", 
-								alignment_method_name = "max_dot_product" )
-
-hessian_hist_match_aligned_nb20p2 = HessianHistMatchAligned( aligner = aligner, n_bins = 20, eigenval_power = 2, 
-								binarize_weights = False, 
-								similarity_metrics_name = "chi_square", 
-								alignment_method_name = "max_dot_product" )
-
-hessian_hist_match_aligned_nb50p1bin = HessianHistMatchAligned( aligner = aligner, n_bins = 50, eigenval_power = 1, 
-								binarize_weights = True, 
-								similarity_metrics_name = "chi_square", 
-								alignment_method_name = "max_dot_product" )
-
-hessian_hist_match_aligned_nb20p1bin = HessianHistMatchAligned( aligner = aligner, n_bins = 20, eigenval_power = 1, 
-								binarize_weights = True, 
-								similarity_metrics_name = "chi_square", 
-								alignment_method_name = "max_dot_product" )
-
-
-
-
 annotationmatch_0_min = AnnotationMatch(sigma=0, score_method='min')
 annotationmatch_1_min = AnnotationMatch(sigma=1, score_method='min')
 annotationmatch_2_min = AnnotationMatch(sigma=2, score_method='min')
@@ -145,8 +94,6 @@ match_template_dilation_5 = MatchTemplate(dilation_flag = True, ellipse_mask_siz
 match_template_dilation_7 = MatchTemplate(dilation_flag = True, ellipse_mask_size = 7)
 match_template_dilation_9 = MatchTemplate(dilation_flag = True, ellipse_mask_size = 9)
 match_template_dilation_11 = MatchTemplate(dilation_flag = True, ellipse_mask_size = 11)
-
-akaze_keypoints_matcher_075 = KeypointsMatcher(ratio_to_match = 0.75)
 
 miura_match_fusion_120_max = MiuraMatchFusion(ch = 120, cw = 120, score_fusion_method = 'max')
 miura_match_fusion_300_225_max = MiuraMatchFusion(ch = 300, cw = 225, score_fusion_method = 'max')
