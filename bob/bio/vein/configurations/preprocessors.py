@@ -8,7 +8,6 @@ from ..preprocessors import KMeansRoi
 from ..preprocessors import PreNone
 from ..preprocessors import ConstructAnnotations
 from ..preprocessors import ManualRoi
-from ..preprocessors import KMeansRoiFast
 
 none = FingerCrop()
 he = FingerCrop(postprocessing='HE')
@@ -89,7 +88,7 @@ kmeans_roi_corrected_eroded_rotated_40_scaled_eqlzd = KMeansRoi(filter_name = "m
                                                                 mask_to_image_area_ratio = 0.2,
                                                                 equalize_adapthist_flag = True)
 
-kmeans_roi_corrected_eroded_rotated_40_scaled_fast = KMeansRoiFast(filter_name = "gaussian_filter", mask_size = 7,
+kmeans_roi_corrected_eroded_rotated_40_scaled_fast = KMeansRoi(filter_name = "gaussian_filter", mask_size = 7,
                                                                     correct_mask_flag = True, correction_erosion_factor = 7,
                                                                     erode_mask_flag = True, erosion_factor = 40,
                                                                     convexity_flag = False,
@@ -100,7 +99,7 @@ kmeans_roi_corrected_eroded_rotated_40_scaled_fast = KMeansRoiFast(filter_name =
                                                                     speedup_flag = True)
 
 
-kmeans_roi_corrected_eroded_rotated_30_scaled_fast = KMeansRoiFast(filter_name = "gaussian_filter", mask_size = 7,
+kmeans_roi_corrected_eroded_rotated_30_scaled_fast = KMeansRoi(filter_name = "gaussian_filter", mask_size = 7,
 						                   correct_mask_flag = True, correction_erosion_factor = 7,
 						                   erode_mask_flag = True, erosion_factor = 30,
 						                   convexity_flag = False,
@@ -111,7 +110,7 @@ kmeans_roi_corrected_eroded_rotated_30_scaled_fast = KMeansRoiFast(filter_name =
 						                   speedup_flag = True)
 
 
-putvein_kmeans_roi_centered_scaled_fast = KMeansRoiFast(erosion_factor=100, normalize_scale_flag=True,
+putvein_kmeans_roi_centered_scaled_fast = KMeansRoi(erosion_factor=100, normalize_scale_flag=True,
 						        correction_erosion_factor=7, erode_mask_flag=False,
 						        mask_size=7, equalize_adapthist_flag=False, mask_to_image_area_ratio=0.2,
 						        speedup_flag=True, rotation_centering_flag=False,
@@ -119,7 +118,7 @@ putvein_kmeans_roi_centered_scaled_fast = KMeansRoiFast(erosion_factor=100, norm
 						        centering_flag = True)
 
 
-putvein_kmeans_roi_centered_scaled_corrected_fast = KMeansRoiFast(erosion_factor=100, normalize_scale_flag=True,
+putvein_kmeans_roi_centered_scaled_corrected_fast = KMeansRoi(erosion_factor=100, normalize_scale_flag=True,
                                 correction_erosion_factor=7, erode_mask_flag=False,
                                 mask_size=7, equalize_adapthist_flag=False, mask_to_image_area_ratio=0.2,
                                 speedup_flag=True, rotation_centering_flag=False,

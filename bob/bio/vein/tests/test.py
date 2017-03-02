@@ -41,9 +41,6 @@ from bob.bio.vein.extractors import MaskedLBPHistograms
 
 from bob.bio.vein.extractors import MaxEigenvalues
 
-
-
-
 def F(parts):
   """Returns the test file path"""
 
@@ -151,31 +148,6 @@ def test_AlignedMatching():
     assert ( (score_hessian_hist + 0.019778549180568854) < 1e-10 ) # Test the score produced by the second pipeline
     assert ( (score_spat_enh_lbp_hist + 0.86723861364068888) < 1e-10 ) # Test the score produced by the third pipeline
     assert ( (score_spat_enh_eigenvalues + 0.47366791419007259) < 1e-10 ) # Test the score produced by the last pipeline
-
-
-#==============================================================================
-def test_KMeansRoi():
-    """
-    Test the ROI extraction algorithm namely KMeansRoi.
-    """
-
-    input_filename = F( ( 'preprocessors', 'TopographyCutRoi_test_image.png' ) ) # the same image is used for testing of TopographyCutRoi and KMeansRoi algorithms
-
-    output_filename = F( ( 'preprocessors', 'KMeansRoi_result_image.hdf5' ) )
-
-    image = bob.io.base.load( input_filename )
-
-    extractor = KMeansRoi(convexity_flag = True)
-
-    roi = extractor.get_roi( image )
-
-    f = bob.io.base.HDF5File( output_filename )
-
-    roi_loaded = f.read('data')
-
-    del f
-
-    assert ( ( np.sum( np.abs( roi - roi_loaded ) ) ) < 100 ) # the conditions are not strict, because the behaviour of the k-means module may vary slightly
 
 
 #==============================================================================
@@ -1161,4 +1133,45 @@ def test_MaxEigenvalues():
     result = extractor( [ image, roi ] ) # resulting vein pattern
 
     assert ( np.sum(result) == 4614. ) # check the sum of the image
+
+
+#==============================================================================
+def test_KMeansRoi():
+    """
+    Test the ROI extraction algorithm namely KMeansRoi.
+    """
+
+    input_filename = F( ( 'preprocessors', 'TopographyCutRoi_test_image.png' ) ) # the same image is used for testing of TopographyCutRoi and KMeansRoi algorithms
+
+    output_filename = F( ( 'preprocessors', 'KMeansRoi_result_image.hdf5' ) )
+
+    image = bob.io.base.load( input_filename )
+
+    preprocessor = KMeansRoi(convexity_flag = True)
+
+    roi = preprocessor.get_roi( image )
+
+    f = bob.io.base.HDF5File( output_filename )
+
+    roi_loaded = f.read('data')
+
+    del f
+
+    preprocessor = KMeansRoi(erosion_factor=100, normalize_scale_flag=True,
+                        correction_erosion_factor=7, erode_mask_flag=True,
+                        mask_size=7, equalize_adapthist_flag=True, mask_to_image_area_ratio=0.1,
+                        speedup_flag=True, rotation_centering_flag=False,
+                        filter_name='gaussian_filter', correct_mask_flag=True, convexity_flag=False,
+                        centering_flag = True)
+
+    image_2, roi_2 = preprocessor( image, 1 )
+
+    preprocessor.centering_flag = False
+    preprocessor.rotation_centering_flag = True
+
+    image_3, roi_3 = preprocessor( image, 1 )
+
+    assert ( np.abs(np.sum(roi_2) - 23253.) < 100 )
+    assert ( np.abs(np.sum(roi_3) - 23254.) < 100 )
+    assert ( ( np.sum( np.abs( roi - roi_loaded ) ) ) < 100 )
 

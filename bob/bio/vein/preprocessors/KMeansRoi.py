@@ -1,11 +1,10 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Created on Thu Nov  3 15:01:11 2016
+Created on Fri Jan 27 10:14:53 2017
 
-@author: olegs nikisins
+@author: onikisins
 """
-
 
 #==============================================================================
 # Import what is needed here:
@@ -22,6 +21,8 @@ import bob.learn.em # for the k-means
 from skimage import exposure
 
 from skimage import transform as tf
+
+from skimage.morphology import disk, binary_opening
 
 #==============================================================================
 # Class implementation:
@@ -40,51 +41,60 @@ class KMeansRoi(Preprocessor):
                  erode_mask_flag = False, erosion_factor = 20,
                  convexity_flag = False,
                  rotation_centering_flag = False,
+                 centering_flag = False,
                  normalize_scale_flag = False,
                  mask_to_image_area_ratio = 0.2,
-                 equalize_adapthist_flag = False):
+                 equalize_adapthist_flag = False,
+                 speedup_flag = False):
         """
         **Parameters:**
 
         ``filter_name`` : :py:class:`str`
-            name of the filter to be applied before further processing.
+            Name of the filter to be applied before further processing.
             Possible optionsa are defined in ``available_filter_names`` parameter of the class.
             Default: "median_filter".
 
         ``mask_size`` : :py:class:`int`
-            size of the filter mask. Default: 7.
+            Size of the filter mask. Default: 7.
 
         ``correct_mask_flag`` : :py:class:`bool`
-            correct the possible ROI outliers if set to True. Default: False.
+            Correct the possible ROI outliers if set to True. Default: False.
 
         ``correction_erosion_factor`` : :py:class:`int`
-            in the roi correction step the binary mask of the ROI will be
+            In the roi correction step the binary mask of the ROI will be
             eroded/dilated with ellipse kernel of the size:
             (image_height / correction_erosion_factor). Default value: 10.
 
         ``erode_mask_flag`` : :py:class:`bool`
-            erode the binary mask of ROI if flag set to True. Default value: False.
+            Erode the binary mask of ROI if flag set to True. Default value: False.
 
         ``erosion_factor`` : :py:class:`int`
-            in the roi erosion step the binary mask of the ROI will be
+            In the roi erosion step the binary mask of the ROI will be
             eroded with square kernel of the size:
             (image_height / erosion_factor)*2+1. Default value: 20.
 
         ``convexity_flag`` : :py:class:`bool`
-            make mask convex if True. Default value: False.
+            Make mask convex if True. Default value: False.
 
         ``rotation_centering_flag`` : :py:class:`bool`
-            rotate and center the binary mask of the ROI and the input image if True. Default value: False.
+            Rotate and center the binary mask of the ROI and the input image if True. Default value: False.
+
+        ``centering_flag`` : :py:class:`bool`
+            Just center the binary mask of the ROI and the input image if True. Default value: False.
 
         ``normalize_scale_flag`` : :py:class:`bool`
-            normalize the scale of the ROI and of the image if True. Default value: False.
+            Normalize the scale of the ROI and of the image if True. Default value: False.
 
         ``mask_to_image_area_ratio`` : :py:class:`float`
-            defines the area of the normalized ROI, as a fraction of the area
+            Defines the area of the normalized ROI, as a fraction of the area
             of the input image. Default value: 0.2.
 
         ``equalize_adapthist_flag`` : :py:class:`bool`
-            enhance the contrast of the image if set to True. Default value: False.
+            Enhance the contrast of the image if set to True. Default value: False.
+
+        ``speedup_flag`` : :py:class:`bool`
+            Use fast but approximate implementation if set to ``True``. This option
+            will make the boundary of the ROI grainy. Default value: ``False``.
         """
 
         Preprocessor.__init__(self,
@@ -96,9 +106,11 @@ class KMeansRoi(Preprocessor):
                                 erosion_factor = erosion_factor,
                                 convexity_flag = convexity_flag,
                                 rotation_centering_flag = rotation_centering_flag,
+                                centering_flag = centering_flag,
                                 normalize_scale_flag = normalize_scale_flag,
                                 mask_to_image_area_ratio = mask_to_image_area_ratio,
-                                equalize_adapthist_flag = equalize_adapthist_flag)
+                                equalize_adapthist_flag = equalize_adapthist_flag,
+                                speedup_flag = speedup_flag)
 
         self.filter_name = filter_name
         self.mask_size = mask_size
@@ -109,9 +121,11 @@ class KMeansRoi(Preprocessor):
         self.convexity_flag = convexity_flag
         self.available_filter_names = ["gaussian_filter", "median_filter"]
         self.rotation_centering_flag = rotation_centering_flag
+        self.centering_flag = centering_flag
         self.normalize_scale_flag = normalize_scale_flag
         self.mask_to_image_area_ratio = mask_to_image_area_ratio
         self.equalize_adapthist_flag = equalize_adapthist_flag
+        self.speedup_flag = speedup_flag
 
 
     #==========================================================================
@@ -210,7 +224,7 @@ class KMeansRoi(Preprocessor):
 
 
     #==========================================================================
-    def get_blob(self, image):
+    def get_blob(self, image, speedup_flag):
         """
         K-means based algorithm for the extraction of the binary mask of the ROI.
         First, 2 centroids are obtained for the gray-scale values of the pixels in the input image.
@@ -222,6 +236,10 @@ class KMeansRoi(Preprocessor):
 
         ``image`` : 2D :py:class:`numpy.ndarray`
             input image.
+
+        ``speedup_flag`` : :py:class:`bool`
+            Use fast but approximate implementation if set to ``True``. In this case
+            not all data (1 out of 50 data points) will be used in the k-means algorithm.
 
         **Returns:**
 
@@ -236,6 +254,12 @@ class KMeansRoi(Preprocessor):
         data = np.delete( data, np.where( data == 255 ) ) # remove oversaturated pixels
 
         data = data.reshape( data.shape[ 0 ], 1 )
+
+        step = len(data)/10000
+
+        if speedup_flag:
+
+            data = data[::step] # select ~10000 data points
 
         data = data.astype( np.float64 ) # must be float64 for the bob k-means
 
@@ -294,7 +318,7 @@ class KMeansRoi(Preprocessor):
 
 
     #==========================================================================
-    def correct_mask(self, binary_image, kernel_diameter):
+    def correct_mask(self, binary_image, kernel_diameter, speedup_flag):
         """
         This function is composed of the following steps:
 
@@ -306,10 +330,14 @@ class KMeansRoi(Preprocessor):
         **Parameters:**
 
         ``binary_image`` : 2D :py:class:`numpy.ndarray`
-            input binary image.
+            Input binary image.
 
         ``kernel_diameter`` : :py:class:`int`
-            diameter of the ellipse kernel.
+            Diameter of the ellipse kernel.
+
+        ``speedup_flag`` : :py:class:`bool`
+            Use fast but approximate implementation if set to ``True``. This option
+            will make the boundary of the ROI grainy.
 
         **Returns:**
 
@@ -317,19 +345,37 @@ class KMeansRoi(Preprocessor):
             binary mask of the ROI.
         """
 
-        ellipse_kernel = self.generate_binary_ellipse_kernel(kernel_diameter)
+        if speedup_flag:
 
-        eroded_image = ndimage.morphology.binary_erosion(binary_image, structure = ellipse_kernel).astype(np.uint8)
+            N = 4
 
-        retval, labels, stats, centroids = self.connectedComponentsWithStats( eroded_image )
+            disk_kernel = disk(kernel_diameter / (2*N))
 
-        selected_blob_idx = np.argmax( stats[:,4] ) + 1
+            binary_downsample = tf.rescale(binary_image, scale = 1./N, order=1,
+                                           mode='constant', cval=0, clip=True, preserve_range=True)
 
-        selected_blob_image = np.zeros( binary_image.shape, dtype = np.uint8 ) # this
+            binary_open = binary_opening( binary_downsample, selem = disk_kernel ).astype(np.uint8)
 
-        selected_blob_image[ labels == selected_blob_idx ] = 1
+            mask_binary = tf.rescale(binary_open, scale = N, order=1, mode='constant', cval=0, clip=True, preserve_range=True)
 
-        mask_binary = ndimage.morphology.binary_dilation(selected_blob_image, structure = ellipse_kernel).astype(np.uint8)
+            mask_binary = 1 * (mask_binary > 0.5)
+
+        else:
+
+            ellipse_kernel = self.generate_binary_ellipse_kernel(kernel_diameter)
+
+            eroded_image = ndimage.morphology.binary_erosion(binary_image, structure = ellipse_kernel).astype(np.uint8)
+
+            retval, labels, stats, centroids = self.connectedComponentsWithStats( eroded_image )
+
+            selected_blob_idx = np.argmax( stats[:,4] ) + 1
+
+            selected_blob_image = np.zeros( binary_image.shape, dtype = np.uint8 ) # this
+
+            selected_blob_image[ labels == selected_blob_idx ] = 1
+
+            mask_binary = ndimage.morphology.binary_dilation(selected_blob_image, structure = ellipse_kernel).astype(np.uint8)
+
 
         return mask_binary.astype( np.uint8 )
 
@@ -446,12 +492,55 @@ class KMeansRoi(Preprocessor):
         mask_binary_transformed = ndimage.affine_transform(mask_binary,
                                                             rotation_mat, offset=(offset[0,0], offset[0,1]),
                                                             output_shape=None, output=None,
-                                                            order=3, mode='constant', cval=0.0, prefilter=True)
+                                                            order=0, mode='constant', cval=0.0, prefilter=True) # was order=3
 
         image_transformed = ndimage.affine_transform(image,
                                                     rotation_mat, offset=(offset[0,0], offset[0,1]),
                                                     output_shape=None, output=None,
-                                                    order=3, mode='constant', cval=0.0, prefilter=True)
+                                                    order=2, mode='constant', cval=0.0, prefilter=True) # was order=3
+
+        return (mask_binary_transformed, image_transformed)
+
+
+    #==========================================================================
+    def center_roi_and_image(self, mask_binary, image):
+        """
+        Center the binary mask of the ROI and the input image.
+        The center of mass of the binary mask of the ROI is aligned with the
+        center of the image. The same centering is applied to the original image.
+
+        **Parameters:**
+
+        ``mask_binary`` : 2D :py:class:`numpy.ndarray`
+            binary mask of the ROI
+
+        ``image`` : 2D :py:class:`numpy.ndarray`
+            input image.
+
+        **Returns:**
+
+        ``mask_binary_transformed`` : 2D :py:class:`numpy.ndarray`
+            binary mask of the ROI after centering.
+
+        ``image_transformed`` : 2D :py:class:`numpy.ndarray`
+            input image after centering.
+        """
+
+        matrix = [[1,0],
+                  [0,1]]
+
+        # Offset to allign the center of mass and image center:
+        offset = np.array(ndimage.center_of_mass(mask_binary)) - np.array(mask_binary.shape)/2
+
+        mask_binary_transformed = ndimage.affine_transform(mask_binary, matrix,
+                                                            offset=(offset[0], offset[1]),
+                                                            output_shape=None, output=None,
+                                                            order=0, mode='constant', cval=0.0, prefilter=True) # was order=3
+
+        image_transformed = ndimage.affine_transform(image, matrix,
+                                                    offset=(offset[0], offset[1]),
+                                                    output_shape=None, output=None,
+                                                    order=2, mode='constant', cval=0.0, prefilter=True) # was order=3
 
         return (mask_binary_transformed, image_transformed)
 
@@ -490,7 +579,10 @@ class KMeansRoi(Preprocessor):
 
         image_scaled = image_scaled.astype(np.uint8)
 
-        mask_scaled[mask_scaled>0.1] = 1
+#        mask_scaled[mask_scaled>0.1] = 1
+
+        mask_scaled = 1 * (mask_scaled > 0.1)
+
         mask_scaled = mask_scaled.astype(np.uint8)
 
         return image_scaled, mask_scaled
@@ -540,14 +632,14 @@ class KMeansRoi(Preprocessor):
 
         filtered_image = self.filter_image(image, self.filter_name) # Filter the image first
 
-        mask_binary = self.get_blob(filtered_image) # obtain the binary mask of the ROI
+        mask_binary = self.get_blob(filtered_image, speedup_flag = self.speedup_flag) # obtain the binary mask of the ROI
 
         if self.correct_mask_flag:
 
             # The kernel diameter for the ROI correction stage:
             kernel_diameter = np.uint( mask_binary.shape[0] / self.correction_erosion_factor )
 
-            mask_binary = self.correct_mask(mask_binary, kernel_diameter)
+            mask_binary = self.correct_mask(mask_binary, kernel_diameter, speedup_flag = self.speedup_flag)
 
         if self.erode_mask_flag:
 
@@ -598,6 +690,11 @@ class KMeansRoi(Preprocessor):
 
             mask_binary_transformed, image_transformed = self.rotate_and_center_roi_and_image(mask_binary_transformed,
                                                                                               image_transformed)
+
+        if self.centering_flag:
+
+            mask_binary_transformed, image_transformed = self.center_roi_and_image(mask_binary_transformed,
+                                                                                   image_transformed)
 
         if self.equalize_adapthist_flag:
 
