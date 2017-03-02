@@ -181,65 +181,6 @@ class MaxEigenvalues( Extractor ):
         return Hxx, Hxy, Hyy
 
 
-#    #==========================================================================
-#    def mean_normalization(self, image, mask):
-#        """
-#        Perform mean normalization of the input image given weights in the mask
-#        array.
-#
-#        **Parameters:**
-#
-#        ``image`` : 2D :py:class:`numpy.ndarray`
-#            Input image.
-#
-#        ``mask`` : 2D :py:class:`numpy.ndarray`
-#            Array with weights.
-#
-#        **Returns:**
-#
-#        ``image_normalized`` : 2D :py:class:`numpy.ndarray`
-#            Normalized image.
-#        """
-#
-#        image_average = np.average(image, weights = mask)
-#
-#        image_normalized = ( image - image_average ) * mask
-#
-#        return image_normalized
-
-
-#    #==========================================================================
-#    def equalize_adapthist(self, image):
-#        """
-#        Enhance local contrast of the input image using
-#        Contrast Limited Adaptive Histogram Equalization (CLAHE) method.
-#
-#        **Parameters:**
-#
-#        ``image`` : 2D :py:class:`numpy.ndarray`
-#            Input image.
-#
-#        **Returns:**
-#
-#        ``image_norm`` : 2D :py:class:`numpy.ndarray`
-#            Image after contrast enhancement.
-#        """
-#
-#        image = image + np.abs( np.min( image ) )
-#
-#        image = exposure.rescale_intensity(image, out_range = np.uint8)
-#
-#        image = image.astype(np.uint8)
-#
-#        image_norm = exposure.equalize_adapthist(image)
-#
-#        image_norm = exposure.rescale_intensity(image_norm, out_range = np.uint8)
-#
-#        image_norm = image_norm.astype(np.float64)
-#
-#        return image_norm
-
-
     #==========================================================================
     def segment_veins(self, image, mask):
         """
@@ -394,8 +335,6 @@ class MaxEigenvalues( Extractor ):
 
         diag_result_2 = rotate(self.amplify_segmented_veins_1d(rotate(image, -45, preserve_range = True)), 45, preserve_range = True)
 
-#        veins = np.max(np.dstack([vert_result, hor_result]), axis = 2)
-
         veins = np.max(np.dstack([vert_result, hor_result, diag_result_1, diag_result_2]), axis = 2)
 
         return veins
@@ -496,8 +435,6 @@ class MaxEigenvalues( Extractor ):
 
         dist_mat_mean = np.mean(dist_mat)
 
-#        scale = dist_mat_mean / selected_mean_dist
-
         scale = selected_mean_dist / dist_mat_mean
 
         return scale
@@ -587,10 +524,6 @@ class MaxEigenvalues( Extractor ):
 
         max_eigenvalues = self.get_max_eigenvalues(image, mask, self.sigma)
 
-#        max_eigenvalues = self.get_max_eigenvalues(image, mask, self.sigma, self.set_negatives_to_zero,
-#                                                   self.mean_normalization_flag, self.binarization_flag,
-#                                                   self.equalize_adapthist_flag)
-
         if self.segment_veins_flag:
 
             if self.two_layer_segmentation_flag:
@@ -616,79 +549,6 @@ class MaxEigenvalues( Extractor ):
                         max_eigenvalues = self.scale_binary_image(max_eigenvalues, scale) # the output is binary image
 
         return max_eigenvalues
-
-#    #==========================================================================
-#    def write_feature( self, data, file_name ):
-#        """
-#        Writes the given data (that has been generated using the __call__ function of this class) to file.
-#        This method overwrites the write_feature() method of the Extractor class.
-#
-#        **Parameters:**
-#
-#        ``data`` : obj
-#            Data returned by the __call__ method of the class.
-#
-#        ``file_name`` : :py:class:`str`
-#            Name of the file.
-#        """
-#
-#        f = bob.io.base.HDF5File( file_name, 'w' )
-#
-#        if self.binarization_flag:
-#
-#            f.set( 'array', data[ 0 ] )
-#
-#        else:
-#
-#            f.set( 'image', data[ 0 ] )
-#            f.set( 'mask', data[ 1 ] )
-#
-#        del f
-#
-#
-#    #==========================================================================
-#    def read_feature( self, file_name ):
-#        """
-#        Reads the preprocessed data from file.
-#        This method overwrites the read_feature() method of the Extractor class.
-#
-#        **Parameters:**
-#
-#        ``file_name`` : :py:class:`str`
-#            Name of the file.
-#
-#        **Returns:**
-#
-#        ``max_eigenvalues`` : 2D :py:class:`numpy.ndarray`
-#            Maximum eigenvalues of Hessian matrices.
-#
-#        ``mask`` : 2D :py:class:`numpy.ndarray`
-#            Binary mask of the ROI.
-#        """
-#
-#        f = bob.io.base.HDF5File( file_name, 'r' )
-#
-#        if self.binarization_flag:
-#
-#            return_data = f.read( 'array' )
-#
-#        else:
-#
-#            max_eigenvalues = f.read( 'image' )
-#            mask = f.read( 'mask' )
-#
-#            return_data = (max_eigenvalues, mask)
-#
-#        del f
-#
-#        return return_data
-
-
-
-
-
-
-
 
 
 

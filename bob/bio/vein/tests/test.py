@@ -41,6 +41,8 @@ from bob.bio.vein.extractors import MaskedLBPHistograms
 
 from bob.bio.vein.extractors import MaxEigenvalues
 
+from bob.bio.vein.extractors import MaximumCurvatureScaleRotation
+
 def F(parts):
   """Returns the test file path"""
 
@@ -1174,4 +1176,32 @@ def test_KMeansRoi():
     assert ( np.abs(np.sum(roi_2) - 23253.) < 100 )
     assert ( np.abs(np.sum(roi_3) - 23254.) < 100 )
     assert ( ( np.sum( np.abs( roi - roi_loaded ) ) ) < 100 )
+
+
+#==============================================================================
+def test_MaximumCurvatureScaleRotation():
+    """
+    Test the MaximumCurvatureScaleRotation vein segmentation algorithm.
+    """
+
+    input_filename = F( ( 'preprocessors', 'TopographyCutRoi_test_image.png' ) ) # test image filename
+
+    mask_filename = F( ( 'preprocessors', 'KMeansRoi_result_image.hdf5' ) ) # file with roi
+
+    image = bob.io.base.load( input_filename ) # load test image
+
+    f = bob.io.base.HDF5File( mask_filename )
+
+    roi = f.read('data') # load roi
+
+    del f
+
+    # extractor to be tested with required options turned on:
+    extractor = MaximumCurvatureScaleRotation(sigma = 5, norm_p2p_dist_flag = True, selected_mean_dist = 100,
+                                              sum_of_rotated_images_flag = False, angle_limit = 10, angle_step = 1)
+
+    result = extractor( [ image, roi ] ) # resulting vein pattern
+
+    assert ( np.sum(result) == 2860. ) # check the sum of the image
+
 

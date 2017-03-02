@@ -570,25 +570,6 @@ class MaximumCurvatureScaleRotation (Extractor):
             The scaled image.
         """
 
-#        binary_image_max = np.max(binary_image)
-#
-#        tform = tf.SimilarityTransform(scale = scale, rotation = 0, translation = (0, 0))
-#
-#        image_scaled = tf.warp(binary_image, tform, preserve_range = True)
-#
-#        translation = np.array(center_of_mass(image_scaled)) - np.array(binary_image.shape)/2.
-#
-#        tform = tf.SimilarityTransform(scale = 1, rotation = 0, translation = (translation[1], translation[0]))
-#
-#        image_scaled_translated = tf.warp(image_scaled, tform, preserve_range = True)
-#
-#        image_scaled_translated[image_scaled_translated>0.25] = binary_image_max
-#
-#        image_scaled_translated = image_scaled_translated.astype(np.uint8)
-#
-#        return image_scaled_translated.astype(np.float64)
-
-
         h, w = image.shape
 
         image_coords = np.argwhere(image) # centered coordinates of the vein (non-zero) pixels
@@ -766,51 +747,5 @@ class MaximumCurvatureScaleRotation (Extractor):
         del f
 
         return return_data
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

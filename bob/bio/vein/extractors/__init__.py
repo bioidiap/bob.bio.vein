@@ -3,11 +3,9 @@ from .MaskedLBPHistograms import MaskedLBPHistograms
 from .MaxEigenvaluesAngles import MaxEigenvaluesAngles
 from .ExtNone import ExtNone
 from .ExtVeinsBiosig import ExtVeinsBiosig
-from .HessianAkazeFeatures import HessianAkazeFeatures
 from .Threshold import Threshold
 from .Learn import Learn
 from .MaxEigenvalues import MaxEigenvalues
-from .MaximumCurvatureAndMask import MaximumCurvatureAndMask
 from .MaximumCurvatureScaleRotation import MaximumCurvatureScaleRotation
 from .ThresholdExtractor import ThresholdExtractor
 from .MaximumCurvatureThresholdFusion import MaximumCurvatureThresholdFusion
