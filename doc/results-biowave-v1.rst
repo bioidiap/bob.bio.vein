@@ -10,7 +10,82 @@ Baseline experiments for BIOWAVE V1 database
 Introduction
 ------------
 
-In this page is summarized baseline experiment results on `BioWave V1`_ database. More information -- :py:mod:`bob.bio.vein.configurations.biowave_v1` and also -- `BioWave V1`_ .
+In this section the results of verification experiments for the `BioWave V1`_ database are summarized. More information -- :py:mod:`bob.bio.vein.configurations.biowave_v1` and also -- `BioWave V1`_ .
+
+
+State of the art verification results
+----------------------------------------
+
+In this subsection the best performing automatic verification pipe-line is described. The results are reported for the ``Idiap_1_1_R``, ``Idiap_1_5_R``, ``Idiap_5_5_R`` and ``Idiap_3_5_R`` protocols of the `BioWave V1`_ database. 
+
+The verification pipeline utilizes the following classes:
+
+  1. preprocessor ``KMeansRoi`` :py:class:`bob.bio.vein.preprocessors.KMeansRoi`,
+  2. extractor ``MaximumCurvatureScaleRotation`` :py:class:`bob.bio.vein.extractors.MaximumCurvatureScaleRotation`,
+  3. matching algorithm ``MiuraMatchRotationFast`` :py:class:`bob.bio.vein.algorithms.MiuraMatchRotationFast`.
+
+The successful parameters for the instances of the above classes are listed below:
+
+.. code-block:: python
+
+   preprocessor = KMeansRoi(filter_name = "gaussian_filter", mask_size = 7,
+                             correct_mask_flag = True, correction_erosion_factor = 7,
+                             erode_mask_flag = True, erosion_factor = 40,
+                             convexity_flag = False,
+                             rotation_centering_flag = True,
+                             centering_flag = False,
+                             normalize_scale_flag = True,
+                             mask_to_image_area_ratio = 0.2,
+                             equalize_adapthist_flag = False,
+                             speedup_flag = True)
+
+   extractor = MaximumCurvatureScaleRotation(sigma = 5,
+                                             norm_p2p_dist_flag = True, 
+                                             selected_mean_dist = 100,
+                                             sum_of_rotated_images_flag = False, 
+                                             angle_limit = 10, angle_step = 1,
+                                             speed_up_flag = False)
+
+   algorithm = MiuraMatchRotationFast(ch = 120, cw = 120,
+                                      angle_limit = 10, angle_step = 1,
+                                      perturbation_matching_flag = True,
+                                      kernel_radius = 1,
+                                      score_fusion_method = 'max',
+                                      gray_scale_input_flag = False)
+
+
+To reproduce the experiments using ``verify.py`` script the following entry points can be used:
+
+  1. ``--preprocessor kmeans-roi-corr-rot-eroded-40-scaled-fast``
+  2. ``--extractor maximum-curvature-scale-rotation-p2pnorm-100``
+  3. ``--algorithm miura-match-fast-120-rotation-10-step-1-pert-1-max1``
+
+An example of the command to run the verification algorithm for the ``Idiap_5_5_R`` protocol of the database is:
+
+.. code-block:: shell-session
+
+   ./bin/verify.py biowave_v1 --preprocessor kmeans-roi-corr-rot-eroded-40-scaled-fast --extractor maximum-curvature-scale-rotation-p2pnorm-100 --algorithm miura-match-fast-120-rotation-10-step-1-pert-1-max1 --protocol Idiap_5_5_R --groups 'dev' 'eval' --sub-directory <PATH_TO_SAVE_THE_RESULTS>
+
+
+The EER/HTER errors are summarized in the Table below.
+
+EER (``'dev'`` set), HTER (``'eval'`` set), different protocols of the `BioWave V1`_ database.
+
++---------------------+----------+----------+
+|      Protocol       |  EER,\%  |  HTER,\% |
++=====================+==========+==========+
+|   ``Idiap_1_1_R``   |  123456  |  123456  |
++---------------------+----------+----------+
+|   ``Idiap_1_5_R``   |  123456  |  123456  |
++---------------------+----------+----------+
+|   ``Idiap_5_5_R``   |  123456  |  123456  |
++---------------------+----------+----------+
+|   ``Idiap_3_5_R``   |**123456**|**123456**|
++---------------------+----------+----------+
+
+The ROC curves for the particular experiment can be downloaded from here:
+
+:download:`ROC curve <img/ROC_biowave_v1_state_of_art.pdf>`
 
 
 Fully-automated experiments
@@ -19,9 +94,9 @@ Fully-automated experiments
 The baseline verification results are summarized in this section. 
 The evaluation of verification pipe-lines is done in two steps:
 
-  1. First, the papameters of each algorithm are adjusted using the grid search on the ``Idiap_1_1_R`` protocol of ``biowave_v1_a`` instance of the `BioWave V1`_ database. 
+  1. First, the parameters of each algorithm are adjusted using the grid search on the ``Idiap_1_1_R`` protocol of ``biowave_v1_a`` instance of the `BioWave V1`_ database. 
      Only ``'dev'`` set of the database is used in the grid search.
-  2. Once best parameters are selected the performance is comuted for 
+  2. Once best parameters are selected the performance is computed for 
      ``Idiap_1_1_R``, ``Idiap_1_5_R``, ``Idiap_5_5_R`` protocols of the `BioWave V1`_ database.
 
 
@@ -60,7 +135,7 @@ EER for the ``'dev'`` set, ``Idiap_1_1_R`` protocol of ``biowave_v1_a`` instance
 | ``topography-cut-roi-conv-erode`` |  27.837  |
 +-----------------------------------+----------+
 
-The ROC curves for the particular experiment can be downlooaded from here:
+The ROC curves for the particular experiment can be downloaded from here:
 
 :download:`ROC curve <img/ROC_verification_experiment_1.pdf>`
 
@@ -102,7 +177,7 @@ EER for the ``'dev'`` set, ``Idiap_1_1_R`` protocol of ``biowave_v1_a`` instance
 |   ``miura-match-wrist-160``  |  28.438  |
 +------------------------------+----------+
 
-The ROC curves for the particular experiment can be downlooaded from here:
+The ROC curves for the particular experiment can be downloaded from here:
 
 :download:`ROC curve <img/ROC_verification_experiment_2.pdf>`
 
@@ -142,7 +217,7 @@ EER for the ``'dev'`` set, ``Idiap_1_1_R`` protocol of ``biowave_v1_a`` instance
 |   ``miura-match-wrist-dilation-17``  |  30.000  |
 +--------------------------------------+----------+
 
-The ROC curves for the particular experiment can be downlooaded from here:
+The ROC curves for the particular experiment can be downloaded from here:
 
 :download:`ROC curve <img/ROC_verification_experiment_3.pdf>`
 
@@ -167,7 +242,7 @@ EER (``'dev'`` set), HTER (``'eval'`` set), different protocols of the `BioWave 
 |   ``Idiap_5_5_R``   |**16.638**|**16.156**|
 +---------------------+----------+----------+
 
-The ROC curves for the particular experiment can be downlooaded from here:
+The ROC curves for the particular experiment can be downloaded from here:
 
 :download:`ROC curve <img/ROC_verification_experiment_4.pdf>`
 
@@ -208,7 +283,7 @@ EER for the ``'dev'`` set, ``Idiap_1_1_R`` protocol of ``biowave_v1_a`` instance
 |   ``mct-histogram-n8r7``   |**29.063**|
 +----------------------------+----------+
 
-The ROC curves for the particular experiment can be downlooaded from here:
+The ROC curves for the particular experiment can be downloaded from here:
 
 :download:`ROC curve <img/ROC_verification_experiment_5.pdf>`
 
@@ -233,7 +308,7 @@ EER (``'dev'`` set), HTER (``'eval'`` set), different protocols of the `BioWave 
 |   ``Idiap_5_5_R``   |**25.588**|**27.494**|
 +---------------------+----------+----------+
 
-The ROC curves for the particular experiment can be downlooaded from here:
+The ROC curves for the particular experiment can be downloaded from here:
 
 :download:`ROC curve <img/ROC_verification_experiment_6.pdf>`
 
