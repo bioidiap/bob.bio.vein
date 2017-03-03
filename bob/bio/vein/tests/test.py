@@ -27,16 +27,16 @@ import bob.io.image
 from ..preprocessor import utils as preprocessor_utils
 # import bob.ip.color
 
-# for the TopographyCutRoi tests:
 from bob.bio.vein.preprocessors import TopographyCutRoi
 
-# for the KMeansRoi tests:
 from bob.bio.vein.preprocessors import KMeansRoi
 
-# for the MiuraMatchAligned tests:
-from bob.bio.vein.algorithms import MiuraMatchAligned
+from bob.bio.vein.algorithms import MiuraMatchFusion
 
-# for the MaskedLBPHistograms class tests:
+from bob.bio.vein.algorithms import MiuraMatchRotationFast
+
+from bob.bio.vein.algorithms import MiuraMatchRotation
+
 from bob.bio.vein.extractors import MaskedLBPHistograms
 
 from bob.bio.vein.extractors import MaxEigenvalues
@@ -176,33 +176,6 @@ def test_TopographyCutRoi():
 
     assert (roi == roi_loaded).all()
 
-#==============================================================================
-def test_MiuraMatchAligned():
-    """
-    Test the vein matching algorithm namely MiuraMatchAligned.
-    """
-
-    model_filename = F( ( 'algorithms', 'MiuraMatchAligned_test_data_1.hdf5' ) )
-
-    probe_filename = F( ( 'algorithms', 'MiuraMatchAligned_test_data_2.hdf5' ) )
-
-    f = bob.io.base.HDF5File( model_filename )
-
-    model = f.read('data')
-
-    del f
-
-    f = bob.io.base.HDF5File( probe_filename )
-
-    probe = f.read('data')
-
-    del f
-
-    miura_matcher = MiuraMatchAligned( ch = 10, cw = 10, alignment_flag = False, alignment_method = "center_of_mass" )
-
-    score = miura_matcher.score( model, probe )
-
-    assert np.abs( score - 0.040135929463629753 ) < 0.000001
 
 #==============================================================================
 def test_MaskedLBPHistograms():
@@ -1203,5 +1176,93 @@ def test_MaximumCurvatureScaleRotation():
     result = extractor( [ image, roi ] ) # resulting vein pattern
 
     assert ( np.sum(result) == 2860. ) # check the sum of the image
+
+
+#==============================================================================
+def test_MiuraMatchFusion():
+    """
+    Test the vein matching algorithm namely MiuraMatchFusion.
+    """
+
+    model_filename = F( ( 'algorithms', 'MiuraMatchAligned_test_data_1.hdf5' ) )
+
+    probe_filename = F( ( 'algorithms', 'MiuraMatchAligned_test_data_2.hdf5' ) )
+
+    f = bob.io.base.HDF5File( model_filename )
+
+    model = f.read('data')
+
+    del f
+
+    f = bob.io.base.HDF5File( probe_filename )
+
+    probe = f.read('data')
+
+    del f
+
+    miura_matcher = MiuraMatchFusion( ch = 10, cw = 10, score_fusion_method = "max" )
+
+    score = miura_matcher.score( model, probe )
+
+    assert np.abs( score - 0.040135929463629656 ) < 0.000001
+
+
+#==============================================================================
+def test_MiuraMatchRotationFast():
+    """
+    Test the vein matching algorithm namely MiuraMatchRotationFast.
+    """
+
+    model_filename = F( ( 'algorithms', 'MiuraMatchAligned_test_data_1.hdf5' ) )
+
+    probe_filename = F( ( 'algorithms', 'MiuraMatchAligned_test_data_2.hdf5' ) )
+
+    f = bob.io.base.HDF5File( model_filename )
+
+    model = f.read('data')
+
+    del f
+
+    f = bob.io.base.HDF5File( probe_filename )
+
+    probe = f.read('data')
+
+    del f
+
+    miura_matcher = MiuraMatchRotationFast(score_fusion_method='max', ch=10, angle_step=1, gray_scale_input_flag = False,
+                                           perturbation_matching_flag=True, angle_limit=10, kernel_radius=3, cw=10)
+
+    score = miura_matcher.score( [model], probe )
+
+    assert np.abs( score - 0.119837767517792 ) < 0.000001
+
+
+#==============================================================================
+def test_MiuraMatchRotation():
+    """
+    Test the vein matching algorithm namely MiuraMatchRotation.
+    """
+
+    model_filename = F( ( 'algorithms', 'MiuraMatchAligned_test_data_1.hdf5' ) )
+
+    probe_filename = F( ( 'algorithms', 'MiuraMatchAligned_test_data_2.hdf5' ) )
+
+    f = bob.io.base.HDF5File( model_filename )
+
+    model = f.read('data')
+
+    del f
+
+    f = bob.io.base.HDF5File( probe_filename )
+
+    probe = f.read('data')
+
+    del f
+
+    miura_matcher = MiuraMatchRotation(ch=10, cw=10, angle_limit=10, angle_step=1, score_fusion_method='max')
+
+    score = miura_matcher.score( [model], probe )
+
+    assert np.abs( score - 0.046853340726365364 ) < 0.000001
 
 
