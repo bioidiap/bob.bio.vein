@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 
 from ..algorithm import MiuraMatch
-from ..algorithms import MiuraMatchAligned
+
 from ..algorithms import HistogramsMatch
 
 from ..algorithms import AnnotationMatch
@@ -12,8 +12,6 @@ from ..algorithms import MatchTemplate
 from ..algorithms import MiuraMatchFusion
 
 from ..algorithms import CrossCorrelationMatch
-
-from ..algorithms import MiuraMatchMaxEigenvalues
 
 from ..algorithms import MiuraMatchRotation
 
@@ -32,34 +30,6 @@ miura_wrist_120 = MiuraMatch( ch = 120, cw = 120 )
 miura_wrist_140 = MiuraMatch( ch = 140, cw = 140 )
 miura_wrist_160 = MiuraMatch( ch = 160, cw = 160 )
 
-miura_wrist_aligned_20 = MiuraMatchAligned( ch = 20, cw = 20, alignment_flag = True, alignment_method = "center_of_mass" )
-miura_wrist_aligned_40 = MiuraMatchAligned( ch = 40, cw = 40, alignment_flag = True, alignment_method = "center_of_mass" )
-miura_wrist_aligned_60 = MiuraMatchAligned( ch = 60, cw = 60, alignment_flag = True, alignment_method = "center_of_mass" )
-miura_wrist_aligned_80 = MiuraMatchAligned( ch = 80, cw = 80, alignment_flag = True, alignment_method = "center_of_mass" )
-miura_wrist_aligned_100 = MiuraMatchAligned( ch = 100, cw = 100, alignment_flag = True, alignment_method = "center_of_mass" )
-miura_wrist_aligned_120 = MiuraMatchAligned( ch = 120, cw = 120, alignment_flag = True, alignment_method = "center_of_mass" )
-miura_wrist_aligned_140 = MiuraMatchAligned( ch = 140, cw = 140, alignment_flag = True, alignment_method = "center_of_mass" )
-miura_wrist_aligned_160 = MiuraMatchAligned( ch = 160, cw = 160, alignment_flag = True, alignment_method = "center_of_mass" )
-
-miura_wrist_dilation_5 = MiuraMatchAligned( ch = 100, cw = 100, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 5 )
-miura_wrist_dilation_7 = MiuraMatchAligned( ch = 100, cw = 100, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 7 )
-miura_wrist_dilation_9 = MiuraMatchAligned( ch = 100, cw = 100, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 9 )
-miura_wrist_dilation_11 = MiuraMatchAligned( ch = 100, cw = 100, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 11 )
-miura_wrist_dilation_13 = MiuraMatchAligned( ch = 100, cw = 100, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 13 )
-miura_wrist_dilation_15 = MiuraMatchAligned( ch = 100, cw = 100, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 15 )
-miura_wrist_dilation_17 = MiuraMatchAligned( ch = 100, cw = 100, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 17 )
-
-miura_wrist_chw_120_dilation_5 = MiuraMatchAligned( ch = 120, cw = 120, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 5 )
-miura_wrist_chw_120_dilation_7 = MiuraMatchAligned( ch = 120, cw = 120, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 7 )
-miura_wrist_chw_120_dilation_9 = MiuraMatchAligned( ch = 120, cw = 120, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 9 )
-miura_wrist_chw_120_dilation_11 = MiuraMatchAligned( ch = 120, cw = 120, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 11 )
-miura_wrist_chw_120_dilation_13 = MiuraMatchAligned( ch = 120, cw = 100, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 13 )
-
-
-mm_t1 = MiuraMatchAligned( ch = 140, cw = 140, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 9 )
-mm_t2 = MiuraMatchAligned( ch = 120, cw = 120, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 9 )
-mm_t3 = MiuraMatchAligned( ch = 100, cw = 100, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 13 )
-mm_t4 = MiuraMatchAligned( ch = 120, cw = 130, alignment_flag = False, alignment_method = "center_of_mass", dilation_flag = True, ellipse_mask_size = 5 )
 chi_square = HistogramsMatch( similarity_metrics_name = "chi_square" )
 
 annotationmatch_0_min = AnnotationMatch(sigma=0, score_method='min')
@@ -100,8 +70,6 @@ miura_match_fusion_300_225_max = MiuraMatchFusion(ch = 300, cw = 225, score_fusi
 
 cross_correlation_match_mean1_fusion = CrossCorrelationMatch(is_mean_normalize_flag = False, score_fusion_method = 'mean')
 cross_correlation_match_mean1_fusion_mean_norm = CrossCorrelationMatch(is_mean_normalize_flag = True, score_fusion_method = 'mean')
-
-miura_match_max_eigenvalues_120_mean1 = MiuraMatchMaxEigenvalues(ch = 120, cw = 120, score_fusion_method = 'mean')
 
 miura_match_120_rotation_10_step_1_max1 = MiuraMatchRotation(ch = 120, cw = 120, angle_limit = 10, angle_step = 1, score_fusion_method = 'max')
 
