@@ -322,6 +322,8 @@ class MiuraMatchRotationFast (Algorithm):
             rotated_coords[:, 0][rotated_coords[:, 0] >= h] = h-1
             rotated_coords[:, 1][rotated_coords[:, 1] >= w] = w-1
 
+            rotated_coords = rotated_coords.astype(np.int)
+
             if gray_scale_input_flag:
 
                 rotated_images[idx, rotated_coords[:,0], rotated_coords[:,1]] = image_val
