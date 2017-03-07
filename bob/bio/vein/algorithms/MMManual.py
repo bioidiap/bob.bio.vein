@@ -116,7 +116,6 @@ class MMManual(Algorithm):
                  ellipse_mask_size=5,
                  allow_affine=False,
                  allow_scale=False,
-                 allow_rotation=False,
                  allow_translation_x=False,
                  allow_translation_y=False
                  ):
@@ -128,7 +127,6 @@ class MMManual(Algorithm):
                            ellipse_mask_size=ellipse_mask_size,
                            allow_affine=allow_affine,
                            allow_scale=allow_scale,
-                           allow_rotation=allow_rotation,
                            allow_translation_x=allow_translation_x,
                            allow_translation_y=allow_translation_y)
 
@@ -138,7 +136,6 @@ class MMManual(Algorithm):
         self.ellipse_mask_size = ellipse_mask_size
         self.allow_affine = allow_affine
         self.allow_scale = allow_scale
-        self.allow_rotation = allow_rotation
         self.allow_translation_x = allow_translation_x
         self.allow_translation_y = allow_translation_y
 
@@ -263,7 +260,6 @@ class MMManual(Algorithm):
 
             # dilate the image
             image_dilated = ndimage.binary_dilation( image, structure = kernel )
-
             return image_dilated.astype(np.float64)
 
     def __min_point_count__(self, enroll_alignment, probe_alignment):
@@ -407,34 +403,32 @@ class MMManual(Algorithm):
         keypoints_1 = np.array(keypoints_1, dtype=np.float64)
         keypoints_2 = np.array(keypoints_2, dtype=np.float64)
 
-        if self.allow_affine is True and self.allow_scale is True and \
-          self.allow_rotation is True and self.allow_translation_x is True \
-          and self.allow_translation_y is True:
+        if (self.allow_affine == True and
+                self.allow_scale == True and
+                self.allow_translation_x == True and
+                self.allow_translation_y == True):
             transformation = skimage.transform.AffineTransform()
             transformation.estimate(keypoints_1, keypoints_2)
 
-        elif self.allow_affine is False and self.allow_scale is True and\
-          self.allow_rotation is True and self.allow_translation_x is True \
-          and self.allow_translation_y is True:
+        elif (self.allow_affine == False and
+                  self.allow_scale == True and
+                  self.allow_translation_x == True and
+                  self.allow_translation_y == True):
             transformation = skimage.transform.SimilarityTransform()
             transformation.estimate(keypoints_1, keypoints_2)
 
-        elif self.allow_affine is False and self.allow_scale is False and\
-          self.allow_rotation is True and self.allow_translation_x is True \
-          and self.allow_translation_y is True:
-#            transformation = skimage.transform.EuclideanTransform()
-            transformation = EuclideanTransform()
-            transformation.estimate(keypoints_1, keypoints_2)
+        elif (self.allow_affine == False and
+                  self.allow_scale == False and
+                  (self.allow_translation_x == True or
+                   self.allow_translation_y == True)):
 
-        elif self.allow_affine is False and self.allow_scale is False and \
-          self.allow_rotation is False and (self.allow_translation_x is True or
-                                            self.allow_translation_y is True):
             transformation = self.mass_center(keypoints_1, keypoints_2)
 
-        elif self.allow_affine is False and self.allow_scale is False and \
-          self.allow_rotation is False and self.allow_translation_x is False \
-          and self.allow_translation_y is False:
-            # no transformation is performed
+        elif (self.allow_affine == False and
+                  self.allow_scale == False and
+                  self.allow_translation_x == False and
+                  self.allow_translation_y == False):
+            # no transformation performed
             transformation = skimage.transform.SimilarityTransform()
 
         else:
@@ -473,7 +467,7 @@ class MMManual(Algorithm):
         model_alignment = model[1]
         model = model[0]
         probe_alignment = probe[1]
-        probe = probe[0]
+        probe = np.array(probe[0], dtype=np.float64)
 
         if len(model.shape) == 2:
             model = [model]
@@ -488,6 +482,7 @@ class MMManual(Algorithm):
                 raise Exception("The image must be a 2D array / grayscale format")
             # make a copy of the enroll image, so that if after transformation
             # image is blank, we can recover the original.
+            enroll = np.array(enroll, dtype=np.float64)
             enroll_ = enroll
             enroll = self.manual_align_image(image=enroll,
                                              enroll_alignment=model_alignment[nr],

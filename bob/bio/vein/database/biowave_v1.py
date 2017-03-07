@@ -128,6 +128,9 @@ class BiowaveV1BioDatabase(BioDatabase):
                                    annotated_images=self.annotated_images,
                                    imagedir = self.original_directory)
 
+    def annotations(self, *args, **kwargs):
+        pass
+
     def objects(self, protocol=None,
                 groups=None,
                 purposes=None,
