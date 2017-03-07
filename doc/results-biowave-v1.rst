@@ -74,19 +74,20 @@ EER (``'dev'`` set), HTER (``'eval'`` set), different protocols of the `BioWave 
 +---------------------+----------+----------+
 |      Protocol       |  EER,\%  |  HTER,\% |
 +=====================+==========+==========+
-|   ``Idiap_1_1_R``   |  123456  |  123456  |
+|   ``Idiap_1_1_R``   |  22.596  |  21.930  |
 +---------------------+----------+----------+
-|   ``Idiap_1_5_R``   |  123456  |  123456  |
+|   ``Idiap_1_5_R``   |  19.030  |  18.456  |
 +---------------------+----------+----------+
-|   ``Idiap_5_5_R``   |  123456  |  123456  |
+|   ``Idiap_5_5_R``   |  10.642  |  10.346  |
 +---------------------+----------+----------+
-|   ``Idiap_3_5_R``   |**123456**|**123456**|
+|   ``Idiap_3_5_R``   |**6.042** |**5.522** |
 +---------------------+----------+----------+
 
 The ROC curves for the particular experiment can be downloaded from here:
 
 :download:`ROC curve <img/ROC_biowave_v1_state_of_art.pdf>`
 
+------------
 
 Fully-automated experiments
 ---------------------------
@@ -312,6 +313,7 @@ The ROC curves for the particular experiment can be downloaded from here:
 
 :download:`ROC curve <img/ROC_verification_experiment_6.pdf>`
 
+------------
 
 Annotation comparison
 ---------------------

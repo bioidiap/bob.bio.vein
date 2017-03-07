@@ -93,6 +93,7 @@ The ROC curves for the particular experiment can be downloaded from here:
 
 :download:`ROC curve <img/ROC_putvein_binary_state_of_art.pdf>`
 
+------------
 
 State of the art verification results (using gray-scale vein images)
 ----------------------------------------------------------------------
@@ -176,6 +177,6 @@ The ROC curves for the particular experiment can be downloaded from here:
 
 :download:`ROC curve <img/ROC_putvein_grayscale_state_of_art.pdf>`
 
-
+------------
 
 .. include:: links.rst
