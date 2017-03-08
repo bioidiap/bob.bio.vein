@@ -55,9 +55,9 @@ class RepeatedLineTracking (Extractor):
     # Sets the random seed before starting to process
     numpy.random.seed(self.seed)
 
-    #Convert image to uint8
-    if finger_image.dtype != numpy.uint8:
-      finger_image = bob.core.convert(finger_image,numpy.uint8,(0,255),(0,1))
+    # Convert image to uint8 - NOT NECESSARY AFTER MODIFICATION TO FingerCrop, which rescales intensities of histogram equalized preprocessed images to range (0, 255)
+    #if finger_image.dtype != numpy.uint8:
+    #  finger_image = bob.core.convert(finger_image,numpy.uint8,(0,255),(0,1))
 
     finger_mask = numpy.zeros(mask.shape)
     finger_mask[mask == True] = 1
