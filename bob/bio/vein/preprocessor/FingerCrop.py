@@ -454,8 +454,9 @@ class FingerCrop (Preprocessor):
 
     """
     from skimage.exposure import equalize_hist
+    from skimage.exposure import rescale_intensity
 
-    retval = equalize_hist(image, mask=mask)
+    retval = rescale_intensity(equalize_hist(image, mask=mask), out_range = (0, 255))
 
     # make the parts outside the mask totally black
     retval[~mask] = 0
