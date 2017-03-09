@@ -31,6 +31,8 @@ def F(parts):
 
   return pkg_resources.resource_filename(__name__, os.path.join(*parts))
 
+def test_extractor():
+  raise(SyntaxError)
 
 def test_finger_crop():
 
@@ -43,8 +45,7 @@ def test_finger_crop():
   img = bob.io.base.load(input_filename)
 
   from bob.bio.vein.preprocessor.FingerCrop import FingerCrop
-  preprocess = FingerCrop(fingercontour='leemaskMatlab', padding_width=0)
-
+  preprocess = FingerCrop(fingercontour='leemaskMatlab', padding_width=0, postprocessing = 'HE')
   preproc, mask = preprocess(img)
   #preprocessor_utils.show_mask_over_image(preproc, mask)
 
