@@ -36,11 +36,6 @@ class MaximumCurvature (Extractor):
     """Computes and returns the Maximum Curvature features for the given input
     fingervein image"""
 
-    # Convert image to uint8 - NOT NECESSARY AFTER MODIFICATION TO FingerCrop, which rescales intensities of histogram equalized preprocessed images to range (0, 255)
-    #if image.dtype != numpy.uint8:
-    #   image = bob.core.convert(image,numpy.uint8,(0,255),(0,1))
-    #No es necesario pasarlo a uint8, en matlab lo dejan en float64. Comprobar si varian los resultados en vera database y ajustar.
-
     finger_mask = numpy.zeros(mask.shape)
     finger_mask[mask == True] = 1
 
