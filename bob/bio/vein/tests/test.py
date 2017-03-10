@@ -30,9 +30,7 @@ def F(parts):
   """Returns the test file path"""
 
   return pkg_resources.resource_filename(__name__, os.path.join(*parts))
-
-def test_extractor():
-  raise(SyntaxError)
+ 
 
 def test_finger_crop():
 
@@ -45,7 +43,7 @@ def test_finger_crop():
   img = bob.io.base.load(input_filename)
 
   from bob.bio.vein.preprocessor.FingerCrop import FingerCrop
-  preprocess = FingerCrop(fingercontour='leemaskMatlab', padding_width=0, postprocessing = 'HE')
+  preprocess = FingerCrop(fingercontour='leemaskMatlab', padding_width=0)
   preproc, mask = preprocess(img)
   #preprocessor_utils.show_mask_over_image(preproc, mask)
 
@@ -85,6 +83,24 @@ def test_max_curvature():
   assert numpy.mean(numpy.abs(output_img - output_img_ref)) < 8e-3
 
 
+def test_max_curvature_HE():
+  # Maximum Curvature method when Histogram Equalization post-processing is applied to the preprocessed vein image
+
+  # Read in input image
+  input_img_filename = F(('preprocessors', '0019_3_1_120509-160517.png'))
+  input_img = bob.io.base.load(input_img_filename)
+  
+  # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in maximum_curvature.py configuration file + postprocessing)
+  from bob.bio.vein.preprocessor.FingerCrop import FingerCrop
+  FC = FingerCrop(postprocessing = 'HE')
+  preproc_data = FC(input_img)
+
+  # Extract features from preprocessed and histogram equalized data using MC extractor (same parameters as in maximum_curvature.py configuration file)
+  from bob.bio.vein.extractor.MaximumCurvature import MaximumCurvature
+  MC = MaximumCurvature(sigma = 5)
+  extr_data = MC(preproc_data)
+
+
 def test_repeated_line_tracking():
 
   #Repeated Line Tracking method against Matlab reference
@@ -110,6 +126,30 @@ def test_repeated_line_tracking():
   assert numpy.mean(numpy.abs(output_img - output_img_ref)) < 0.5
 
 
+def test_repeated_line_tracking_HE():
+  # Repeated Line Tracking method when Histogram Equalization post-processing is applied to the preprocessed vein image
+
+  # Read in input image
+  input_img_filename = F(('preprocessors', '0019_3_1_120509-160517.png'))
+  input_img = bob.io.base.load(input_img_filename)
+  
+  # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in repeated_line_tracking.py configuration file + postprocessing)
+  from bob.bio.vein.preprocessor.FingerCrop import FingerCrop
+  FC = FingerCrop(postprocessing = 'HE')
+  preproc_data = FC(input_img)
+
+  # Extract features from preprocessed and histogram equalized data using RLT extractor (same parameters as in repeated_line_tracking.py configuration file)
+  from bob.bio.vein.extractor.RepeatedLineTracking import RepeatedLineTracking
+  # Maximum number of iterations
+  NUMBER_ITERATIONS = 3000
+  # Distance between tracking point and cross section of profile
+  DISTANCE_R = 1
+  # Width of profile
+  PROFILE_WIDTH = 21
+  RLT = RepeatedLineTracking(iterations = NUMBER_ITERATIONS, r = DISTANCE_R, profile_w = PROFILE_WIDTH, seed = 0)
+  extr_data = RLT(preproc_data)
+
+
 def test_wide_line_detector():
 
   #Wide Line Detector method against Matlab reference
@@ -132,6 +172,30 @@ def test_wide_line_detector():
 
   # Compare output of python's implementation to matlab reference
   assert numpy.allclose(output_img, output_img_ref)
+
+
+def test_wide_line_detector_HE():
+  # Wide Line Detector method when Histogram Equalization post-processing is applied to the preprocessed vein image
+
+  # Read in input image
+  input_img_filename = F(('preprocessors', '0019_3_1_120509-160517.png'))
+  input_img = bob.io.base.load(input_img_filename)
+  
+  # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in wide_line_detector.py configuration file + postprocessing)
+  from bob.bio.vein.preprocessor.FingerCrop import FingerCrop
+  FC = FingerCrop(postprocessing = 'HE')
+  preproc_data = FC(input_img)
+
+  # Extract features from preprocessed and histogram equalized data using WLD extractor (same parameters as in wide_line_detector.py configuration file)
+  from bob.bio.vein.extractor.WideLineDetector import WideLineDetector
+  # Radius of the circular neighbourhood region
+  RADIUS_NEIGHBOURHOOD_REGION = 5
+  NEIGHBOURHOOD_THRESHOLD = 1
+  # Sum of neigbourhood threshold
+  SUM_NEIGHBOURHOOD = 41
+  RESCALE = True
+  WLD = WideLineDetector(radius = RADIUS_NEIGHBOURHOOD_REGION, threshold = NEIGHBOURHOOD_THRESHOLD, g = SUM_NEIGHBOURHOOD, rescale = RESCALE)
+  extr_data = WLD(preproc_data)
 
 
 def test_miura_match():
