@@ -1050,13 +1050,12 @@ def test_MMManual():
 
     from bob.bio.vein.algorithms import MMManual
 
-    alignment_parameters = [[False, False, False, False, False],
-                            [False, False, False, False, True],
-                            [False, False, False, True, False],
-                            [False, False, False, True, True],
-                            [False, False, True, True, True],
-                            [False, True, True, True, True],
-                            [True, True, True, True, True]]
+    alignment_parameters = [[False, False, False, False],
+                            [False, False, False, True],
+                            [False, False, True, False],
+                            [False, False, True, True],
+                            [False, True, True, True],
+                            [True, True, True, True]]
     results = []
     for n in alignment_parameters:
         algorithm = MMManual(ch=10,
@@ -1065,9 +1064,8 @@ def test_MMManual():
                              ellipse_mask_size=5,
                              allow_affine=n[0],
                              allow_scale=n[1],
-                             allow_rotation=n[2],
-                             allow_translation_x=n[3],
-                             allow_translation_y=n[4]
+                             allow_translation_x=n[2],
+                             allow_translation_y=n[3]
                              )
         score = algorithm.score(enroll, probe)
         # print(score)
@@ -1077,7 +1075,7 @@ def test_MMManual():
     # generate higher score:
     assert np.mean(results[0:3]) < np.mean(results[3:])
     # no 2 results should be equal:
-    assert len(set(results)) == 7
+    assert len(set(results)) == 6
 
 
 #==============================================================================
