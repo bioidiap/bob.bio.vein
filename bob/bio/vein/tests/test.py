@@ -793,10 +793,7 @@ def test_manualRoiCut():
     from bob.bio.vein.preprocessors.utils.utils import ManualRoiCut
     image_path      = F(('preprocessors', '0019_3_1_120509-160517.png'))
     annotation_path  = F(('preprocessors', '0019_3_1_120509-160517.txt'))
-    #-------------------
-    #image_path = "/remote/idiap.svm/home.active/teglitis/Desktop/bob.bio.vein/bob/bio/vein/tests/preprocessors/0019_3_1_120509-160517.png"
-    #annotation_path = "/remote/idiap.svm/home.active/teglitis/Desktop/bob.bio.vein/bob/bio/vein/tests/preprocessors/0019_3_1_120509-160517.txt"
-    #-------------------
+
     c = ManualRoiCut(annotation_path, image_path)
     mask_1 = c.roi_mask()
     image_1 = c.roi_image()
@@ -924,12 +921,6 @@ def test_ManualRoi():
   roi_annotations_filename = F( ( 'preprocessors', 'ConstructAnnotations.txt' ) )
   vein_annotations_filename = F( ( 'preprocessors', 'ConstructAnnotations.npy' ) )
 
-
-#  image_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/ConstructAnnotations.png'
-#  roi_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/ConstructAnnotations.txt'
-#  vein_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/ConstructAnnotations.npy'
-
-
   image = bob.io.base.load( image_filename )
   roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
   roi_annotations =  [tuple([point[0], point[1]]) for point in roi_annotations]
@@ -952,10 +943,6 @@ def test_Learn():
   roi_annotations_filename = F( ( 'preprocessors', '023_F_R_S01_A02_3.txt' ) )
   vein_annotations_filename = F( ( 'preprocessors', '023_F_R_S01_A02_3.npy' ) )
 
-#   image_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.png'
-#   roi_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.txt'
-#   vein_annotations_filename = '/idiap/home/teglitis/Desktop/BOB-VEIN-MODIFY/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.npy'
-
   image = bob.io.base.load( image_filename )
   roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
   roi_annotations =  [tuple([point[0], point[1]]) for point in roi_annotations]
@@ -976,16 +963,6 @@ def test_Learn():
   output = extractor(data)
   print(np.sum(output))
   assert np.isclose(np.sum(output),14496, atol=100)
-#  import matplotlib.pyplot as plt
-#  fig = plt.figure()
-#  ax = plt.subplot(131)
-#  ax.imshow(data[0], cmap='Greys_r', interpolation='none')
-#  ax = plt.subplot(132)
-#  ax.imshow(data[1], cmap='Greys_r', interpolation='none')
-#  ax = plt.subplot(133)
-#  ax.imshow(output, cmap='Greys_r', interpolation='none')
-#  plt.show(fig)
-
 
 
 def test_MMManual():
@@ -996,11 +973,6 @@ def test_MMManual():
     roi_annotations_filename = F(('preprocessors', '023_F_R_S01_A02_3.txt'))
     vein_annotations_filename = F(('preprocessors', '023_F_R_S01_A02_3.npy'))
     alignment_annotations_filename = F(('preprocessors', '023_F_R_S01_A02_3_alignment.txt'))
-
-#    image_filename = '/idiap/home/teglitis/Desktop/BOB/VEINS_LEARN/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.png'
-#    roi_annotations_filename = '/idiap/home/teglitis/Desktop/BOB/VEINS_LEARN/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.txt'
-#    vein_annotations_filename = '/idiap/home/teglitis/Desktop/BOB/VEINS_LEARN/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3.npy'
-#    alignment_annotations_filename = '/idiap/home/teglitis/Desktop/BOB/VEINS_LEARN/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S01_A02_3_alignment.txt'
 
     image = bob.io.base.load( image_filename )
     roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')
@@ -1024,11 +996,6 @@ def test_MMManual():
     roi_annotations_filename = F(('preprocessors', '023_F_R_S03_A04_3.txt'))
     vein_annotations_filename = F(('preprocessors', '023_F_R_S03_A04_3.npy'))
     alignment_annotations_filename = F(('preprocessors', '023_F_R_S03_A04_3_alignment.txt'))
-
-#    image_filename = '/idiap/home/teglitis/Desktop/BOB/VEINS_LEARN/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S03_A04_3.png'
-#    roi_annotations_filename = '/idiap/home/teglitis/Desktop/BOB/VEINS_LEARN/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S03_A04_3.txt'
-#    vein_annotations_filename = '/idiap/home/teglitis/Desktop/BOB/VEINS_LEARN/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S03_A04_3.npy'
-#    alignment_annotations_filename = '/idiap/home/teglitis/Desktop/BOB/VEINS_LEARN/src/bob.bio.vein/bob/bio/vein/tests/preprocessors/023_F_R_S03_A04_3_alignment.txt'
 
     image = bob.io.base.load( image_filename )
     roi_annotations = np.loadtxt(roi_annotations_filename, dtype='uint16')

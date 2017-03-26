@@ -1,11 +1,3 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jan 23 16:21:42 2017
-
-@author: onikisins
-"""
-
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
@@ -14,13 +6,10 @@ from bob.bio.base.extractor import Extractor
 import bob.ip.base
 import bob.io.base
 import cv2
-# import bob.learn.libsvm
-# import bob.io.base
 from skimage.filters.rank import mean_percentile
 from skimage.morphology import disk
 from skimage import exposure
 from skimage.filters.rank import median
-
 from skimage.morphology import skeletonize
 from skimage import morphology
 from scipy import ndimage
@@ -74,10 +63,10 @@ class ThresholdExtractor(Extractor):
             image = ~np.array(image, dtype=np.bool)
             image = np.array(image, dtype=np.uint8)
             return image
-        elif self.name.startswith("Adaptive") and not \
-            self.name.startswith("Adaptive_h") and not \
-            self.name.startswith("Adaptive_c") and not \
-            self.name.startswith("Adaptive_ski"):
+        elif (self.name.startswith("Adaptive") and not
+              self.name.startswith("Adaptive_h") and not
+              self.name.startswith("Adaptive_c") and not
+              self.name.startswith("Adaptive_ski")):
 
             params = self.name.split("_")
             p1 = int(params[1])
@@ -171,7 +160,7 @@ class ThresholdExtractor(Extractor):
         image = np.where(mask < 1,
                          min_ROI_value,
                          image)
-        #import ipdb; ipdb.sset_trace()
+
         image = self.__apply_baseline__(image)
 
         if self.median:
@@ -183,13 +172,11 @@ class ThresholdExtractor(Extractor):
 
         if self.thin_veins_flag:
 
-            ellipse_kernel = morphology.disk(radius = 1)
+            ellipse_kernel = morphology.disk(radius=1)
 
-            veins_eroded = ndimage.morphology.binary_erosion(image, structure = ellipse_kernel).astype(np.float)
-
+            veins_eroded = ndimage.morphology.binary_erosion(image, structure=ellipse_kernel).astype(np.float)
             veins_skeleton = skeletonize(veins_eroded)
-
-            image = ndimage.morphology.binary_dilation(veins_skeleton, structure = ellipse_kernel).astype(np.float)
+            image = ndimage.morphology.binary_dilation(veins_skeleton, structure=ellipse_kernel).astype(np.float)
 
         return image
 

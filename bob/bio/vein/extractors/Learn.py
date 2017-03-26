@@ -70,7 +70,7 @@ class Learn(Extractor):
                                   block_size=block_size,
                                   block_overlap=block_overlap,
                                   flat=False)
-            # import ipdb; ipdb.sset_trace()
+
             image_patches = np.array(image_patches, dtype=np.float64)
             image_patches = np.reshape(image_patches, (image_patches.shape[0],
                                                        image_patches.shape[1],

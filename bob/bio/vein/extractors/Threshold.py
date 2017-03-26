@@ -6,8 +6,6 @@ from bob.bio.base.extractor import Extractor
 import bob.ip.base
 import bob.io.base
 import cv2
-# import bob.learn.libsvm
-# import bob.io.base
 from skimage.filters.rank import mean_percentile
 from skimage.morphology import disk
 from skimage import exposure
@@ -57,10 +55,10 @@ class Threshold(Extractor):
             image = ~np.array(image, dtype=np.bool)
             image = np.array(image, dtype=np.uint8)
             return image
-        elif self.name.startswith("Adaptive") and not \
-            self.name.startswith("Adaptive_h") and not \
-            self.name.startswith("Adaptive_c") and not \
-            self.name.startswith("Adaptive_ski"):
+        elif (self.name.startswith("Adaptive") and not
+              self.name.startswith("Adaptive_h") and not
+              self.name.startswith("Adaptive_c") and not
+              self.name.startswith("Adaptive_ski")):
 
             params = self.name.split("_")
             p1 = int(params[1])
@@ -154,7 +152,7 @@ class Threshold(Extractor):
         image = np.where(mask < 1,
                          min_ROI_value,
                          image)
-        #import ipdb; ipdb.sset_trace()
+
         image = self.__apply_baseline__(image)
 
         if self.median:
