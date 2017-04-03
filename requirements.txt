@@ -14,3 +14,4 @@ bob.db.verafinger
 bob.db.putvein
 bob.db.fv3d
 scikit-image
+matplotlib
