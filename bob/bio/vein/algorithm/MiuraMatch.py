@@ -4,6 +4,9 @@
 import numpy
 import scipy.signal
 
+import bob.core
+logger = bob.core.log.setup("bob.bio.base")
+
 from bob.bio.base.algorithm import Algorithm
 
 
@@ -44,11 +47,14 @@ class MiuraMatch (Algorithm):
 
     cw (:py:class:`int`, optional): Maximum search displacement in x-direction.
 
+    score_fusion_method (:py:class:`str`, optional): The strategy to be used for score fusion.
+
   """
 
   def __init__(self,
       ch = 8,       # Maximum search displacement in y-direction
       cw = 5,       # Maximum search displacement in x-direction
+      score_fusion_method = 'mean' # The strategy to be used for score fusion
       ):
 
     # call base class constructor
@@ -57,6 +63,7 @@ class MiuraMatch (Algorithm):
 
         ch = ch,
         cw = cw,
+        score_fusion_method = score_fusion_method,
 
         multiple_model_scoring = None,
         multiple_probe_scoring = None
@@ -64,6 +71,8 @@ class MiuraMatch (Algorithm):
 
     self.ch = ch
     self.cw = cw
+    self.score_fusion_method = score_fusion_method
+    self.available_score_fusion_methods = ['mean', 'max', 'median', 'min']
 
 
   def enroll(self, enroll_features):
@@ -129,4 +138,12 @@ class MiuraMatch (Algorithm):
       # result (i.e., the eroded model and part of the probe)
       scores.append(Nmm/(sum(sum(crop_R)) + sum(sum(I[t0:t0+h-2*self.ch, s0:s0+w-2*self.cw]))))
 
-    return numpy.mean(scores)
+    if self.score_fusion_method not in self.available_score_fusion_methods:
+
+      logger.error("The %s score fusion strategy is not implemented.", self.score_fusion_method)
+
+    else:
+
+      score = getattr(numpy, self.score_fusion_method)(scores)
+
+    return score
