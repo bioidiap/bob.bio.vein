@@ -543,3 +543,138 @@ def test_correlation():
   total = time.clock() - start
   print('scipy+correlate2d, %d iterations - %.2e per iteration' % (N, total/N))
   '''
+
+#==============================================================================
+def test_KMeansRoi():
+    """
+    Test the ROI extraction algorithm namely KMeansRoi.
+    """
+
+    from bob.bio.vein.preprocessor import KMeansRoi
+
+    input_filename = F( ( 'preprocessors', 'TopographyCutRoi_test_image.png' ) ) # the same image is used for testing of TopographyCutRoi and KMeansRoi algorithms
+
+    output_filename = F( ( 'preprocessors', 'KMeansRoi_result_image.hdf5' ) )
+
+    image = bob.io.base.load( input_filename )
+
+    preprocessor = KMeansRoi(convexity_flag = True)
+
+    roi = preprocessor.get_roi( image )
+
+    f = bob.io.base.HDF5File( output_filename )
+
+    roi_loaded = f.read('data')
+
+    del f
+
+    preprocessor = KMeansRoi(erosion_factor=100, normalize_scale_flag=True,
+                        correction_erosion_factor=7, erode_mask_flag=True,
+                        mask_size=7, equalize_adapthist_flag=True, mask_to_image_area_ratio=0.1,
+                        speedup_flag=True, rotation_centering_flag=False,
+                        filter_name='gaussian_filter', correct_mask_flag=True, convexity_flag=False,
+                        centering_flag = True)
+
+    image_2, roi_2 = preprocessor( image, 1 )
+
+    preprocessor.centering_flag = False
+    preprocessor.rotation_centering_flag = True
+
+    image_3, roi_3 = preprocessor( image, 1 )
+
+    assert ( np.abs(np.sum(roi_2) - 23253.) < 100 )
+    assert ( np.abs(np.sum(roi_3) - 23254.) < 100 )
+    assert ( ( np.sum( np.abs( roi - roi_loaded ) ) ) < 100 )
+
+
+#==============================================================================
+def test_MaxEigenvalues():
+    """
+    Test the MaxEigenvalues vein segmentation algorithm.
+    """
+
+    from bob.bio.vein.extractor import MaxEigenvalues
+
+    input_filename = F( ( 'preprocessors', 'TopographyCutRoi_test_image.png' ) ) # test image filename
+
+    mask_filename = F( ( 'preprocessors', 'KMeansRoi_result_image.hdf5' ) ) # file with roi
+
+    image = bob.io.base.load( input_filename ) # load test image
+
+    f = bob.io.base.HDF5File( mask_filename )
+
+    roi = f.read('data') # load roi
+
+    del f
+
+    # extractor to be tested with all options turned on:
+    extractor = MaxEigenvalues(sigma = 5, segment_veins_flag=True,
+                               amplify_segmented_veins_flag = True,
+                               two_layer_segmentation_flag = True,
+                               binarize_flag = True, kernel_size = 3,
+                               norm_p2p_dist_flag = True, selected_mean_dist = 100)
+
+    result = extractor( [ image, roi ] ) # resulting vein pattern
+
+    assert ( np.sum(result) == 4614. ) # check the sum of the image
+
+
+#==============================================================================
+def test_FastMaximumCurvature():
+    """
+    Test the FastMaximumCurvature vein segmentation algorithm.
+    """
+
+    from bob.bio.vein.extractor import FastMaximumCurvature
+
+    input_filename = F( ( 'preprocessors', 'TopographyCutRoi_test_image.png' ) ) # test image filename
+
+    mask_filename = F( ( 'preprocessors', 'KMeansRoi_result_image.hdf5' ) ) # file with roi
+
+    image = bob.io.base.load( input_filename ) # load test image
+
+    f = bob.io.base.HDF5File( mask_filename )
+
+    roi = f.read('data') # load roi
+
+    del f
+
+    # extractor to be tested with required options turned on:
+    extractor = FastMaximumCurvature(sigma = 5, norm_p2p_dist_flag = True, selected_mean_dist = 100,
+                                              sum_of_rotated_images_flag = False, angle_limit = 10, angle_step = 1)
+
+    result = extractor( [ image, roi ] ) # resulting vein pattern
+
+    assert ( np.sum(result) == 2860. ) # check the sum of the image
+
+
+#==============================================================================
+def test_MiuraMatchRotationFast():
+    """
+    Test the vein matching algorithm namely MiuraMatchRotationFast.
+    """
+
+    from bob.bio.vein.algorithm import MiuraMatchRotationFast
+
+    model_filename = F( ( 'algorithms', 'MiuraMatchAligned_test_data_1.hdf5' ) )
+
+    probe_filename = F( ( 'algorithms', 'MiuraMatchAligned_test_data_2.hdf5' ) )
+
+    f = bob.io.base.HDF5File( model_filename )
+
+    model = f.read('data')
+
+    del f
+
+    f = bob.io.base.HDF5File( probe_filename )
+
+    probe = f.read('data')
+
+    del f
+
+    miura_matcher = MiuraMatchRotationFast(score_fusion_method='max', ch=10, angle_step=1, gray_scale_input_flag = False,
+                                           perturbation_matching_flag=True, angle_limit=10, kernel_radius=3, cw=10)
+
+    score = miura_matcher.score( [model], probe )
+
+    assert np.abs( score - 0.119837767517792 ) < 0.000001
