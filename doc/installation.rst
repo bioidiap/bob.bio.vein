@@ -20,8 +20,7 @@ buildout this package:
 
 .. code-block:: sh
 
-  $ python bootstrap-buildout.py
-  $ ./bin/buildout
+  $ buildout
 
 
 Sphinx Documentation Building
@@ -32,7 +31,7 @@ running:
 
 .. code-block:: sh
 
-  $ ./bin/sphinx-build doc html
+  $ sphinx-build doc html
 
 The resulting HTML documentation will be output inside the directory `html`.
 
@@ -80,8 +79,7 @@ previously installed Bob_ packages. To do so, use the buildout recipe in
 
 .. code-block:: sh
 
-  $ python bootstrap-buildout.py
-  $ ./bin/buildout -c develop.cfg
+  $ buildout -c develop.cfg
 
 
 Database SQL support files
@@ -93,7 +91,7 @@ package. This operation can be easily done like this:
 
 .. code-block:: sh
 
-  $ ./bin/bob_dbmanage.py all download
+  $ bob_dbmanage.py all download
 
 
 .. include:: links.rst

@@ -21,7 +21,7 @@ Databases
 ---------
 
 These resources represent configuration files containing at least settings for
-the following runtime attributes of ``./bin/verify.py``:
+the following runtime attributes of ``verify.py``:
 
   * ``database``
   * ``protocol``
@@ -50,7 +50,7 @@ Recognition Systems
 -------------------
 
 These resources represent configuration files containing at least settings for
-the following runtime attributes of ``./bin/verify.py``:
+the following runtime attributes of ``verify.py``:
 
   * ``sub_directory``
   * ``preprocessor``
