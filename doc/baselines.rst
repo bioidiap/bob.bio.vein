@@ -14,20 +14,20 @@ recognition algorithms that are implemented in ``bob.bio.vein``.
 Running Baseline Experiments
 ----------------------------
 
-To run the baseline experiments, you can use the ``./bin/verify.py`` script by
+To run the baseline experiments, you can use the ``verify.py`` script by
 just going to the console and typing:
 
 .. code-block:: sh
 
-   $ ./bin/verify.py
+   $ verify.py
 
 
 This script is explained in more detail in :ref:`bob.bio.base.experiments`.
-The ``./bin/verify.py --help`` option shows you, which other options you can
+The ``verify.py --help`` option shows you, which other options you can
 set.
 
 Usually it is a good idea to have at least verbose level 2 (i.e., calling
-``./bin/verify.py --verbose --verbose``, or the short version ``./bin/verify.py
+``verify.py --verbose --verbose``, or the short version ``verify.py
 -vv``).
 
 .. note:: **Running in Parallel**
@@ -98,7 +98,7 @@ protocol, do the following:
 
 .. code-block:: sh
 
-   $ ./bin/verify.py verafinger rlt -vv
+   $ verify.py verafinger rlt -vv
 
 
 .. tip::
@@ -114,7 +114,7 @@ protocol, do the following:
 
    .. code-block:: sh
 
-      $ ./bin/verify.py verafinger rlt parallel -vv
+      $ verify.py verafinger rlt parallel -vv
 
 
 This command line selects and runs the following implementations for the
@@ -134,7 +134,7 @@ performance:
 
 .. code-block:: sh
 
-   $ ./bin/bob_eval_threshold.py <path-to>/verafinger/rlt/Nom/nonorm/scores-dev
+   $ bob_eval_threshold.py <path-to>/verafinger/rlt/Nom/nonorm/scores-dev
    ('Threshold:', 0.32045327)
    FAR : 26.362% (12701/48180)
    FRR : 26.364% (58/220)
@@ -152,7 +152,7 @@ protocol like above, do the following:
 
 .. code-block:: sh
 
-   $ ./bin/verify.py verafinger mc -vv
+   $ verify.py verafinger mc -vv
 
 
 This command line selects and runs the following implementations for the
@@ -167,7 +167,7 @@ we obtained:
 
 .. code-block:: sh
 
-   $ ./bin/bob_eval_threshold.py <path-to>/verafinger/mc/Nom/nonorm/scores-dev
+   $ bob_eval_threshold.py <path-to>/verafinger/mc/Nom/nonorm/scores-dev
    ('Threshold:', 0.078274325)
    FAR : 3.182% (1533/48180)
    FRR : 3.182% (7/220)
@@ -186,7 +186,7 @@ protocol like above, do the following:
 
 .. code-block:: sh
 
-   $ ./bin/verify.py verafinger wld -vv
+   $ verify.py verafinger wld -vv
 
 
 This command line selects and runs the following implementations for the
@@ -201,7 +201,7 @@ we obtained:
 
 .. code-block:: sh
 
-   $ ./bin/bob_eval_threshold.py <path-to>/verafinger/wld/NOM/nonorm/scores-dev
+   $ bob_eval_threshold.py <path-to>/verafinger/wld/NOM/nonorm/scores-dev
    ('Threshold:', 0.239141175)
    FAR : 10.455% (5037/48180)
    FRR : 10.455% (23/220)
@@ -258,7 +258,7 @@ First, you identify where the configuration file sits:
 
 .. code-block:: sh
 
-   $ ./bin/resources.py -tc -p bob.bio.vein
+   $ resources.py -tc -p bob.bio.vein
    - bob.bio.vein X.Y.Z @ /path/to/bob.bio.vein:
      + mc         --> bob.bio.vein.configurations.maximum_curvature
      + parallel   --> bob.bio.vein.configurations.parallel
@@ -299,7 +299,7 @@ Now, re-run the experiment using your modified database descriptor:
 
 .. code-block:: sh
 
-   $ ./bin/verify.py ./verafinger_full.py wld -vv
+   $ verify.py ./verafinger_full.py wld -vv
 
 
 Notice we replace the use of the registered configuration file named
@@ -330,7 +330,7 @@ extracted ones. E.g.:
 
 .. code-block:: sh
 
-   $ ./bin/compare_rois.py ~/verafinger/mc_annot/preprocessed ~/verafinger/mc/preprocessed
+   $ compare_rois.py ~/verafinger/mc_annot/preprocessed ~/verafinger/mc/preprocessed
    Jaccard index: 9.60e-01 +- 5.98e-02
    Intersection ratio (m1): 9.79e-01 +- 5.81e-02
    Intersection ratio of complement (m2): 1.96e-02 +- 1.53e-02
@@ -351,7 +351,7 @@ preprocessing step using:
 
 .. code-block:: sh
 
-   $ ./bin/view_mask.py /path/to/verafinger/mc/preprocessed/098-F/098_R_1.hdf5 --save=example.png
+   $ view_mask.py /path/to/verafinger/mc/preprocessed/098-F/098_R_1.hdf5 --save=example.png
    $ # open example.png
 
 And you should be able to view an image like this (example taken from the Vera
