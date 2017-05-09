@@ -74,7 +74,6 @@ is available on the section :ref:`bob.bio.vein.resources`.
 
       [YOUR_VERAFINGER_DIRECTORY] = /complete/path/to/verafinger
       [YOUR_UTFVP_DIRECTORY] = /complete/path/to/utfvp
-      [YOUR_BIOWAVE_TEST_DIRECTORY] = /complete/path/to/biowave_test
 
    Notice it is rather important to use the strings as described above,
    otherwise ``bob.bio.base`` will not be able to correctly load your images.
