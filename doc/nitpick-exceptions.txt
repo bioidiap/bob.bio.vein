@@ -1,4 +1,6 @@
 # These are not documented at all in Python 2.7, but works for 3.x
+py:obj list
+py:class list
 py:exc TypeError
 py:exc ValueError
 py:exc AssertionError
