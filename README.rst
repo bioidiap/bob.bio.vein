@@ -30,7 +30,7 @@ Bob_. It contains resources for finger, palm and wrist vein recognition as
 Installation
 ------------
 
-Complete Bob's `installation`_ instructions. Then, to install this pacakge,
+Complete Bob's `installation`_ instructions. Then, to install this package,
 run::
 
   $ conda install bob.bio.vein
