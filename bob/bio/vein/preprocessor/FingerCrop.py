@@ -492,7 +492,9 @@ class FingerCrop (Preprocessor):
       image, mask = data
 
     ## Finger edges and contour extraction:
-    if self.fingercontour == 'leemaskMatlab':
+    if self.fingercontour == 'none': #image is sufficiently clean
+      mask = numpy.ones(image.shape, dtype='bool')
+    elif self.fingercontour == 'leemaskMatlab':
       mask = self.__leemaskMatlab__(image) #for UTFVP
     elif self.fingercontour == 'leemaskMod':
       mask = self.__leemaskMod__(image) #for VERA
@@ -504,11 +506,14 @@ class FingerCrop (Preprocessor):
             "current sample being processed does not provide a mask")
     else:
       raise RuntimeError("Please choose between leemaskMod, leemaskMatlab, " \
-          "konomask or annotation for parameter 'fingercontour'. %s is not " \
-          "valid" % self.fingercontour)
+          "konomask, annotation or none for parameter 'fingercontour'. %s " \
+          "is not valid" % self.fingercontour)
 
     ## Finger region normalization:
-    image_norm, mask_norm = self.__huangnormalization__(image, mask)
+    if self.fingercontour == 'none': #don't normalize
+      image_norm, mask_norm = image, mask
+    else:
+      image_norm, mask_norm = self.__huangnormalization__(image, mask)
 
     ## veins enhancement:
     if self.postprocessing == 'HE':
