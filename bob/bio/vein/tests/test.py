@@ -30,7 +30,7 @@ def F(parts):
   """Returns the test file path"""
 
   return pkg_resources.resource_filename(__name__, os.path.join(*parts))
- 
+
 
 def test_finger_crop():
 
@@ -89,7 +89,7 @@ def test_max_curvature_HE():
   # Read in input image
   input_img_filename = F(('preprocessors', '0019_3_1_120509-160517.png'))
   input_img = bob.io.base.load(input_img_filename)
-  
+
   # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in maximum_curvature.py configuration file + postprocessing)
   from bob.bio.vein.preprocessor.FingerCrop import FingerCrop
   FC = FingerCrop(postprocessing = 'HE')
@@ -132,7 +132,7 @@ def test_repeated_line_tracking_HE():
   # Read in input image
   input_img_filename = F(('preprocessors', '0019_3_1_120509-160517.png'))
   input_img = bob.io.base.load(input_img_filename)
-  
+
   # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in repeated_line_tracking.py configuration file + postprocessing)
   from bob.bio.vein.preprocessor.FingerCrop import FingerCrop
   FC = FingerCrop(postprocessing = 'HE')
@@ -180,7 +180,7 @@ def test_wide_line_detector_HE():
   # Read in input image
   input_img_filename = F(('preprocessors', '0019_3_1_120509-160517.png'))
   input_img = bob.io.base.load(input_img_filename)
-  
+
   # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in wide_line_detector.py configuration file + postprocessing)
   from bob.bio.vein.preprocessor.FingerCrop import FingerCrop
   FC = FingerCrop(postprocessing = 'HE')
