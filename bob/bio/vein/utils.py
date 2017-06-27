@@ -3,7 +3,6 @@
 
 import numpy
 import scipy.signal
-import bob.ip.base
 import bob.sp
 import bob.core
 
@@ -11,22 +10,27 @@ import bob.core
 def imfilter(a, b):
   """Applies a 2D filtering between images
 
-  This implementation was created to work similarly like the Matlab one.
+  This implementation was created to work similarly like the Matlab one when
+  ``boundary = replicate``. It filters the image ``a`` with the filter ``b`` by
+  applying it over an extended version of ``a``, expanded of ``b.shape`` on the
+  right and bottom, by repeating the values on ``a``'s borders.
+
+  The filter is then applied to the image considering only the ``valid`` range
+  with :py:func:`scipy.signal.convolve2d`.
 
 
   Parameters:
 
     a (numpy.ndarray): A 2-dimensional :py:class:`numpy.ndarray` which
       represents the image to be filtered. The dtype of the array is supposed
-      to be 64-floats. You can also pass an 8-bit unsigned integer array,
-      loaded from a file (for example). In this case it will be scaled as
-      with :py:func:`bob.core.convert` and the range reset to ``[0.0, 1.0]``.
+      to be 64-bit floats. You can also pass an 8-bit unsigned integer array,
+      loaded from a file (for example). In this case it will be scaled as with
+      :py:func:`bob.core.convert` and the range reset to ``[0.0, 1.0]``.
 
     b (numpy.ndarray): A 64-bit float 2-dimensional :py:class:`numpy.ndarray`
       which represents the filter to be applied to the image. The input filter
       has to be rotated by 180 degrees as we use
-      :py:func:`scipy.signal.convolve2d` to apply it. You can rotate your
-      filter ``b`` with the help of :py:func:`bob.ip.base.rotate`.
+      :py:func:`scipy.signal.convolve2d` to apply it.
 
   """
 
