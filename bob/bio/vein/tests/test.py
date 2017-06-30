@@ -86,8 +86,7 @@ def test_max_curvature():
   MC = MaximumCurvature(3) #value used to create references
 
   kappa = MC.detect_valleys(image, mask)
-  V = MC.eval_vein_probabilities(kappa)
-  Vt = V.sum(axis=2)
+  Vt = MC.eval_vein_probabilities(kappa)
   Cd = MC.connect_centres(Vt)
   G = numpy.amax(Cd, axis=2)
   bina = MC.binarise(G)

@@ -217,7 +217,7 @@ class MaximumCurvature (Extractor):
 
     '''
 
-    V = numpy.zeros_like(k)
+    V = numpy.zeros(k.shape[:2], dtype='float64')
 
     def _prob_1d(a):
       '''Finds "vein probabilities" in a 1-D signal
@@ -289,17 +289,17 @@ class MaximumCurvature (Extractor):
 
     # Horizontal direction
     for index in range(k.shape[0]):
-      V[index,:,0] += _prob_1d(k[index,:,0])
+      V[index,:] += _prob_1d(k[index,:,0])
 
     # Vertical direction
     for index in range(k.shape[1]):
-      V[:,index,1] += _prob_1d(k[:,index,1])
+      V[:,index] += _prob_1d(k[:,index,1])
 
     # Direction: 45 degrees (\)
     curv = k[:,:,2]
     i,j = numpy.indices(curv.shape)
     for index in range(-curv.shape[0]+1, curv.shape[1]):
-      V[i==(j-index),2] += _prob_1d(curv.diagonal(index))
+      V[i==(j-index)] += _prob_1d(curv.diagonal(index))
 
     # Direction: -45 degrees (/)
     # NOTE: due to the way the access to the diagonals are implemented, in this
@@ -308,7 +308,7 @@ class MaximumCurvature (Extractor):
     curv = numpy.flipud(k[:,:,3]) #required so we get "/" diagonals correctly
     Vud = numpy.flipud(V) #match above inversion
     for index in reversed(range(curv.shape[1]-1, -curv.shape[0], -1)):
-      Vud[i==(j-index),3] += _prob_1d(curv.diagonal(index))
+      Vud[i==(j-index)] += _prob_1d(curv.diagonal(index))
 
     return V
 
@@ -472,36 +472,36 @@ class MaximumCurvature (Extractor):
     finger_image = image[0]
     finger_mask = image[1]
 
-    import time
-    start = time.time()
+    #import time
+    #start = time.time()
 
     kappa = self.detect_valleys(finger_image, finger_mask)
 
     #self._view_four(kappa, "Valley Detectors - $\kappa$")
 
-    print('filtering took %.2f seconds' % (time.time() - start))
-    start = time.time()
+    #print('filtering took %.2f seconds' % (time.time() - start))
+    #start = time.time()
 
     V = self.eval_vein_probabilities(kappa)
 
     #self._view_four(V, "Center Probabilities - $V_i$")
     #self._view_single(V.sum(axis=2), "Accumulated Probabilities - V")
 
-    print('probabilities took %.2f seconds' % (time.time() - start))
-    start = time.time()
+    #print('probabilities took %.2f seconds' % (time.time() - start))
+    #start = time.time()
 
-    Cd = self.connect_centres(V.sum(axis=2))
+    Cd = self.connect_centres(V)
 
     #self._view_four(Cd, "Connected Centers - $C_{di}$")
     #self._view_single(numpy.amax(Cd, axis=2), "Connected Centers - G")
 
-    print('connections took %.2f seconds' % (time.time() - start))
-    start = time.time()
+    #print('connections took %.2f seconds' % (time.time() - start))
+    #start = time.time()
 
     retval = self.binarise(numpy.amax(Cd, axis=2))
 
     #self._view_single(retval, "Final Binarised Image")
 
-    print('binarization took %.2f seconds' % (time.time() - start))
+    #print('binarization took %.2f seconds' % (time.time() - start))
 
     return retval
