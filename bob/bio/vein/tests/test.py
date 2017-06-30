@@ -42,9 +42,15 @@ def test_finger_crop():
 
   img = bob.io.base.load(input_filename)
 
-  from bob.bio.vein.preprocessor.FingerCrop import FingerCrop
-  preprocess = FingerCrop(fingercontour='leemaskMatlab', padding_width=0)
-  preproc, mask = preprocess(img)
+  from bob.bio.vein.preprocessor import Preprocessor, LeeMask, \
+      HuangNormalization, NoFilter
+
+  processor = Preprocessor(
+      LeeMask(filter_height=40, filter_width=4),
+      HuangNormalization(padding_width=0, padding_constant=0),
+      NoFilter(),
+      )
+  preproc, mask = processor(img)
   #preprocessor_utils.show_mask_over_image(preproc, mask)
 
   mask_ref = bob.io.base.load(output_fvr_filename).astype('bool')
@@ -53,7 +59,7 @@ def test_finger_crop():
 
   assert numpy.mean(numpy.abs(mask - mask_ref)) < 1e-2
 
- # Very loose comparison!
+  # Very loose comparison!
   #preprocessor_utils.show_image(numpy.abs(preproc.astype('int16') - preproc_ref.astype('int16')).astype('uint8'))
   assert numpy.mean(numpy.abs(preproc - preproc_ref)) < 1.3e2
 
@@ -62,25 +68,41 @@ def test_max_curvature():
 
   #Maximum Curvature method against Matlab reference
 
-  input_img_filename  = F(('extractors', 'miuramax_input_img.mat'))
-  input_fvr_filename  = F(('extractors', 'miuramax_input_fvr.mat'))
-  output_filename     = F(('extractors', 'miuramax_output.mat'))
-
-  # Load inputs
-  input_img = bob.io.base.load(input_img_filename)
-  input_fvr = bob.io.base.load(input_fvr_filename)
+  image = bob.io.base.load(F(('extractors', 'image.hdf5')))
+  image = image.T
+  image = image.astype('float64')/255.
+  mask  = bob.io.base.load(F(('extractors', 'mask.hdf5')))
+  mask  = mask.T
+  mask  = mask.astype('bool')
+  vt_ref = bob.io.base.load(F(('extractors', 'mc_vt_matlab.hdf5')))
+  vt_ref = vt_ref.T
+  g_ref = bob.io.base.load(F(('extractors', 'mc_g_matlab.hdf5')))
+  g_ref = g_ref.T
+  bin_ref = bob.io.base.load(F(('extractors', 'mc_bin_matlab.hdf5')))
+  bin_ref = bin_ref.T
 
   # Apply Python implementation
   from bob.bio.vein.extractor.MaximumCurvature import MaximumCurvature
-  MC = MaximumCurvature(5)
-  output_img = MC((input_img, input_fvr))
+  MC = MaximumCurvature(3) #value used to create references
 
-  # Load Matlab reference
-  output_img_ref = bob.io.base.load(output_filename)
+  kappa = MC.detect_valleys(image, mask)
+  V = MC.eval_vein_probabilities(kappa)
+  Vt = V.sum(axis=2)
+  Cd = MC.connect_centres(Vt)
+  G = numpy.amax(Cd, axis=2)
+  bina = MC.binarise(G)
 
-  # Compare output of python's implementation to matlab reference
-  # (loose comparison!)
-  assert numpy.mean(numpy.abs(output_img - output_img_ref)) < 8e-3
+  assert numpy.allclose(Vt, vt_ref, 1e-3, 1e-4), \
+      'Vt differs from reference by %s' % numpy.abs(Vt-vt_ref).sum()
+  # Note: due to Matlab implementation bug, can only compare in a limited
+  # range with a 3-pixel around frame
+  assert numpy.allclose(G[2:-3,2:-3], g_ref[2:-3,2:-3]), \
+      'G differs from reference by %s' % numpy.abs(G-g_ref).sum()
+  # We require no more than 30 pixels (from a total of 63'840) are different
+  # between ours and the matlab implementation
+  assert numpy.abs(bin_ref-bina).sum() < 30, \
+      'Binarized image differs from reference by %s' % \
+      numpy.abs(bin_ref-bina).sum()
 
 
 def test_max_curvature_HE():
@@ -91,9 +113,14 @@ def test_max_curvature_HE():
   input_img = bob.io.base.load(input_img_filename)
 
   # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in maximum_curvature.py configuration file + postprocessing)
-  from bob.bio.vein.preprocessor.FingerCrop import FingerCrop
-  FC = FingerCrop(postprocessing = 'HE')
-  preproc_data = FC(input_img)
+  from bob.bio.vein.preprocessor import Preprocessor, LeeMask, \
+      HuangNormalization, HistogramEqualization
+  processor = Preprocessor(
+      LeeMask(filter_height=40, filter_width=4),
+      HuangNormalization(padding_width=0, padding_constant=0),
+      HistogramEqualization(),
+      )
+  preproc_data = processor(input_img)
 
   # Extract features from preprocessed and histogram equalized data using MC extractor (same parameters as in maximum_curvature.py configuration file)
   from bob.bio.vein.extractor.MaximumCurvature import MaximumCurvature
@@ -134,9 +161,14 @@ def test_repeated_line_tracking_HE():
   input_img = bob.io.base.load(input_img_filename)
 
   # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in repeated_line_tracking.py configuration file + postprocessing)
-  from bob.bio.vein.preprocessor.FingerCrop import FingerCrop
-  FC = FingerCrop(postprocessing = 'HE')
-  preproc_data = FC(input_img)
+  from bob.bio.vein.preprocessor import Preprocessor, LeeMask, \
+      HuangNormalization, HistogramEqualization
+  processor = Preprocessor(
+      LeeMask(filter_height=40, filter_width=4),
+      HuangNormalization(padding_width=0, padding_constant=0),
+      HistogramEqualization(),
+      )
+  preproc_data = processor(input_img)
 
   # Extract features from preprocessed and histogram equalized data using RLT extractor (same parameters as in repeated_line_tracking.py configuration file)
   from bob.bio.vein.extractor.RepeatedLineTracking import RepeatedLineTracking
@@ -182,9 +214,14 @@ def test_wide_line_detector_HE():
   input_img = bob.io.base.load(input_img_filename)
 
   # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in wide_line_detector.py configuration file + postprocessing)
-  from bob.bio.vein.preprocessor.FingerCrop import FingerCrop
-  FC = FingerCrop(postprocessing = 'HE')
-  preproc_data = FC(input_img)
+  from bob.bio.vein.preprocessor import Preprocessor, LeeMask, \
+      HuangNormalization, HistogramEqualization
+  processor = Preprocessor(
+      LeeMask(filter_height=40, filter_width=4),
+      HuangNormalization(padding_width=0, padding_constant=0),
+      HistogramEqualization(),
+      )
+  preproc_data = processor(input_img)
 
   # Extract features from preprocessed and histogram equalized data using WLD extractor (same parameters as in wide_line_detector.py configuration file)
   from bob.bio.vein.extractor.WideLineDetector import WideLineDetector
