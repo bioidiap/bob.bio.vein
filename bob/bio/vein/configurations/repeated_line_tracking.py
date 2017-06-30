@@ -20,8 +20,23 @@ or the attribute ``sub_directory`` in a configuration file loaded **after**
 this resource.
 """
 
-from ..preprocessor import FingerCrop
-preprocessor = FingerCrop()
+from ..preprocessor import Padder, TomesLeeMask, HuangNormalization, NoFilter
+from ..preprocessor import Preprocessor
+
+# Filter sizes for the vertical "high-pass" filter
+FILTER_HEIGHT = 4
+FILTER_WIDTH = 40
+
+# Padding (to create a buffer during normalization)
+PAD_WIDTH = 5
+PAD_CONST = 51
+
+preprocessor = Preprocessor(
+    mask=TomesLeeMask(filter_height=FILTER_HEIGHT, filter_width=FILTER_WIDTH),
+    normalize=HuangNormalization(padding_width=PAD_WIDTH,
+      padding_constant=PAD_CONST),
+    filter=NoFilter(),
+    )
 """Preprocessing using gray-level based finger cropping and no post-processing
 """
 
