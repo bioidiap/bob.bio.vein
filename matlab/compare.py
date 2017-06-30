@@ -32,8 +32,7 @@ from bob.bio.vein.extractor.MaximumCurvature import MaximumCurvature
 MC = MaximumCurvature(3)
 
 kappa = MC.detect_valleys(image, region) #OK
-V = MC.eval_vein_probabilities(kappa) #OK
-Vt = V.sum(axis=2) #OK
+Vt = MC.eval_vein_probabilities(kappa) #OK
 Cd = MC.connect_centres(Vt) #OK
 G = numpy.amax(Cd, axis=2) #OK
 
@@ -41,9 +40,6 @@ G = numpy.amax(Cd, axis=2) #OK
 for k in range(4):
   print('Comparing kappa[%d]: %s' % (k,
     numpy.abs(kappa[...,k]-kappa_matlab[...,k]).sum()))
-
-for k in range(4):
-  print('Comparing V[%d]: %s' % (k, numpy.abs(V[...,k]-V_matlab[...,k]).sum()))
 
 print('Comparing Vt: %s' % numpy.abs(Vt-Vt_matlab).sum())
 
