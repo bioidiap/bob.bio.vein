@@ -42,7 +42,7 @@ class Database(BioDatabase):
                 model_ids=None, **kwargs):
 
         retval = self._db.objects(groups=groups, protocol=protocol,
-                                  purposes=purposes, model_ids=model_ids, **kwargs)
+            purposes=purposes, model_ids=model_ids, **kwargs)
 
         return [File(f) for f in retval]
 
