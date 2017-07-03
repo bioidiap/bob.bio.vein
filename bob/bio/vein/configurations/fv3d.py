@@ -13,11 +13,11 @@ the link.
 
 from ..database.fv3d import Database
 
-fv3d_directory = "[YOUR_FV3D_DIRECTORY]"
+_fv3d_directory = "[YOUR_FV3D_DIRECTORY]"
 """Value of ``~/.bob_bio_databases.txt`` for this database"""
 
 database = Database(
-    original_directory = fv3d_directory,
+    original_directory = _fv3d_directory,
     original_extension = '.png',
     )
 """The :py:class:`bob.bio.base.database.BioDatabase` derivative with fv3d
