@@ -158,8 +158,6 @@ class MaximumCurvature (Extractor):
     image_g2_45 = 0.5*image_g2_0 + fxy + 0.5*image_g2_90
     image_g2_m45  = 0.5*image_g2_0 - fxy + 0.5*image_g2_90
 
-    img_h, img_w = image.shape  #Image height and width
-
     # ######################################################################
     # [Step 1-1] Calculation of curvature profiles
     # ######################################################################
@@ -469,7 +467,7 @@ class MaximumCurvature (Extractor):
 
   def __call__(self, image):
 
-    finger_image = image[0]
+    finger_image = image[0].astype('float64')
     finger_mask = image[1]
 
     #import time
@@ -484,8 +482,7 @@ class MaximumCurvature (Extractor):
 
     V = self.eval_vein_probabilities(kappa)
 
-    #self._view_four(V, "Center Probabilities - $V_i$")
-    #self._view_single(V.sum(axis=2), "Accumulated Probabilities - V")
+    #self._view_single(V, "Accumulated Probabilities - V")
 
     #print('probabilities took %.2f seconds' % (time.time() - start))
     #start = time.time()

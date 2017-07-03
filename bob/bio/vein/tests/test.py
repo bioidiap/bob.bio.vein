@@ -125,6 +125,7 @@ def test_max_curvature_HE():
   from bob.bio.vein.extractor.MaximumCurvature import MaximumCurvature
   MC = MaximumCurvature(sigma = 5)
   extr_data = MC(preproc_data)
+  #preprocessor_utils.show_image((255.*extr_data).astype('uint8'))
 
 
 def test_repeated_line_tracking():
