@@ -8,6 +8,7 @@ import numpy
 from bob.bio.base.database import BioFile, BioDatabase
 
 from . import AnnotatedArray
+from ..preprocessor.utils import poly_to_mask
 
 
 class File(BioFile):
@@ -38,13 +39,15 @@ class File(BioFile):
         """(Overrides base method) Loads both image and mask"""
 
         image = super(File, self).load(*args, **kwargs)
+        image = numpy.rot90(image, 3)
         roi = self.__f.roi()
 
         # calculates the 90 degrees anti-clockwise rotated RoI points
-        h, w = image.shape
-        roi = [(x,-y+h) for k in roi]
+        w, h = image.shape
+        roi = [(x,h-y) for (y,x) in roi]
+        mask = poly_to_mask(image.shape, roi)
 
-        return ImageWithAnnotation(numpy.rot90(image), metadata=dict(mask=roi))
+        return AnnotatedArray(image, metadata=dict(mask=mask, roi=roi))
 
 
 class Database(BioDatabase):
