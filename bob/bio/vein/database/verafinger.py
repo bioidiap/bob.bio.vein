@@ -6,6 +6,7 @@
 from bob.bio.base.database import BioFile, BioDatabase
 
 from . import AnnotatedArray
+from ..preprocessor.utils import poly_to_mask
 
 
 class File(BioFile):
