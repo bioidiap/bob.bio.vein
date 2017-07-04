@@ -13,8 +13,6 @@
    :target: https://gitlab.idiap.ch/bob/bob.bio.vein
 .. image:: http://img.shields.io/pypi/v/bob.bio.vein.svg
    :target: https://pypi.python.org/pypi/bob.bio.vein
-.. image:: http://img.shields.io/pypi/dm/bob.bio.vein.svg
-   :target: https://pypi.python.org/pypi/bob.bio.vein
 
 
 ==========================
