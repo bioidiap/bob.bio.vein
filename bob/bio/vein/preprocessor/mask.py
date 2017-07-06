@@ -89,12 +89,41 @@ class Masker(object):
       raise NotImplemented('You must implement the __call__ slot')
 
 
-class NoMask(object):
-  """Implements no masking - i.e. returns a mask the same size as input
+class FixedMask(object):
+  """Implements masking using a fixed suppression of border pixels
+
+  The defaults mask no lines from the image and returns a mask of the same size
+  of the original image where all values are ``True``.
+
+
+  .. note::
+
+     Before choosing values, note you're responsible for knowing what is the
+     orientation of images fed into this masker.
+
+
+  Parameters:
+
+    top (:py:class:`int`, optional): Number of lines to suppress from the top
+      of the image. The top of the image corresponds to ``y = 0``.
+
+    bottom (:py:class:`int`, optional): Number of lines to suppress from the
+      bottom of the image. The bottom of the image corresponds to ``y =
+      height``.
+
+    left (:py:class:`int`, optional): Number of lines to suppress from the left
+      of the image. The left of the image corresponds to ``x = 0``.
+
+    right (:py:class:`int`, optional): Number of lines to suppress from the
+      right of the image. The right of the image corresponds to ``x = width``.
+
   """
 
-  def __init__(self):
-    pass
+  def __init__(self, top=0, bottom=0, left=0, right=0):
+    self.top = top
+    self.bottom = bottom
+    self.left = left
+    self.right = right
 
 
   def __call__(self, image):
@@ -115,7 +144,15 @@ class NoMask(object):
 
 
     """
-    return numpy.ones(image.shape, dtype='bool')
+    retval = numpy.ones(image.shape, dtype='bool')
+
+    # this should work even if limits are zeros
+    retval[:self.top] = False
+    retval[-self.bottom:] = False
+    retval[:,:self.left] = False
+    retval[:,-self.right:] = False
+
+    return retval
 
 
 class AnnotatedRoIMask(object):
@@ -428,3 +465,6 @@ class TomesLeeMask(Masker):
     else:
       w = self.padder.padding_width
       return finger_mask[w:-w,w:-w]
+
+
+

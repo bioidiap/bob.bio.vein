@@ -42,10 +42,11 @@ def test_finger_crop():
 
   img = bob.io.base.load(input_filename)
 
-  from bob.bio.vein.preprocessor import Preprocessor, LeeMask, \
+  from bob.bio.vein.preprocessor import Preprocessor, NoCropper, LeeMask, \
       HuangNormalization, NoFilter
 
   processor = Preprocessor(
+      NoCropper(),
       LeeMask(filter_height=40, filter_width=4),
       HuangNormalization(padding_width=0, padding_constant=0),
       NoFilter(),
@@ -112,9 +113,10 @@ def test_max_curvature_HE():
   input_img = bob.io.base.load(input_img_filename)
 
   # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in maximum_curvature.py configuration file + postprocessing)
-  from bob.bio.vein.preprocessor import Preprocessor, LeeMask, \
+  from bob.bio.vein.preprocessor import Preprocessor, NoCropper, LeeMask, \
       HuangNormalization, HistogramEqualization
   processor = Preprocessor(
+      NoCropper(),
       LeeMask(filter_height=40, filter_width=4),
       HuangNormalization(padding_width=0, padding_constant=0),
       HistogramEqualization(),
@@ -161,9 +163,10 @@ def test_repeated_line_tracking_HE():
   input_img = bob.io.base.load(input_img_filename)
 
   # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in repeated_line_tracking.py configuration file + postprocessing)
-  from bob.bio.vein.preprocessor import Preprocessor, LeeMask, \
+  from bob.bio.vein.preprocessor import Preprocessor, NoCropper, LeeMask, \
       HuangNormalization, HistogramEqualization
   processor = Preprocessor(
+      NoCropper(),
       LeeMask(filter_height=40, filter_width=4),
       HuangNormalization(padding_width=0, padding_constant=0),
       HistogramEqualization(),
@@ -214,9 +217,10 @@ def test_wide_line_detector_HE():
   input_img = bob.io.base.load(input_img_filename)
 
   # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in wide_line_detector.py configuration file + postprocessing)
-  from bob.bio.vein.preprocessor import Preprocessor, LeeMask, \
+  from bob.bio.vein.preprocessor import Preprocessor, NoCropper, LeeMask, \
       HuangNormalization, HistogramEqualization
   processor = Preprocessor(
+      NoCropper(),
       LeeMask(filter_height=40, filter_width=4),
       HuangNormalization(padding_width=0, padding_constant=0),
       HistogramEqualization(),
