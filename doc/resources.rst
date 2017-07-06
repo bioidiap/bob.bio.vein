@@ -100,3 +100,10 @@ Parallel Running
 .. automodule:: bob.bio.vein.configurations.parallel
    :members:
 
+
+Using SGE at Idiap
+==================
+
+.. automodule:: bob.bio.vein.configurations.gridio4g48
+   :members:
+

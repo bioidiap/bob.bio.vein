@@ -116,6 +116,18 @@ protocol, do the following:
 
       $ verify.py verafinger rlt parallel -vv
 
+   To run on the Idiap SGE grid using our stock
+   io-big-48-slots-4G-memory-enabled (see
+   :py:mod:`bob.bio.vein.configurations.gridio4g48`) configuration, use:
+
+   .. code-block:: sh
+
+      $ verify.py verafinger rlt grid -vv
+
+   You may also, optionally, use the configuration resource ``gridio4g48``,
+   which is just an alias of ``grid`` in this package.
+
+
 
 This command line selects and runs the following implementations for the
 toolchain:
