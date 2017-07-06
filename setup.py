@@ -44,6 +44,8 @@ setup(
 
         # other
         'parallel = bob.bio.vein.configurations.parallel',
+        'gridio4g48 = bob.bio.vein.configurations.gridio4g48',
+        'grid = bob.bio.vein.configurations.gridio4g48',
         ],
 
       'console_scripts': [
