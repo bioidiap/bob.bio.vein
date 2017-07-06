@@ -1,4 +1,5 @@
-from .mask import Padder, Masker, NoMask, AnnotatedRoIMask
+from .cropper import Cropper, FixedCropper, NoCropper
+from .mask import Padder, Masker, FixedMask, AnnotatedRoIMask
 from .mask import KonoMask, LeeMask, TomesLeeMask
 from .normalize import Normalizer, NoNormalization, HuangNormalization
 from .filters import Filter, NoFilter, HistogramEqualization
@@ -19,9 +20,12 @@ def __appropriate__(*args):
   for obj in args: obj.__module__ = __name__
 
 __appropriate__(
+    Cropper,
+    FixedCropper,
+    NoCropper,
     Padder,
     Masker,
-    NoMask,
+    FixedMask,
     AnnotatedRoIMask,
     KonoMask,
     LeeMask,

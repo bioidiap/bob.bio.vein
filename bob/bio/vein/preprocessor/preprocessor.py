@@ -11,13 +11,19 @@ class Preprocessor (BasePreprocessor):
 
   In this implementation, the finger image is (in this order):
 
-    #. The mask is expolated from the image using one of our
+    #. The image is pre-cropped to remove obvious non-finger image parts
+    #. The mask is extrapolated from the image using one of our
        :py:class:`Masker`'s concrete implementations
     #. The image is normalized with one of our :py:class:`Normalizer`'s
     #. The image is filtered with one of our :py:class:`Filter`'s
 
 
   Parameters:
+
+    crop (:py:class:`Cropper`): An object that will perform pre-cropping on
+      the input image before a mask can be estimated. It removes parts of the
+      image which are surely not part of the finger region you'll want to
+      consider for the next steps.
 
     mask (:py:class:`Masker`): An object representing a Masker instance which
       will extrapolate the mask from the input image.
@@ -34,15 +40,17 @@ class Preprocessor (BasePreprocessor):
   """
 
 
-  def __init__(self, mask, normalize, filter, **kwargs):
+  def __init__(self, crop, mask, normalize, filter, **kwargs):
 
     BasePreprocessor.__init__(self,
+        crop = crop,
         mask = mask,
         normalize = normalize,
         filter = filter,
         **kwargs
         )
 
+    self.crop = crop
     self.mask = mask
     self.normalize = normalize
     self.filter = filter
@@ -66,7 +74,8 @@ class Preprocessor (BasePreprocessor):
 
     """
 
-    mask = self.mask(data)
+    cropped = self.crop(data)
+    mask = self.mask(cropped)
     data, mask = self.normalize(data, mask)
     data = self.filter(data, mask)
     return data, mask
