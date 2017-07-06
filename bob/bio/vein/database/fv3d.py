@@ -40,12 +40,17 @@ class File(BioFile):
 
         image = super(File, self).load(*args, **kwargs)
         image = numpy.rot90(image, 3)
-        roi = self.__f.roi()
 
-        # calculates the 90 degrees anti-clockwise rotated RoI points
-        w, h = image.shape
-        roi = [(x,h-y) for (y,x) in roi]
-        mask = poly_to_mask(image.shape, roi)
+        if not self.has_roi():
+          return image
+
+        else:
+          roi = self.__f.roi()
+
+          # calculates the 90 degrees anti-clockwise rotated RoI points
+          w, h = image.shape
+          roi = [(x,h-y) for (y,x) in roi]
+          mask = poly_to_mask(image.shape, roi)
 
         return AnnotatedArray(image, metadata=dict(mask=mask, roi=roi))
 
