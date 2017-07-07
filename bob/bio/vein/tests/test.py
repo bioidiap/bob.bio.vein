@@ -14,7 +14,6 @@ the generated sphinx documentation)
 
 import os
 import numpy
-import numpy as np
 import nose.tools
 
 import pkg_resources
@@ -32,7 +31,71 @@ def F(parts):
   return pkg_resources.resource_filename(__name__, os.path.join(*parts))
 
 
-def test_finger_crop():
+def test_cropping():
+
+  # tests if the cropping stage at preprocessors works as planned
+
+  from ..preprocessor.crop import FixedCrop, NoCrop
+
+  shape = (20, 17)
+  test_image = numpy.random.randint(0, 1000, size=shape, dtype=int)
+
+  dont_crop = NoCrop()
+  cropped = dont_crop(test_image)
+  nose.tools.eq_(test_image.shape, cropped.shape)
+  nose.tools.eq_((test_image-cropped).sum(), 0)
+
+  top = 5; bottom = 2; left=3; right=7
+  fixed_crop = FixedCrop(top, bottom, left, right)
+  cropped = fixed_crop(test_image)
+  nose.tools.eq_(cropped.shape, (shape[0]-(top+bottom), shape[1]-(left+right)))
+  nose.tools.eq_((test_image[top:-bottom,left:-right]-cropped).sum(), 0)
+
+
+def test_masking():
+
+  # tests if the masking stage at preprocessors work as planned
+
+  from ..preprocessor.mask import FixedMask, NoMask, AnnotatedRoIMask
+  from ..database import AnnotatedArray
+
+  shape = (17, 20)
+  test_image = numpy.random.randint(0, 1000, size=shape, dtype=int)
+
+  masker = NoMask()
+  mask = masker(test_image)
+  nose.tools.eq_(mask.dtype, numpy.dtype('bool'))
+  nose.tools.eq_(mask.shape, test_image.shape)
+  nose.tools.eq_(mask.sum(), numpy.prod(shape))
+
+  top = 4; bottom = 2; left=3; right=1
+  masker = FixedMask(top, bottom, left, right)
+  mask = masker(test_image)
+  nose.tools.eq_(mask.dtype, numpy.dtype('bool'))
+  nose.tools.eq_(mask.sum(), (shape[0]-(top+bottom)) * (shape[1]-(left+right)))
+  nose.tools.eq_(mask[top:-bottom,left:-right].sum(), mask.sum())
+
+  # this matches the previous "fixed" mask - notice we consider the pixels
+  # under the polygon line to be **part** of the RoI (mask position == True)
+  shape = (10, 10)
+  test_image = numpy.random.randint(0, 1000, size=shape, dtype=int)
+  annotations = [
+      (top, left),
+      (top, shape[1]-(right+1)),
+      (shape[0]-(bottom+1), shape[1]-(right+1)),
+      (shape[0]-(bottom+1), left),
+      ]
+  image = AnnotatedArray(test_image, metadata=dict(roi=annotations))
+  masker = AnnotatedRoIMask()
+  mask = masker(image)
+  nose.tools.eq_(mask.dtype, numpy.dtype('bool'))
+  nose.tools.eq_(mask.sum(), (shape[0]-(top+bottom)) * (shape[1]-(left+right)))
+  nose.tools.eq_(mask[top:-bottom,left:-right].sum(), mask.sum())
+
+
+def test_preprocessor():
+
+  # tests the whole preprocessing mechanism, compares to matlab source
 
   input_filename = F(('preprocessors', '0019_3_1_120509-160517.png'))
   output_img_filename  = F(('preprocessors',
@@ -42,11 +105,11 @@ def test_finger_crop():
 
   img = bob.io.base.load(input_filename)
 
-  from bob.bio.vein.preprocessor import Preprocessor, NoCropper, LeeMask, \
+  from ..preprocessor import Preprocessor, NoCrop, LeeMask, \
       HuangNormalization, NoFilter
 
   processor = Preprocessor(
-      NoCropper(),
+      NoCrop(),
       LeeMask(filter_height=40, filter_width=4),
       HuangNormalization(padding_width=0, padding_constant=0),
       NoFilter(),
@@ -83,7 +146,7 @@ def test_max_curvature():
   bin_ref = bin_ref.T
 
   # Apply Python implementation
-  from bob.bio.vein.extractor.MaximumCurvature import MaximumCurvature
+  from ..extractor.MaximumCurvature import MaximumCurvature
   MC = MaximumCurvature(3) #value used to create references
 
   kappa = MC.detect_valleys(image, mask)
@@ -113,10 +176,10 @@ def test_max_curvature_HE():
   input_img = bob.io.base.load(input_img_filename)
 
   # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in maximum_curvature.py configuration file + postprocessing)
-  from bob.bio.vein.preprocessor import Preprocessor, NoCropper, LeeMask, \
+  from ..preprocessor import Preprocessor, NoCrop, LeeMask, \
       HuangNormalization, HistogramEqualization
   processor = Preprocessor(
-      NoCropper(),
+      NoCrop(),
       LeeMask(filter_height=40, filter_width=4),
       HuangNormalization(padding_width=0, padding_constant=0),
       HistogramEqualization(),
@@ -124,7 +187,7 @@ def test_max_curvature_HE():
   preproc_data = processor(input_img)
 
   # Extract features from preprocessed and histogram equalized data using MC extractor (same parameters as in maximum_curvature.py configuration file)
-  from bob.bio.vein.extractor.MaximumCurvature import MaximumCurvature
+  from ..extractor.MaximumCurvature import MaximumCurvature
   MC = MaximumCurvature(sigma = 5)
   extr_data = MC(preproc_data)
   #preprocessor_utils.show_image((255.*extr_data).astype('uint8'))
@@ -143,7 +206,7 @@ def test_repeated_line_tracking():
   input_fvr = bob.io.base.load(input_fvr_filename)
 
   # Apply Python implementation
-  from bob.bio.vein.extractor.RepeatedLineTracking import RepeatedLineTracking
+  from ..extractor.RepeatedLineTracking import RepeatedLineTracking
   RLT = RepeatedLineTracking(3000, 1, 21, False)
   output_img = RLT((input_img, input_fvr))
 
@@ -163,10 +226,10 @@ def test_repeated_line_tracking_HE():
   input_img = bob.io.base.load(input_img_filename)
 
   # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in repeated_line_tracking.py configuration file + postprocessing)
-  from bob.bio.vein.preprocessor import Preprocessor, NoCropper, LeeMask, \
+  from ..preprocessor import Preprocessor, NoCrop, LeeMask, \
       HuangNormalization, HistogramEqualization
   processor = Preprocessor(
-      NoCropper(),
+      NoCrop(),
       LeeMask(filter_height=40, filter_width=4),
       HuangNormalization(padding_width=0, padding_constant=0),
       HistogramEqualization(),
@@ -174,7 +237,7 @@ def test_repeated_line_tracking_HE():
   preproc_data = processor(input_img)
 
   # Extract features from preprocessed and histogram equalized data using RLT extractor (same parameters as in repeated_line_tracking.py configuration file)
-  from bob.bio.vein.extractor.RepeatedLineTracking import RepeatedLineTracking
+  from ..extractor.RepeatedLineTracking import RepeatedLineTracking
   # Maximum number of iterations
   NUMBER_ITERATIONS = 3000
   # Distance between tracking point and cross section of profile
@@ -198,7 +261,7 @@ def test_wide_line_detector():
   input_fvr = bob.io.base.load(input_fvr_filename)
 
   # Apply Python implementation
-  from bob.bio.vein.extractor.WideLineDetector import WideLineDetector
+  from ..extractor.WideLineDetector import WideLineDetector
   WL = WideLineDetector(5, 1, 41, False)
   output_img = WL((input_img, input_fvr))
 
@@ -217,10 +280,10 @@ def test_wide_line_detector_HE():
   input_img = bob.io.base.load(input_img_filename)
 
   # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in wide_line_detector.py configuration file + postprocessing)
-  from bob.bio.vein.preprocessor import Preprocessor, NoCropper, LeeMask, \
+  from ..preprocessor import Preprocessor, NoCrop, LeeMask, \
       HuangNormalization, HistogramEqualization
   processor = Preprocessor(
-      NoCropper(),
+      NoCrop(),
       LeeMask(filter_height=40, filter_width=4),
       HuangNormalization(padding_width=0, padding_constant=0),
       HistogramEqualization(),
@@ -228,7 +291,7 @@ def test_wide_line_detector_HE():
   preproc_data = processor(input_img)
 
   # Extract features from preprocessed and histogram equalized data using WLD extractor (same parameters as in wide_line_detector.py configuration file)
-  from bob.bio.vein.extractor.WideLineDetector import WideLineDetector
+  from ..extractor.WideLineDetector import WideLineDetector
   # Radius of the circular neighbourhood region
   RADIUS_NEIGHBOURHOOD_REGION = 5
   NEIGHBOURHOOD_THRESHOLD = 1
@@ -251,7 +314,7 @@ def test_miura_match():
   probe_gen_vein = bob.io.base.load(probe_gen_filename)
   probe_imp_vein = bob.io.base.load(probe_imp_filename)
 
-  from bob.bio.vein.algorithm.MiuraMatch import MiuraMatch
+  from ..algorithm.MiuraMatch import MiuraMatch
   MM = MiuraMatch(ch=18, cw=28)
   score_gen = MM.score(template_vein, probe_gen_vein)
 
