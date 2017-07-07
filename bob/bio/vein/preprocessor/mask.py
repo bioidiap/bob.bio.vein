@@ -89,7 +89,7 @@ class Masker(object):
       raise NotImplemented('You must implement the __call__ slot')
 
 
-class FixedMask(object):
+class FixedMask(Masker):
   """Implements masking using a fixed suppression of border pixels
 
   The defaults mask no lines from the image and returns a mask of the same size
@@ -144,18 +144,21 @@ class FixedMask(object):
 
 
     """
-    retval = numpy.ones(image.shape, dtype='bool')
 
-    # this should work even if limits are zeros
-    retval[:self.top] = False
-    retval[-self.bottom:] = False
-    retval[:,:self.left] = False
-    retval[:,-self.right:] = False
-
+    retval = numpy.zeros(image.shape, dtype='bool')
+    h, w = image.shape
+    retval[self.top:h-self.bottom, self.left:w-self.right] = True
     return retval
 
 
-class AnnotatedRoIMask(object):
+class NoMask(FixedMask):
+  """Convenience: same as FixedMask()"""
+
+  def __init__(self):
+    super(NoMask, self).__init__(0, 0, 0, 0)
+
+
+class AnnotatedRoIMask(Masker):
   """Devises the mask from the annotated RoI"""
 
 
@@ -183,6 +186,7 @@ class AnnotatedRoIMask(object):
 
 
     """
+
     return poly_to_mask(image.shape, image.metadata['roi'])
 
 
