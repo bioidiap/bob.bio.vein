@@ -43,9 +43,9 @@ class FixedCrop(Cropper):
   """Implements cropping using a fixed suppression of border pixels
 
   The defaults supress no lines from the image and returns an image like the
-  original. If an :py:class:`..database.AnnotatedArray` is passed, then we also
-  check for its ``.metadata['roi']`` component and correct it so that annotated
-  RoI points are consistent on the cropped image.
+  original. If an :py:class:`bob.bio.vein.database.AnnotatedArray` is passed,
+  then we also check for its ``.metadata['roi']`` component and correct it so
+  that annotated RoI points are consistent on the cropped image.
 
 
   .. note::
