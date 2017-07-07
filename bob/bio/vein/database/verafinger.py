@@ -32,8 +32,7 @@ class File(BioFile):
 
         image = super(File, self).load(*args, **kwargs)
         roi = self.__f.roi()
-        mask = poly_to_mask(image.shape, roi)
-        return AnnotatedArray(image, metadata=dict(mask=mask, roi=roi))
+        return AnnotatedArray(image, metadata=dict(roi=roi))
 
 
 class Database(BioDatabase):
