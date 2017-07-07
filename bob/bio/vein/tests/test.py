@@ -63,7 +63,6 @@ def test_cropping():
   assert hasattr(annotated_image, 'metadata')
   cropped = fixed_crop(annotated_image)
   assert hasattr(cropped, 'metadata')
-  import ipdb; ipdb.set_trace()
   assert numpy.allclose(cropped.metadata['roi'], [
     (0, 2),
     (3, cropped.shape[1]-1),
