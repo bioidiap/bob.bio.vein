@@ -43,7 +43,9 @@ class FixedCrop(Cropper):
   """Implements cropping using a fixed suppression of border pixels
 
   The defaults supress no lines from the image and returns an image like the
-  original.
+  original. If an :py:class:`..database.AnnotatedArray` is passed, then we also
+  check for its ``.metadata['roi']`` component and correct it so that annotated
+  RoI points are consistent on the cropped image.
 
 
   .. note::
@@ -97,7 +99,22 @@ class FixedCrop(Cropper):
 
     # this should work even if limits are zeros
     h, w = image.shape
-    return image[self.top:h-self.bottom, self.left:w-self.right]
+    retval = image[self.top:h-self.bottom, self.left:w-self.right]
+
+    if hasattr(retval, 'metadata') and 'roi' in retval.metadata:
+      # adjust roi points to new cropping
+      retval = retval.copy() #don't override original
+      h, w = retval.shape
+      points = []
+      for y, x in retval.metadata['roi']:
+        y = max(y-self.top, 0) #adjust
+        y = min(y, h-1) #verify it is not over the limits
+        x = max(x-self.left, 0) #adjust
+        x = min(x, w-1) #verify it is not over the limits
+        points.append((y,x))
+      retval.metadata['roi'] = points
+
+    return retval
 
 
 class NoCrop(FixedCrop):

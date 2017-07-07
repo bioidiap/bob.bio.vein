@@ -51,6 +51,26 @@ def test_cropping():
   nose.tools.eq_(cropped.shape, (shape[0]-(top+bottom), shape[1]-(left+right)))
   nose.tools.eq_((test_image[top:-bottom,left:-right]-cropped).sum(), 0)
 
+  # tests metadata survives after cropping (and it is corrected)
+  from ..database import AnnotatedArray
+  annotations = [
+      (top-2, left+2), #slightly above and to the right
+      (top+3, shape[1]-(right+1)+3), #slightly down and to the right
+      (shape[0]-(bottom+1)+4, shape[1]-(right+1)-2),
+      (shape[0]-(bottom+1)+1, left),
+      ]
+  annotated_image = AnnotatedArray(test_image, metadata=dict(roi=annotations))
+  assert hasattr(annotated_image, 'metadata')
+  cropped = fixed_crop(annotated_image)
+  assert hasattr(cropped, 'metadata')
+  import ipdb; ipdb.set_trace()
+  assert numpy.allclose(cropped.metadata['roi'], [
+    (0, 2),
+    (3, cropped.shape[1]-1),
+    (cropped.shape[0]-1, 4),
+    (cropped.shape[0]-1, 0),
+    ])
+
 
 def test_masking():
 
