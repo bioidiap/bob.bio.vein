@@ -20,7 +20,7 @@ or the attribute ``sub_directory`` in a configuration file loaded **after**
 this resource.
 """
 
-from ..preprocessor import NoCropper, Padder, TomesLeeMask, \
+from ..preprocessor import NoCrop, Padder, TomesLeeMask, \
     HuangNormalization, NoFilter, Preprocessor
 
 # Filter sizes for the vertical "high-pass" filter
@@ -32,7 +32,7 @@ PAD_WIDTH = 5
 PAD_CONST = 51
 
 preprocessor = Preprocessor(
-    crop=NoCropper(),
+    crop=NoCrop(),
     mask=TomesLeeMask(filter_height=FILTER_HEIGHT, filter_width=FILTER_WIDTH),
     normalize=HuangNormalization(padding_width=PAD_WIDTH,
       padding_constant=PAD_CONST),
