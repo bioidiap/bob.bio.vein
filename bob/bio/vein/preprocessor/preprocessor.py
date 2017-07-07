@@ -74,8 +74,8 @@ class Preprocessor (BasePreprocessor):
 
     """
 
-    cropped = self.crop(data)
-    mask = self.mask(cropped)
+    data = self.crop(data)
+    mask = self.mask(data)
     data, mask = self.normalize(data, mask)
     data = self.filter(data, mask)
     return data, mask
