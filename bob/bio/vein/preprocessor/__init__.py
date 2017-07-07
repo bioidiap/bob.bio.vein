@@ -1,5 +1,5 @@
-from .cropper import Cropper, FixedCropper, NoCropper
-from .mask import Padder, Masker, FixedMask, AnnotatedRoIMask
+from .crop import Cropper, FixedCrop, NoCrop
+from .mask import Padder, Masker, FixedMask, NoMask, AnnotatedRoIMask
 from .mask import KonoMask, LeeMask, TomesLeeMask
 from .normalize import Normalizer, NoNormalization, HuangNormalization
 from .filters import Filter, NoFilter, HistogramEqualization
@@ -21,11 +21,12 @@ def __appropriate__(*args):
 
 __appropriate__(
     Cropper,
-    FixedCropper,
-    NoCropper,
+    FixedCrop,
+    NoCrop,
     Padder,
     Masker,
     FixedMask,
+    NoMask,
     AnnotatedRoIMask,
     KonoMask,
     LeeMask,
