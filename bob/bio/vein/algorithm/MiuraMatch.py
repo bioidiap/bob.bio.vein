@@ -94,8 +94,6 @@ class MiuraMatch (Algorithm):
     if len(model.shape) == 2:
       model = numpy.array([model])
 
-    n_models = model.shape[0]
-
     scores = []
 
     # iterate over all models for a given individual
@@ -103,7 +101,7 @@ class MiuraMatch (Algorithm):
 
       # erode model by (ch, cw)
       R = md.astype(numpy.float64)
-      h, w = R.shape
+      h, w = R.shape #same as I
       crop_R = R[self.ch:h-self.ch, self.cw:w-self.cw]
 
       # correlates using scipy - fastest option available iff the self.ch and
@@ -127,6 +125,6 @@ class MiuraMatch (Algorithm):
       # normalizes the output by the number of pixels lit on the input
       # matrices, taking into consideration the surface that produced the
       # result (i.e., the eroded model and part of the probe)
-      scores.append(Nmm/(sum(sum(crop_R)) + sum(sum(I[t0:t0+h-2*self.ch, s0:s0+w-2*self.cw]))))
+      scores.append(Nmm/(crop_R.sum() + I[t0:t0+h-2*self.ch, s0:s0+w-2*self.cw].sum()))
 
     return numpy.mean(scores)

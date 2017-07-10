@@ -343,6 +343,25 @@ def test_miura_match():
   assert numpy.isclose(score_imp, 0.172906739278421)
 
 
+def test_correlate():
+
+  #Match Ratio method against Matlab reference
+
+  template_filename = F(('algorithms', '0001_2_1_120509-135338.mat'))
+  probe_gen_filename = F(('algorithms', '0001_2_2_120509-135558.mat'))
+  probe_imp_filename = F(('algorithms', '0003_2_1_120509-141255.mat'))
+
+  template_vein = bob.io.base.load(template_filename)
+  probe_gen_vein = bob.io.base.load(probe_gen_filename)
+  probe_imp_vein = bob.io.base.load(probe_imp_filename)
+
+  from ..algorithm.Correlate import Correlate
+  C = Correlate()
+  score_gen = C.score(template_vein, probe_gen_vein)
+
+  # we don't check here - no templates
+
+
 def test_assert_points():
 
   # Tests that point assertion works as expected
