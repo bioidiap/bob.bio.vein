@@ -234,6 +234,7 @@ class KonoMask(Masker):
     '''
 
     image = image if self.padder is None else self.padder(image)
+    if image.dtype == numpy.uint8: image = image.astype('float64')/255.
 
     img_h,img_w = image.shape
 
@@ -334,6 +335,7 @@ class LeeMask(Masker):
     '''
 
     image = image if self.padder is None else self.padder(image)
+    if image.dtype == numpy.uint8: image = image.astype('float64')/255.
 
     img_h,img_w = image.shape
 
@@ -342,10 +344,9 @@ class LeeMask(Masker):
 
     # Construct mask for filtering
     mask = numpy.ones((self.filter_height,self.filter_width), dtype='float64')
-    mask[int(self.filter_height/2):,:] = -1.0
+    mask[int(self.filter_height/2.):,:] = -1.0
 
-    img_filt = scipy.ndimage.convolve(image.astype(numpy.float64), mask,
-        mode='nearest')
+    img_filt = scipy.ndimage.convolve(image, mask, mode='nearest')
 
     # Upper part of filtered image
     img_filt_up = img_filt[:half_img_h,:]
@@ -420,6 +421,7 @@ class TomesLeeMask(Masker):
     '''
 
     image = image if self.padder is None else self.padder(image)
+    if image.dtype == numpy.uint8: image = image.astype('float64')/255.
 
     img_h,img_w = image.shape
 
@@ -429,7 +431,7 @@ class TomesLeeMask(Masker):
 
     # Construct mask for filtering (up-bottom direction)
     mask = numpy.ones((self.filter_height, self.filter_width), dtype='float64')
-    mask[int(self.filter_height/2):,:] = -1.0
+    mask[int(self.filter_height/2.):,:] = -1.0
 
     img_filt = scipy.ndimage.convolve(image, mask, mode='nearest')
 
@@ -441,7 +443,7 @@ class TomesLeeMask(Masker):
     img_filt_lo = img_filt[int(half_img_h):,:]
     y_lo = img_filt_lo.argmin(axis=0)
 
-    img_filt = scipy.ndimage.convolve(image, mask, mode='nearest')
+    img_filt = scipy.ndimage.convolve(image, mask.T, mode='nearest')
 
     # Left part of filtered image
     img_filt_lf = img_filt[:,:int(half_img_w)]
@@ -469,6 +471,3 @@ class TomesLeeMask(Masker):
     else:
       w = self.padder.padding_width
       return finger_mask[w:-w,w:-w]
-
-
-
