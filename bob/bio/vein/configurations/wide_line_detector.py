@@ -33,7 +33,8 @@ PAD_CONST = 51
 
 preprocessor = Preprocessor(
     crop=NoCrop(),
-    mask=TomesLeeMask(filter_height=FILTER_HEIGHT, filter_width=FILTER_WIDTH),
+    mask=TomesLeeMask(filter_height=FILTER_HEIGHT, filter_width=FILTER_WIDTH,
+      padder=Padder(padding_width=PAD_WIDTH, padding_constant=PAD_CONST)),
     normalize=HuangNormalization(padding_width=PAD_WIDTH,
       padding_constant=PAD_CONST),
     filter=NoFilter(),
