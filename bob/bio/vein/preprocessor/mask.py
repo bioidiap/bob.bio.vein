@@ -385,7 +385,10 @@ class TomesLeeMask(Masker):
   https://nl.mathworks.com/matlabcentral/fileexchange/35752-finger-region-localisation/content/lee_region.m
 
   In this variant from Pedro Tome, the technique of filtering the image with
-  a horizontal filter is also applied on the vertical axis.
+  a horizontal filter is also applied on the vertical axis. The objective is to
+  find better limits on the horizontal axis in case finger images show the
+  finger tip. If that is not your case, you may use the original variant
+  :py:class:`LeeMask` above.
 
 
   Parameters:
