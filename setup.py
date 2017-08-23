@@ -36,6 +36,8 @@ setup(
         'verafinger = bob.bio.vein.configurations.verafinger',
         'utfvp = bob.bio.vein.configurations.utfvp',
         'fv3d = bob.bio.vein.configurations.fv3d',
+        'verafinger-full = bob.bio.vein.configurations.verafinger_full',
+        'utfvp-1vsall = bob.bio.vein.configurations.utfvp_1vsall',
 
         # baselines
         'mc = bob.bio.vein.configurations.maximum_curvature',

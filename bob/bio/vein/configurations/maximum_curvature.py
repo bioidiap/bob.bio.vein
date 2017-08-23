@@ -12,7 +12,7 @@ References:
 
 '''
 
-sub_directory = 'mc'
+sub_directory = 'fingervein_relative_entropy/1vsall/mc'
 """Sub-directory where results will be placed.
 
 You may change this setting using the ``--sub-directory`` command-line option

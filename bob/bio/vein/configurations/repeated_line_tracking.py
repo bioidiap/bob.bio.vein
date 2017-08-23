@@ -12,7 +12,7 @@ References:
 
 '''
 
-sub_directory = 'rlt'
+sub_directory = 'fingervein_relative_entropy/1vsall/rlt'
 """Sub-directory where results will be placed.
 
 You may change this setting using the ``--sub-directory`` command-line option
