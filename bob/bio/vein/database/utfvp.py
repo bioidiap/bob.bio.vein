@@ -48,3 +48,8 @@ class Database(BioDatabase):
 
     def annotations(self, file):
         return None
+
+    def client_id_from_model_id(self, model_id, group='dev'):
+        """Required as ``model_id != client_id`` on this database"""
+
+        return self._db.get_client_id_from_model_id(model_id)
