@@ -3,8 +3,10 @@
 
 '''Base utilities for mask processing'''
 
+import math
 import numpy
 import scipy.ndimage
+import skimage
 
 from .utils import poly_to_mask
 
@@ -474,3 +476,172 @@ class TomesLeeMask(Masker):
     else:
       w = self.padder.padding_width
       return finger_mask[w:-w,w:-w]
+
+
+class WatershedMask(Masker):
+  """Estimates the finger region given an input NIR image using Watershedding
+
+  This method uses the `Watershedding Morphological Algorithm
+  <https://en.wikipedia.org/wiki/Watershed_(image_processing>` for determining
+  the finger mask given an input image.
+
+  The masker works first by determining image edges using a simple 2-D Sobel
+  filter. The next step is to determine markers in the image for both the
+  finger region and background. Markers are set on the image by using a
+  pre-trained feed-forward neural network model (multi-layer perceptron or MLP)
+  learned from existing annotations. The model is trained in a separate
+  program and operates on 3x3 regions around the pixel to be predicted for
+  finger/background. The ``(y,x)`` location also is provided as input to the
+  classifier. The feature vector is then composed of 9 pixel values plus the
+  ``y`` and ``x`` (normalized) coordinates of the pixel. The network then
+  provides a prediction that depends on these input parameters. The closer the
+  output is to ``1.0``, the more likely it is from within the finger region.
+
+  Values output by the network are thresholded in order to remove uncertain
+  markers. The ``threshold`` parameter is configurable.
+
+  A series of morphological opening operations is used to, given the neural net
+  markers, remove noise before watershedding the edges from the Sobel'ed
+  original image.
+
+
+  Parameters:
+
+    model (str): Path to the model file to be used for generating
+      finger/background markers. This model should be pre-trained using a
+      separate program.
+
+    threshold (float): Threshold given a logistic regression output (interval
+      :math:`[0, 1]`) for which we consider finger markers provided by the
+      network.  The higher the value, the more selective the algorithm will be
+      and the less markers will be used from the network selection. This value
+      should be a floating point number in the open-set interval :math:`(0.5,
+      1.0)`.  Values for background selection will be set to :math:`1.0-T`,
+      where ``T`` represents this threshold.
+
+  """
+
+
+  def __init__(self, model, threshold):
+
+    import bob.io.base
+    import bob.learn.mlp
+    import bob.learn.activation
+
+    self.labeller = bob.learn.mlp.Machine((11,10,1))
+    h5f = bob.io.base.HDF5File(model)
+    self.labeller.load(h5f)
+    self.labeller.output_activation = bob.learn.activation.Logistic()
+    del h5f
+    self.threshold = threshold
+
+
+  def _view(self, image, markers, edges, mask):
+    '''displays and overview plot of the mask detection'''
+
+    import matplotlib.pyplot as plt
+
+    plt.subplot(2,2,1)
+    _ = markers.copy()
+    _[_==1] = 128
+    plt.imshow(_, cmap='gray')
+    plt.title('Markers')
+
+    plt.subplot(2,2,2)
+    plt.imshow(edges*255, cmap='gray')
+    plt.title('Edges')
+
+    plt.subplot(2,2,3)
+    plt.imshow(mask.astype('uint8')*255, cmap='gray')
+    plt.title('Mask')
+
+    plt.subplot(2,2,4)
+    plt.imshow(image, cmap='gray')
+    red_mask = numpy.dstack([
+        (~mask).astype('uint8')*255,
+        numpy.zeros_like(image),
+        numpy.zeros_like(image),
+        ])
+    plt.imshow(red_mask, alpha=0.15)
+    plt.title('Image (masked)')
+    plt.show()
+
+
+  class _filterfun(object):
+    '''Callable for filtering the input image with marker predictions'''
+
+
+    def __init__(self, image, labeller):
+      self.labeller = labeller
+      self.features = numpy.zeros(self.labeller.shape[0], dtype='float64')
+      self.output = numpy.zeros(self.labeller.shape[-1], dtype='float64')
+
+      # builds indexes before hand, based on image dimensions
+      idx = numpy.mgrid[:image.shape[0], :image.shape[1]]
+      self.indexes = numpy.array([idx[0].flatten(), idx[1].flatten()],
+          dtype='float64')
+      self.indexes[0,:] /= image.shape[0]
+      self.indexes[1,:] /= image.shape[1]
+      self.current = 0
+
+
+    def __call__(self, arr):
+
+      self.features[:9] = arr.astype('float64')/255
+      self.features[-2:] = self.indexes[:,self.current]
+      self.current += 1
+      return self.labeller(self.features, self.output)
+
+
+  def __call__(self, image):
+    '''Inputs an image, returns a mask (numpy boolean array)
+
+      Parameters:
+
+        image (numpy.ndarray): A 2D numpy array of type ``uint8`` with the
+          input image
+
+
+      Returns:
+
+        numpy.ndarray: A 2D numpy array of type boolean with the caculated
+        mask. ``True`` values correspond to regions where the finger is
+        located
+
+    '''
+
+    # applies the pre-trained neural network model to get predictions about
+    # finger/background regions
+    function = WatershedMask._filterfun(image, self.labeller)
+    predictions = numpy.zeros(image.shape, 'float64')
+    scipy.ndimage.filters.generic_filter(image, function,
+        size=3, mode='nearest', output=predictions)
+
+    selector = skimage.morphology.disk(radius=5)
+
+    # applies a morphological "opening" operation
+    # (https://en.wikipedia.org/wiki/Opening_(morphology)) to remove outliers
+    markers_bg = numpy.where(predictions<(1-self.threshold), 1, 0)
+    markers_bg = skimage.morphology.opening(markers_bg, selem=selector)
+    markers_fg = numpy.where(predictions>self.threshold, 255, 0)
+    markers_fg = skimage.morphology.opening(markers_fg, selem=selector)
+
+    # the final markers are a combination of foreground and background markers
+    markers = markers_fg | markers_bg
+
+    # this will determine the natural boundaries in the image where the
+    # flooding will be limited
+    edges = skimage.filters.sobel(image)
+
+    # applies watersheding to get a final estimate of the finger mask
+    segmentation = skimage.morphology.watershed(edges, markers)
+
+    # removes small perturbations and makes the finger region more uniform
+    segmentation[segmentation==1] = 0
+    mask = skimage.morphology.binary_opening(segmentation.astype('bool'),
+        selem=selector)
+
+    # visualizes processing
+    #self._view(image, markers, edges, mask)
+
+    return mask
