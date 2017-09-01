@@ -13,7 +13,7 @@ from ..preprocessor.utils import poly_to_mask
 
 class File(BioFile):
     """
-    Implements extra properties of vein files for the Vera Fingervein database
+    Implements extra properties of vein files for the 3D Fingervein database
 
 
     Parameters:
@@ -29,17 +29,11 @@ class File(BioFile):
         self.__f = f
 
 
-    def mask(self, shape):
-        """Returns the binary mask from the ROI annotations available"""
-
-        return poly_to_mask(shape, self.__f.roi())
-
-
     def load(self, *args, **kwargs):
         """(Overrides base method) Loads both image and mask"""
 
         image = super(File, self).load(*args, **kwargs)
-        image = numpy.rot90(image, 3)
+        image = numpy.rot90(image, -1)
 
         if not self.__f.has_roi():
           return image
@@ -56,7 +50,7 @@ class File(BioFile):
 
 class Database(BioDatabase):
     """
-    Implements verification API for querying Vera Fingervein database.
+    Implements verification API for querying the 3D Fingervein database.
     """
 
     def __init__(self, **kwargs):
