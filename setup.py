@@ -52,6 +52,7 @@ setup(
         'compare_rois.py = bob.bio.vein.script.compare_rois:main',
         'view_sample.py = bob.bio.vein.script.view_sample:main',
         'blame.py = bob.bio.vein.script.blame:main',
+        'markdet.py = bob.bio.vein.script.markdet:main',
         ]
       },
 
