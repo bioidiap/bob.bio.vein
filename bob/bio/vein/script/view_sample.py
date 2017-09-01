@@ -93,7 +93,7 @@ def save_figures(title, image, mask, image_pp, binary):
     'binarized.png'))
 
 
-def proof_figure(title, image, mask, image_pp, binary):
+def proof_figure(title, image, mask, image_pp, binary=None):
   '''Builds a proof canvas out of individual images
 
 
@@ -111,8 +111,9 @@ def proof_figure(title, image, mask, image_pp, binary):
     image_pp (numpy.ndarray): A version of the original image, pre-processed by
       one of the available algorithms
 
-    binary (numpy.ndarray): A binarized version of the original image in which
-      all pixels (should) represent vein (``True``) or not-vein (``False``)
+    binary (numpy.ndarray, Optional): A binarized version of the original image
+      in which all pixels (should) represent vein (``True``) or not-vein
+      (``False``)
 
 
   Returns:
@@ -122,24 +123,27 @@ def proof_figure(title, image, mask, image_pp, binary):
 
   '''
 
-  fig = mpl.figure(figsize=(6,9), dpi=50) #900 x 300 pixels
+  fig = mpl.figure(figsize=(6,9), dpi=100)
+
+  images = 3 if binary is not None else 2
 
   # add original image
-  mpl.subplot(3, 1, 1)
+  mpl.subplot(images, 1, 1)
   mpl.title('%s - original' % title)
   mpl.imshow(image, cmap="gray")
 
   # add preprocessed image
   from ..preprocessor import utils
   img = utils.draw_mask_over_image(image_pp, mask)
-  mpl.subplot(3, 1, 2)
+  mpl.subplot(images, 1, 2)
   mpl.title('Preprocessed')
   mpl.imshow(img)
 
-  # add binary image
-  mpl.subplot(3, 1, 3)
-  mpl.title('Binarized')
-  mpl.imshow(binary.astype('uint8')*255, cmap="gray")
+  if binary is not None:
+    # add binary image
+    mpl.subplot(3, 1, 3)
+    mpl.title('Binarized')
+    mpl.imshow(binary.astype('uint8')*255, cmap="gray")
 
   return fig
 
@@ -172,16 +176,18 @@ def main(user_input=None):
   # Loads the image, the mask and save it to a PNG file
   for stem in args['<stem>']:
     image = bob.bio.base.load(os.path.join(args['<database>'], stem + '.png'))
+    image = numpy.rot90(image, k=-1)
     pp = bob.io.base.HDF5File(os.path.join(args['<processed>'],
       'preprocessed', stem + '.hdf5'))
     mask  = pp.read('mask')
     image_pp = pp.read('image')
-    binary = bob.io.base.load(os.path.join(args['<processed>'],
-      'extracted', stem + '.hdf5'))
+    binary_path = os.path.join(args['<processed>'], 'extracted', stem + '.hdf5')
+    if os.path.exists(binary_path):
+      binary = bob.io.base.load(binary_path)
+    else:
+      binary = None
     fig = proof_figure(stem, image, mask, image_pp, binary)
-    #fig.title(stem)
     if args['--save']:
-      #fig.savefig(args['--save'])
       save_figures(args['--save'], image, mask, image_pp, binary)
     else:
       mpl.show()
