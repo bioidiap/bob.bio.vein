@@ -170,3 +170,79 @@ def open_multipage_pdf_file(s):
   import matplotlib.pyplot as mpl
   from matplotlib.backends.backend_pdf import PdfPages
   return PdfPages(s)
+
+
+class validate_protocol(object):
+  '''Validates the protocol for a given database
+
+
+  Parameters:
+
+    name (str): The name of the database to validate the protocol for
+
+
+  Raises:
+
+    schema.SchemaError: if the database is not supported
+
+  '''
+
+  def __init__(self, name):
+
+    self.dbname = name
+
+    if name == 'fv3d':
+      import bob.db.fv3d
+      self.valid_names = bob.db.fv3d.Database().protocol_names()
+    elif name == 'verafinger':
+      import bob.db.verafinger
+      self.valid_names = bob.db.verafinger.Database().protocol_names()
+    else:
+      raise schema.SchemaError("do not support database {}".format(name))
+
+
+  def __call__(self, name):
+
+    if name not in self.valid_names:
+      msg = "{} is not a valid protocol for database {}"
+      raise schema.SchemaError(msg.format(name, self.dbname))
+
+    return True
+
+
+class validate_group(object):
+  '''Validates the group for a given database
+
+
+  Parameters:
+
+    name (str): The name of the database to validate the group for
+
+
+  Raises:
+
+    schema.SchemaError: if the database is not supported
+
+  '''
+
+  def __init__(self, name):
+
+    self.dbname = name
+
+    if name == 'fv3d':
+      import bob.db.fv3d
+      self.valid_names = bob.db.fv3d.Database().groups()
+    elif name == 'verafinger':
+      import bob.db.verafinger
+      self.valid_names = bob.db.verafinger.Database().groups()
+    else:
+      raise schema.SchemaError("do not support database {}".format(name))
+
+
+  def __call__(self, name):
+
+    if name not in self.valid_names:
+      msg = "{} is not a valid group for database {}"
+      raise schema.SchemaError(msg.format(name, self.dbname))
+
+    return True

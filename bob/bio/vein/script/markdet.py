@@ -13,7 +13,7 @@ Usage: %(prog)s [-v...] [--samples=N] [--model=PATH] [--points=N] [--hidden=N]
 Arguments:
 
   <database>  Name of the database to use for creating the model (options are:
-              "fv3d")
+              "fv3d" or "verafinger")
   <protocol>  Name of the protocol to use for creating the model (options
               depend on the database chosen)
   <group>     Name of the group to use on the database/protocol with the
@@ -89,7 +89,8 @@ def validate(args):
 
   '''
 
-  from .validate import check_model_does_not_exist
+  from .validate import check_model_does_not_exist, validate_protocol, \
+      validate_group
 
   sch = schema.Schema({
     '--model': check_model_does_not_exist,
@@ -98,9 +99,9 @@ def validate(args):
     '--hidden': schema.Use(int),
     '--batch': schema.Use(int),
     '--iterations': schema.Use(int),
-    '<database>': lambda n: n in ('fv3d',),
-    '<protocol>': lambda n: n in ('central', 'left', 'right'),
-    '<group>': lambda n: n in ('dev',),
+    '<database>': lambda n: n in ('fv3d', 'verafinger'),
+    '<protocol>': validate_protocol(args['<database>']),
+    '<group>': validate_group(args['<database>']),
     str: object, #ignores strings we don't care about
     }, ignore_extra_keys=True)
 
@@ -134,10 +135,19 @@ def main(user_input=None):
   except schema.SchemaError as e:
     sys.exit(e)
 
-  from ..configurations.fv3d import database as db
+  if args['<database>'] == 'fv3d':
+    from ..configurations.fv3d import database as db
+  elif args['<database>'] == 'verafinger':
+    from ..configurations.verafinger import database as db
+  else:
+    raise schema.SchemaError('Database %s is not supported' % \
+        args['<database>'])
+
   database_replacement = "%s/.bob_bio_databases.txt" % os.environ["HOME"]
   db.replace_directories(database_replacement)
   objects = db.objects(protocol=args['<protocol>'], groups=args['<group>'])
+  if args['--samples'] is None:
+    args['--samples'] = len(objects)
 
   from ..preprocessor.utils import poly_to_mask
   features = None
@@ -169,6 +179,7 @@ def main(user_input=None):
           dtype='bool')
 
     mask = poly_to_mask(image.shape, image.metadata['roi'])
+
     mask = mask[1:-1, 1:-1]
     for y in range(windows.shape[0]):
       for x in range(windows.shape[1]):
@@ -232,7 +243,7 @@ def main(user_input=None):
   pos_errors = pos_output < 0
   hter_train = ((sum(neg_errors) / float(len(negatives))) + \
       (sum(pos_errors)) / float(len(positives))) / 2.0
-  logger.info('Training set HTER: %.2f%%', hter_train)
+  logger.info('Training set HTER: %.2f%%', 100*hter_train)
   logger.info('  Errors on negatives: %d / %d', sum(neg_errors), len(negatives))
   logger.info('  Errors on positives: %d / %d', sum(pos_errors), len(positives))
 
@@ -241,7 +252,8 @@ def main(user_input=None):
   pos_errors = pos_output < -threshold
   hter_train = ((sum(neg_errors) / float(len(negatives))) + \
       (sum(pos_errors)) / float(len(positives))) / 2.0
-  logger.info('Training set HTER (threshold=%g): %.2f%%', threshold, hter_train)
+  logger.info('Training set HTER (threshold=%g): %.2f%%', threshold,
+      100*hter_train)
   logger.info('  Errors on negatives: %d / %d', sum(neg_errors), len(negatives))
   logger.info('  Errors on positives: %d / %d', sum(pos_errors), len(positives))
   # plot separation threshold
