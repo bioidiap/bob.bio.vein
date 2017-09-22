@@ -80,4 +80,4 @@ class Database(BioDatabase):
 
 
     def annotations(self, file):
-            return None
+        return None
