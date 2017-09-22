@@ -12,12 +12,13 @@ Usage: %(prog)s [-v...] [-s <path>] <database> <processed> <stem> [<stem>...]
 
 Arguments:
 
-  <database>  Path to the database with the image to be inspected
+  <database>   Name of the database to use for creating the model (options are:
+               "fv3d" or "verafinger")
   <processed>  Path with the directory holding the preprocessed and extracted
                sub-directories containing the processing results of a
                bob.bio.vein toolchain
-  <stem>       Name of the object on the database to display, with the root or
-               the extension
+  <stem>       Name of the object on the database to display, without the root
+               or the extension
 
 
 Options:
@@ -31,13 +32,13 @@ Options:
 
 Examples:
 
-  Visualize to processing toolchain over a single image
+  Visualize to processing toolchain over a single image of VERA finger vein:
 
-     $ %(prog)s /database /mc client/sample
+     $ %(prog)s verafinger /mc client/sample
 
   Visualize multiple masks (like in a proof-sheet):
 
-     $ %(prog)s /database /mc client/sample1 client/sample2
+     $ %(prog)s verafinger /mc client/sample1 client/sample2
 
 """
 
@@ -46,6 +47,10 @@ import os
 import sys
 
 import numpy
+
+import schema
+import docopt
+
 import bob.core
 logger = bob.core.log.setup("bob.bio.vein")
 
@@ -148,6 +153,41 @@ def proof_figure(title, image, mask, image_pp, binary=None):
   return fig
 
 
+def validate(args):
+  '''Validates command-line arguments, returns parsed values
+
+  This function uses :py:mod:`schema` for validating :py:mod:`docopt`
+  arguments. Logging level is not checked by this procedure (actually, it is
+  ignored) and must be previously setup as some of the elements here may use
+  logging for outputing information.
+
+
+  Parameters:
+
+    args (dict): Dictionary of arguments as defined by the help message and
+      returned by :py:mod:`docopt`
+
+
+  Returns
+
+    dict: Validate dictionary with the same keys as the input and with values
+      possibly transformed by the validation procedure
+
+
+  Raises:
+
+    schema.SchemaError: in case one of the checked options does not validate.
+
+  '''
+
+  sch = schema.Schema({
+    '<database>': lambda n: n in ('fv3d', 'verafinger'),
+    str: object, #ignores strings we don't care about
+    }, ignore_extra_keys=True)
+
+  return sch.validate(args)
+
+
 def main(user_input=None):
 
   if user_input is not None:
@@ -155,7 +195,6 @@ def main(user_input=None):
   else:
     argv = sys.argv[1:]
 
-  import docopt
   import pkg_resources
 
   completions = dict(
@@ -169,22 +208,41 @@ def main(user_input=None):
       version=completions['version'],
       )
 
-  # Sets-up logging
-  verbosity = int(args['--verbose'])
-  bob.core.log.set_verbosity_level(logger, verbosity)
+  try:
+    from .validate import setup_logger
+    logger = setup_logger('bob.bio.vein', args['--verbose'])
+    args = validate(args)
+  except schema.SchemaError as e:
+    sys.exit(e)
+
+  if args['<database>'] == 'fv3d':
+    from ..configurations.fv3d import database as db
+  elif args['<database>'] == 'verafinger':
+    from ..configurations.verafinger import database as db
+  else:
+    raise schema.SchemaError('Database %s is not supported' % \
+        args['<database>'])
+
+  database_replacement = "%s/.bob_bio_databases.txt" % os.environ["HOME"]
+  db.replace_directories(database_replacement)
+  all_files = db.objects()
 
   # Loads the image, the mask and save it to a PNG file
   for stem in args['<stem>']:
-    image = bob.bio.base.load(os.path.join(args['<database>'], stem + '.png'))
-    image = numpy.rot90(image, k=-1)
-    pp = bob.io.base.HDF5File(os.path.join(args['<processed>'],
-      'preprocessed', stem + '.hdf5'))
+    f = [k for k in all_files if k.path == stem]
+    if len(f) == 0:
+      raise RuntimeError('File with stem "%s" does not exist on "%s"' % \
+          stem, args['<database>'])
+    f = f[0]
+    image = f.load(db.original_directory, db.original_extension)
+    pp_name = f.make_path(os.path.join(args['<processed>'], 'preprocessed'),
+        extension='.hdf5')
+    pp = bob.io.base.HDF5File(pp_name)
     mask  = pp.read('mask')
     image_pp = pp.read('image')
-    binary_path = os.path.join(args['<processed>'], 'extracted', stem + '.hdf5')
-    if os.path.exists(binary_path):
-      binary = bob.io.base.load(binary_path)
-    else:
+    try:
+      binary = f.load(os.path.join(args['<processed>'], 'extracted'))
+    except:
       binary = None
     fig = proof_figure(stem, image, mask, image_pp, binary)
     if args['--save']:
