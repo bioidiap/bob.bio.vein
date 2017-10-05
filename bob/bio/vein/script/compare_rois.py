@@ -171,7 +171,6 @@ def main(user_input=None):
   from ..preprocessor import utils
   metrics = []
   for k in gt:
-    logger.info("Evaluating metrics for `%s'..." % k)
     gt_file = os.path.join(args['<ground-truth>'], k)
     db_file = os.path.join(args['<database>'], k)
     gt_roi = bob.io.base.HDF5File(gt_file).read('mask')
@@ -182,6 +181,7 @@ def main(user_input=None):
       utils.intersect_ratio(gt_roi, db_roi),
       utils.intersect_ratio_of_complement(gt_roi, db_roi),
       ))
+    logger.info("%s: JI = %.5g, M1 = %.5g, M2 = %5.g" % metrics[-1])
 
   # Print statistics
   names = (
