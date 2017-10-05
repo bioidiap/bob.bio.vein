@@ -6,7 +6,8 @@
 import math
 import numpy
 import scipy.ndimage
-import skimage
+import skimage.filters
+import skimage.morphology
 
 from .utils import poly_to_mask
 
@@ -511,18 +512,29 @@ class WatershedMask(Masker):
       finger/background markers. This model should be pre-trained using a
       separate program.
 
-    threshold (float): Threshold given a logistic regression output (interval
-      :math:`[0, 1]`) for which we consider finger markers provided by the
-      network.  The higher the value, the more selective the algorithm will be
-      and the less markers will be used from the network selection. This value
-      should be a floating point number in the open-set interval :math:`(0.5,
-      1.0)`.  Values for background selection will be set to :math:`1.0-T`,
-      where ``T`` represents this threshold.
+    foreground_threshold (float): Threshold given a logistic regression output
+      (interval :math:`[0, 1]`) for which we consider finger markers provided
+      by the network.  The higher the value, the more selective the algorithm
+      will be and the less (foreground) markers will be used from the network
+      selection. This value should be a floating point number in the open-set
+      interval :math:`(0.0, 1.0)`.  If ``background_threshold`` is not set,
+      values for background selection will be set to :math:`1.0-T`, where ``T``
+      represents this threshold.
+
+    background_threshold (float): Threshold given a logistic regression output
+      (interval :math:`[0, 1]`) for which we consider finger markers provided
+      by the network.  The smaller the value, the more selective the algorithm
+      will be and the less (background) markers will be used from the network
+      selection. This value should be a floating point number in the open-set
+      interval :math:`(0.0, 1.0)`.  If ``foreground_threshold`` is not set,
+      values for foreground selection will be set to :math:`1.0-T`, where ``T``
+      represents this threshold.
+
 
   """
 
 
-  def __init__(self, model, threshold):
+  def __init__(self, model, foreground_threshold, background_threshold):
 
     import bob.io.base
     import bob.learn.mlp
@@ -533,38 +545,18 @@ class WatershedMask(Masker):
     self.labeller.load(h5f)
     self.labeller.output_activation = bob.learn.activation.Logistic()
     del h5f
-    self.threshold = threshold
 
+    # adjust threshold from background and foreground
+    if foreground_threshold is None and background_threshold is not None:
+      foreground_threshold = 1 - background_threshold
+    if background_threshold is None and foreground_threshold is not None:
+      background_threshold = 1 - foreground_threshold
+    if foreground_threshold is None and background_threshold is None:
+      foreground_threshold = 0.5
+      background_threshold = 0.5
 
-  def _view(self, image, markers, edges, mask):
-    '''displays and overview plot of the mask detection'''
-
-    import matplotlib.pyplot as plt
-
-    plt.subplot(2,2,1)
-    _ = markers.copy()
-    _[_==1] = 128
-    plt.imshow(_, cmap='gray')
-    plt.title('Markers')
-
-    plt.subplot(2,2,2)
-    plt.imshow(edges*255, cmap='gray')
-    plt.title('Edges')
-
-    plt.subplot(2,2,3)
-    plt.imshow(mask.astype('uint8')*255, cmap='gray')
-    plt.title('Mask')
-
-    plt.subplot(2,2,4)
-    plt.imshow(image, cmap='gray')
-    red_mask = numpy.dstack([
-        (~mask).astype('uint8')*255,
-        numpy.zeros_like(image),
-        numpy.zeros_like(image),
-        ])
-    plt.imshow(red_mask, alpha=0.15)
-    plt.title('Image (masked)')
-    plt.show()
+    self.foreground_threshold = foreground_threshold
+    self.background_threshold = background_threshold
 
 
   class _filterfun(object):
@@ -593,8 +585,8 @@ class WatershedMask(Masker):
       return self.labeller(self.features, self.output)
 
 
-  def __call__(self, image):
-    '''Inputs an image, returns a mask (numpy boolean array)
+  def run(self, image):
+    '''Fully preprocesses the input image and returns intermediate results
 
       Parameters:
 
@@ -603,6 +595,12 @@ class WatershedMask(Masker):
 
 
       Returns:
+
+        numpy.ndarray: A 2D numpy array of type ``uint8`` with the markers for
+        foreground and background, selected by the neural network model
+
+        numpy.ndarray: A 2D numpy array of type ``float64`` with the edges used
+        to define the borders of the watermasking process
 
         numpy.ndarray: A 2D numpy array of type boolean with the caculated
         mask. ``True`` values correspond to regions where the finger is
@@ -621,17 +619,23 @@ class WatershedMask(Masker):
 
     # applies a morphological "opening" operation
     # (https://en.wikipedia.org/wiki/Opening_(morphology)) to remove outliers
-    markers_bg = numpy.where(predictions<(1-self.threshold), 1, 0)
+    markers_bg = numpy.where(predictions<self.background_threshold, 1, 0)
     markers_bg = skimage.morphology.opening(markers_bg, selem=selector)
-    markers_fg = numpy.where(predictions>self.threshold, 255, 0)
+    markers_fg = numpy.where(predictions>=self.foreground_threshold, 255, 0)
     markers_fg = skimage.morphology.opening(markers_fg, selem=selector)
+
+    # avoids most important finger borders are loaded with markers
+    selector = skimage.morphology.disk(radius=2)
+    markers_fg = skimage.morphology.erosion(markers_fg, selem=selector)
 
     # the final markers are a combination of foreground and background markers
     markers = markers_fg | markers_bg
 
     # this will determine the natural boundaries in the image where the
-    # flooding will be limited
+    # flooding will be limited - dialation is applied on the output of the
+    # Sobel filter to well mark the finger boundaries
     edges = skimage.filters.sobel(image)
+    edges = skimage.morphology.dilation(edges, selem=selector)
 
     # applies watersheding to get a final estimate of the finger mask
     segmentation = skimage.morphology.watershed(edges, markers)
@@ -641,7 +645,25 @@ class WatershedMask(Masker):
     mask = skimage.morphology.binary_opening(segmentation.astype('bool'),
         selem=selector)
 
-    # visualizes processing
-    #self._view(image, markers, edges, mask)
+    return markers, edges, mask
 
+
+  def __call__(self, image):
+    '''Inputs an image, returns a mask (numpy boolean array)
+
+      Parameters:
+
+        image (numpy.ndarray): A 2D numpy array of type ``uint8`` with the
+          input image
+
+
+      Returns:
+
+        numpy.ndarray: A 2D numpy array of type boolean with the caculated
+        mask. ``True`` values correspond to regions where the finger is
+        located
+
+    '''
+
+    markers, edges, mask = self.run(image)
     return mask
