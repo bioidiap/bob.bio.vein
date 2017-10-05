@@ -180,8 +180,11 @@ def validate(args):
 
   '''
 
+  valid_databases = ('fv3d', 'verafinger')
+
   sch = schema.Schema({
-    '<database>': lambda n: n in ('fv3d', 'verafinger'),
+    '<database>': schema.And(lambda n: n in valid_databases,
+      error='<database> must be one of %s' % ', '.join(valid_databases)),
     str: object, #ignores strings we don't care about
     }, ignore_extra_keys=True)
 
@@ -219,9 +222,6 @@ def main(user_input=None):
     from ..configurations.fv3d import database as db
   elif args['<database>'] == 'verafinger':
     from ..configurations.verafinger import database as db
-  else:
-    raise schema.SchemaError('Database %s is not supported' % \
-        args['<database>'])
 
   database_replacement = "%s/.bob_bio_databases.txt" % os.environ["HOME"]
   db.replace_directories(database_replacement)
