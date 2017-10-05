@@ -32,7 +32,7 @@ Options:
 
 Examples:
 
-  Visualize to processing toolchain over a single image of VERA finger vein:
+  Visualize the processing toolchain over a single image of VERA finger vein:
 
      $ %(prog)s verafinger /mc client/sample
 
