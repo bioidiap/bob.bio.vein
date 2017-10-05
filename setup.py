@@ -53,6 +53,7 @@ setup(
         'view_sample.py = bob.bio.vein.script.view_sample:main',
         'blame.py = bob.bio.vein.script.blame:main',
         'markdet.py = bob.bio.vein.script.markdet:main',
+        'watershed_mask.py = bob.bio.vein.script.watershed_mask:main',
         ]
       },
 
