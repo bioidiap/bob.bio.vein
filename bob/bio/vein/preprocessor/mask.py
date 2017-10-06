@@ -624,7 +624,7 @@ class WatershedMask(Masker):
     markers_fg = numpy.where(predictions>=self.foreground_threshold, 255, 0)
     markers_fg = skimage.morphology.opening(markers_fg, selem=selector)
 
-    # avoids most important finger borders are loaded with markers
+    # avoids markers on finger borders
     selector = skimage.morphology.disk(radius=2)
     markers_fg = skimage.morphology.erosion(markers_fg, selem=selector)
 
