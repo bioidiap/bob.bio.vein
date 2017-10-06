@@ -20,23 +20,13 @@ or the attribute ``sub_directory`` in a configuration file loaded **after**
 this resource.
 """
 
-from ..preprocessor import NoCrop, Padder, TomesLeeMask, \
-    HuangNormalization, NoFilter, Preprocessor
-
-# Filter sizes for the vertical "high-pass" filter
-FILTER_HEIGHT = 4
-FILTER_WIDTH = 40
-
-# Padding (to create a buffer during normalization)
-PAD_WIDTH = 5
-PAD_CONST = 51
+from ..preprocessor import NoCrop, TomesLeeMask, HuangNormalization, \
+    NoFilter, Preprocessor
 
 preprocessor = Preprocessor(
     crop=NoCrop(),
-    mask=TomesLeeMask(filter_height=FILTER_HEIGHT, filter_width=FILTER_WIDTH,
-      padder=Padder(padding_width=PAD_WIDTH, padding_constant=PAD_CONST)),
-    normalize=HuangNormalization(padding_width=PAD_WIDTH,
-      padding_constant=PAD_CONST),
+    mask=TomesLeeMask(),
+    normalize=HuangNormalization(),
     filter=NoFilter(),
     )
 """Preprocessing using gray-level based finger cropping and no post-processing
@@ -44,21 +34,7 @@ preprocessor = Preprocessor(
 
 from ..extractor import RepeatedLineTracking
 
-# Maximum number of iterations
-NUMBER_ITERATIONS = 3000
-
-# Distance between tracking point and cross section of profile
-DISTANCE_R = 1
-
-# Width of profile
-PROFILE_WIDTH = 21
-
-extractor = RepeatedLineTracking(
-    iterations=NUMBER_ITERATIONS,
-    r=DISTANCE_R,
-    profile_w=PROFILE_WIDTH,
-    seed=0, #Sets numpy.random.seed() to this value
-    )
+extractor = RepeatedLineTracking()
 """Features are the output of repeated-line tracking, as described on [MNM04]_.
 
 Defaults taken from [TV13]_.

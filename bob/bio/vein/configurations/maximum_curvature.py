@@ -20,30 +20,20 @@ or the attribute ``sub_directory`` in a configuration file loaded **after**
 this resource.
 """
 
-from ..preprocessor import NoCrop, Padder, TomesLeeMask, \
-    HuangNormalization, NoFilter, Preprocessor
-
-# Filter sizes for the vertical "high-pass" filter
-FILTER_HEIGHT = 4
-FILTER_WIDTH = 40
-
-# Padding (to create a buffer during normalization)
-PAD_WIDTH = 5
-PAD_CONST = 51
+from ..preprocessor import NoCrop, TomesLeeMask, HuangNormalization, \
+    NoFilter, Preprocessor
 
 preprocessor = Preprocessor(
     crop=NoCrop(),
-    mask=TomesLeeMask(filter_height=FILTER_HEIGHT, filter_width=FILTER_WIDTH,
-      padder=Padder(padding_width=PAD_WIDTH, padding_constant=PAD_CONST)),
-    normalize=HuangNormalization(padding_width=PAD_WIDTH,
-      padding_constant=PAD_CONST),
+    mask=TomesLeeMask(),
+    normalize=HuangNormalization(),
     filter=NoFilter(),
     )
 """Preprocessing using gray-level based finger cropping and no post-processing
 """
 
 from ..extractor import MaximumCurvature
-extractor = MaximumCurvature(sigma = 5)
+extractor = MaximumCurvature()
 """Features are the output of the maximum curvature algorithm, as described on
 [MNM05]_.
 
@@ -53,7 +43,7 @@ Defaults taken from [TV13]_.
 # Notice the values of ch and cw are different than those from the
 # repeated-line tracking baseline.
 from ..algorithm import MiuraMatch
-algorithm = MiuraMatch(ch=80, cw=90)
+algorithm = MiuraMatch()
 """Miura-matching algorithm with specific settings for search displacement
 
 Defaults taken from [TV13]_.

@@ -47,8 +47,8 @@ class MiuraMatch (Algorithm):
   """
 
   def __init__(self,
-      ch = 8,       # Maximum search displacement in y-direction
-      cw = 5,       # Maximum search displacement in x-direction
+      ch = 80,       # Maximum search displacement in y-direction
+      cw = 90,       # Maximum search displacement in x-direction
       ):
 
     # call base class constructor

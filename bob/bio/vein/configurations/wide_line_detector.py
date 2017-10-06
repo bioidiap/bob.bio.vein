@@ -20,23 +20,13 @@ or the attribute ``sub_directory`` in a configuration file loaded **after**
 this resource.
 """
 
-from ..preprocessor import NoCrop, Padder, TomesLeeMask, \
-    HuangNormalization, NoFilter, Preprocessor
-
-# Filter sizes for the vertical "high-pass" filter
-FILTER_HEIGHT = 4
-FILTER_WIDTH = 40
-
-# Padding (to create a buffer during normalization)
-PAD_WIDTH = 5
-PAD_CONST = 51
+from ..preprocessor import NoCrop, TomesLeeMask, HuangNormalization, \
+    NoFilter, Preprocessor
 
 preprocessor = Preprocessor(
     crop=NoCrop(),
-    mask=TomesLeeMask(filter_height=FILTER_HEIGHT, filter_width=FILTER_WIDTH,
-      padder=Padder(padding_width=PAD_WIDTH, padding_constant=PAD_CONST)),
-    normalize=HuangNormalization(padding_width=PAD_WIDTH,
-      padding_constant=PAD_CONST),
+    mask=TomesLeeMask(),
+    normalize=HuangNormalization(),
     filter=NoFilter(),
     )
 """Preprocessing using gray-level based finger cropping and no post-processing
@@ -44,20 +34,7 @@ preprocessor = Preprocessor(
 
 from ..extractor import WideLineDetector
 
-# Radius of the circular neighbourhood region
-RADIUS_NEIGHBOURHOOD_REGION = 5
-NEIGHBOURHOOD_THRESHOLD = 1
-
-#Sum of neigbourhood threshold
-SUM_NEIGHBOURHOOD = 41
-RESCALE = True
-
-extractor = WideLineDetector(
-    radius=RADIUS_NEIGHBOURHOOD_REGION,
-    threshold=NEIGHBOURHOOD_THRESHOLD,
-    g=SUM_NEIGHBOURHOOD,
-    rescale=RESCALE
-    )
+extractor = WideLineDetector()
 """Features are the output of the maximum curvature algorithm, as described on
 [HDLTL10]_.
 

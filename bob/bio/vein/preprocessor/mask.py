@@ -213,7 +213,7 @@ class KonoMask(Masker):
 
   """
 
-  def __init__(self, sigma=5, padder=None):
+  def __init__(self, sigma=5, padder=Padder()):
 
     self.sigma = sigma
     self.padder = padder
@@ -314,7 +314,7 @@ class LeeMask(Masker):
 
   """
 
-  def __init__(self, filter_height = 4, filter_width = 40, padder=None):
+  def __init__(self, filter_height = 4, filter_width = 40, padder=Padder()):
     self.filter_height = filter_height
     self.filter_width = filter_width
     self.padder = padder
@@ -403,7 +403,7 @@ class TomesLeeMask(Masker):
 
   """
 
-  def __init__(self, filter_height = 4, filter_width = 40, padder=None):
+  def __init__(self, filter_height = 4, filter_width = 40, padder=Padder()):
     self.filter_height = filter_height
     self.filter_width = filter_width
     self.padder = padder
