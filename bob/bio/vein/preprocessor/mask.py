@@ -483,7 +483,7 @@ class WatershedMask(Masker):
   """Estimates the finger region given an input NIR image using Watershedding
 
   This method uses the `Watershedding Morphological Algorithm
-  <https://en.wikipedia.org/wiki/Watershed_(image_processing>` for determining
+  <https://en.wikipedia.org/wiki/Watershed_(image_processing)>` for determining
   the finger mask given an input image.
 
   The masker works first by determining image edges using a simple 2-D Sobel
