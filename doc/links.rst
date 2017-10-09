@@ -20,4 +20,4 @@
 .. _mailing list: https://www.idiap.ch/software/bob/discuss
 .. _bob.bio.base: https://pypi.python.org/pypi/bob.bio.base
 .. _jaccard index: https://en.wikipedia.org/wiki/Jaccard_index
-.. _watershed:
+.. _watershed: https://en.wikipedia.org/wiki/Watershed_(image_processing)
