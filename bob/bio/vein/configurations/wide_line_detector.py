@@ -20,27 +20,21 @@ or the attribute ``sub_directory`` in a configuration file loaded **after**
 this resource.
 """
 
-from ..preprocessor import FingerCrop
-preprocessor = FingerCrop()
+from ..preprocessor import NoCrop, TomesLeeMask, HuangNormalization, \
+    NoFilter, Preprocessor
+
+preprocessor = Preprocessor(
+    crop=NoCrop(),
+    mask=TomesLeeMask(),
+    normalize=HuangNormalization(),
+    filter=NoFilter(),
+    )
 """Preprocessing using gray-level based finger cropping and no post-processing
 """
 
 from ..extractor import WideLineDetector
 
-# Radius of the circular neighbourhood region
-RADIUS_NEIGHBOURHOOD_REGION = 5
-NEIGHBOURHOOD_THRESHOLD = 1
-
-#Sum of neigbourhood threshold
-SUM_NEIGHBOURHOOD = 41
-RESCALE = True
-
-extractor = WideLineDetector(
-    radius=RADIUS_NEIGHBOURHOOD_REGION,
-    threshold=NEIGHBOURHOOD_THRESHOLD,
-    g=SUM_NEIGHBOURHOOD,
-    rescale=RESCALE
-    )
+extractor = WideLineDetector()
 """Features are the output of the maximum curvature algorithm, as described on
 [HDLTL10]_.
 

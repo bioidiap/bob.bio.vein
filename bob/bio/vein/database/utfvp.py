@@ -42,9 +42,14 @@ class Database(BioDatabase):
                 model_ids=None, **kwargs):
 
         retval = self._db.objects(groups=groups, protocol=protocol,
-                                  purposes=purposes, model_ids=model_ids, **kwargs)
+            purposes=purposes, model_ids=model_ids, **kwargs)
 
         return [File(f) for f in retval]
 
     def annotations(self, file):
         return None
+
+    def client_id_from_model_id(self, model_id, group='dev'):
+        """Required as ``model_id != client_id`` on this database"""
+
+        return self._db.get_client_id_from_model_id(model_id)

@@ -14,7 +14,6 @@ the generated sphinx documentation)
 
 import os
 import numpy
-import numpy as np
 import nose.tools
 
 import pkg_resources
@@ -30,9 +29,92 @@ def F(parts):
   """Returns the test file path"""
 
   return pkg_resources.resource_filename(__name__, os.path.join(*parts))
- 
 
-def test_finger_crop():
+
+def test_cropping():
+
+  # tests if the cropping stage at preprocessors works as planned
+
+  from ..preprocessor.crop import FixedCrop, NoCrop
+
+  shape = (20, 17)
+  test_image = numpy.random.randint(0, 1000, size=shape, dtype=int)
+
+  dont_crop = NoCrop()
+  cropped = dont_crop(test_image)
+  nose.tools.eq_(test_image.shape, cropped.shape)
+  nose.tools.eq_((test_image-cropped).sum(), 0)
+
+  top = 5; bottom = 2; left=3; right=7
+  fixed_crop = FixedCrop(top, bottom, left, right)
+  cropped = fixed_crop(test_image)
+  nose.tools.eq_(cropped.shape, (shape[0]-(top+bottom), shape[1]-(left+right)))
+  nose.tools.eq_((test_image[top:-bottom,left:-right]-cropped).sum(), 0)
+
+  # tests metadata survives after cropping (and it is corrected)
+  from ..database import AnnotatedArray
+  annotations = [
+      (top-2, left+2), #slightly above and to the right
+      (top+3, shape[1]-(right+1)+3), #slightly down and to the right
+      (shape[0]-(bottom+1)+4, shape[1]-(right+1)-2),
+      (shape[0]-(bottom+1)+1, left),
+      ]
+  annotated_image = AnnotatedArray(test_image, metadata=dict(roi=annotations))
+  assert hasattr(annotated_image, 'metadata')
+  cropped = fixed_crop(annotated_image)
+  assert hasattr(cropped, 'metadata')
+  assert numpy.allclose(cropped.metadata['roi'], [
+    (0, 2),
+    (3, cropped.shape[1]-1),
+    (cropped.shape[0]-1, 4),
+    (cropped.shape[0]-1, 0),
+    ])
+
+
+def test_masking():
+
+  # tests if the masking stage at preprocessors work as planned
+
+  from ..preprocessor.mask import FixedMask, NoMask, AnnotatedRoIMask
+  from ..database import AnnotatedArray
+
+  shape = (17, 20)
+  test_image = numpy.random.randint(0, 1000, size=shape, dtype=int)
+
+  masker = NoMask()
+  mask = masker(test_image)
+  nose.tools.eq_(mask.dtype, numpy.dtype('bool'))
+  nose.tools.eq_(mask.shape, test_image.shape)
+  nose.tools.eq_(mask.sum(), numpy.prod(shape))
+
+  top = 4; bottom = 2; left=3; right=1
+  masker = FixedMask(top, bottom, left, right)
+  mask = masker(test_image)
+  nose.tools.eq_(mask.dtype, numpy.dtype('bool'))
+  nose.tools.eq_(mask.sum(), (shape[0]-(top+bottom)) * (shape[1]-(left+right)))
+  nose.tools.eq_(mask[top:-bottom,left:-right].sum(), mask.sum())
+
+  # this matches the previous "fixed" mask - notice we consider the pixels
+  # under the polygon line to be **part** of the RoI (mask position == True)
+  shape = (10, 10)
+  test_image = numpy.random.randint(0, 1000, size=shape, dtype=int)
+  annotations = [
+      (top, left),
+      (top, shape[1]-(right+1)),
+      (shape[0]-(bottom+1), shape[1]-(right+1)),
+      (shape[0]-(bottom+1), left),
+      ]
+  image = AnnotatedArray(test_image, metadata=dict(roi=annotations))
+  masker = AnnotatedRoIMask()
+  mask = masker(image)
+  nose.tools.eq_(mask.dtype, numpy.dtype('bool'))
+  nose.tools.eq_(mask.sum(), (shape[0]-(top+bottom)) * (shape[1]-(left+right)))
+  nose.tools.eq_(mask[top:-bottom,left:-right].sum(), mask.sum())
+
+
+def test_preprocessor():
+
+  # tests the whole preprocessing mechanism, compares to matlab source
 
   input_filename = F(('preprocessors', '0019_3_1_120509-160517.png'))
   output_img_filename  = F(('preprocessors',
@@ -42,9 +124,16 @@ def test_finger_crop():
 
   img = bob.io.base.load(input_filename)
 
-  from bob.bio.vein.preprocessor.FingerCrop import FingerCrop
-  preprocess = FingerCrop(fingercontour='leemaskMatlab', padding_width=0)
-  preproc, mask = preprocess(img)
+  from ..preprocessor import Preprocessor, NoCrop, LeeMask, \
+      HuangNormalization, NoFilter
+
+  processor = Preprocessor(
+      NoCrop(),
+      LeeMask(filter_height=40, filter_width=4),
+      HuangNormalization(padding_width=0, padding_constant=0),
+      NoFilter(),
+      )
+  preproc, mask = processor(img)
   #preprocessor_utils.show_mask_over_image(preproc, mask)
 
   mask_ref = bob.io.base.load(output_fvr_filename).astype('bool')
@@ -53,7 +142,7 @@ def test_finger_crop():
 
   assert numpy.mean(numpy.abs(mask - mask_ref)) < 1e-2
 
- # Very loose comparison!
+  # Very loose comparison!
   #preprocessor_utils.show_image(numpy.abs(preproc.astype('int16') - preproc_ref.astype('int16')).astype('uint8'))
   assert numpy.mean(numpy.abs(preproc - preproc_ref)) < 1.3e2
 
@@ -62,25 +151,40 @@ def test_max_curvature():
 
   #Maximum Curvature method against Matlab reference
 
-  input_img_filename  = F(('extractors', 'miuramax_input_img.mat'))
-  input_fvr_filename  = F(('extractors', 'miuramax_input_fvr.mat'))
-  output_filename     = F(('extractors', 'miuramax_output.mat'))
-
-  # Load inputs
-  input_img = bob.io.base.load(input_img_filename)
-  input_fvr = bob.io.base.load(input_fvr_filename)
+  image = bob.io.base.load(F(('extractors', 'image.hdf5')))
+  image = image.T
+  image = image.astype('float64')/255.
+  mask  = bob.io.base.load(F(('extractors', 'mask.hdf5')))
+  mask  = mask.T
+  mask  = mask.astype('bool')
+  vt_ref = bob.io.base.load(F(('extractors', 'mc_vt_matlab.hdf5')))
+  vt_ref = vt_ref.T
+  g_ref = bob.io.base.load(F(('extractors', 'mc_g_matlab.hdf5')))
+  g_ref = g_ref.T
+  bin_ref = bob.io.base.load(F(('extractors', 'mc_bin_matlab.hdf5')))
+  bin_ref = bin_ref.T
 
   # Apply Python implementation
-  from bob.bio.vein.extractor.MaximumCurvature import MaximumCurvature
-  MC = MaximumCurvature(5)
-  output_img = MC((input_img, input_fvr))
+  from ..extractor.MaximumCurvature import MaximumCurvature
+  MC = MaximumCurvature(3) #value used to create references
 
-  # Load Matlab reference
-  output_img_ref = bob.io.base.load(output_filename)
+  kappa = MC.detect_valleys(image, mask)
+  Vt = MC.eval_vein_probabilities(kappa)
+  Cd = MC.connect_centres(Vt)
+  G = numpy.amax(Cd, axis=2)
+  bina = MC.binarise(G)
 
-  # Compare output of python's implementation to matlab reference
-  # (loose comparison!)
-  assert numpy.mean(numpy.abs(output_img - output_img_ref)) < 8e-3
+  assert numpy.allclose(Vt, vt_ref, 1e-3, 1e-4), \
+      'Vt differs from reference by %s' % numpy.abs(Vt-vt_ref).sum()
+  # Note: due to Matlab implementation bug, can only compare in a limited
+  # range with a 3-pixel around frame
+  assert numpy.allclose(G[2:-3,2:-3], g_ref[2:-3,2:-3]), \
+      'G differs from reference by %s' % numpy.abs(G-g_ref).sum()
+  # We require no more than 30 pixels (from a total of 63'840) are different
+  # between ours and the matlab implementation
+  assert numpy.abs(bin_ref-bina).sum() < 30, \
+      'Binarized image differs from reference by %s' % \
+      numpy.abs(bin_ref-bina).sum()
 
 
 def test_max_curvature_HE():
@@ -89,16 +193,23 @@ def test_max_curvature_HE():
   # Read in input image
   input_img_filename = F(('preprocessors', '0019_3_1_120509-160517.png'))
   input_img = bob.io.base.load(input_img_filename)
-  
+
   # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in maximum_curvature.py configuration file + postprocessing)
-  from bob.bio.vein.preprocessor.FingerCrop import FingerCrop
-  FC = FingerCrop(postprocessing = 'HE')
-  preproc_data = FC(input_img)
+  from ..preprocessor import Preprocessor, NoCrop, LeeMask, \
+      HuangNormalization, HistogramEqualization
+  processor = Preprocessor(
+      NoCrop(),
+      LeeMask(filter_height=40, filter_width=4),
+      HuangNormalization(padding_width=0, padding_constant=0),
+      HistogramEqualization(),
+      )
+  preproc_data = processor(input_img)
 
   # Extract features from preprocessed and histogram equalized data using MC extractor (same parameters as in maximum_curvature.py configuration file)
-  from bob.bio.vein.extractor.MaximumCurvature import MaximumCurvature
+  from ..extractor.MaximumCurvature import MaximumCurvature
   MC = MaximumCurvature(sigma = 5)
   extr_data = MC(preproc_data)
+  #preprocessor_utils.show_image((255.*extr_data).astype('uint8'))
 
 
 def test_repeated_line_tracking():
@@ -114,7 +225,7 @@ def test_repeated_line_tracking():
   input_fvr = bob.io.base.load(input_fvr_filename)
 
   # Apply Python implementation
-  from bob.bio.vein.extractor.RepeatedLineTracking import RepeatedLineTracking
+  from ..extractor.RepeatedLineTracking import RepeatedLineTracking
   RLT = RepeatedLineTracking(3000, 1, 21, False)
   output_img = RLT((input_img, input_fvr))
 
@@ -132,14 +243,20 @@ def test_repeated_line_tracking_HE():
   # Read in input image
   input_img_filename = F(('preprocessors', '0019_3_1_120509-160517.png'))
   input_img = bob.io.base.load(input_img_filename)
-  
+
   # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in repeated_line_tracking.py configuration file + postprocessing)
-  from bob.bio.vein.preprocessor.FingerCrop import FingerCrop
-  FC = FingerCrop(postprocessing = 'HE')
-  preproc_data = FC(input_img)
+  from ..preprocessor import Preprocessor, NoCrop, LeeMask, \
+      HuangNormalization, HistogramEqualization
+  processor = Preprocessor(
+      NoCrop(),
+      LeeMask(filter_height=40, filter_width=4),
+      HuangNormalization(padding_width=0, padding_constant=0),
+      HistogramEqualization(),
+      )
+  preproc_data = processor(input_img)
 
   # Extract features from preprocessed and histogram equalized data using RLT extractor (same parameters as in repeated_line_tracking.py configuration file)
-  from bob.bio.vein.extractor.RepeatedLineTracking import RepeatedLineTracking
+  from ..extractor.RepeatedLineTracking import RepeatedLineTracking
   # Maximum number of iterations
   NUMBER_ITERATIONS = 3000
   # Distance between tracking point and cross section of profile
@@ -163,7 +280,7 @@ def test_wide_line_detector():
   input_fvr = bob.io.base.load(input_fvr_filename)
 
   # Apply Python implementation
-  from bob.bio.vein.extractor.WideLineDetector import WideLineDetector
+  from ..extractor.WideLineDetector import WideLineDetector
   WL = WideLineDetector(5, 1, 41, False)
   output_img = WL((input_img, input_fvr))
 
@@ -180,14 +297,20 @@ def test_wide_line_detector_HE():
   # Read in input image
   input_img_filename = F(('preprocessors', '0019_3_1_120509-160517.png'))
   input_img = bob.io.base.load(input_img_filename)
-  
+
   # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in wide_line_detector.py configuration file + postprocessing)
-  from bob.bio.vein.preprocessor.FingerCrop import FingerCrop
-  FC = FingerCrop(postprocessing = 'HE')
-  preproc_data = FC(input_img)
+  from ..preprocessor import Preprocessor, NoCrop, LeeMask, \
+      HuangNormalization, HistogramEqualization
+  processor = Preprocessor(
+      NoCrop(),
+      LeeMask(filter_height=40, filter_width=4),
+      HuangNormalization(padding_width=0, padding_constant=0),
+      HistogramEqualization(),
+      )
+  preproc_data = processor(input_img)
 
   # Extract features from preprocessed and histogram equalized data using WLD extractor (same parameters as in wide_line_detector.py configuration file)
-  from bob.bio.vein.extractor.WideLineDetector import WideLineDetector
+  from ..extractor.WideLineDetector import WideLineDetector
   # Radius of the circular neighbourhood region
   RADIUS_NEIGHBOURHOOD_REGION = 5
   NEIGHBOURHOOD_THRESHOLD = 1
@@ -210,7 +333,7 @@ def test_miura_match():
   probe_gen_vein = bob.io.base.load(probe_gen_filename)
   probe_imp_vein = bob.io.base.load(probe_imp_filename)
 
-  from bob.bio.vein.algorithm.MiuraMatch import MiuraMatch
+  from ..algorithm.MiuraMatch import MiuraMatch
   MM = MiuraMatch(ch=18, cw=28)
   score_gen = MM.score(template_vein, probe_gen_vein)
 
@@ -218,6 +341,25 @@ def test_miura_match():
 
   score_imp = MM.score(template_vein, probe_imp_vein)
   assert numpy.isclose(score_imp, 0.172906739278421)
+
+
+def test_correlate():
+
+  #Match Ratio method against Matlab reference
+
+  template_filename = F(('algorithms', '0001_2_1_120509-135338.mat'))
+  probe_gen_filename = F(('algorithms', '0001_2_2_120509-135558.mat'))
+  probe_imp_filename = F(('algorithms', '0003_2_1_120509-141255.mat'))
+
+  template_vein = bob.io.base.load(template_filename)
+  probe_gen_vein = bob.io.base.load(probe_gen_filename)
+  probe_imp_vein = bob.io.base.load(probe_imp_filename)
+
+  from ..algorithm.Correlate import Correlate
+  C = Correlate()
+  score_gen = C.score(template_vein, probe_gen_vein)
+
+  # we don't check here - no templates
 
 
 def test_assert_points():

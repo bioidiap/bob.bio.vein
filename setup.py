@@ -35,6 +35,7 @@ setup(
         # databases
         'verafinger = bob.bio.vein.configurations.verafinger',
         'utfvp = bob.bio.vein.configurations.utfvp',
+        'fv3d = bob.bio.vein.configurations.fv3d',
 
         # baselines
         'mc = bob.bio.vein.configurations.maximum_curvature',
@@ -43,11 +44,16 @@ setup(
 
         # other
         'parallel = bob.bio.vein.configurations.parallel',
+        'gridio4g48 = bob.bio.vein.configurations.gridio4g48',
+        'grid = bob.bio.vein.configurations.gridio4g48',
         ],
 
       'console_scripts': [
         'compare_rois.py = bob.bio.vein.script.compare_rois:main',
-        'view_mask.py = bob.bio.vein.script.view_mask:main',
+        'view_sample.py = bob.bio.vein.script.view_sample:main',
+        'blame.py = bob.bio.vein.script.blame:main',
+        'markdet.py = bob.bio.vein.script.markdet:main',
+        'watershed_mask.py = bob.bio.vein.script.watershed_mask:main',
         ]
       },
 

@@ -31,3 +31,14 @@ def test_verafinger():
     except IOError as e:
         raise SkipTest(
             "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'" % e)
+
+
+@db_available('fv3d')
+def test_fv3d():
+    module = bob.bio.base.load_resource('fv3d', 'config',
+        preferred_package='bob.bio.vein')
+    try:
+        check_database(module.database, protocol='central', groups=('dev',))
+    except IOError as e:
+        raise SkipTest(
+            "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'" % e)

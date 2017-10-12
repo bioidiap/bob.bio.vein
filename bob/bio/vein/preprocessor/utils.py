@@ -100,7 +100,7 @@ def poly_to_mask(shape, points):
   # n.b.: PIL images are (x, y), while Bob shapes are represented in (y, x)!
   mask = Image.new('L', (shape[1], shape[0]))
 
-  # coverts whatever comes in into a list of tuples for PIL
+  # converts whatever comes in into a list of tuples for PIL
   fixed = tuple(map(tuple, numpy.roll(fix_points(shape, points), 1, 1)))
 
   # draws polygon

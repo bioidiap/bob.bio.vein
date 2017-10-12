@@ -53,7 +53,7 @@ is available on the section :ref:`bob.bio.vein.resources`.
    instructions described in this guide. You **need first** to procure yourself
    the raw data files that correspond to *each* database used here in order to
    correctly run experiments with those data. Biometric data is considered
-   private date and, under EU regulations, cannot be distributed without a
+   private data and, under EU regulations, cannot be distributed without a
    consent or license. You may consult our
    :ref:`bob.bio.vein.resources.databases` resources section for checking
    currently supported databases and accessing download links for the raw data
@@ -74,6 +74,7 @@ is available on the section :ref:`bob.bio.vein.resources`.
 
       [YOUR_VERAFINGER_DIRECTORY] = /complete/path/to/verafinger
       [YOUR_UTFVP_DIRECTORY] = /complete/path/to/utfvp
+      [YOUR_FV3D_DIRECTORY] = /complete/path/to/fv3d
 
    Notice it is rather important to use the strings as described above,
    otherwise ``bob.bio.base`` will not be able to correctly load your images.
@@ -114,6 +115,18 @@ protocol, do the following:
    .. code-block:: sh
 
       $ verify.py verafinger rlt parallel -vv
+
+   To run on the Idiap SGE grid using our stock
+   io-big-48-slots-4G-memory-enabled (see
+   :py:mod:`bob.bio.vein.configurations.gridio4g48`) configuration, use:
+
+   .. code-block:: sh
+
+      $ verify.py verafinger rlt grid -vv
+
+   You may also, optionally, use the configuration resource ``gridio4g48``,
+   which is just an alias of ``grid`` in this package.
+
 
 
 This command line selects and runs the following implementations for the
@@ -214,34 +227,28 @@ This package may generate results for other combinations of protocols and
 databases. Here is a summary table for some variants (results expressed
 correspond to the the equal-error rate on the development set, in percentage):
 
-======================== ================= ====== ====== ====== ====== ======
-               Approach                     Vera Finger             UTFVP
------------------------------------------- -------------------- -------------
-   Feature Extractor      Post Processing   Full     B    Nom   1vsall  nom
-======================== ================= ====== ====== ====== ====== ======
-Repeated Line Tracking        None          23.9   24.1   24.9   1.7    1.4
-Repeated Line Tracking     Histogram Eq.    26.2   23.6   24.9   2.1    0.9
-Maximum Curvature             None           3.2    3.2    3.1   0.4    0.
-Maximum Curvature          Histogram Eq.     3.0    2.7    2.7   0.4    0.
-Wide Line Detector            None          10.2   10.2   10.5   2.3    1.7
-Wide Line Detector         Histogram Eq.     8.0    9.7    7.3   1.7    0.9
-======================== ================= ====== ====== ====== ====== ======
+======================== ====== ====== ====== ====== ======
+       Toolchain              Vera Finger         UTFVP
+------------------------ -------------------- -------------
+   Feature Extractor      Full     B    Nom   1vsall  nom
+======================== ====== ====== ====== ====== ======
+Repeated Line Tracking    23.9   24.1   24.9   1.7    1.4
+Wide Line Detector        10.2   10.2   10.5   2.3    1.7
+Maximum Curvature          3.2    3.2    3.1   0.4    0.
+======================== ====== ====== ====== ====== ======
 
 In a machine with 48 cores, running these baselines took the following time
 (hh:mm):
 
-======================== ================= ====== ====== ====== ====== ======
-               Approach                     Vera Finger             UTFVP
------------------------------------------- -------------------- -------------
-   Feature Extractor      Post Processing   Full     B    Nom   1vsall  nom
-======================== ================= ====== ====== ====== ====== ======
-Repeated Line Tracking        None          01:16  00:23  00:23  12:44  00:35
-Repeated Line Tracking     Histogram Eq.    00:50  00:23  00:23  13:00  00:35
-Maximum Curvature             None          03:28  00:54  00:59  58:34  01:48
-Maximum Curvature          Histogram Eq.    02:45  00:54  00:59  49:03  01:49
-Wide Line Detector            None          00:07  00:01  00:01  02:25  00:05
-Wide Line Detector         Histogram Eq.    00:04  00:01  00:01  02:04  00:06
-======================== ================= ====== ====== ====== ====== ======
+======================== ====== ====== ====== ====== ======
+       Toolchain              Vera Finger         UTFVP
+------------------------ -------------------- -------------
+   Feature Extractor      Full     B    Nom   1vsall  nom
+======================== ====== ====== ====== ====== ======
+Repeated Line Tracking    01:16  00:23  00:23  12:44  00:35
+Wide Line Detector        00:07  00:01  00:01  02:25  00:05
+Maximum Curvature         03:28  00:54  00:59  58:34  01:48
+======================== ====== ====== ====== ====== ======
 
 
 Modifying Baseline Experiments
@@ -313,6 +320,49 @@ This package contains other resources that can be used to evaluate different
 bits of the vein processing toolchain.
 
 
+Training the Watershed Finger region detector
+=============================================
+
+The correct detection of the finger boundaries is an important step of many
+algorithms for the recognition of finger veins. It allows to compensate for
+eventual rotation and scaling issues one might find when comparing models and
+probes. In this package, we propose a novel finger boundary detector based on
+the `Watershedding Morphological Algorithm
+<https://en.wikipedia.org/wiki/Watershed_(image_processing)>`. Watershedding
+works in three steps:
+
+1. Determine markers on the original image indicating the types of areas one
+   would like to detect (e.g. "finger" or "background")
+2. Determine a 2D (gray-scale) surface representing the original image in which
+   darker spots (representing valleys) are more likely to be filled by
+   surrounding markers. This is normally achieved by filtering the image with a
+   high-pass filter like Sobel or using an edge detector such as Canny.
+3. Run the watershed algorithm
+
+In order to determine markers for step 1, we train a neural network which
+outputs the likelihood of a point being part of a finger, given its coordinates
+and values of surrounding pixels.
+
+When used to run an experiment,
+:py:class:`bob.bio.vein.preprocessor.WatershedMask` requires you provide a
+*pre-trained* neural network model that presets the markers before
+watershedding takes place. In order to create one, you can run the program
+`markdet.py`:
+
+.. code-block:: sh
+
+   $ markdet.py --hidden=20 --samples=500 fv3d central dev
+
+You input, as arguments to this application, the database, protocol and subset
+name you wish to use for training the network. The data is loaded observing a
+total maximum number of samples from the dataset (passed with ``--samples=N``),
+the network is trained and recorded into an HDF5 file (by default, the file is
+called ``model.hdf5``, but the name can be changed with the option
+``--model=``).  Once you have a model, you can use the preprocessor mask by
+constructing an object and attaching it to the
+:py:class:`bob.bio.vein.preprocessor.Preprocessor` entry on your configuration.
+
+
 Region of Interest Goodness of Fit
 ==================================
 
@@ -345,23 +395,34 @@ mask
 can use the option ``-n 5`` to print the 5 worst cases according to each of the
 metrics.
 
-You can use the program ``view_mask.py`` to display the images after the
-preprocessing step using:
+
+Pipeline Display
+================
+
+You can use the program ``view_sample.py`` to display the images after
+full processing using:
 
 .. code-block:: sh
 
-   $ view_mask.py /path/to/verafinger/mc/preprocessed/098-F/098_R_1.hdf5 --save=example.png
-   $ # open example.png
+   $ ./bin/view_sample.py --save=output-dir verafinger /path/to/processed/directory 030-M/030_L_1
+   $ # open output-dir
 
-And you should be able to view an image like this (example taken from the Vera
-fingervein database, using the automatic annotator):
+And you should be able to view images like these (example taken from the Vera
+fingervein database, using the automatic annotator and Maximum Curvature
+feature extractor):
 
-.. figure:: img/vein-mask.*
+.. figure:: img/preprocessed.*
    :scale: 50%
 
    Example RoI overlayed on finger vein image of the Vera fingervein database,
-   as produced by the script ``view_mask.py``.
+   as produced by the script ``view_sample.py``.
 
+
+.. figure:: img/binarized.*
+   :scale: 50%
+
+   Example of fingervein image from the Vera fingervein database, binarized by
+   using Maximum Curvature, after pre-processing.
 
 
 .. include:: links.rst

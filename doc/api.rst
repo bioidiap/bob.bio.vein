@@ -15,6 +15,11 @@ which can be used for vein experiments.
 Database Interfaces
 -------------------
 
+Common Utilities
+================
+
+.. automodule:: bob.bio.vein.database
+
 Vera Fingervein Database
 ========================
 

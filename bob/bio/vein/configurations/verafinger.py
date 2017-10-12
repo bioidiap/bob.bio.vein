@@ -10,18 +10,16 @@ Occidentale in Sion, in Switzerland. The reference citation is [TVM14]_.
 
 You can download the raw data of the `VERA Fingervein`_ database by following
 the link.
-
-.. include:: links.rst
 """
 
 
 from ..database.verafinger import Database
 
-verafinger_directory = "[YOUR_VERAFINGER_DIRECTORY]"
+_verafinger_directory = "[YOUR_VERAFINGER_DIRECTORY]"
 """Value of ``~/.bob_bio_databases.txt`` for this database"""
 
 database = Database(
-    original_directory = verafinger_directory,
+    original_directory = _verafinger_directory,
     original_extension = '.png',
     )
 """The :py:class:`bob.bio.base.database.BioDatabase` derivative with Verafinger

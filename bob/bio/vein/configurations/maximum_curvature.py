@@ -20,13 +20,20 @@ or the attribute ``sub_directory`` in a configuration file loaded **after**
 this resource.
 """
 
-from ..preprocessor import FingerCrop
-preprocessor = FingerCrop()
+from ..preprocessor import NoCrop, TomesLeeMask, HuangNormalization, \
+    NoFilter, Preprocessor
+
+preprocessor = Preprocessor(
+    crop=NoCrop(),
+    mask=TomesLeeMask(),
+    normalize=HuangNormalization(),
+    filter=NoFilter(),
+    )
 """Preprocessing using gray-level based finger cropping and no post-processing
 """
 
 from ..extractor import MaximumCurvature
-extractor = MaximumCurvature(sigma = 5)
+extractor = MaximumCurvature()
 """Features are the output of the maximum curvature algorithm, as described on
 [MNM05]_.
 
@@ -36,7 +43,7 @@ Defaults taken from [TV13]_.
 # Notice the values of ch and cw are different than those from the
 # repeated-line tracking baseline.
 from ..algorithm import MiuraMatch
-algorithm = MiuraMatch(ch=80, cw=90)
+algorithm = MiuraMatch()
 """Miura-matching algorithm with specific settings for search displacement
 
 Defaults taken from [TV13]_.

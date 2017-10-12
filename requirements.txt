@@ -2,6 +2,10 @@ setuptools
 numpy
 scipy
 pillow
+schema
+docopt
+scikit-image
+matplotlib
 bob.extension
 bob.core
 bob.io.base
@@ -12,4 +16,7 @@ bob.bio.base
 bob.db.utfvp
 bob.db.verafinger
 bob.db.putvein
-scikit-image
+bob.db.fv3d
+bob.learn.linear
+bob.learn.activation
+bob.learn.mlp
