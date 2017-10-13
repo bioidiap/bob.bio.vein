@@ -14,26 +14,13 @@ Package Installation
 --------------------
 
 To install this package, first follow our `installation`_ instructions. Then,
-using the Python interpreter provided by the distribution, bootstrap and
-buildout this package:
+using the Python interpreter provided by the distribution, install this
+package:
 
 
 .. code-block:: sh
 
-  $ buildout
-
-
-Sphinx Documentation Building
------------------------------
-
-Once the package is installed, you may re-build this documentation locally by
-running:
-
-.. code-block:: sh
-
-  $ sphinx-build doc html
-
-The resulting HTML documentation will be output inside the directory `html`.
+  $ conda install bob.bio.vein
 
 
 Setting up Databases
@@ -51,21 +38,21 @@ to run the baselines.
 
    If you're at the Idiap Research Institute in Switzlerand, the datasets in
    the baselines mentioned in this guide are already downloaded and
-   pre-installed on our shared file system. You don't need to re-download
-   databases or create a ``~/.bob_bio_databases.txt`` file.
+   pre-installed on our shared file system.
 
 
 The current system readily supports the following freely available datasets:
 
 * ``vera``: `Vera Fingervein`_
 * ``utfvp``: `UTFVP`_
+* ``fv3d``: `3D Fingervein`_
 * ``put``: `PUT`_ Vein Dataset
 
 
 After downloading the databases, annotate the base directories in which they
 are installed. Then, follow the instructions in
-:ref:`bob.bio.base.installation` to let this framework know where databases are
-located on your system.
+:ref:`bob.bio.base.installation` to let this framework know where root
+installation of such databases are located on your system.
 
 
 Development
@@ -91,7 +78,7 @@ package. This operation can be easily done like this:
 
 .. code-block:: sh
 
-  $ bob_dbmanage.py all download
+  $ bob_dbmanage.py all download --missing
 
 
 .. include:: links.rst
