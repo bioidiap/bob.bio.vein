@@ -44,6 +44,14 @@ UTFVP Database
 .. automodule:: bob.bio.vein.configurations.utfvp
    :members:
 
+.. _bob.bio.vein.resources.database.fv3d:
+
+3D Fingervein Database
+======================
+
+.. automodule:: bob.bio.vein.configurations.fv3d
+   :members:
+
 .. _bob.bio.vein.resources.recognition:
 
 Recognition Systems

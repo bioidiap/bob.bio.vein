@@ -30,6 +30,12 @@ UTFVP Database
 
 .. automodule:: bob.bio.vein.database.utfvp
 
+3D Fingervein Database
+======================
+
+.. automodule:: bob.bio.vein.database.fv3d
+
+
 
 Pre-processors
 --------------

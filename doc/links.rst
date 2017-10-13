@@ -13,6 +13,7 @@
 .. _virtualbox: https://www.virtualbox.org
 .. _hdf5: http://www.hdfgroup.org/HDF5
 .. _vera fingervein: https://www.idiap.ch/dataset/vera-fingervein
+.. _3d fingervein: https://www.idiap.ch/dataset/3d-fingervein
 .. _utfvp: http://scs.ewi.utwente.nl/downloads/show,Finger%20Vein/
 .. _put: http://biometrics.put.poznan.pl/vein-dataset/
 .. _installation: https://www.idiap.ch/software/bob/install
