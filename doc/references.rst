@@ -24,3 +24,6 @@
 .. [TVM14] *Pedro Tome, Matthias Vanoni and Sébastien Marcel*, **On the Vulnerability of Finger Vein Recognition to Spoofing**, in: IEEE International Conference of the Biometrics Special Interest Group (BIOSIG), Darmstadt, Germay, pages 1 - 10, IEEE, 2014
 
 .. [TV13] *B. Ton and R. Veldhuis*, **A high quality finger vascular pattern dataset collected using a custom designed capturing device**, in: IAPR International Conference on Biometrics (ICB), 2013.
+
+.. [KK10] *R. Kabacinski and *M. Kowalski, **Human Vein Pattern Segmentation from Low Quality Images - A Comparison of Methods**, in: Image Processing and Communications Challenges 2, pp. 105-112, 2010.
+

@@ -15,7 +15,7 @@
 .. _vera fingervein: https://www.idiap.ch/dataset/vera-fingervein
 .. _3d fingervein: https://www.idiap.ch/dataset/3d-fingervein
 .. _utfvp: http://scs.ewi.utwente.nl/downloads/show,Finger%20Vein/
-.. _put: http://biometrics.put.poznan.pl/vein-dataset/
+.. _put vein: http://biometrics.put.poznan.pl/vein-dataset/
 .. _installation: https://www.idiap.ch/software/bob/install
 .. _dependencies: https://gitlab.idiap.ch/bob/bob/wikis/Dependencies
 .. _mailing list: https://www.idiap.ch/software/bob/discuss

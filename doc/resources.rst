@@ -52,6 +52,16 @@ UTFVP Database
 .. automodule:: bob.bio.vein.configurations.fv3d
    :members:
 
+
+.. _bob.bio.vein.resources.database.putvein:
+
+PUT Vein Databas
+======================
+
+.. automodule:: bob.bio.vein.configurations.putvein
+   :members:
+
+
 .. _bob.bio.vein.resources.recognition:
 
 Recognition Systems
