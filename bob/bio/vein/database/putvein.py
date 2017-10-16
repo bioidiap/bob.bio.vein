@@ -80,6 +80,14 @@ class PutveinBioDatabase(BioDatabase):
         from bob.db.putvein.query import Database as LowLevelDatabase
         self.__db = LowLevelDatabase()
 
+        self.low_level_group_names = ('train', 'dev', 'eval')
+        self.high_level_group_names = ('world', 'dev', 'eval')
+
+    def groups(self):
+
+        return self.convert_names_to_highlevel(self.__db.groups(),
+            self.low_level_group_names, self.high_level_group_names)
+
     def __protocol_split__(self, prot_name):
         """
         Overrides the "high level" database names (see the list abowe) to the
@@ -155,6 +163,8 @@ class PutveinBioDatabase(BioDatabase):
         """
         kind, prot = self.__protocol_split__(protocol)
 
+        groups = self.convert_names_to_lowlevel(groups, self.low_level_group_names, self.high_level_group_names)
+
         return self.__db.model_ids(protocol=prot,
                                    groups=groups,
                                    kinds=kind)
@@ -163,6 +173,9 @@ class PutveinBioDatabase(BioDatabase):
     def objects(self, protocol=None, groups=None, purposes=None, model_ids=None, kinds=None, **kwargs):
 
         kind, prot = self.__protocol_split__(protocol)
+
+        groups = self.convert_names_to_lowlevel(groups, self.low_level_group_names, self.high_level_group_names)
+
         retval = self.__db.objects(protocol=prot,
                                    groups=groups,
                                    purposes=purposes,
