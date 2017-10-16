@@ -1,4 +1,3 @@
-gridtk
-bob.db.verafinger
 bob.db.utfvp
-bob.db.putvein
+bob.db.verafinger
+bob.db.fv3d

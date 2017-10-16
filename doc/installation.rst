@@ -23,6 +23,16 @@ package:
   $ conda install bob.bio.vein
 
 
+You must also install drivers for all database interfaces you may want to use.
+The next command line install some of the available drivers:
+
+.. code-block:: sh
+
+  $ conda install bob.db.utfvp bob.db.verafinger
+
+For a list of currently maintained database drivers, you may check `this file <https://gitlab.idiap.ch/bob/bob.bio.vein/blob/master/test-requirements.txt>`_.
+
+
 Setting up Databases
 --------------------
 
@@ -46,7 +56,8 @@ The current system readily supports the following freely available datasets:
 * ``vera``: `Vera Fingervein`_
 * ``utfvp``: `UTFVP`_
 * ``fv3d``: `3D Fingervein`_
-* ``put``: `PUT`_ Vein Dataset
+
+.. * ``put``: `PUT`_ Vein Dataset
 
 
 After downloading the databases, annotate the base directories in which they

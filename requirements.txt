@@ -13,10 +13,6 @@ bob.io.matlab
 bob.io.image
 bob.ip.base
 bob.bio.base
-bob.db.utfvp
-bob.db.verafinger
-bob.db.putvein
-bob.db.fv3d
 bob.learn.linear
 bob.learn.activation
 bob.learn.mlp
