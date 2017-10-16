@@ -12,6 +12,7 @@ bob.io.base
 bob.io.matlab
 bob.io.image
 bob.ip.base
+bob.ip.color
 bob.bio.base
 bob.learn.linear
 bob.learn.activation
