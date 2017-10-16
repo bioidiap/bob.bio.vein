@@ -42,3 +42,14 @@ def test_fv3d():
     except IOError as e:
         raise SkipTest(
             "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'" % e)
+
+
+@db_available('putvein')
+def test_putvein():
+    module = bob.bio.base.load_resource('putvein', 'config',
+        preferred_package='bob.bio.vein')
+    try:
+        check_database(module.database, protocol='wrist-LR_1', groups=('dev',))
+    except IOError as e:
+        raise SkipTest(
+            "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'" % e)
