@@ -37,8 +37,10 @@ Options:
   -S, --scan                  If set, ignores settings for the threshold and
                               scans the whole range of threshold printing the
                               Jaccard, M1 and M2 merith figures
-  -s <path>, --save=<path>    If set, saves image into a file instead of
-                              displaying it
+  -s <path>, --save=<path>    If set, saves individual image into files instead
+                              of displaying the result of processing. Pass the
+                              name of directory that will be created and
+                              suffixed with the paths of original images.
 
 
 Examples:
@@ -47,10 +49,10 @@ Examples:
 
      $ %(prog)s model.hdf5 verafinger sample-stem
 
-  Save the results of the preprocessing to a file. In this case, the program
-  runs non-interactively:
+  Save the results of the preprocessing to several files. In this case, the
+  program runs non-interactively:
 
-     $ %(prog)s -s graphics.png model.hdf5 verafinger sample-stem
+     $ %(prog)s -s graphics model.hdf5 verafinger sample-stem
 
   Scans the set of possible thresholds printing Jaccard, M1 and M2 indexes:
 
@@ -125,6 +127,28 @@ def validate(args):
   return sch.validate(args)
 
 
+def save_figures(title, image, markers, edges, mask):
+  '''Saves individual images on a directory
+  '''
+
+  dirname = os.path.dirname(title)
+  if not os.path.exists(dirname): os.makedirs(dirname)
+  bob.io.base.save(image, os.path.join(title, 'original.png'))
+
+  _ = markers.copy().astype('uint8')
+  _[_==1] = 128
+  bob.io.base.save(_, os.path.join(title, 'markers.png'))
+
+  bob.io.base.save((255*edges).astype('uint8'), os.path.join(title,'edges.png'))
+
+  bob.io.base.save(mask.astype('uint8')*255, os.path.join(title, 'mask.png'))
+
+  from ..preprocessor.utils import draw_mask_over_image
+
+  masked_image = draw_mask_over_image(image, mask)
+  masked_image.save(os.path.join(title, 'masked.png'))
+
+
 def make_figure(image, markers, edges, mask):
   '''Returns a matplotlib figure with the detailed processing result'''
 
@@ -138,7 +162,7 @@ def make_figure(image, markers, edges, mask):
 
   plt.subplot(2,2,2)
   _ = numpy.dstack([
-      (_ | (2550*edges).astype('uint8')),
+      (_ | (255*edges).astype('uint8')),
       _,
       _,
       ])
@@ -193,15 +217,15 @@ def process_one(args, image, path):
 
   if not args['--scan']:
 
-    fig = make_figure(image, markers, edges, mask)
-    fig.suptitle('%s @ %s - JI=%.4f, M1=%.4f, M2=%.4f\n' \
-        '($\\tau_{FG}$ = %.2f - $\\tau_{BG}$ = %.2f)' % \
-        (path, args['<database>'], ji, m1, m2, args['--fg-threshold'],
-          args['--bg-threshold']), fontsize=12)
-
     if args['--save']:
-      fig.savefig(args['--save'])
+      dest = os.path.join(args['--save'], path)
+      save_figures(dest, image, markers, edges, mask)
     else:
+      fig = make_figure(image, markers, edges, mask)
+      fig.suptitle('%s @ %s - JI=%.4f, M1=%.4f, M2=%.4f\n' \
+          '($\\tau_{FG}$ = %.2f - $\\tau_{BG}$ = %.2f)' % \
+          (path, args['<database>'], ji, m1, m2, args['--fg-threshold'],
+            args['--bg-threshold']), fontsize=12)
       print('Close the figure to continue...')
       plt.show()
 
