@@ -232,7 +232,7 @@ def main(user_input=None):
     f = [k for k in all_files if k.path == stem]
     if len(f) == 0:
       raise RuntimeError('File with stem "%s" does not exist on "%s"' % \
-          stem, args['<database>'])
+          (stem, args['<database>']))
     f = f[0]
     image = f.load(db.original_directory, db.original_extension)
     pp_name = f.make_path(os.path.join(args['<processed>'], 'preprocessed'),
@@ -242,6 +242,7 @@ def main(user_input=None):
     image_pp = pp.read('image')
     try:
       binary = f.load(os.path.join(args['<processed>'], 'extracted'))
+      binary = numpy.rot90(binary, k=1)
     except:
       binary = None
     fig = proof_figure(stem, image, mask, image_pp, binary)
