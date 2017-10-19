@@ -685,3 +685,26 @@ def test_correlation():
   total = time.clock() - start
   print('scipy+correlate2d, %d iterations - %.2e per iteration' % (N, total/N))
   '''
+
+
+def test_hamming_distance():
+
+  from ..algorithm.HammingDistance import HammingDistance
+  HD = HammingDistance()
+
+  # Tests on simple binary arrays:
+  # 1.) Maximum HD (1.0):
+  model_1 = numpy.array([0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0])
+  probe_1 = numpy.array([[1, 0, 0, 0, 1, 0], [0, 1, 1, 1, 0, 1]])
+  score_max = HD.score(model_1, probe_1)
+  assert score_max == 1.0
+  # 2.) Minimum HD (0.0):
+  model_2 = numpy.array([0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1])
+  probe_2 = numpy.array([[0, 1, 1, 1, 0, 1], [0, 1, 1, 1, 0, 1]])
+  score_min = HD.score(model_2, probe_2)
+  assert score_min == 0.0
+  # 3.) HD of exactly half (0.5)
+  model_3 = numpy.array([0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0])
+  probe_3 = numpy.array([[0, 1, 1, 1, 0, 1], [0, 1, 1, 1, 0, 1]])
+  score_half = HD.score(model_3, probe_3)
+  assert score_half == 0.5
