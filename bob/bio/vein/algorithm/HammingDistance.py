@@ -7,8 +7,21 @@ import scipy.spatial.distance
 
 
 class HammingDistance (Distance):
-  """Finger vein matching: Hamming Distance between binary fingervein feature vectors
+  """This class calculates the Hamming distance between two binary images.
+
+  Each binary image is first flattened by concatenating its rows to form a one-dimensional vector.  The Hamming distance is then calculated between the two binary vectors.
+  The Hamming distance is computed using :py:func:`scipy.spatial.distance.hamming`, which returns a scalar ``float`` to represent the proportion of mismatching corresponding bits between the two binary vectors.
+
+  **Parameters:**
+
+  ``distance_function`` : function
+    Set this parameter to ``scipy.spatial.distance.hamming`` to ensure we are calculating the Hamming distance
+
+  ``is_distance_function`` : bool
+    Set this flag to ``False`` to ensure that Hamming distances are returned as positive values rather than negative 
+
   """
+
 
   def __init__(
       self,
