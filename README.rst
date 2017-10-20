@@ -1,17 +1,17 @@
 .. vim: set fileencoding=utf-8 :
 .. Fri 19 Aug 2016 13:32:51 CEST
 
-.. image:: http://img.shields.io/badge/docs-stable-yellow.svg
-   :target: http://beatubulatest.lab.idiap.ch/private/docs/bob/bob.bio.vein/stable/index.html
-.. image:: http://img.shields.io/badge/docs-latest-orange.svg
-   :target: http://beatubulatest.lab.idiap.ch/private/docs/bob/bob.bio.vein/master/index.html
+.. image:: https://img.shields.io/badge/docs-stable-yellow.svg
+   :target: https://www.idiap.ch/software/bob/docs/bob/bob.bio.vein/stable/index.html
+.. image:: https://img.shields.io/badge/docs-latest-orange.svg
+   :target: https://www.idiap.ch/software/bob/docs/bob/bob.bio.vein/master/index.html
 .. image:: https://gitlab.idiap.ch/bob/bob.bio.vein/badges/master/build.svg
    :target: https://gitlab.idiap.ch/bob/bob.bio.vein/commits/master
 .. image:: https://gitlab.idiap.ch/bob/bob.bio.vein/badges/master/coverage.svg
    :target: https://gitlab.idiap.ch/bob/bob.bio.vein/commits/master
 .. image:: https://img.shields.io/badge/gitlab-project-0000c0.svg
    :target: https://gitlab.idiap.ch/bob/bob.bio.vein
-.. image:: http://img.shields.io/pypi/v/bob.bio.vein.svg
+.. image:: https://img.shields.io/pypi/v/bob.bio.vein.svg
    :target: https://pypi.python.org/pypi/bob.bio.vein
 
 
