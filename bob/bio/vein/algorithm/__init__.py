@@ -1,5 +1,4 @@
 from .MiuraMatch import MiuraMatch
-from .MiuraMatchRotationFast import MiuraMatchRotationFast
 from .Correlate import Correlate
 from .HammingDistance import HammingDistance
 
@@ -19,7 +18,6 @@ def __appropriate__(*args):
 
 __appropriate__(
     MiuraMatch,
-    MiuraMatchRotationFast,
     Correlate,
     HammingDistance,
     )
