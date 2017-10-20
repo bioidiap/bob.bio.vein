@@ -20,7 +20,7 @@ class HammingDistance (Distance):
   which returns a scalar 64-bit ``float`` to represent the proportion of
   mismatching corresponding bits between the two binary vectors.
 
-  The base clas constructor parameter ``is_distance_function`` is set to
+  The base class constructor parameter ``is_distance_function`` is set to
   ``False`` on purpose to ensure that calculated distances are returned as
   positive values rather than negative.
 
