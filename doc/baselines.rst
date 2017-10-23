@@ -231,9 +231,9 @@ correspond to the the equal-error rate on the development set, in percentage):
 ------------------------ -------------------- -------------
    Feature Extractor      Full     B    Nom   1vsall  nom
 ======================== ====== ====== ====== ====== ======
-Repeated Line Tracking    23.9   24.1   23.6   1.7    1.4
-Wide Line Detector        10.2   10.2   9.7   2.3    1.7
-Maximum Curvature          3.2    3.2    4.5   0.4    0.
+Repeated Line Tracking    14.6   13.4   23.6   3.4    1.4
+Wide Line Detector         5.8    5.6   9.7   2.8    1.9
+Maximum Curvature          2.5    1.4    4.5   0.9    0.4
 ======================== ====== ====== ====== ====== ======
 
 In a machine with 48 cores, running these baselines took the following time
