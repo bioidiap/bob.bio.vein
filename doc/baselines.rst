@@ -147,10 +147,10 @@ performance:
 .. code-block:: sh
 
    $ bob_eval_threshold.py <path-to>/verafinger/rlt/Nom/nonorm/scores-dev
-   ('Threshold:', 0.32045327)
-   FAR : 26.362% (12701/48180)
-   FRR : 26.364% (58/220)
-   HTER: 26.363%
+   ('Threshold:', 0.31835292)
+   FAR : 23.636% (11388/48180)
+   FRR : 23.636% (52/220)
+   HTER: 23.636%
 
 
 Maximum Curvature with Miura Matching
@@ -180,11 +180,10 @@ we obtained:
 .. code-block:: sh
 
    $ bob_eval_threshold.py <path-to>/verafinger/mc/Nom/nonorm/scores-dev
-   ('Threshold:', 0.078274325)
-   FAR : 3.182% (1533/48180)
-   FRR : 3.182% (7/220)
-   HTER: 3.182%
-
+   ('Threshold:', 0.0737283)
+   FAR : 4.388% (2114/48180)
+   FRR : 4.545% (10/220)
+   HTER: 4.467%
 
 Wide Line Detector with Miura Matching
 ======================================
@@ -214,10 +213,10 @@ we obtained:
 .. code-block:: sh
 
    $ bob_eval_threshold.py <path-to>/verafinger/wld/NOM/nonorm/scores-dev
-   ('Threshold:', 0.239141175)
-   FAR : 10.455% (5037/48180)
-   FRR : 10.455% (23/220)
-   HTER: 10.455%
+   ('Threshold:', 0.240269475)
+   FAR : 9.770% (4707/48180)
+   FRR : 9.545% (21/220)
+   HTER: 9.658%
 
 
 Results for other Baselines
@@ -232,9 +231,9 @@ correspond to the the equal-error rate on the development set, in percentage):
 ------------------------ -------------------- -------------
    Feature Extractor      Full     B    Nom   1vsall  nom
 ======================== ====== ====== ====== ====== ======
-Repeated Line Tracking    23.9   24.1   24.9   1.7    1.4
-Wide Line Detector        10.2   10.2   10.5   2.3    1.7
-Maximum Curvature          3.2    3.2    3.1   0.4    0.
+Repeated Line Tracking    14.6   13.4   23.6   3.4    1.4
+Wide Line Detector         5.8    5.6   9.7   2.8    1.9
+Maximum Curvature          2.5    1.4    4.5   0.9    0.4
 ======================== ====== ====== ====== ====== ======
 
 In a machine with 48 cores, running these baselines took the following time
