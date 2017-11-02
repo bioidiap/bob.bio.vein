@@ -146,11 +146,8 @@ performance:
 
 .. code-block:: sh
 
-   $ bob_eval_threshold.py <path-to>/verafinger/rlt/Nom/nonorm/scores-dev
-   ('Threshold:', 0.31835292)
-   FAR : 23.636% (11388/48180)
-   FRR : 23.636% (52/220)
-   HTER: 23.636%
+   $ evaluate.py -c EER -D det.pdf -d <path-to>/verafinger/rlt/Nom/nonorm/scores-dev
+   The EER of the development set of '<path-to>/verafinger/rlt/Nom/nonorm/scores-dev' is 23.636%
 
 
 Maximum Curvature with Miura Matching
@@ -177,13 +174,12 @@ In a 4-core machine and using 4 parallel tasks, it takes around 1 hour and 40
 minutes to process this baseline with the current code implementation. Results
 we obtained:
 
+
 .. code-block:: sh
 
-   $ bob_eval_threshold.py <path-to>/verafinger/mc/Nom/nonorm/scores-dev
-   ('Threshold:', 0.0737283)
-   FAR : 4.388% (2114/48180)
-   FRR : 4.545% (10/220)
-   HTER: 4.467%
+   $ evaluate.py -c EER -D det.pdf -d <path-to>/verafinger/mc/Nom/nonorm/scores-dev
+   The EER of the development set of '<path-to>/verafinger/mc/Nom/nonorm/scores-dev' is 4.467%
+
 
 Wide Line Detector with Miura Matching
 ======================================
@@ -212,11 +208,8 @@ we obtained:
 
 .. code-block:: sh
 
-   $ bob_eval_threshold.py <path-to>/verafinger/wld/NOM/nonorm/scores-dev
-   ('Threshold:', 0.240269475)
-   FAR : 9.770% (4707/48180)
-   FRR : 9.545% (21/220)
-   HTER: 9.658%
+   $ evaluate.py -c EER -D det.pdf -d <path-to>/verafinger/wld/Nom/nonorm/scores-dev
+   The EER of the development set of '<path-to>/verafinger/wld/Nom/nonorm/scores-dev' is 9.658%
 
 
 Results for other Baselines
@@ -232,22 +225,18 @@ correspond to the the equal-error rate on the development set, in percentage):
    Feature Extractor      Full     B    Nom   1vsall  nom
 ======================== ====== ====== ====== ====== ======
 Repeated Line Tracking    14.6   13.4   23.6   3.4    1.4
-Wide Line Detector         5.8    5.6   9.7   2.8    1.9
+Wide Line Detector         5.8    5.6    9.7   2.8    1.9
 Maximum Curvature          2.5    1.4    4.5   0.9    0.4
 ======================== ====== ====== ====== ====== ======
 
-In a machine with 48 cores, running these baselines took the following time
-(hh:mm):
+The DET curves of such combinations of database, protocols and baselines can be
+generated using a command-line similar to this:
 
-======================== ====== ====== ====== ====== ======
-       Toolchain              Vera Finger         UTFVP
------------------------- -------------------- -------------
-   Feature Extractor      Full     B    Nom   1vsall  nom
-======================== ====== ====== ====== ====== ======
-Repeated Line Tracking    01:16  00:23  00:23  12:44  00:35
-Wide Line Detector        00:07  00:01  00:01  02:25  00:05
-Maximum Curvature         03:28  00:54  00:59  58:34  01:48
-======================== ====== ====== ====== ====== ======
+.. code-block:: sh
+
+   $ evaluate.py -D det.pdf -d <path-to>/verafinger/{rlt,wld,mc}/Full/nonorm/scores-dev -T 'Verafinger (Full)' -l rlt wld mc
+
+Just repeat it for every combination of database and protocols.
 
 
 Modifying Baseline Experiments

@@ -22,3 +22,5 @@
 .. _bob.bio.base: https://pypi.python.org/pypi/bob.bio.base
 .. _jaccard index: https://en.wikipedia.org/wiki/Jaccard_index
 .. _watershed: https://en.wikipedia.org/wiki/Watershed_(image_processing)
+.. _hong kong polytechnic university finger image database: http://www4.comp.polyu.edu.hk/~csajaykr/fvdatabase.htm
+.. _tsinghua university finger vein and finger dorsal texture database: http://www.sz.tsinghua.edu.cn/labs/vipl/thu-fvfdt.html

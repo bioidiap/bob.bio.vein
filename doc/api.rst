@@ -36,6 +36,17 @@ UTFVP Database
 .. automodule:: bob.bio.vein.database.fv3d
 
 
+Hong Kong Polytechnic University Finger Image Database
+======================================================
+
+.. automodule:: bob.bio.vein.database.hkpu
+
+
+Tsinghua University Finger Vein and Finger Dorsal Texture Database
+==================================================================
+
+.. automodule:: bob.bio.vein.database.thu_fvfdt
+
 
 Pre-processors
 --------------

@@ -37,6 +37,7 @@ setup(
         'utfvp = bob.bio.vein.configurations.utfvp',
         'fv3d = bob.bio.vein.configurations.fv3d',
         'putvein = bob.bio.vein.configurations.putvein',
+        'hkup = bob.bio.vein.configurations.hkpu',
 
         # baselines
         'mc = bob.bio.vein.configurations.maximum_curvature',

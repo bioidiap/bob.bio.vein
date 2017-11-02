@@ -55,10 +55,27 @@ UTFVP Database
 
 .. _bob.bio.vein.resources.database.putvein:
 
-PUT Vein Databas
-======================
+PUT Vein Database
+=================
 
 .. automodule:: bob.bio.vein.configurations.putvein
+   :members:
+
+.. _bob.bio.vein.resources.database.hkpu:
+
+Hong Kong Polytechnic University Finger Image Database
+======================================================
+
+.. automodule:: bob.bio.vein.configurations.hkpu
+   :members:
+
+
+.. _bob.bio.vein.resources.database.thu_fvfdt:
+
+Tsinghua University Finger Vein and Finger Dorsal Texture Database
+==================================================================
+
+.. automodule:: bob.bio.vein.configurations.thu_fvfdt
    :members:
 
 
