@@ -254,11 +254,17 @@ First, you identify where the configuration file sits:
 
    $ resources.py -tc -p bob.bio.vein
    - bob.bio.vein X.Y.Z @ /path/to/bob.bio.vein:
-     + mc         --> bob.bio.vein.configurations.maximum_curvature
+     + grid       --> bob.bio.vein.configurations.gridio4g48
+     + gridio4g48 --> bob.bio.vein.configurations.gridio4g48
      + parallel   --> bob.bio.vein.configurations.parallel
-     + rlt        --> bob.bio.vein.configurations.repeated_line_tracking
      + utfvp      --> bob.bio.vein.configurations.utfvp
      + verafinger --> bob.bio.vein.configurations.verafinger
+     + putvein    --> bob.bio.vein.configurations.putvein
+     + hkpu       --> bob.bio.vein.configurations.hkpu
+     * thu_fvfdt  --> bob.bio.vein.configurations.thu_fvfdt
+     + fv3d       --> bob.bio.vein.configurations.fv3d
+     + mc         --> bob.bio.vein.configurations.maximum_curvature
+     + rlt        --> bob.bio.vein.configurations.repeated_line_tracking
      + wld        --> bob.bio.vein.configurations.wide_line_detector
 
 
