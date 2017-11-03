@@ -53,3 +53,27 @@ def test_putvein():
     except IOError as e:
         raise SkipTest(
             "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'" % e)
+
+
+@db_available('hkpu')
+def test_hkpu():
+    module = bob.bio.base.load_resource('hkpu', 'config',
+        preferred_package='bob.bio.vein')
+    try:
+        check_database(module.database, protocol='A', groups=('dev',),
+            skip_train=True)
+    except IOError as e:
+        raise SkipTest(
+            "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'" % e)
+
+
+@db_available('thu_fvfdt')
+def test_thu_fvfdt():
+    module = bob.bio.base.load_resource('thu_fvfdt', 'config',
+        preferred_package='bob.bio.vein')
+    try:
+        check_database(module.database, protocol='p3', groups=('dev',),
+            skip_train=True)
+    except IOError as e:
+        raise SkipTest(
+            "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'" % e)
