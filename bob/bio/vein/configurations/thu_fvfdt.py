@@ -5,7 +5,15 @@
 
 The `Tsinghua University Finger Vein and Finger Dorsal Texture Database`_
 contains data of finger vein and finger dorsal texture from 610 different
-subjects.
+subjects. Details of part 1 of this dataset were originally published in
+[YYL09]_. A number of studies were published based on this subset of the FVFDT
+database. Authors of this dataset list [YRL11]_, [YHL12]_, [YMLL13]_ and
+[YHZL13]_.
+
+Subsequently, the dataset was augmented (part 2) to include more subjects and a
+study based on fixed regions of interested [YMZL14]_. The raw images from which
+the regions of interest in part 2 were extracted were then published to become
+part 3 of this dataset, without further references.
 
 You can download the raw data of the `Tsinghua University Finger Vein and
 Finger Dorsal Texture Database`_ by following the link.

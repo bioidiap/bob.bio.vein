@@ -6,7 +6,7 @@
 The `Hong Kong Polytechnic University Finger Image Database`_  consists of
 simultaneously acquired finger vein and finger surface texture images from the
 male and female volunteers. The currently available database has 6264 images
-from the 156 subjects.
+from the 156 subjects. Details of this database were published in [KV12]_.
 
 You can download the raw data of the `Hong Kong Polytechnic University Finger Image Database`_ by following the link.
 """

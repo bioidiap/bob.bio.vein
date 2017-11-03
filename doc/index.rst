@@ -22,9 +22,9 @@ Users Guide
 
    installation
    baselines
-   references
    resources
    api
+   references
 
 .. todolist::
 
