@@ -3,4 +3,4 @@ bob.db.verafinger
 bob.db.fv3d
 bob.db.putvein
 bob.db.hkpu
-bob.db.thu_fvfdt
+bob.db.thufvdt

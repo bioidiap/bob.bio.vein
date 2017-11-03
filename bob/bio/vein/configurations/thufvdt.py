@@ -20,16 +20,16 @@ Finger Dorsal Texture Database`_ by following the link.
 """
 
 
-from ..database.thu_fvfdt import Database
+from ..database.thufvdt import Database
 
-_thu_fvfdt_directory = "[YOUR_THU_FVFDT_DIRECTORY]"
+_thufvdt_directory = "[YOUR_THUFVDT_DIRECTORY]"
 """Value of ``~/.bob_bio_databases.txt`` for this database"""
 
 database = Database(
-    original_directory = _thu_fvfdt_directory,
+    original_directory = _thufvdt_directory,
     original_extension = '.bmp',
     )
-"""The :py:class:`bob.bio.base.database.BioDatabase` derivative with thu_fvfdt
+"""The :py:class:`bob.bio.base.database.BioDatabase` derivative with thufvdt
 database settings
 
 .. warning::
@@ -38,7 +38,7 @@ database settings
    manner, respecting usage protocols. It does **not** contain the raw
    datafiles. You should procure those yourself.
 
-Notice that ``original_directory`` is set to ``[YOUR_THU_FVFDT_DIRECTORY]``.
+Notice that ``original_directory`` is set to ``[YOUR_THUFVDT_DIRECTORY]``.
 You must make sure to create ``${HOME}/.bob_bio_databases.txt`` setting this
 value to the place where you actually installed the `Tsinghua University Finger
 Vein and Finger Dorsal Texture Database`_, as explained in the section

@@ -53,8 +53,8 @@ class Database(BioDatabase):
 
     def __init__(self, **kwargs):
 
-        super(Database, self).__init__(name='thu_fvfdt', **kwargs)
-        from bob.db.thu_fvfdt.query import Database as LowLevelDatabase
+        super(Database, self).__init__(name='thufvdt', **kwargs)
+        from bob.db.thufvdt.query import Database as LowLevelDatabase
         self.__db = LowLevelDatabase()
 
         self.low_level_group_names = ('train', 'dev', 'eval')

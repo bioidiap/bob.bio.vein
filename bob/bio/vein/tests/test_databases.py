@@ -67,9 +67,9 @@ def test_hkpu():
             "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'" % e)
 
 
-@db_available('thu_fvfdt')
-def test_thu_fvfdt():
-    module = bob.bio.base.load_resource('thu_fvfdt', 'config',
+@db_available('thufvdt')
+def test_thufvdt():
+    module = bob.bio.base.load_resource('thufvdt', 'config',
         preferred_package='bob.bio.vein')
     try:
         check_database(module.database, protocol='p3', groups=('dev',),

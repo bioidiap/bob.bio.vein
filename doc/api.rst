@@ -45,7 +45,7 @@ Hong Kong Polytechnic University Finger Image Database
 Tsinghua University Finger Vein and Finger Dorsal Texture Database
 ==================================================================
 
-.. automodule:: bob.bio.vein.database.thu_fvfdt
+.. automodule:: bob.bio.vein.database.thufvdt
 
 
 Pre-processors

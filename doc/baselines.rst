@@ -261,7 +261,7 @@ First, you identify where the configuration file sits:
      + verafinger --> bob.bio.vein.configurations.verafinger
      + putvein    --> bob.bio.vein.configurations.putvein
      + hkpu       --> bob.bio.vein.configurations.hkpu
-     * thu_fvfdt  --> bob.bio.vein.configurations.thu_fvfdt
+     * thufvdt    --> bob.bio.vein.configurations.thufvdt
      + fv3d       --> bob.bio.vein.configurations.fv3d
      + mc         --> bob.bio.vein.configurations.maximum_curvature
      + rlt        --> bob.bio.vein.configurations.repeated_line_tracking
