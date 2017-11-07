@@ -77,3 +77,15 @@ def test_thufvdt():
     except IOError as e:
         raise SkipTest(
             "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'" % e)
+
+
+@db_available('mmcbnu6k')
+def test_mmcbnu6k():
+    module = bob.bio.base.load_resource('mmcbnu6k', 'config',
+        preferred_package='bob.bio.vein')
+    try:
+        check_database(module.database, protocol='default', groups=('dev',),
+            skip_train=True)
+    except IOError as e:
+        raise SkipTest(
+            "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'" % e)

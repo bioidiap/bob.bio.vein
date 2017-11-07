@@ -39,6 +39,7 @@ setup(
         'putvein = bob.bio.vein.configurations.putvein',
         'hkpu = bob.bio.vein.configurations.hkpu',
         'thu_fvfdt = bob.bio.vein.configurations.thu_fvfdt',
+        'mmcbnu6k = bob.bio.vein.configurations.mmcbnu6k',
 
         # baselines
         'mc = bob.bio.vein.configurations.maximum_curvature',

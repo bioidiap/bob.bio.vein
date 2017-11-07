@@ -24,3 +24,4 @@
 .. _watershed: https://en.wikipedia.org/wiki/Watershed_(image_processing)
 .. _hong kong polytechnic university finger image database: http://www4.comp.polyu.edu.hk/~csajaykr/fvdatabase.htm
 .. _tsinghua university finger vein and finger dorsal texture database: http://www.sz.tsinghua.edu.cn/labs/vipl/thu-fvfdt.html
+.. _mmcbnu 6000 database: http://multilab.jbnu.ac.kr/MMCBNU_6000

@@ -79,6 +79,15 @@ Tsinghua University Finger Vein and Finger Dorsal Texture Database
    :members:
 
 
+.. _bob.bio.vein.resources.database.mmcbnu6k:
+
+MMCBNU 6000 Finger Vein Database
+================================
+
+.. automodule:: bob.bio.vein.configurations.mmcbnu6k
+   :members:
+
+
 .. _bob.bio.vein.resources.recognition:
 
 Recognition Systems
