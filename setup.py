@@ -38,7 +38,7 @@ setup(
         'fv3d = bob.bio.vein.configurations.fv3d',
         'putvein = bob.bio.vein.configurations.putvein',
         'hkpu = bob.bio.vein.configurations.hkpu',
-        'thu_fvfdt = bob.bio.vein.configurations.thu_fvfdt',
+        'thufvdt = bob.bio.vein.configurations.thufvdt',
         'mmcbnu6k = bob.bio.vein.configurations.mmcbnu6k',
 
         # baselines
