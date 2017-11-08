@@ -187,7 +187,7 @@ Wide Line Detector with Miura Matching
 You can find the description of this method on the paper from Huang *et al.*
 [HDLTL10]_.
 
-To run the baseline on the `VERA fingervein`_ database, using the ``NOM``
+To run the baseline on the `VERA fingervein`_ database, using the ``Nom``
 protocol like above, do the following:
 
 
@@ -219,24 +219,50 @@ This package may generate results for other combinations of protocols and
 databases. Here is a summary table for some variants (results expressed
 correspond to the the equal-error rate on the development set, in percentage):
 
-======================== ====== ====== ====== ====== ======
-       Toolchain              Vera Finger         UTFVP
------------------------- -------------------- -------------
-   Feature Extractor      Full     B    Nom   1vsall  nom
-======================== ====== ====== ====== ====== ======
-Repeated Line Tracking    14.6   13.4   23.6   3.4    1.4
-Wide Line Detector         5.8    5.6    9.7   2.8    1.9
-Maximum Curvature          2.5    1.4    4.5   0.9    0.4
-======================== ====== ====== ====== ====== ======
+
+.. _baselines_table:
+.. table:: Baselines Available
+   :widths: auto
+
+   ======================== ======= ======= =======
+     Database (protocol)      RLT     WLD     MC
+   ======================== ======= ======= =======
+    UTFVP (1vsall)             3.4     2.8     0.9
+    UTFVP (nom)                1.4     1.9     0.4
+    VERA-finger (Full)        14.6     5.8     2.5
+    VERA-finger (B)           13.4     5.6     1.4
+    VERA-finger (Nom)         23.6     9.7     4.5
+   ======================== ======= ======= =======
+
+Numbers in :numref:`baselines_table` correspond to the Equal-Error-Rate (EER)
+on the development set of these datasets/protocols. Legend: RLT - Repeated Line
+Tracking; WLD - Wide Line Detector; MC - Maximum Curvature. Each baseline is
+followed by a Miura-Matching algorithm (correlation).
 
 The DET curves of such combinations of database, protocols and baselines can be
 generated using a command-line similar to this:
 
 .. code-block:: sh
 
-   $ evaluate.py -D det.pdf -d <path-to>/verafinger/{rlt,wld,mc}/Full/nonorm/scores-dev -T 'Verafinger (Full)' -l rlt wld mc
+   $ evaluate.py -D det.pdf -d <path-to>/verafinger/{rlt,wld,mc}/Nom/nonorm/scores-dev -T 'VERA-finger (Nom)' -l rlt wld mc
 
-Just repeat it for every combination of database and protocols.
+Which generates a figure like this:
+
+
+.. figure:: img/det.*
+   :scale: 50%
+
+   Example Detector-Error-Tradeoff (DET) curve of multiple experiments on the
+   VERA-finger dataset using the Nom protocol.
+
+
+Just repeat it for every combination of database and protocol.
+
+.. note::
+
+   The script ``evaluate.py`` may generate other types of plots including ROC
+   and EPC plots. Read its help message for detailed instructions.
+
 
 
 Modifying Baseline Experiments
