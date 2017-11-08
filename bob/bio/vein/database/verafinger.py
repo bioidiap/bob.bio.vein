@@ -24,14 +24,14 @@ class File(BioFile):
 
         super(File, self).__init__(client_id=f.unique_finger_name, path=f.path,
             file_id=f.id)
-        self.__f = f
+        self._f = f
 
 
     def load(self, *args, **kwargs):
         """(Overrides base method) Loads both image and mask"""
 
-        image = super(File, self).load(*args, **kwargs)
-        roi = self.__f.roi()
+        image = self._f.load(*args, **kwargs)
+        roi = self._f.roi()
         return AnnotatedArray(image, metadata=dict(roi=roi))
 
 

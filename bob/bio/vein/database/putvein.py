@@ -25,7 +25,7 @@ class File(BioFile):
                                    path=f.path,
                                    file_id=f.id)
 
-        self.f = f
+        self._f = f
 
     def load(self, directory=None, extension='.bmp'):
         """
@@ -36,8 +36,7 @@ class File(BioFile):
         ``bob.db.biowave_v1`` database.
         Output images dimentions - (1024, 768).
         """
-        color_image = self.f.load(directory=directory,
-                                  extension=extension)
+        color_image = self._f.load(directory=directory, extension=extension)
         grayscale_image = bob.ip.color.rgb_to_gray(color_image)
         grayscale_image = np.rot90(grayscale_image, k=3)
         return grayscale_image
@@ -78,14 +77,14 @@ class PutveinBioDatabase(BioDatabase):
         super(PutveinBioDatabase, self).__init__(name='putvein', **kwargs)
 
         from bob.db.putvein.query import Database as LowLevelDatabase
-        self.__db = LowLevelDatabase()
+        self._db = LowLevelDatabase()
 
         self.low_level_group_names = ('train', 'dev', 'eval')
         self.high_level_group_names = ('world', 'dev', 'eval')
 
     def groups(self):
 
-        return self.convert_names_to_highlevel(self.__db.groups(),
+        return self.convert_names_to_highlevel(self._db.groups(),
             self.low_level_group_names, self.high_level_group_names)
 
     def __protocol_split__(self, prot_name):
@@ -141,7 +140,7 @@ class PutveinBioDatabase(BioDatabase):
 
     def client_id_from_model_id(self, model_id, group='dev'):
         """Required as ``model_id != client_id`` on this database"""
-        return self.__db.client_id_from_model_id(model_id)
+        return self._db.client_id_from_model_id(model_id)
 
 
     def model_ids_with_protocol(self, groups=None, protocol=None, **kwargs):
@@ -165,7 +164,7 @@ class PutveinBioDatabase(BioDatabase):
 
         groups = self.convert_names_to_lowlevel(groups, self.low_level_group_names, self.high_level_group_names)
 
-        return self.__db.model_ids(protocol=prot,
+        return self._db.model_ids(protocol=prot,
                                    groups=groups,
                                    kinds=kind)
 
@@ -176,7 +175,7 @@ class PutveinBioDatabase(BioDatabase):
 
         groups = self.convert_names_to_lowlevel(groups, self.low_level_group_names, self.high_level_group_names)
 
-        retval = self.__db.objects(protocol=prot,
+        retval = self._db.objects(protocol=prot,
                                    groups=groups,
                                    purposes=purposes,
                                    model_ids=model_ids,

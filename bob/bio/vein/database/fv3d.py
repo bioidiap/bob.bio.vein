@@ -26,20 +26,20 @@ class File(BioFile):
 
         super(File, self).__init__(client_id=f.finger.unique_name, path=f.path,
             file_id=f.id)
-        self.__f = f
+        self._f = f
 
 
     def load(self, *args, **kwargs):
         """(Overrides base method) Loads both image and mask"""
 
-        image = super(File, self).load(*args, **kwargs)
+        image = self._f.load(*args, **kwargs)
         image = numpy.rot90(image, -1)
 
-        if not self.__f.has_roi():
+        if not self._f.has_roi():
           return image
 
         else:
-          roi = self.__f.roi()
+          roi = self._f.roi()
 
           # calculates the 90 degrees anti-clockwise rotated RoI points
           w, h = image.shape
@@ -57,7 +57,7 @@ class Database(BioDatabase):
 
         super(Database, self).__init__(name='fv3d', **kwargs)
         from bob.db.fv3d.query import Database as LowLevelDatabase
-        self.__db = LowLevelDatabase()
+        self._db = LowLevelDatabase()
 
         self.low_level_group_names = ('train', 'dev', 'eval')
         self.high_level_group_names = ('world', 'dev', 'eval')
@@ -65,21 +65,21 @@ class Database(BioDatabase):
 
     def groups(self):
 
-        return self.convert_names_to_highlevel(self.__db.groups(),
+        return self.convert_names_to_highlevel(self._db.groups(),
             self.low_level_group_names, self.high_level_group_names)
 
 
     def client_id_from_model_id(self, model_id, group='dev'):
         """Required as ``model_id != client_id`` on this database"""
 
-        return self.__db.finger_name_from_model_id(model_id)
+        return self._db.finger_name_from_model_id(model_id)
 
 
     def model_ids_with_protocol(self, groups=None, protocol=None, **kwargs):
 
         groups = self.convert_names_to_lowlevel(groups,
             self.low_level_group_names, self.high_level_group_names)
-        return self.__db.model_ids(groups=groups, protocol=protocol)
+        return self._db.model_ids(groups=groups, protocol=protocol)
 
 
     def objects(self, groups=None, protocol=None, purposes=None,
@@ -87,7 +87,7 @@ class Database(BioDatabase):
 
         groups = self.convert_names_to_lowlevel(groups,
             self.low_level_group_names, self.high_level_group_names)
-        retval = self.__db.objects(groups=groups, protocol=protocol,
+        retval = self._db.objects(groups=groups, protocol=protocol,
             purposes=purposes, model_ids=model_ids, **kwargs)
 
         return [File(f) for f in retval]
