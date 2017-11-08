@@ -58,6 +58,12 @@ MMCBNU 6000 Finger Vein Database
 .. automodule:: bob.bio.vein.database.mmcbnu6k
 
 
+SDUMLA-HMT Finger Vein Database
+===============================
+
+.. automodule:: bob.bio.vein.database.hmtvein
+
+
 Pre-processors
 --------------
 

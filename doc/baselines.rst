@@ -263,6 +263,7 @@ First, you identify where the configuration file sits:
      + hkpu       --> bob.bio.vein.configurations.hkpu
      + thufvdt    --> bob.bio.vein.configurations.thufvdt
      + mmcbnu6k   --> bob.bio.vein.configurations.mmcbnu6k
+     + hmtvein    --> bob.bio.vein.configurations.hmtvein
      + fv3d       --> bob.bio.vein.configurations.fv3d
      + mc         --> bob.bio.vein.configurations.maximum_curvature
      + rlt        --> bob.bio.vein.configurations.repeated_line_tracking

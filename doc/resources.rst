@@ -88,6 +88,15 @@ MMCBNU 6000 Finger Vein Database
    :members:
 
 
+.. _bob.bio.vein.resources.database.hmtvein:
+
+SDUMLA-HMT Finger Vein Database
+===============================
+
+.. automodule:: bob.bio.vein.configurations.hmtvein
+   :members:
+
+
 .. _bob.bio.vein.resources.recognition:
 
 Recognition Systems
