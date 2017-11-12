@@ -21,7 +21,7 @@ from 106 individuals.
 """
 
 
-from ..database.mmcbnu6k import Database
+from ..database.hmtvein import Database
 
 _hmtvein_directory = "[YOUR_HMTVEIN_DIRECTORY]"
 """Value of ``~/.bob_bio_databases.txt`` for this database"""
