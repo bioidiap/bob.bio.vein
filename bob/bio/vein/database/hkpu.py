@@ -24,7 +24,7 @@ class File(BioFile):
 
     def __init__(self, f):
 
-        super(File, self).__init__(client_id=f.model_id, path=f.path,
+        super(File, self).__init__(client_id=f.finger.unique_name, path=f.path,
             file_id=f.id)
         self._f = f
 
@@ -62,6 +62,12 @@ class Database(BioDatabase):
 
         return self.convert_names_to_highlevel(self._db.groups(),
             self.low_level_group_names, self.high_level_group_names)
+
+
+    def client_id_from_model_id(self, model_id, group='dev'):
+        """Required as ``model_id != client_id`` on this database"""
+
+        return self._db.finger_name_from_model_id(model_id)
 
 
     def model_ids_with_protocol(self, groups=None, protocol=None, **kwargs):
