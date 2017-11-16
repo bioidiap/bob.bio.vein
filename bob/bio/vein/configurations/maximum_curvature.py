@@ -20,18 +20,6 @@ or the attribute ``sub_directory`` in a configuration file loaded **after**
 this resource.
 """
 
-from ..preprocessor import NoCrop, TomesLeeMask, HuangNormalization, \
-    NoFilter, Preprocessor
-
-preprocessor = Preprocessor(
-    crop=NoCrop(),
-    mask=TomesLeeMask(),
-    normalize=HuangNormalization(),
-    filter=NoFilter(),
-    )
-"""Preprocessing using gray-level based finger cropping and no post-processing
-"""
-
 from ..extractor import MaximumCurvature
 extractor = MaximumCurvature()
 """Features are the output of the maximum curvature algorithm, as described on

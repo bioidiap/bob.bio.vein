@@ -1,3 +1,4 @@
 include README.rst buildout.cfg develop.cfg COPYING version.txt requirements.txt test-requirements.txt
 recursive-include doc *.py *.rst
 recursive-include bob/bio/vein/tests *.png *.mat *.txt *.hdf5
+recursive-include bob/bio/vein/configurations *.hdf5
