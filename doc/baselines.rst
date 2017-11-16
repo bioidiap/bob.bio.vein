@@ -75,6 +75,11 @@ is available on the section :ref:`bob.bio.vein.resources`.
       [YOUR_VERAFINGER_DIRECTORY] = /complete/path/to/verafinger
       [YOUR_UTFVP_DIRECTORY] = /complete/path/to/utfvp
       [YOUR_FV3D_DIRECTORY] = /complete/path/to/fv3d
+      [YOUR_HKPU_DIRECTORY] = /complete/path/to/hkpu
+      [YOUR_THUFVDT_DIRECTORY] = /complete/path/to/thu-fvfdt
+      [YOUR_MMCBNU6K_DIRECTORY] = /complete/path/to/mmcbnu-6000
+      [YOUR_HMTVEIN_DIRECTORY] = /complete/path/to/sdumla-hmt-vein
+
 
    Notice it is rather important to use the strings as described above,
    otherwise ``bob.bio.base`` will not be able to correctly load your images.
@@ -224,20 +229,56 @@ correspond to the the equal-error rate on the development set, in percentage):
 .. table:: Baselines Available
    :widths: auto
 
-   ======================== ======= ======= =======
-     Database (protocol)      RLT     WLD     MC
-   ======================== ======= ======= =======
-    UTFVP (1vsall)             3.4     2.8     0.9
-    UTFVP (nom)                1.4     1.9     0.4
-    VERA-finger (Full)        14.6     5.8     2.5
-    VERA-finger (B)           13.4     5.6     1.4
-    VERA-finger (Nom)         23.6     9.7     4.5
-   ======================== ======= ======= =======
+   ========================== ============= ======= ======= =======
+     Database (resource)       --protocol     rlt     wld     mc
+   ========================== ============= ======= ======= =======
+    UTFVP (utfvp)               nom           1.4     1.9     0.4
+    VERA-finger (verafinger)    Nom          23.6     9.7     4.5
+    HKPU (hkpu)                 A            42.3    14.7    14.5
+    THU-FVFDT (thufvdt)         p3           33.8    28.2    33.1
+    MMCBNU_6000 (mmcbnu6k)      default       9.3     8.8     3.2
+    SDUMLA-HMT (hmtvein)        default      31.3    19.2    11.8
+   ========================== ============= ======= ======= =======
 
-Numbers in :numref:`baselines_table` correspond to the Equal-Error-Rate (EER)
-on the development set of these datasets/protocols. Legend: RLT - Repeated Line
-Tracking; WLD - Wide Line Detector; MC - Maximum Curvature. Each baseline is
-followed by a Miura-Matching algorithm (correlation).
+.. _score_table:
+.. table:: Database Sizes
+   :widths: auto
+
+   ========================== ============= ========== ========== ========== =========== ===========
+     Database (resource)       --protocol    subjects   fingers    genuines   impostors    scores
+   ========================== ============= ========== ========== ========== =========== ===========
+    UTFVP (utfvp)               nom             18         108         216        23112       23328
+    VERA-finger (verafinger)    Nom            110         220         220        48180       48400
+    HKPU (hkpu)                 A              156         218        7560      1500040     1587600
+    THU-FVFDT (thufvdt)         p3             610         610         610       371490      327100
+    MMCBNU_6000 (mmcbnu6k)      default        100         600       15000      8985000     9000000
+    SDUMLA-HMT (hmtvein)        default        106         636        5724      3634740     3640464
+   ========================== ============= ========== ========== ========== =========== ===========
+
+
+Numbers in :numref:`baselines_table` correspond to the percentual
+Equal-Error-Rate (EER) on the development set of these datasets/protocols.
+Legend: ``rlt`` - Repeated Line Tracking; ``wld`` - Wide Line Detector; ``mc``
+- Maximum Curvature. Each baseline is followed by a Miura-Matching algorithm
+(correlation). The ``(resource)`` entry refers to the resource name describing
+the database configuration while the ``--protocol`` entry defines the protocol
+override so that experiment runs using the defined evaluation protocol. For
+example, to execute the ``mc`` baseline against VERA-finger using the ``B``
+protocol, using all cores on your machine, do this:
+
+
+.. code-block:: sh
+
+   $ verify.py verafinger --protocol=B mc -vvv parallel
+
+
+Numbers in :numref:`score_table` show some information about the number of
+subjects and unique fingers available in each database/protocol combination. We
+also display the number of scores for the evaluation of each protocol. These
+numbers given an estimate on the amount of processing power required to run the
+protocol and on the reliability of the error rates reported in
+:numref:`baselines_table`.
+
 
 The DET curves of such combinations of database, protocols and baselines can be
 generated using a command-line similar to this:
@@ -245,6 +286,7 @@ generated using a command-line similar to this:
 .. code-block:: sh
 
    $ evaluate.py -D det.pdf -d <path-to>/verafinger/{rlt,wld,mc}/Nom/nonorm/scores-dev -T 'VERA-finger (Nom)' -l rlt wld mc
+
 
 Which generates a figure like this:
 
@@ -256,7 +298,8 @@ Which generates a figure like this:
    VERA-finger dataset using the Nom protocol.
 
 
-Just repeat it for every combination of database and protocol.
+To reproduce all baselines, just repeat it for every combination of database
+and protocol.
 
 .. note::
 
@@ -273,8 +316,9 @@ do so, you must copy the configuration files for the given baseline you want to
 modify, edit them to make the desired changes and run the experiment again.
 
 For example, suppose you'd like to change the protocol on the Vera Fingervein
-database and use the protocol ``full`` instead of the default protocol ``nom``.
-First, you identify where the configuration file sits:
+database, *through a modification on a configuration file*, and use the
+protocol ``B`` instead of the default protocol ``Nom``.  First, you need to
+identify where the configuration file sits:
 
 .. code-block:: sh
 
@@ -296,42 +340,28 @@ First, you identify where the configuration file sits:
      + wld        --> bob.bio.vein.configurations.wide_line_detector
 
 
-The listing above tells the ``verafinger`` configuration file sits on the
-file ``/path/to/bob.bio.vein/bob/bio/vein/configurations/verafinger.py``. In
-order to modify it, make a local copy. For example:
-
-.. code-block:: sh
-
-   $ cp /path/to/bob.bio.vein/bob/bio/vein/configurations/verafinger.py verafinger_full.py
-   $ # edit verafinger_full.py, change the value of "protocol" to "full"
-
-
-Also, don't forget to change all relative module imports (such as ``from
-..database.verafinger import Database``) to absolute imports (e.g. ``from
-bob.bio.vein.database.verafinger import Database``). This will make the
-configuration file work irrespectively of its location w.r.t. ``bob.bio.vein``.
-The final version of the modified file could look like this:
+In order to modify it, create a local file called, e.g., ``verafinger_b.py``
+that imports all assets in the original configuration file and change the
+``protocol`` variable to set it to the required value (``B``). The final
+version of the new configuration file could look like this:
 
 .. code-block:: python
 
-   from bob.bio.vein.database.verafinger import Database
+   from bob.bio.vein.configurations.verafinger import *
 
-   database = Database(original_directory='/where/you/have/the/raw/files',
-     original_extension='.png', #don't change this
-     )
-
-   protocol = 'full'
+   #override the "protocol" setting to the value wanted
+   protocol = 'B'
 
 
 Now, re-run the experiment using your modified database descriptor:
 
 .. code-block:: sh
 
-   $ verify.py ./verafinger_full.py wld -vv
+   $ verify.py ./verafinger_b.py wld -vv
 
 
 Notice we replace the use of the registered configuration file named
-``verafinger`` by the local file ``verafinger_full.py``. This makes the program
+``verafinger`` by the local file ``verafinger_b.py``. This makes the program
 ``verify.py`` take that into consideration instead of the original file.
 
 
