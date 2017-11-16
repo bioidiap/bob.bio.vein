@@ -79,6 +79,7 @@ is available on the section :ref:`bob.bio.vein.resources`.
       [YOUR_THUFVDT_DIRECTORY] = /complete/path/to/thu-fvfdt
       [YOUR_MMCBNU6K_DIRECTORY] = /complete/path/to/mmcbnu-6000
       [YOUR_HMTVEIN_DIRECTORY] = /complete/path/to/sdumla-hmt-vein
+      [YOUR_PUTVEIN_DIRECTORY] = /complete/path/to/put-vein
 
 
    Notice it is rather important to use the strings as described above,
