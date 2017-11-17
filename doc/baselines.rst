@@ -241,7 +241,7 @@ correspond to the the equal-error rate on the development set, in percentage):
     SDUMLA-HMT (hmtvein)        default      31.3    19.2    11.8
    ========================== ============= ======= ======= =======
 
-.. _baselines_table:
+.. _baselines_table_watershedding:
 .. table:: Baselines Available (with Watershedding)
    :widths: auto
 
