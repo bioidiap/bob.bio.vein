@@ -197,6 +197,9 @@ class validate_protocol(object):
     elif name == 'verafinger':
       import bob.db.verafinger
       self.valid_names = bob.db.verafinger.Database().protocol_names()
+    elif name == 'hkpu':
+      import bob.db.hkpu
+      self.valid_names = bob.db.hkpu.Database().protocol_names()
     else:
       raise schema.SchemaError("do not support database {}".format(name))
 
@@ -235,6 +238,9 @@ class validate_group(object):
     elif name == 'verafinger':
       import bob.db.verafinger
       self.valid_names = bob.db.verafinger.Database().groups()
+    elif name == 'hkpu':
+      import bob.db.hkpu
+      self.valid_names = bob.db.hkpu.Database().groups()
     else:
       raise schema.SchemaError("do not support database {}".format(name))
 

@@ -241,6 +241,21 @@ correspond to the the equal-error rate on the development set, in percentage):
     SDUMLA-HMT (hmtvein)        default      31.3    19.2    11.8
    ========================== ============= ======= ======= =======
 
+.. _baselines_table:
+.. table:: Baselines Available (with Watershedding)
+   :widths: auto
+
+   ========================== ============= ======= ======= =======
+     Database (resource)       --protocol     rlt     wld     mc
+   ========================== ============= ======= ======= =======
+    UTFVP (utfvp)               nom
+    VERA-finger (verafinger)    Nom          19.5     6.4     2.8
+    HKPU (hkpu)                 A
+    THU-FVFDT (thufvdt)         p3
+    MMCBNU_6000 (mmcbnu6k)      default
+    SDUMLA-HMT (hmtvein)        default
+   ========================== ============= ======= ======= =======
+
 .. _score_table:
 .. table:: Database Sizes
    :widths: auto

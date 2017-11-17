@@ -99,7 +99,7 @@ def validate(args):
     '--hidden': schema.Use(int),
     '--batch': schema.Use(int),
     '--iterations': schema.Use(int),
-    '<database>': lambda n: n in ('fv3d', 'verafinger'),
+    '<database>': lambda n: n in ('fv3d', 'verafinger', 'hkpu'),
     '<protocol>': validate_protocol(args['<database>']),
     '<group>': validate_group(args['<database>']),
     str: object, #ignores strings we don't care about
@@ -139,6 +139,8 @@ def main(user_input=None):
     from ..configurations.fv3d import database as db
   elif args['<database>'] == 'verafinger':
     from ..configurations.verafinger import database as db
+  elif args['<database>'] == 'hkpu':
+    from ..configurations.hkpu import database as db
   else:
     raise schema.SchemaError('Database %s is not supported' % \
         args['<database>'])
