@@ -59,7 +59,7 @@ from ..preprocessor import NoCrop, WatershedMask, HuangNormalization, \
 
 from os.path import join as _join
 from pkg_resources import resource_filename as _filename
-_model = _filename(__name__, _join('data', 'verafinger.hdf5'))
+_model = _filename(__name__, _join('data', 'thufvdt.hdf5'))
 
 preprocessor = Preprocessor(
     crop=NoCrop(),
