@@ -13,7 +13,7 @@ Usage: %(prog)s [-v...] [--samples=N] [--model=PATH] [--points=N] [--hidden=N]
 Arguments:
 
   <database>  Name of the database to use for creating the model (options are:
-              "fv3d" or "verafinger")
+              "fv3d", "verafinger", "hkpu" or "thufvdt")
   <protocol>  Name of the protocol to use for creating the model (options
               depend on the database chosen)
   <group>     Name of the group to use on the database/protocol with the
@@ -99,7 +99,7 @@ def validate(args):
     '--hidden': schema.Use(int),
     '--batch': schema.Use(int),
     '--iterations': schema.Use(int),
-    '<database>': lambda n: n in ('fv3d', 'verafinger', 'hkpu'),
+    '<database>': lambda n: n in ('fv3d', 'verafinger', 'hkpu', 'thufvdt'),
     '<protocol>': validate_protocol(args['<database>']),
     '<group>': validate_group(args['<database>']),
     str: object, #ignores strings we don't care about
@@ -141,6 +141,8 @@ def main(user_input=None):
     from ..configurations.verafinger import database as db
   elif args['<database>'] == 'hkpu':
     from ..configurations.hkpu import database as db
+  elif args['<database>'] == 'thufvdt':
+    from ..configurations.thufvdt import database as db
   else:
     raise schema.SchemaError('Database %s is not supported' % \
         args['<database>'])

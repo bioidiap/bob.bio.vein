@@ -227,7 +227,7 @@ correspond to the the equal-error rate on the development set, in percentage):
 
 
 .. _baselines_table:
-.. table:: Baselines Available
+.. table:: Baselines Available (Tome's Mask)
    :widths: auto
 
    ========================== ============= ======= ======= =======
@@ -242,7 +242,7 @@ correspond to the the equal-error rate on the development set, in percentage):
    ========================== ============= ======= ======= =======
 
 .. _baselines_table_watershedding:
-.. table:: Baselines Available (with Watershedding)
+.. table:: Baselines Available (Watershed Mask)
    :widths: auto
 
    ========================== ============= ======= ======= =======
@@ -250,14 +250,14 @@ correspond to the the equal-error rate on the development set, in percentage):
    ========================== ============= ======= ======= =======
     UTFVP (utfvp)               nom
     VERA-finger (verafinger)    Nom          19.5     6.4     2.8
-    HKPU (hkpu)                 A
+    HKPU (hkpu)                 A             8.6     7.2     4.8
     THU-FVFDT (thufvdt)         p3
     MMCBNU_6000 (mmcbnu6k)      default
     SDUMLA-HMT (hmtvein)        default
    ========================== ============= ======= ======= =======
 
-.. _score_table:
-.. table:: Database Sizes
+.. _database_dimensions:
+.. table:: Database Dimensions
    :widths: auto
 
    ========================== ============= ========== ========== ========== =========== ===========
@@ -288,9 +288,9 @@ protocol, using all cores on your machine, do this:
    $ verify.py verafinger --protocol=B mc -vvv parallel
 
 
-Numbers in :numref:`score_table` show some information about the number of
-subjects and unique fingers available in each database/protocol combination. We
-also display the number of scores for the evaluation of each protocol. These
+Numbers in :numref:`database_dimensions` show some information about the number
+of subjects and unique fingers available in each database/protocol combination.
+We also display the number of scores for the evaluation of each protocol. These
 numbers given an estimate on the amount of processing power required to run the
 protocol and on the reliability of the error rates reported in
 :numref:`baselines_table`.
@@ -431,8 +431,8 @@ constructing an object and attaching it to the
 :py:class:`bob.bio.vein.preprocessor.Preprocessor` entry on your configuration.
 
 
-Region of Interest Goodness of Fit
-==================================
+Region of Interest Benchmarking
+===============================
 
 Automatic region of interest (RoI) finding and cropping can be evaluated using
 a couple of scripts available in this package. The program ``compare_rois.py``

@@ -200,6 +200,9 @@ class validate_protocol(object):
     elif name == 'hkpu':
       import bob.db.hkpu
       self.valid_names = bob.db.hkpu.Database().protocol_names()
+    elif name == 'thufvdt':
+      import bob.db.thufvdt
+      self.valid_names = bob.db.thufvdt.Database().protocol_names()
     else:
       raise schema.SchemaError("do not support database {}".format(name))
 
@@ -241,6 +244,9 @@ class validate_group(object):
     elif name == 'hkpu':
       import bob.db.hkpu
       self.valid_names = bob.db.hkpu.Database().groups()
+    elif name == 'thufvdt':
+      import bob.db.thufvdt
+      self.valid_names = bob.db.thufvdt.Database().groups()
     else:
       raise schema.SchemaError("do not support database {}".format(name))
 
