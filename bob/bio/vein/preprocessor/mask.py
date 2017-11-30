@@ -534,19 +534,22 @@ class WatershedMask(Masker):
   """
 
 
-  def __init__(self, model, foreground_threshold, background_threshold):
+  def __init__(self, model, foreground_threshold, background_threshold,
+      footprint=None):
 
     import bob.io.base
     import bob.learn.mlp
     import bob.learn.activation
 
-    self.labeller = bob.learn.mlp.Machine((11,10,1))
-    h5f = bob.io.base.HDF5File(model)
-    self.labeller.load(h5f)
-    self.labeller.output_activation = bob.learn.activation.Logistic()
-    del h5f
+    with bob.io.base.HDF5File(model) as f:
+      self.labeller = bob.learn.mlp.Machine(f)
+      self.footprint = f['footprint']
 
-    # adjust threshold from background and foreground
+    # resets the output activation of the neural network, so it provides an
+    # output value between [0.0, 1.0]
+    self.labeller.output_activation = bob.learn.activation.Logistic()
+
+    # adjusts threshold from background and foreground
     if foreground_threshold is None and background_threshold is not None:
       foreground_threshold = 1 - background_threshold
     if background_threshold is None and foreground_threshold is not None:
@@ -579,7 +582,7 @@ class WatershedMask(Masker):
 
     def __call__(self, arr):
 
-      self.features[:9] = arr.astype('float64')/255
+      self.features[:-2] = arr.astype('float64')/255
       self.features[-2:] = self.indexes[:,self.current]
       self.current += 1
       return self.labeller(self.features, self.output)
@@ -613,7 +616,7 @@ class WatershedMask(Masker):
     function = WatershedMask._filterfun(image, self.labeller)
     predictions = numpy.zeros(image.shape, 'float64')
     scipy.ndimage.filters.generic_filter(image, function,
-        size=3, mode='nearest', output=predictions)
+        footprint=self.footprint, mode='nearest', output=predictions)
 
     selector = skimage.morphology.disk(radius=5)
 
