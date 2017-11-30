@@ -6,16 +6,15 @@
 """Preprocesses a fingervein image with a watershed/neural-net seeded mask
 
 Usage: %(prog)s [-v...] [-s <path>] [-f <float>] [-b <float>] [--scan]
-                <model> <database> [<stem>...]
+                [-m <path>] <database> [<stem>...]
        %(prog)s --help
        %(prog)s --version
 
 
 Arguments:
 
-  <model>     Path to model to use for find watershed markers
   <database>  Name of the database to use for creating the model (options are:
-              "fv3d" or "verafinger")
+              "fv3d", "verafinger", "hkpu" or "thufvdt")
   <stem>      Name of the object on the database to display, without the root
               or the extension. If none provided, run for all possible stems on
               the database
@@ -34,29 +33,33 @@ Options:
                               number that is between 0.0 and 0.5. The smaller,
                               the less markers for the foreground watershed
                               process will be produced. [default: 0.3]
+  -m, --model=<path>          Path to model to use to find watershed markers.
+                              If not set, use the database's associated default
   -S, --scan                  If set, ignores settings for the threshold and
                               scans the whole range of threshold printing the
                               Jaccard, M1 and M2 merith figures
   -s <path>, --save=<path>    If set, saves individual image into files instead
                               of displaying the result of processing. Pass the
                               name of directory that will be created and
-                              suffixed with the paths of original images.
+                              suffixed with the paths of original and processed
+                              images.
 
 
 Examples:
 
   Visualize the preprocessing toolchain over a single image
 
-     $ %(prog)s model.hdf5 verafinger sample-stem
+     $ %(prog)s verafinger sample-stem
 
   Save the results of the preprocessing to several files. In this case, the
   program runs non-interactively:
 
-     $ %(prog)s -s graphics model.hdf5 verafinger sample-stem
+     $ %(prog)s -s graphics verafinger sample-stem
 
-  Scans the set of possible thresholds printing Jaccard, M1 and M2 indexes:
+  Scans the set of possible thresholds printing Jaccard, M1 and M2 indexes, use
+  a specific model (instead of the default) for the verafinger dataset:
 
-     $ %(prog)s --scan model.hdf5 verafinger sample-stem
+     $ %(prog)s --scan --model=model.hdf5 verafinger sample-stem
 
 """
 
@@ -66,6 +69,7 @@ import sys
 import time
 
 import numpy
+import pkg_resources
 
 import schema
 import docopt
@@ -106,11 +110,11 @@ def validate(args):
 
   '''
 
-  valid_databases = ('fv3d', 'verafinger')
+  valid_databases = ('fv3d', 'verafinger', 'hkpu', 'thufvdt')
 
   sch = schema.Schema({
-    '<model>': schema.And(os.path.exists,
-      error='<model> should point to an existing path'),
+    '--model': schema.Or(None, schema.And(os.path.exists,
+      error='<model> should point to an existing path')),
     '<database>': schema.And(lambda n: n in valid_databases,
       error='<database> must be one of %s' % ', '.join(valid_databases)),
     '--fg-threshold': schema.And(
@@ -193,7 +197,7 @@ def process_one(args, image, path):
 
   # loads the processor once - avoids re-reading weights from the disk
   processor = WatershedMask(
-      model=args['<model>'],
+      model=args['--model'],
       foreground_threshold=args['--fg-threshold'],
       background_threshold=args['--bg-threshold'],
       )
@@ -249,8 +253,6 @@ def main(user_input=None):
   else:
     argv = sys.argv[1:]
 
-  import pkg_resources
-
   completions = dict(
       prog=os.path.basename(sys.argv[0]),
       version=pkg_resources.require('bob.bio.vein')[0].version
@@ -270,9 +272,16 @@ def main(user_input=None):
     sys.exit(e)
 
   if args['<database>'] == 'fv3d':
-    from ..configurations.fv3d import database as db
+    from ..configurations.fv3d import database as db, _model as model
   elif args['<database>'] == 'verafinger':
-    from ..configurations.verafinger import database as db
+    from ..configurations.verafinger import database as db, _model as model
+  elif args['<database>'] == 'hkpu':
+    from ..configurations.hkpu import database as db, _model as model
+  elif args['<database>'] == 'thufvdt':
+    from ..configurations.thufvdt import database as db, _model as model
+
+  # get the right default model for the relevant dataset if none is passed
+  args['--model'] = args['--model'] or model
 
   database_replacement = "%s/.bob_bio_databases.txt" % os.environ["HOME"]
   db.replace_directories(database_replacement)
@@ -287,7 +296,7 @@ def main(user_input=None):
     f = [k for k in all_files if k.path == stem]
     if len(f) == 0:
       raise RuntimeError('File with stem "%s" does not exist on "%s"' % \
-          stem, args['<database>'])
+          (stem, args['<database>']))
 
     f = f[0]
     image = f.load(db.original_directory, db.original_extension)
@@ -301,8 +310,8 @@ def main(user_input=None):
           args['--bg-threshold'] = bg_threshold
           results.append(process_one(args, image, f.path))
       best_thresholds = eval_best_thresholds(results)
-      logger.info('%s: FG = %.2f | BG = %.2f | M1/M2 = %.2f', f.path,
+      print('[best] %s: FG = %.2f | BG = %.2f | M1/M2 = %.2f' % (f.path,
         results[best_thresholds][2], results[best_thresholds][3],
-        results[best_thresholds][-2]/results[best_thresholds][-1])
+        results[best_thresholds][-2]/results[best_thresholds][-1]))
     else:
       process_one(args, image, f.path)
