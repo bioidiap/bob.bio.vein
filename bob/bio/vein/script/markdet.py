@@ -5,7 +5,8 @@
 """Trains a new MLP to perform pre-watershed marker detection
 
 Usage: %(prog)s [-v...] [--samples=N] [--model=PATH] [--points=N] [--hidden=N]
-                [--batch=N] [--iterations=N] <database> <protocol> <group>
+                [--batch=N] [--iterations=N] [--hollow]
+                <database> <protocol> <group> <size>
        %(prog)s --help
        %(prog)s --version
 
@@ -19,6 +20,19 @@ Arguments:
   <group>     Name of the group to use on the database/protocol with the
               samples to use for training the model (options are: "train",
               "dev" or "eval")
+  <size>      The size (see scipy.ndimage.generic_filter) of the window to use
+              for determining the input to the neural network. Valid values are
+              odd numbers starting from 3 (3, 5, 7, 9, 11, ...).  Odd values
+              are required so the network output is produced w.r.t. an existing
+              (center) pixel. As you increase the window size, the amount of
+              data passed to the neural network increases exponetially. For
+              example, if this parameter is set to 3, the input size to the
+              neural network is 11 (9 pixels + center pixel location). If this
+              parameter is set to 5, then the input becomes 27 in size and so
+              on. You can optionally specify the ``--hollow`` command-line
+              option to make the footprint of the window passed to the neural
+              network smaller.
+
 
 Options:
 
@@ -39,17 +53,21 @@ Options:
   -b N, --batch=N        Number of samples to use for every batch [default: 1]
   -i N, --iterations=N   Number of iterations to train the neural net for
                          [default: 2000]
+  -x, --hollow           If set, then the image sub-window passed to the neural
+                         network will be hollow - the pixels that are not in
+                         the outside border of the window are not passed
+                         (except for the center pixel value).
 
 
 Examples:
 
-  Trains on the 3D Fingervein database:
+  Trains on the 3D Fingervein database, uses a filled window size of 3x3 pixels:
 
-     $ %(prog)s -vv fv3d central dev
+     $ %(prog)s -vv fv3d central dev 3
 
   Saves the model to a different file, use only 100 samples:
 
-    $ %(prog)s -vv -s 100 --model=/path/to/saved-model.hdf5 fv3d central dev
+    $ %(prog)s -vv -s 100 --model=/path/to/saved-model.hdf5 fv3d central dev 3
 
 """
 
@@ -59,7 +77,30 @@ import sys
 import schema
 import docopt
 import numpy
-import skimage
+import scipy.ndimage
+
+
+class Filter(object):
+  '''Callable for filtering/converting the input image into features'''
+
+
+  def __init__(self, image_shape):
+
+    # builds indexes before hand, based on image dimensions
+    idx = numpy.mgrid[:image_shape[0], :image_shape[1]]
+    self.indexes = numpy.array([idx[0].flatten(), idx[1].flatten()],
+        dtype='float64')
+    self.indexes[0,:] /= image_shape[0]
+    self.indexes[1,:] /= image_shape[1]
+    self.current = 0
+
+
+  def __call__(self, arr, output):
+
+    output[self.current, :-2] = arr/255
+    output[self.current, -2:] = self.indexes[:,self.current]
+    self.current += 1
+    return 1.0
 
 
 def validate(args):
@@ -102,6 +143,9 @@ def validate(args):
     '<database>': lambda n: n in ('fv3d', 'verafinger', 'hkpu', 'thufvdt'),
     '<protocol>': validate_protocol(args['<database>']),
     '<group>': validate_group(args['<database>']),
+    '<size>': schema.And(schema.Use(int), lambda n: n >= 3,
+      lambda n: n % 2 == 1, error='<size> must be an odd number greater ' \
+          'or equal 3'),
     str: object, #ignores strings we don't care about
     }, ignore_extra_keys=True)
 
@@ -153,54 +197,67 @@ def main(user_input=None):
   if args['--samples'] is None:
     args['--samples'] = len(objects)
 
-  from ..preprocessor.utils import poly_to_mask
+
+  # calculates the footprint
+  sz = args['<size>']
+  if args['--hollow']:
+    footprint = numpy.zeros((sz, sz), dtype=bool)
+    footprint[:,0] = True # left column
+    footprint[:,-1] = True # right column
+    footprint[0,:] = True # top row
+    footprint[-1,:] = True # bottom row
+    footprint[int(sz/2), int(sz/2)] = True #center pixel
+  else:
+    footprint = numpy.ones((sz, sz), dtype=bool)
+
+  logger.debug('Footprint is:\n%s', footprint.astype('int'))
+
+
+  from ..preprocessor.utils import poly_to_mask, show_mask_over_image
   features = None
   target = None
   loaded = 0
   for k, sample in enumerate(objects):
 
-    if args['--samples'] is not None and loaded >= args['--samples']:
+    try:
+      if args['--samples'] is not None and loaded >= args['--samples']:
+        break
+      path = sample.make_path(directory=db.original_directory,
+          extension=db.original_extension)
+      logger.info('Loading sample %d/%d (%s)...', loaded, len(objects), path)
+      image = sample.load(directory=db.original_directory,
+          extension=db.original_extension)
+      if not (hasattr(image, 'metadata') and 'roi' in image.metadata):
+        logger.info('Skipping sample (no ROI)')
+        continue
+
+      # initializes our converter filter for the current image
+      filterfun = Filter(image.shape)
+      pixels = numpy.prod(image.shape) #OK, this is not necessary
+
+      if features is None and target is None:
+        features = numpy.zeros(
+            (args['--samples']*pixels, footprint.sum()+2), dtype='float64')
+        target = numpy.zeros(args['--samples']*pixels, dtype='bool')
+
+      scipy.ndimage.filters.generic_filter(
+          image, filterfun, footprint=footprint, mode='nearest',
+          extra_arguments=(features[k*pixels:(k+1)*pixels,:],))
+      target[k*pixels:(k+1)*pixels] = poly_to_mask(image.shape,
+          image.metadata['roi']).flatten()
+
+      loaded += 1
+
+    except KeyboardInterrupt:
+      print() #avoids the ^C line
+      logger.info('Gracefully stopping loading samples before limit ' \
+          '(%d samples)', args['--samples'])
       break
-    path = sample.make_path(directory=db.original_directory,
-        extension=db.original_extension)
-    logger.info('Loading sample %d/%d (%s)...', loaded, len(objects), path)
-    image = sample.load(directory=db.original_directory,
-        extension=db.original_extension)
-    if not (hasattr(image, 'metadata') and 'roi' in image.metadata):
-      logger.info('Skipping sample (no ROI)')
-      continue
-    loaded += 1
 
-    # copy() required by skimage.util.shape.view_as_windows()
-    image = image.copy().astype('float64') / 255.
-    windows = skimage.util.shape.view_as_windows(image, (3,3))
-
-    if features is None and target is None:
-      features = numpy.zeros(
-          (args['--samples']*windows.shape[0]*windows.shape[1],
-            windows.shape[2]*windows.shape[3]+2), dtype='float64')
-      target = numpy.zeros(args['--samples']*windows.shape[0]*windows.shape[1],
-          dtype='bool')
-
-    mask = poly_to_mask(image.shape, image.metadata['roi'])
-
-    mask = mask[1:-1, 1:-1]
-    for y in range(windows.shape[0]):
-      for x in range(windows.shape[1]):
-        idx = ((loaded-1)*windows.shape[0]*windows.shape[1]) + \
-            (y*windows.shape[1]) + x
-        features[idx,:-2] = windows[y,x].flatten()
-        features[idx,-2] = y+1
-        features[idx,-1] = x+1
-        target[idx] = mask[y,x]
 
   # if number of loaded samples is smaller than expected, clip features array
-  features = features[:loaded*windows.shape[0]*windows.shape[1]]
-  target = target[:loaded*windows.shape[0]*windows.shape[1]]
-
-  # normalize w.r.t. dimensions
-  features[:,-2] /= image.shape[0]
-  features[:,-1] /= image.shape[1]
+  features = features[:loaded*pixels]
+  target = target[:loaded*pixels]
 
   target_float = target.astype('float64')
   target_float[~target] = -1.0
@@ -311,5 +368,6 @@ def main(user_input=None):
   import bob.io.base
   h5f = bob.io.base.HDF5File(args['--model'], 'w')
   machine.save(h5f)
+  h5f['footprint'] = footprint
   del h5f
-  logger.info('Saved MLP model to %s', args['--model'])
+  logger.info('Saved MLP model and footprint to %s', args['--model'])
