@@ -251,7 +251,7 @@ correspond to the the equal-error rate on the development set, in percentage):
     UTFVP (utfvp)               nom
     VERA-finger (verafinger)    Nom          19.5     6.4     2.8
     HKPU (hkpu)                 A             8.6     7.2     4.8
-    THU-FVFDT (thufvdt)         p3
+    THU-FVFDT (thufvdt)         p3           11.4    13.1    11.0
     MMCBNU_6000 (mmcbnu6k)      default
     SDUMLA-HMT (hmtvein)        default
    ========================== ============= ======= ======= =======
