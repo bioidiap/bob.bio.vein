@@ -42,8 +42,11 @@ Options:
                          allows the program to output informational messages as
                          it goes along.
   -m PATH, --model=PATH  Path to the generated model file [default: model.hdf5]
-  -s N, --samples=N      Maximum number of samples to use for training. If not
-                         set, use all samples
+  -s N, --samples=N      Maximum number of samples to use for training and
+                         validation. If not set, use half of the samples for
+                         training and the other half for validation. If all
+                         samples are used for training, then no samples will be
+                         used for validation.
   -p N, --points=N       Maximum number of samples to use for plotting
                          ground-truth and classification errors. The more
                          points, the less responsive the plot becomes
@@ -78,6 +81,8 @@ import schema
 import docopt
 import numpy
 import scipy.ndimage
+
+logger = None
 
 
 class Filter(object):
@@ -152,6 +157,147 @@ def validate(args):
   return sch.validate(args)
 
 
+def load_data(objects, original_directory, original_extension, footprint):
+  '''Loads data, separates it in features and targets'''
+
+  from ..preprocessor.utils import poly_to_mask
+
+  features = None
+  target = None
+  pixels = 0
+  loaded = 0
+  logger.info('Loading at most %d samples - use CTRL-C to halt' % len(objects))
+
+  for k, sample in enumerate(objects):
+
+    try:
+      path = sample.make_path(directory=original_directory,
+          extension=original_extension)
+      logger.info('Loading sample %d/%d (%s)...', loaded+1, len(objects), path)
+      image = sample.load(directory=original_directory,
+          extension=original_extension)
+      if not (hasattr(image, 'metadata') and 'roi' in image.metadata):
+        logger.info('Skipping sample (no ROI)')
+        continue
+
+      # initializes our converter filter for the current image
+      filterfun = Filter(image.shape)
+      pixels = numpy.prod(image.shape) #OK, this is not necessary
+
+      if features is None and target is None:
+        features = numpy.zeros(
+            (len(objects)*pixels, footprint.sum()+2), dtype='float64')
+        target = numpy.zeros(len(objects)*pixels, dtype='bool')
+
+      scipy.ndimage.filters.generic_filter(
+          image, filterfun, footprint=footprint, mode='nearest',
+          extra_arguments=(features[k*pixels:(k+1)*pixels,:],))
+      target[k*pixels:(k+1)*pixels] = poly_to_mask(image.shape,
+          image.metadata['roi']).flatten()
+
+      loaded += 1
+
+    except KeyboardInterrupt:
+      print() #avoids the ^C line
+      logger.info('Gracefully stopping loading samples before limit ' \
+          '(%d samples)', len(objects))
+      break
+
+  # if number of loaded samples is smaller than expected, clip features array
+  features = features[:loaded*pixels]
+  target = target[:loaded*pixels]
+
+  target_float = target.astype('float64')
+  target_float[~target] = -1.0
+  target_float = target_float.reshape(len(target), 1)
+
+  return features, target_float, loaded
+
+
+def analyze(machine, negatives, positives, name, threshold):
+  '''Prints performance analysis'''
+
+  # describe errors
+  neg_output = machine(negatives)
+  pos_output = machine(positives)
+  neg_errors = neg_output >= 0
+  pos_errors = pos_output < 0
+  hter = ((sum(neg_errors) / float(len(negatives))) + \
+      (sum(pos_errors)) / float(len(positives))) / 2.0
+  logger.info('%s set HTER: %.2f%%', name.capitalize(), 100*hter)
+  logger.info('  Errors on negatives: %d / %d', sum(neg_errors), len(negatives))
+  logger.info('  Errors on positives: %d / %d', sum(pos_errors), len(positives))
+
+  neg_errors = neg_output >= threshold
+  pos_errors = pos_output < -threshold
+  hter = ((sum(neg_errors) / float(len(negatives))) + \
+      (sum(pos_errors)) / float(len(positives))) / 2.0
+  logger.info('%s set HTER (threshold=%g): %.2f%%', name.capitalize(),
+      threshold, 100*hter)
+  logger.info('  Errors on negatives: %d / %d', sum(neg_errors), len(negatives))
+  logger.info('  Errors on positives: %d / %d', sum(pos_errors), len(positives))
+
+
+def plot(machine, negatives, positives, npoints, sample, directory, extension,
+    threshold):
+  '''Provides a graphical overview of errors'''
+
+  # plot separation threshold
+  import matplotlib.pyplot as plt
+  from mpl_toolkits.mplot3d import Axes3D
+
+  # only plot N random samples otherwise it makes it too slow
+  N = numpy.random.randint(min(len(negatives), len(positives)),
+      size=min(len(negatives), len(positives), npoints))
+
+  fig = plt.figure()
+
+  image = sample.load(directory=directory, extension=extension)
+
+  ax = fig.add_subplot(211, projection='3d')
+  ax.scatter(image.shape[1]*negatives[N,-1], image.shape[0]*negatives[N,-2],
+      255*negatives[N,4], label='negatives', color='blue', marker='.')
+  ax.scatter(image.shape[1]*positives[N,-1], image.shape[0]*positives[N,-2],
+      255*positives[N,4], label='positives', color='red', marker='.')
+  ax.set_xlabel('Width')
+  ax.set_xlim(0, image.shape[1])
+  ax.set_ylabel('Height')
+  ax.set_ylim(0, image.shape[0])
+  ax.set_zlabel('Intensity')
+  ax.set_zlim(0, 255)
+  ax.legend()
+  ax.grid()
+  ax.set_title('Ground Truth')
+  plt.tight_layout()
+
+  neg_output = machine(negatives)
+  pos_output = machine(positives)
+
+  pos_output = machine(positives)
+  ax = fig.add_subplot(212, projection='3d')
+  neg_plot = negatives[neg_output[:,0]>=threshold]
+  pos_plot = positives[pos_output[:,0]<-threshold]
+  N = numpy.random.randint(min(len(neg_plot), len(pos_plot)),
+      size=min(len(neg_plot), len(pos_plot), npoints))
+  ax.scatter(image.shape[1]*neg_plot[N,-1], image.shape[0]*neg_plot[N,-2],
+      255*neg_plot[N,4], label='negatives', color='red', marker='.')
+  ax.scatter(image.shape[1]*pos_plot[N,-1], image.shape[0]*pos_plot[N,-2],
+      255*pos_plot[N,4], label='positives', color='blue', marker='.')
+  ax.set_xlabel('Width')
+  ax.set_xlim(0, image.shape[1])
+  ax.set_ylabel('Height')
+  ax.set_ylim(0, image.shape[0])
+  ax.set_zlabel('Intensity')
+  ax.set_zlim(0, 255)
+  ax.legend()
+  ax.grid()
+  ax.set_title('Classifier Errors')
+  plt.tight_layout()
+
+  print('Close plot window to continue...')
+  plt.show()
+
+
 def main(user_input=None):
 
   if user_input is not None:
@@ -173,6 +319,7 @@ def main(user_input=None):
       )
 
   try:
+    global logger #affects global logger variable
     from .validate import setup_logger
     logger = setup_logger('bob.bio.vein', args['--verbose'])
     args = validate(args)
@@ -194,8 +341,9 @@ def main(user_input=None):
   database_replacement = "%s/.bob_bio_databases.txt" % os.environ["HOME"]
   db.replace_directories(database_replacement)
   objects = db.objects(protocol=args['<protocol>'], groups=args['<group>'])
+  logger.info('There are %d samples on input dataset', len(objects))
   if args['--samples'] is None:
-    args['--samples'] = len(objects)
+    args['--samples'] = int(len(objects)/2)
 
 
   # calculates the footprint
@@ -213,158 +361,76 @@ def main(user_input=None):
   logger.debug('Footprint is:\n%s', footprint.astype('int'))
 
 
-  from ..preprocessor.utils import poly_to_mask, show_mask_over_image
-  features = None
-  target = None
-  loaded = 0
-  for k, sample in enumerate(objects):
+  # loads data for training and validation
+  train_features, train_targets, loaded = load_data(objects[:args['--samples']],
+      db.original_directory, db.original_extension, footprint)
 
-    try:
-      if args['--samples'] is not None and loaded >= args['--samples']:
-        break
-      path = sample.make_path(directory=db.original_directory,
-          extension=db.original_extension)
-      logger.info('Loading sample %d/%d (%s)...', loaded, len(objects), path)
-      image = sample.load(directory=db.original_directory,
-          extension=db.original_extension)
-      if not (hasattr(image, 'metadata') and 'roi' in image.metadata):
-        logger.info('Skipping sample (no ROI)')
-        continue
+  valid_features, valid_targets, loaded = load_data(
+      objects[loaded:(loaded+args['--samples'])],
+      db.original_directory, db.original_extension, footprint)
 
-      # initializes our converter filter for the current image
-      filterfun = Filter(image.shape)
-      pixels = numpy.prod(image.shape) #OK, this is not necessary
+  train_positives = train_features[train_targets[:,0]>0.]
+  train_negatives = train_features[train_targets[:,0]<0.]
+  logger.info('There are %d training samples on input dataset',
+      len(train_targets))
+  logger.info('  %d are negatives', len(train_negatives))
+  logger.info('  %d are positives', len(train_positives))
 
-      if features is None and target is None:
-        features = numpy.zeros(
-            (args['--samples']*pixels, footprint.sum()+2), dtype='float64')
-        target = numpy.zeros(args['--samples']*pixels, dtype='bool')
-
-      scipy.ndimage.filters.generic_filter(
-          image, filterfun, footprint=footprint, mode='nearest',
-          extra_arguments=(features[k*pixels:(k+1)*pixels,:],))
-      target[k*pixels:(k+1)*pixels] = poly_to_mask(image.shape,
-          image.metadata['roi']).flatten()
-
-      loaded += 1
-
-    except KeyboardInterrupt:
-      print() #avoids the ^C line
-      logger.info('Gracefully stopping loading samples before limit ' \
-          '(%d samples)', args['--samples'])
-      break
+  valid_positives = valid_features[valid_targets[:,0]>0.]
+  valid_negatives = valid_features[valid_targets[:,0]<0.]
+  logger.info('There are %d validation samples on input dataset',
+      len(valid_targets))
+  logger.info('  %d are negatives', len(valid_negatives))
+  logger.info('  %d are positives', len(valid_positives))
 
 
-  # if number of loaded samples is smaller than expected, clip features array
-  features = features[:loaded*pixels]
-  target = target[:loaded*pixels]
-
-  target_float = target.astype('float64')
-  target_float[~target] = -1.0
-  target_float = target_float.reshape(len(target), 1)
-  positives = features[target]
-  negatives = features[~target]
-  logger.info('There are %d samples on input dataset', len(target))
-  logger.info('  %d are negatives', len(negatives))
-  logger.info('  %d are positives', len(positives))
-
+  # machine training
   import bob.learn.mlp
 
   # by default, machine uses hyperbolic tangent output
-  machine = bob.learn.mlp.Machine((features.shape[1], args['--hidden'], 1))
+  machine = bob.learn.mlp.Machine(
+      (train_features.shape[1], args['--hidden'], 1))
   machine.randomize() #initialize weights randomly
   loss = bob.learn.mlp.SquareError(machine.output_activation)
   train_biases = True
   trainer = bob.learn.mlp.RProp(args['--batch'], loss, machine, train_biases)
   trainer.reset()
-  shuffler = bob.learn.mlp.DataShuffler([negatives, positives],
-      [[-1.0], [+1.0]])
+  train_shuffler = bob.learn.mlp.DataShuffler(
+      [train_negatives, train_positives], [[-1.0], [+1.0]])
+  valid_shuffler = bob.learn.mlp.DataShuffler(
+      [valid_negatives, valid_positives], [[-1.0], [+1.0]])
 
   # start cost
-  output = machine(features)
-  cost = loss.f(output, target_float)
-  logger.info('[initial] MSE = %g', cost.mean())
+  train_output = machine(train_features)
+  train_cost = loss.f(train_output, train_targets)
+  valid_output = machine(valid_features)
+  valid_cost = loss.f(valid_output, valid_targets)
+  logger.info('[initial] MSE = %g / %g', train_cost.mean(),
+      valid_cost.mean())
 
-  # trains the network until the error is near zero
+  # trains the network until number of iterations or CTRL-C is pressed
   for i in range(args['--iterations']):
     try:
-      _feats, _tgts = shuffler.draw(args['--batch'])
-      trainer.train(machine, _feats, _tgts)
-      logger.info('[%d] MSE = %g', i, trainer.cost(_tgts))
+      train_feats, train_tgts = train_shuffler.draw(args['--batch'])
+      valid_feats, valid_tgts = valid_shuffler.draw(args['--batch'])
+      trainer.train(machine, train_feats, train_tgts)
+      train_mse = trainer.cost(train_tgts)
+      valid_mse = loss.f(machine(valid_feats), valid_tgts).mean()
+      logger.info('[%d] MSE = %g / %g', i, train_mse, valid_mse)
     except KeyboardInterrupt:
       print() #avoids the ^C line
       logger.info('Gracefully stopping training before limit (%d iterations)',
           args['--batch'])
       break
 
-  # describe errors
-  neg_output = machine(negatives)
-  pos_output = machine(positives)
-  neg_errors = neg_output >= 0
-  pos_errors = pos_output < 0
-  hter_train = ((sum(neg_errors) / float(len(negatives))) + \
-      (sum(pos_errors)) / float(len(positives))) / 2.0
-  logger.info('Training set HTER: %.2f%%', 100*hter_train)
-  logger.info('  Errors on negatives: %d / %d', sum(neg_errors), len(negatives))
-  logger.info('  Errors on positives: %d / %d', sum(pos_errors), len(positives))
-
+  # runs analysis
   threshold = 0.8
-  neg_errors = neg_output >= threshold
-  pos_errors = pos_output < -threshold
-  hter_train = ((sum(neg_errors) / float(len(negatives))) + \
-      (sum(pos_errors)) / float(len(positives))) / 2.0
-  logger.info('Training set HTER (threshold=%g): %.2f%%', threshold,
-      100*hter_train)
-  logger.info('  Errors on negatives: %d / %d', sum(neg_errors), len(negatives))
-  logger.info('  Errors on positives: %d / %d', sum(pos_errors), len(positives))
-  # plot separation threshold
-  import matplotlib.pyplot as plt
-  from mpl_toolkits.mplot3d import Axes3D
+  analyze(machine, train_negatives, train_positives, 'training', threshold)
+  analyze(machine, valid_negatives, valid_positives, 'validation', threshold)
 
-  # only plot N random samples otherwise it makes it too slow
-  N = numpy.random.randint(min(len(negatives), len(positives)),
-      size=min(len(negatives), len(positives), args['--points']))
+  plot(machine, valid_negatives, valid_positives, args['--points'], objects[0],
+      db.original_directory, db.original_extension, threshold)
 
-  fig = plt.figure()
-
-  ax = fig.add_subplot(211, projection='3d')
-  ax.scatter(image.shape[1]*negatives[N,-1], image.shape[0]*negatives[N,-2],
-      255*negatives[N,4], label='negatives', color='blue', marker='.')
-  ax.scatter(image.shape[1]*positives[N,-1], image.shape[0]*positives[N,-2],
-      255*positives[N,4], label='positives', color='red', marker='.')
-  ax.set_xlabel('Width')
-  ax.set_xlim(0, image.shape[1])
-  ax.set_ylabel('Height')
-  ax.set_ylim(0, image.shape[0])
-  ax.set_zlabel('Intensity')
-  ax.set_zlim(0, 255)
-  ax.legend()
-  ax.grid()
-  ax.set_title('Ground Truth')
-  plt.tight_layout()
-
-  ax = fig.add_subplot(212, projection='3d')
-  neg_plot = negatives[neg_output[:,0]>=threshold]
-  pos_plot = positives[pos_output[:,0]<-threshold]
-  N = numpy.random.randint(min(len(neg_plot), len(pos_plot)),
-      size=min(len(neg_plot), len(pos_plot), args['--points']))
-  ax.scatter(image.shape[1]*neg_plot[N,-1], image.shape[0]*neg_plot[N,-2],
-      255*neg_plot[N,4], label='negatives', color='red', marker='.')
-  ax.scatter(image.shape[1]*pos_plot[N,-1], image.shape[0]*pos_plot[N,-2],
-      255*pos_plot[N,4], label='positives', color='blue', marker='.')
-  ax.set_xlabel('Width')
-  ax.set_xlim(0, image.shape[1])
-  ax.set_ylabel('Height')
-  ax.set_ylim(0, image.shape[0])
-  ax.set_zlabel('Intensity')
-  ax.set_zlim(0, 255)
-  ax.legend()
-  ax.grid()
-  ax.set_title('Classifier Errors')
-  plt.tight_layout()
-
-  print('Close plot window to save model and end program...')
-  plt.show()
   import bob.io.base
   h5f = bob.io.base.HDF5File(args['--model'], 'w')
   machine.save(h5f)
