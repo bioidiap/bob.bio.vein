@@ -52,26 +52,3 @@ You may modify this at runtime by specifying the option ``--protocol`` on the
 command-line of ``verify.py`` or using the keyword ``protocol`` on a
 configuration file that is loaded **after** this configuration resource.
 """
-
-
-from ..preprocessor import NoCrop, WatershedMask, HuangNormalization, \
-    NoFilter, Preprocessor
-
-from os.path import join as _join
-from pkg_resources import resource_filename as _filename
-_model = _filename(__name__, _join('data', 'thufvdt.hdf5'))
-
-preprocessor = Preprocessor(
-    crop=NoCrop(),
-    mask=WatershedMask(
-      model=_model,
-      foreground_threshold=0.6,
-      background_threshold=0.2,
-      ),
-    normalize=HuangNormalization(),
-    filter=NoFilter(),
-    )
-"""Preprocessing using morphology and watershedding
-
-Settings are optimised for the image quality of VERA-Fingervein.
-"""
