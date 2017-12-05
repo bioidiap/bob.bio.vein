@@ -97,6 +97,51 @@ SDUMLA-HMT Finger Vein Database
    :members:
 
 
+.. _bob.bio.vein.resources.preprocessing:
+
+Preprocessors
+-------------
+
+These resources represent configuration files containing settings for the
+``preprocessor`` stage, i.e., region-of-interest marking and alignment.
+
+
+Annotations
+===========
+
+.. automodule:: bob.bio.vein.configurations.annotations
+   :members:
+
+
+Watershed
+=========
+
+.. automodule:: bob.bio.vein.configurations.watershed
+   :members:
+
+
+Tome's Lee Mask
+===============
+
+.. automodule:: bob.bio.vein.configurations.tomelee
+   :members:
+
+
+Lee's Mask
+==========
+
+.. automodule:: bob.bio.vein.configurations.lee
+   :members:
+
+
+Kono's Mask
+===========
+
+.. automodule:: bob.bio.vein.configurations.kono
+   :members:
+
+
+
 .. _bob.bio.vein.resources.recognition:
 
 Recognition Systems
@@ -106,7 +151,6 @@ These resources represent configuration files containing at least settings for
 the following runtime attributes of ``verify.py``:
 
   * ``sub_directory``
-  * ``preprocessor``
   * ``extractor``
   * ``algorithm``
 

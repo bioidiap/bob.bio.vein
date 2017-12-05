@@ -96,7 +96,8 @@ in this guide were published in [TVM14]_.
 Repeated Line-Tracking with Miura Matching
 ==========================================
 
-Detailed description at :ref:`bob.bio.vein.resources.recognition.rlt`.
+Detailed description at
+:py:mod:`bob.bio.vein.configurations.repeated_line_tracking`.
 
 To run the baseline on the `VERA fingervein`_ database, using the ``Nom``
 protocol, do the following:
@@ -104,7 +105,7 @@ protocol, do the following:
 
 .. code-block:: sh
 
-   $ verify.py verafinger rlt -vv
+   $ verify.py verafinger annotations rlt -vv
 
 
 .. tip::
@@ -120,7 +121,7 @@ protocol, do the following:
 
    .. code-block:: sh
 
-      $ verify.py verafinger rlt parallel -vv
+      $ verify.py verafinger annotations rlt parallel -vv
 
    To run on the Idiap SGE grid using our stock
    io-big-48-slots-4G-memory-enabled (see
@@ -128,7 +129,7 @@ protocol, do the following:
 
    .. code-block:: sh
 
-      $ verify.py verafinger rlt grid -vv
+      $ verify.py verafinger annotations rlt grid -vv
 
    You may also, optionally, use the configuration resource ``gridio4g48``,
    which is just an alias of ``grid`` in this package.
@@ -138,8 +139,9 @@ protocol, do the following:
 This command line selects and runs the following implementations for the
 toolchain:
 
-* :ref:`bob.bio.vein.resources.database.verafinger`
-* :ref:`bob.bio.vein.resources.recognition.rlt`
+* :py:mod:`bob.bio.vein.configurations.verafinger`
+* :py:mod:`bob.bio.vein.configurations.annotations`
+* :py:mod:`bob.bio.vein.configurations.repeated_line_tracking`
 
 As the tool runs, you'll see printouts that show how it advances through
 preprocessing, feature extraction and matching. In a 4-core machine and using
@@ -173,8 +175,9 @@ protocol like above, do the following:
 This command line selects and runs the following implementations for the
 toolchain:
 
-* :ref:`bob.bio.vein.resources.database.verafinger`
-* :ref:`bob.bio.vein.resources.recognition.mc`
+* :py:mod:`bob.bio.vein.configurations.verafinger`
+* :py:mod:`bob.bio.vein.configurations.annotations`
+* :py:mod:`bob.bio.vein.configurations.maximum_curvature`
 
 In a 4-core machine and using 4 parallel tasks, it takes around 1 hour and 40
 minutes to process this baseline with the current code implementation. Results
@@ -205,8 +208,9 @@ protocol like above, do the following:
 This command line selects and runs the following implementations for the
 toolchain:
 
-* :ref:`bob.bio.vein.resources.database.verafinger`
-* :ref:`bob.bio.vein.resources.recognition.wld`
+* :py:mod:`bob.bio.vein.configurations.verafinger`
+* :py:mod:`bob.bio.vein.configurations.annotations`
+* :py:mod:`bob.bio.vein.configurations.wide_line_detector`
 
 In a 4-core machine and using 4 parallel tasks, it takes only around 5 minutes
 minutes to process this baseline with the current code implementation.Results
@@ -226,19 +230,19 @@ databases. Here is a summary table for some variants (results expressed
 correspond to the the equal-error rate on the development set, in percentage):
 
 
-.. _baselines_table:
-.. table:: Baselines Available (Tome's Mask)
+.. _baselines_table_annotations:
+.. table:: Baselines Available (Hand Annotations)
    :widths: auto
 
    ========================== ============= ======= ======= =======
      Database (resource)       --protocol     rlt     wld     mc
    ========================== ============= ======= ======= =======
-    UTFVP (utfvp)               nom           1.4     1.9     0.4
-    VERA-finger (verafinger)    Nom          23.6     9.7     4.5
-    HKPU (hkpu)                 A            42.3    14.7    14.5
-    THU-FVFDT (thufvdt)         p3           33.8    28.2    33.1
-    MMCBNU_6000 (mmcbnu6k)      default       9.3     8.8     3.2
-    SDUMLA-HMT (hmtvein)        default      31.3    19.2    11.8
+    UTFVP (utfvp)               nom
+    VERA-finger (verafinger)    Nom
+    HKPU (hkpu)                 A
+    THU-FVFDT (thufvdt)         p3
+    MMCBNU_6000 (mmcbnu6k)      default
+    SDUMLA-HMT (hmtvein)        default
    ========================== ============= ======= ======= =======
 
 .. _baselines_table_watershedding:
@@ -254,6 +258,21 @@ correspond to the the equal-error rate on the development set, in percentage):
     THU-FVFDT (thufvdt)         p3           11.4    13.1    11.0
     MMCBNU_6000 (mmcbnu6k)      default
     SDUMLA-HMT (hmtvein)        default
+   ========================== ============= ======= ======= =======
+
+.. _baselines_table_tomemask:
+.. table:: Baselines Available (Tome's Mask)
+   :widths: auto
+
+   ========================== ============= ======= ======= =======
+     Database (resource)       --protocol     rlt     wld     mc
+   ========================== ============= ======= ======= =======
+    UTFVP (utfvp)               nom           1.4     1.9     0.4
+    VERA-finger (verafinger)    Nom          23.6     9.7     4.5
+    HKPU (hkpu)                 A            42.3    14.7    14.5
+    THU-FVFDT (thufvdt)         p3           33.8    28.2    33.1
+    MMCBNU_6000 (mmcbnu6k)      default       9.3     8.8     3.2
+    SDUMLA-HMT (hmtvein)        default      31.3    19.2    11.8
    ========================== ============= ======= ======= =======
 
 .. _database_dimensions:
@@ -272,7 +291,7 @@ correspond to the the equal-error rate on the development set, in percentage):
    ========================== ============= ========== ========== ========== =========== ===========
 
 
-Numbers in :numref:`baselines_table` correspond to the percentual
+Numbers in :numref:`baselines_table_annotations` correspond to the percentual
 Equal-Error-Rate (EER) on the development set of these datasets/protocols.
 Legend: ``rlt`` - Repeated Line Tracking; ``wld`` - Wide Line Detector; ``mc``
 - Maximum Curvature. Each baseline is followed by a Miura-Matching algorithm
@@ -285,7 +304,7 @@ protocol, using all cores on your machine, do this:
 
 .. code-block:: sh
 
-   $ verify.py verafinger --protocol=B mc -vvv parallel
+   $ verify.py verafinger --protocol=B annotations mc -vvv parallel
 
 
 Numbers in :numref:`database_dimensions` show some information about the number
@@ -293,7 +312,7 @@ of subjects and unique fingers available in each database/protocol combination.
 We also display the number of scores for the evaluation of each protocol. These
 numbers given an estimate on the amount of processing power required to run the
 protocol and on the reliability of the error rates reported in
-:numref:`baselines_table`.
+:numref:`baselines_table_annotations`.
 
 
 The DET curves of such combinations of database, protocols and baselines can be

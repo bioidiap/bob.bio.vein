@@ -196,9 +196,7 @@ class AnnotatedRoIMask(Masker):
 class KonoMask(Masker):
   """Estimates the finger region given an input NIR image using Kono et al.
 
-  This method is based on the work of M. Kono, H. Ueki and S.  Umemura.
-  Near-infrared finger vein patterns for personal identification, Applied
-  Optics, Vol. 41, Issue 35, pp. 7429-7436 (2002).
+  This method is based on the work of Kono and others from [KUU02]_.
 
 
   Parameters:
@@ -285,11 +283,7 @@ class KonoMask(Masker):
 class LeeMask(Masker):
   """Estimates the finger region given an input NIR image using Lee et al.
 
-  This method is based on the work of Finger vein recognition using
-  minutia-based alignment and local binary pattern-based feature extraction,
-  E.C. Lee, H.C. Lee and K.R. Park, International Journal of Imaging Systems
-  and Technology, Volume 19, Issue 3, September 2009, Pages 175--178, doi:
-  10.1002/ima.20193
+  This method is based on the work of Lee and others, from [LLP09]_.
 
   This code is based on the Matlab implementation by Bram Ton, available at:
 
@@ -376,11 +370,7 @@ class LeeMask(Masker):
 class TomesLeeMask(Masker):
   """Estimates the finger region given an input NIR image using Lee et al.
 
-  This method is based on the work of Finger vein recognition using
-  minutia-based alignment and local binary pattern-based feature extraction,
-  E.C. Lee, H.C. Lee and K.R. Park, International Journal of Imaging Systems
-  and Technology, Volume 19, Issue 3, September 2009, Pages 175--178, doi:
-  10.1002/ima.20193
+  This method is based on the work of Finger vein recognition from [LLP09]_.
 
   This code is a variant of the Matlab implementation by Bram Ton, available
   at:

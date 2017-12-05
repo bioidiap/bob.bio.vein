@@ -2,17 +2,17 @@
 # vim: set fileencoding=utf-8 :
 # Tue 05 Dec 2017 10:19:21 CET
 
-'''RoI Preprocessing based on Tome's variant of Lee's masking in [LLP09]_.'''
+'''RoI Preprocessing based on Kono's masking, from [KUU02]_.
+'''
 
-from ..preprocessor import NoCrop, TomesLeeMask, HuangNormalization, \
-    NoFilter, Preprocessor
+from ..preprocessor import NoCrop, KonoMask, HuangNormalization, NoFilter, \
+    Preprocessor
 
 preprocessor = Preprocessor(
     crop=NoCrop(),
-    mask=TomesLeeMask(),
+    mask=KonoMask(),
     normalize=HuangNormalization(),
     filter=NoFilter(),
     )
 """Preprocessing using gray-level based finger cropping and no post-processing
 """
-

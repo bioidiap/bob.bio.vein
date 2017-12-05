@@ -46,6 +46,8 @@ setup(
         'annotations = bob.bio.vein.configurations.annotations',
         'watershed = bob.bio.vein.configurations.watershed',
         'tomelee = bob.bio.vein.configurations.tomelee',
+        'lee = bob.bio.vein.configurations.lee',
+        'kono = bob.bio.vein.configurations.kono',
 
         # baselines
         'mc = bob.bio.vein.configurations.maximum_curvature',

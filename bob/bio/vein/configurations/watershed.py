@@ -9,7 +9,13 @@ from ..preprocessor import NoCrop, WatershedMask, HuangNormalization, \
 
 from os.path import join as _join
 from pkg_resources import resource_filename as _filename
-_model = _filename(__name__, _join('data', '%s.hdf5' % database))
+
+try:
+  _model = _filename(__name__, _join('data', database + '.hdf5'))
+except NameError:
+  # makes documentation compile fine
+  _model = _filename(__name__, _join('data', 'verafinger.hdf5'))
+
 
 preprocessor = Preprocessor(
     crop=NoCrop(),
