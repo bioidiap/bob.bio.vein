@@ -42,6 +42,11 @@ setup(
         'mmcbnu6k = bob.bio.vein.configurations.mmcbnu6k',
         'hmtvein = bob.bio.vein.configurations.hmtvein',
 
+        # preprocessors
+        'annotations = bob.bio.vein.configurations.annotations',
+        'watershed = bob.bio.vein.configurations.watershed',
+        'tomelee = bob.bio.vein.configurations.tomelee',
+
         # baselines
         'mc = bob.bio.vein.configurations.maximum_curvature',
         'rlt = bob.bio.vein.configurations.repeated_line_tracking',

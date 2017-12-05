@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # Tue 05 Dec 2017 10:19:21 CET
 
-'''Baseline configuration for watershed masking'''
+'''RoI Preprocessing based on Watershed-based masking'''
 
 from ..preprocessor import NoCrop, WatershedMask, HuangNormalization, \
     NoFilter, Preprocessor
