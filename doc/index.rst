@@ -22,6 +22,7 @@ Users Guide
 
    installation
    baselines
+   preprocessing
    resources
    api
    references
