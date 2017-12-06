@@ -11,7 +11,6 @@ from os.path import join as _join
 from pkg_resources import resource_filename as _filename
 
 try:
-  import ipdb; ipdb.set_trace()
   _model = _filename(__name__, _join('data', database.name + '.hdf5'))
 except NameError:
   # makes documentation compile fine
