@@ -241,12 +241,12 @@ class KonoMask(Masker):
 
     # Determine lower half starting point
     if numpy.mod(img_h,2) == 0:
-        half_img_h = img_h/2 + 1
+        half_img_h = int(img_h/2) + 1
     else:
-        half_img_h = numpy.ceil(img_h/2)
+        half_img_h = int(numpy.ceil(img_h/2))
 
     #Construct filter kernel
-    winsize = numpy.ceil(4*self.sigma)
+    winsize = int(numpy.ceil(4*self.sigma))
 
     x = numpy.arange(-winsize, winsize+1)
     y = numpy.arange(-winsize, winsize+1)
