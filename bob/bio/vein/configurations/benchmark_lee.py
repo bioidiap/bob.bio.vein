@@ -15,3 +15,5 @@ preprocessor = Preprocessor(
     )
 """Preprocessing using gray-level based finger cropping and no post-processing
 """
+
+from .maximum_curvature import *

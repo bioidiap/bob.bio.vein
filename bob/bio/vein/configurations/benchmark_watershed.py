@@ -31,3 +31,5 @@ preprocessor = Preprocessor(
 
 Settings are optimised for the image quality of the specific dataset.
 """
+
+from .maximum_curvature import *

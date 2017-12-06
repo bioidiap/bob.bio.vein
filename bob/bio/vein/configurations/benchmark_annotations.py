@@ -16,3 +16,5 @@ preprocessor = Preprocessor(
     )
 """Preprocessing using RoI annotations
 """
+
+from .maximum_curvature import *
