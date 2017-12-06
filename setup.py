@@ -49,6 +49,12 @@ setup(
         'lee = bob.bio.vein.configurations.lee',
         'kono = bob.bio.vein.configurations.kono',
 
+        'benchmark_annotations = bob.bio.vein.configurations.benchmark_annotations',
+        'benchmark_watershed = bob.bio.vein.configurations.benchmark_watershed',
+        'benchmark_tomelee = bob.bio.vein.configurations.benchmark_tomelee',
+        'benchmark_lee = bob.bio.vein.configurations.benchmark_lee',
+        'benchmark_kono = bob.bio.vein.configurations.benchmark_kono',
+
         # baselines
         'mc = bob.bio.vein.configurations.maximum_curvature',
         'rlt = bob.bio.vein.configurations.repeated_line_tracking',
