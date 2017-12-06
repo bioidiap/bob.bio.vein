@@ -400,4 +400,37 @@ Notice we replace the use of the registered configuration file named
 ``verify.py`` take that into consideration instead of the original file.
 
 
+Other Tools
+-----------
+
+
+Pipeline Display
+================
+
+You can use the program ``view_sample.py`` to display the images after
+full processing using:
+
+.. code-block:: sh
+
+   $ ./bin/view_sample.py --save=output-dir verafinger /path/to/processed/directory 030-M/030_L_1
+   $ # open output-dir
+
+And you should be able to view images like these (example taken from the Vera
+fingervein database, using the automatic annotator and Maximum Curvature
+feature extractor):
+
+.. figure:: img/preprocessed.*
+   :scale: 50%
+
+   Example RoI overlayed on finger vein image of the Vera fingervein database,
+   as produced by the script ``view_sample.py``.
+
+
+.. figure:: img/binarized.*
+   :scale: 50%
+
+   Example of fingervein image from the Vera fingervein database, binarized by
+   using Maximum Curvature, after pre-processing.
+
+
 .. include:: links.rst
