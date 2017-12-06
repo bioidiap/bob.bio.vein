@@ -11,7 +11,7 @@ from os.path import join as _join
 from pkg_resources import resource_filename as _filename
 
 try:
-  _model = _filename(__name__, _join('data', database + '.hdf5'))
+  _model = _filename(__name__, _join('data', database.name + '.hdf5'))
 except NameError:
   # makes documentation compile fine
   _model = _filename(__name__, _join('data', 'verafinger.hdf5'))
