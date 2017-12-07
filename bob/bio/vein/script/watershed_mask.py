@@ -28,11 +28,11 @@ Options:
   -f, --fg-threshold=<float>  Foreground threshold value. Should be set to a
                               number that is between 0.5 and 1.0. The higher,
                               the less markers for the foreground watershed
-                              process will be produced. [default: 0.7]
+                              process will be produced. [default: 0.6]
   -b, --bg-threshold=<float>  Background threshold value. Should be set to a
                               number that is between 0.0 and 0.5. The smaller,
                               the less markers for the foreground watershed
-                              process will be produced. [default: 0.3]
+                              process will be produced. [default: 0.2]
   -m, --model=<path>          Path to model to use to find watershed markers.
                               If not set, use the database's associated default
   -S, --scan                  If set, ignores settings for the threshold and
@@ -272,13 +272,16 @@ def main(user_input=None):
     sys.exit(e)
 
   if args['<database>'] == 'fv3d':
-    from ..configurations.fv3d import database as db, _model as model
+    from ..configurations.fv3d import database as db
   elif args['<database>'] == 'verafinger':
-    from ..configurations.verafinger import database as db, _model as model
+    from ..configurations.verafinger import database as db
   elif args['<database>'] == 'hkpu':
-    from ..configurations.hkpu import database as db, _model as model
+    from ..configurations.hkpu import database as db
   elif args['<database>'] == 'thufvdt':
-    from ..configurations.thufvdt import database as db, _model as model
+    from ..configurations.thufvdt import database as db
+
+  # resolves the default watershed model to use
+  model = pkg_resources.resource_filename(__name__, os.path.join('..', 'configurations', 'data', args['<database>'] + '.hdf5'))
 
   # get the right default model for the relevant dataset if none is passed
   args['--model'] = args['--model'] or model

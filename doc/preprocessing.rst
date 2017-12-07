@@ -157,4 +157,41 @@ constructing an object and attaching it to the
 :py:class:`bob.bio.vein.preprocessor.Preprocessor` entry on your configuration.
 
 
+.. note::
+
+   By default, we provide pre-trained neural networks with specific
+   configurations for each dataset. If not explicitly set when instantiating
+   the preprocessor, these defaults are used. You can find these models under
+   this package's data (see the ``data`` directory under
+   ``bob.bio.vein.configurations``).
+
+
+Visualizing the Watershed Finger region detector
+------------------------------------------------
+
+The utility ``watershed_mask.py`` can help you visualize the output of the
+Watersheding preprocessing. By default, it displays the result of preprocessing
+one sample from a database:
+
+
+.. code-block:: sh
+
+   $ watershed_mask.py verafinger 001-M/001_L_1
+
+
+Should produce an image like the following:
+
+
+.. figure:: img/watershed.*
+   :scale: 50%
+
+   Example RoI overlayed on finger vein image of the Vera fingervein database,
+   as produced by the script ``watershed_mask.py``.
+
+
+The application ``watershed_mask.py`` has more options allowing you to override
+the model used for marker detection, thresholds, save resulting images from the
+various processing phases or scan for thresholds. Use ``--help`` for help.
+
+
 .. include:: links.rst
