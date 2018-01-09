@@ -203,6 +203,9 @@ class validate_protocol(object):
     elif name == 'thufvdt':
       import bob.db.thufvdt
       self.valid_names = bob.db.thufvdt.Database().protocol_names()
+    elif name == 'hmtvein':
+      import bob.db.hmtvein
+      self.valid_names = bob.db.hmtvein.Database().protocol_names()
     else:
       raise schema.SchemaError("do not support database {}".format(name))
 
@@ -247,6 +250,9 @@ class validate_group(object):
     elif name == 'thufvdt':
       import bob.db.thufvdt
       self.valid_names = bob.db.thufvdt.Database().groups()
+    elif name == 'hmtvein':
+      import bob.db.hmtvein
+      self.valid_names = bob.db.hmtvein.Database().groups()
     else:
       raise schema.SchemaError("do not support database {}".format(name))
 

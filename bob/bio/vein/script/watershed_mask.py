@@ -14,7 +14,7 @@ Usage: %(prog)s [-v...] [-s <path>] [-f <float>] [-b <float>] [--scan]
 Arguments:
 
   <database>  Name of the database to use for creating the model (options are:
-              "fv3d", "verafinger", "hkpu" or "thufvdt")
+              "fv3d", "verafinger", "hkpu", "thufvdt" or "hmtvein")
   <stem>      Name of the object on the database to display, without the root
               or the extension. If none provided, run for all possible stems on
               the database
@@ -110,7 +110,7 @@ def validate(args):
 
   '''
 
-  valid_databases = ('fv3d', 'verafinger', 'hkpu', 'thufvdt')
+  valid_databases = ('fv3d', 'verafinger', 'hkpu', 'thufvdt', 'hmtvein')
 
   sch = schema.Schema({
     '--model': schema.Or(None, schema.And(os.path.exists,
@@ -279,6 +279,8 @@ def main(user_input=None):
     from ..configurations.hkpu import database as db
   elif args['<database>'] == 'thufvdt':
     from ..configurations.thufvdt import database as db
+  elif args['<database>'] == 'hmtvein':
+    from ..configurations.hmtvein import database as db
 
   # resolves the default watershed model to use
   model = pkg_resources.resource_filename(__name__, os.path.join('..', 'configurations', 'data', args['<database>'] + '.hdf5'))

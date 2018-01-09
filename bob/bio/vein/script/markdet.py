@@ -14,7 +14,7 @@ Usage: %(prog)s [-v...] [--samples=N] [--model=PATH] [--points=N] [--hidden=N]
 Arguments:
 
   <database>  Name of the database to use for creating the model (options are:
-              "fv3d", "verafinger", "hkpu" or "thufvdt")
+              "fv3d", "verafinger", "hkpu", "thufvdt" or "hmtvein")
   <protocol>  Name of the protocol to use for creating the model (options
               depend on the database chosen)
   <group>     Name of the group to use on the database/protocol with the
@@ -151,7 +151,8 @@ def validate(args):
     '--batch': schema.Use(int),
     '--iterations': schema.Use(int),
     '--maximum-error': schema.Use(float),
-    '<database>': lambda n: n in ('fv3d', 'verafinger', 'hkpu', 'thufvdt'),
+    '<database>': lambda n: n in ('fv3d', 'verafinger', 'hkpu', 'thufvdt',
+      'hmtvein'),
     '<protocol>': validate_protocol(args['<database>']),
     '<group>': validate_group(args['<database>']),
     '<size>': schema.And(schema.Use(int), lambda n: n >= 3,
@@ -365,6 +366,8 @@ def main(user_input=None):
     from ..configurations.hkpu import database as db
   elif args['<database>'] == 'thufvdt':
     from ..configurations.thufvdt import database as db
+  elif args['<database>'] == 'hmtvein':
+    from ..configurations.hmtvein import database as db
   else:
     raise schema.SchemaError('Database %s is not supported' % \
         args['<database>'])
@@ -453,7 +456,7 @@ def main(user_input=None):
     except KeyboardInterrupt:
       print() #avoids the ^C line
       logger.info('Gracefully stopping training before limit (%d iterations)',
-          args['--batch'])
+          args['--iterations'])
       break
 
   # replaces output function with a sigmoid (output between 0.0 and 1.0)
@@ -482,4 +485,5 @@ def main(user_input=None):
   h5f['fg_threshold'] = fg
   h5f['bg_threshold'] = bg
   del h5f
-  logger.info('Saved MLP model and footprint to %s', args['--model'])
+  logger.info('Saved MLP model, thresholds and footprint to %s',
+      args['--model'])
