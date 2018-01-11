@@ -13,7 +13,7 @@ Usage: %(prog)s [-v...] [-s <path>] <database> <processed> <stem> [<stem>...]
 Arguments:
 
   <database>   Name of the database to use for creating the model (options are:
-               "fv3d" or "verafinger")
+               "fv3d", "verafinger", "hkpu", "thufvdt" or "hmtvein")
   <processed>  Path with the directory holding the preprocessed and extracted
                sub-directories containing the processing results of a
                bob.bio.vein toolchain
@@ -180,7 +180,7 @@ def validate(args):
 
   '''
 
-  valid_databases = ('fv3d', 'verafinger')
+  valid_databases = ('fv3d', 'verafinger', 'hkpu', 'thufvdt', 'hmtvein')
 
   sch = schema.Schema({
     '<database>': schema.And(lambda n: n in valid_databases,
@@ -222,6 +222,12 @@ def main(user_input=None):
     from ..configurations.fv3d import database as db
   elif args['<database>'] == 'verafinger':
     from ..configurations.verafinger import database as db
+  elif args['<database>'] == 'hkpu':
+    from ..configurations.hkpu import database as db
+  elif args['<database>'] == 'thufvdt':
+    from ..configurations.thufvdt import database as db
+  elif args['<database>'] == 'hmtvein':
+    from ..configurations.hmtvein import database as db
 
   database_replacement = "%s/.bob_bio_databases.txt" % os.environ["HOME"]
   db.replace_directories(database_replacement)
