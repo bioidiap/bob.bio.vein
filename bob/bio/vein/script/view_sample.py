@@ -247,8 +247,9 @@ def main(user_input=None):
     mask  = pp.read('mask')
     image_pp = pp.read('image')
     try:
-      binary = f.load(os.path.join(args['<processed>'], 'extracted'))
-      binary = numpy.rot90(binary, k=1)
+      binary_name = f.make_path(os.path.join(args['<processed>'], 'extracted'),
+          extension='.hdf5')
+      binary = bob.io.base.load(binary_name)
     except:
       binary = None
     fig = proof_figure(stem, image, mask, image_pp, binary)
