@@ -242,7 +242,7 @@ correspond to the the equal-error rate on the development set, in percentage):
     HKPU (hkpu)                 A             6.4      6.3    4.2
     THU-FVFDT (thufvdt)         p3            4.4      3.8    2.4
     MMCBNU_6000 (mmcbnu6k)      default
-    SDUMLA-HMT (hmtvein)        default
+    SDUMLA-HMT (hmtvein)        default      31.4     18.7   11.6
    ========================== ============= ======= ======= =======
 
 .. _baselines_table_watershedding:
@@ -257,7 +257,7 @@ correspond to the the equal-error rate on the development set, in percentage):
     HKPU (hkpu)                 A             8.6     7.2     4.8
     THU-FVFDT (thufvdt)         p3           11.4    13.1    11.0
     MMCBNU_6000 (mmcbnu6k)      default
-    SDUMLA-HMT (hmtvein)        default
+    SDUMLA-HMT (hmtvein)        default      32.2    19.2    12.0
    ========================== ============= ======= ======= =======
 
 .. _baselines_table_tomemask:

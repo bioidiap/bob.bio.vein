@@ -78,7 +78,7 @@ extracted ones. E.g.:
 
 .. code-block:: sh
 
-   $ compare_rois.py ~/verafinger/benchmark-annotations/preprocessed ~/verafinger/benchmark-watershed/preprocessed
+   $ compare_rois.py <path-to>/verafinger/benchmark-annotations/preprocessed <path-to>/verafinger/benchmark-watershed/preprocessed
    Statistics:
    Jaccard index: 9.84e-01 +- 1.64e-02
    Intersection ratio (m1): 9.93e-01 +- 1.06e-02
@@ -108,6 +108,21 @@ metrics.
     Tome's Lee (benchmark_tomelee)         0.96       0.98        0.02
     Lee (benchmark_lee)                    0.95       0.99        0.05
     Kono (benchmark_kono)                  0.94       0.99        0.05
+   ===================================== ========== ========== ==========
+
+
+.. _preprocessing_hmt_default_table:
+.. table:: Performance of RoI extraction algorithms on the SDUMLA HMT vein database ("default" protocol) when compared to annotations
+   :widths: auto
+
+   ===================================== ========== ========== ==========
+    Algorithm (module)                    Jaccard       M1         M2
+   ===================================== ========== ========== ==========
+    Annotations (benchmark_annotations)    1.0        1.0         0.0
+    Watershed (benchmark_watershed)        0.98       0.99        0.02
+    Tome's Lee (benchmark_tomelee)         0.88       0.92        0.04
+    Lee (benchmark_lee)
+    Kono (benchmark_kono)
    ===================================== ========== ========== ==========
 
 
