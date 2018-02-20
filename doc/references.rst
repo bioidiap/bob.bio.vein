@@ -11,7 +11,7 @@
 
 .. [MNM05] *N. Miura, A. Nagasaka, and T. Miyatake*, **Extraction of Finger-Vein Pattern Using Maximum Curvature Points in Image Profiles**, Proceedings on IAPR conference on machine vision applications, Vol. 9 , pp. 347--350, 2005.
 
-.. [LLP09] *E.C. Lee, H.C. Lee and K.R. Park*, **Finger vein recognition using minutia-based alignment and local binary pattern-based feature extraction**, International Journal of Imaging Systems and Technology. Vol. 19, No. 3, pp. 175-178, September 2009.
+.. #not used [LLP09] *E.C. Lee, H.C. Lee and K.R. Park*, **Finger vein recognition using minutia-based alignment and local binary pattern-based feature extraction**, International Journal of Imaging Systems and Technology. Vol. 19, No. 3, pp. 175-178, September 2009.
 
 .. #not used [ZY09] *J. Zhang and J. Yang*, **Finger-vein image enhancement based on combination of gray-level grouping and circular gabor filter** In International Conference on Information Engineering and Computer Science (ICIECS), pp. 1-4, Dec 2009.
 
