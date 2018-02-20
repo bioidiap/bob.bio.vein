@@ -53,7 +53,7 @@ requirements:
     - {{ pin_compatible('pillow') }}
     - {{ pin_compatible('schema') }}
     - {{ pin_compatible('docopt') }}
-    - {{ pin_compatible('scikit_image') }}
+    - {{ pin_compatible('scikit-image') }}
     - {{ pin_compatible('matplotlib') }}
 
 test:
