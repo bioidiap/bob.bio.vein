@@ -14,8 +14,8 @@ def test_utfvp():
     module = bob.bio.base.load_resource('utfvp', 'config',
         preferred_package='bob.bio.vein')
     try:
-        check_database(module.database, protocol=module.protocol,
-            groups=('dev', 'eval'))
+        check_database(module.database, protocol='nomLeftIndex', groups=('dev',
+          'eval'))
     except IOError as e:
         raise SkipTest(
             "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'" % e)
