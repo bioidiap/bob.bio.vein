@@ -5,7 +5,7 @@
  References
 ============
 
-.. [KUU02] *M. Kono, H. Ueki and S. Umemura*, **Near-infrared finger vein patterns for personal identification**, Applied Optics, Vol. 41, Issue 35, pp. 7429-7436 (2002).
+.. #not used [KUU02] *M. Kono, H. Ueki and S. Umemura*, **Near-infrared finger vein patterns for personal identification**, Applied Optics, Vol. 41, Issue 35, pp. 7429-7436 (2002).
 
 .. [MNM04] *N. Miura, A. Nagasaka, and T. Miyatake*, **Feature extraction of finger vein patterns based on repeated line tracking and its application to personal identification. Machine Vision and Applications**, Vol. 15, Num. 4, pp. 194--203, 2004.
 
@@ -15,11 +15,11 @@
 
 .. #not used [ZY09] *J. Zhang and J. Yang*, **Finger-vein image enhancement based on combination of gray-level grouping and circular gabor filter** In International Conference on Information Engineering and Computer Science (ICIECS), pp. 1-4, Dec 2009.
 
-.. [ZTXL09] *Jianjun Zhao, Hogliang Tian, Weixing Xu, and Xin Li*, **A New Approach to Hand Vein Image Enhancement**. In IEEE Second International Conference on Intelligent Computation Technology and Automation, ICICTA. Vol. 1, pp. 499-501. 2009.
+.. #not used [ZTXL09] *Jianjun Zhao, Hogliang Tian, Weixing Xu, and Xin Li*, **A New Approach to Hand Vein Image Enhancement**. In IEEE Second International Conference on Intelligent Computation Technology and Automation, ICICTA. Vol. 1, pp. 499-501. 2009.
 
 .. [HDLTL10] *B. Huang, Y. Dai, R. Li, D. Tang and W. Li*, **Finger-vein authentication based on wide line detector and pattern normalization**, Proceedings on 20th International Conference on Pattern Recognition (ICPR), 2010.
 
-.. [MD13] *L. Mirmohamadsadeghi and A. Drygajlo*, **Palm vein recognition using local texture patterns**, IET Biometrics, pp. 1-9, 2013.
+.. #not used [MD13] *L. Mirmohamadsadeghi and A. Drygajlo*, **Palm vein recognition using local texture patterns**, IET Biometrics, pp. 1-9, 2013.
 
 .. [TVM14] *Pedro Tome, Matthias Vanoni and Sébastien Marcel*, **On the Vulnerability of Finger Vein Recognition to Spoofing**, in: IEEE International Conference of the Biometrics Special Interest Group (BIOSIG), Darmstadt, Germay, pages 1 - 10, IEEE, 2014
 
