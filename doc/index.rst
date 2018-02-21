@@ -14,7 +14,6 @@ introduction. In this guide, we focus on details concerning vein recognition
 experiments with our plugins.
 
 
-===========
 Users Guide
 ===========
 
