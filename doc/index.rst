@@ -1,6 +1,6 @@
 .. vim: set fileencoding=utf-8 :
-.. date: Wed Jan 14 11:58:57 CEST 2015
 
+.. _bob.bio.vein:
 
 ====================================
  Biometric Vein Recognition Library

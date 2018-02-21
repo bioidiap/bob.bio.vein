@@ -1,0 +1,88 @@
+{% set name = 'bob.bio.vein' %}
+{% set project_dir = environ.get('RECIPE_DIR') + '/..' %}
+
+package:
+  name: {{ name }}
+  version: {{ environ.get('BOB_PACKAGE_VERSION', '0.0.1') }}
+
+build:
+  entry_points:
+    - compare_rois.py = bob.bio.vein.script.compare_rois:main
+    - view_sample.py = bob.bio.vein.script.view_sample:main
+    - blame.py = bob.bio.vein.script.blame:main
+    - markdet.py = bob.bio.vein.script.markdet:main
+    - watershed_mask.py = bob.bio.vein.script.watershed_mask:main
+  number: {{ environ.get('BOB_BUILD_NUMBER', 0) }}
+  run_exports:
+    - {{ pin_subpackage(name) }}
+  script:
+    - cd {{ project_dir }}
+    {% if environ.get('BUILD_EGG') %}
+    - python setup.py sdist --formats=zip
+    {% endif %}
+    - python setup.py install --single-version-externally-managed --record record.txt
+
+requirements:
+  host:
+    - python {{ python }}
+    - setuptools {{ setuptools }}
+    - numpy {{ numpy }}
+    - scipy {{ scipy }}
+    - pillow {{ pillow }}
+    - schema {{ schema }}
+    - docopt {{ docopt }}
+    - scikit-image {{ scikit_image }}
+    - matplotlib {{ matplotlib }}
+    - bob.extension
+    - bob.core
+    - bob.io.base
+    - bob.io.matlab
+    - bob.io.image
+    - bob.ip.base
+    - bob.ip.color
+    - bob.bio.base
+    - bob.learn.linear
+    - bob.learn.activation
+    - bob.learn.mlp
+
+  run:
+    - python
+    - setuptools
+    - {{ pin_compatible('numpy') }}
+    - {{ pin_compatible('scipy') }}
+    - {{ pin_compatible('pillow') }}
+    - {{ pin_compatible('schema') }}
+    - {{ pin_compatible('docopt') }}
+    - {{ pin_compatible('scikit-image') }}
+    - {{ pin_compatible('matplotlib') }}
+
+test:
+  imports:
+    - {{ name }}
+  commands:
+    - compare_rois.py --help
+    - view_sample.py --help
+    - blame.py --help
+    - markdet.py --help
+    - watershed_mask.py --help
+    - nosetests --with-coverage --cover-package={{ name }} -sv {{ name }}
+    - sphinx-build -aEW {{ project_dir }}/doc {{ project_dir }}/sphinx
+    - sphinx-build -aEb doctest {{ project_dir }}/doc sphinx
+    - conda inspect linkages -p $PREFIX {{ name }}  # [not win]
+    - conda inspect objects -p $PREFIX {{ name }}  # [osx]
+  requires:
+    - bob-devel {{ bob_devel }}.*
+    - nose
+    - coverage
+    - sphinx
+    - sphinx_rtd_theme
+    - bob.db.utfvp
+    - bob.db.verafinger
+    - bob.db.fv3d
+    - bob.db.putvein
+
+about:
+  home: https://www.idiap.ch/software/bob/
+  license: GNU General Public License v3 (GPLv3)
+  summary: Vein Recognition Library
+  license_family: GPL
