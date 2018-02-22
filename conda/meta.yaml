@@ -80,6 +80,10 @@ test:
     - bob.db.verafinger
     - bob.db.fv3d
     - bob.db.putvein
+    - bob.db.hkpu
+    - bob.db.thufvdt
+    - bob.db.mmcbnu6k
+    - bob.db.hmtvein
 
 about:
   home: https://www.idiap.ch/software/bob/
