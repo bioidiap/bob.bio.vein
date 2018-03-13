@@ -43,4 +43,10 @@ protocol = 'Nom'
 You may modify this at runtime by specifying the option ``--protocol`` on the
 command-line of ``verify.py`` or using the keyword ``protocol`` on a
 configuration file that is loaded **after** this configuration resource.
+
+We accept any biometric recognition protocol implemented by bob.db.verafinger.
+Variants of the biometric recognition protocol ending in ``-va`` can be used to
+test for vulnerability analysis. For example, use the protocol ``Nom-va`` to
+test the vulnerability of a biometric recognition pipeline using the ``Nom``
+protocol for enrollment and probe samples from presentation attacks.
 """

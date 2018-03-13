@@ -105,7 +105,8 @@ protocol, do the following:
 
    If you have more processing cores on your local machine and don't want to
    submit your job for SGE execution, you can run it in parallel (using 4
-   parallel tasks) by adding the options ``--parallel=4 --nice=10``.
+   parallel tasks) by adding the options ``--parallel=4 --nice=10``. **Before**
+   doing so, make sure the package gridtk_ is properly installed.
 
    Optionally, you may use the ``parallel`` resource configuration which
    already sets the number of parallel jobs to the number of hardware cores you

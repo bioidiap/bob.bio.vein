@@ -2,6 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # Tue 27 Sep 2016 16:48:57 CEST
 
+import os
 
 from bob.bio.base.database import BioFile, BioDatabase
 
@@ -22,8 +23,9 @@ class File(BioFile):
 
     def __init__(self, f):
 
-        super(File, self).__init__(client_id=f.unique_finger_name, path=f.path,
-            file_id=f.id)
+        id_ = f.finger.unique_name
+        if f.source == 'pa': id_ = 'attack/%s' % id_
+        super(File, self).__init__(client_id=id_, path=f.path, file_id=f.id)
         self.__f = f
 
 
@@ -31,8 +33,14 @@ class File(BioFile):
         """(Overrides base method) Loads both image and mask"""
 
         image = super(File, self).load(*args, **kwargs)
-        roi = self.__f.roi()
-        return AnnotatedArray(image, metadata=dict(roi=roi))
+        basedir = args[0] if args else kwargs['directory']
+        annotdir = os.path.join(basedir, 'annotations', 'roi')
+        if os.path.exists(annotdir):
+          print('loading annotations')
+          roi = self.__f.roi(args[0])
+          return AnnotatedArray(image, metadata=dict(roi=roi))
+        print('NOT loading annotations')
+        return image
 
 
 class Database(BioDatabase):
@@ -72,9 +80,16 @@ class Database(BioDatabase):
 
         groups = self.convert_names_to_lowlevel(groups,
             self.low_level_group_names, self.high_level_group_names)
-        retval = self._db.objects(groups=groups, protocol=protocol,
-                                  purposes=purposes, model_ids=model_ids,
-                                  **kwargs)
+
+        if (protocol.endswith('-va') or protocol.endswith('-VA')) and \
+            purposes=='probe': #the user actually means 'attack'
+          retval = self._db.objects(groups=groups, protocol=protocol[:-3],
+                                purposes='attack', model_ids=model_ids,
+                                **kwargs)
+        else:
+          retval = self._db.objects(groups=groups, protocol=protocol,
+                                    purposes=purposes, model_ids=model_ids,
+                                    **kwargs)
 
         return [File(f) for f in retval]
 
