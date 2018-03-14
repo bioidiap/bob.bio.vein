@@ -36,10 +36,8 @@ class File(BioFile):
         basedir = args[0] if args else kwargs['directory']
         annotdir = os.path.join(basedir, 'annotations', 'roi')
         if os.path.exists(annotdir):
-          print('loading annotations')
           roi = self.__f.roi(args[0])
           return AnnotatedArray(image, metadata=dict(roi=roi))
-        print('NOT loading annotations')
         return image
 
 
@@ -72,6 +70,8 @@ class Database(BioDatabase):
 
         groups = self.convert_names_to_lowlevel(groups,
             self.low_level_group_names, self.high_level_group_names)
+        if protocol.endswith('-va') or protocol.endswith('-VA'):
+            protocol = protocol[:-3]
         return self._db.model_ids(groups=groups, protocol=protocol)
 
 
@@ -81,15 +81,12 @@ class Database(BioDatabase):
         groups = self.convert_names_to_lowlevel(groups,
             self.low_level_group_names, self.high_level_group_names)
 
-        if (protocol.endswith('-va') or protocol.endswith('-VA')) and \
-            purposes=='probe': #the user actually means 'attack'
-          retval = self._db.objects(groups=groups, protocol=protocol[:-3],
-                                purposes='attack', model_ids=model_ids,
-                                **kwargs)
-        else:
-          retval = self._db.objects(groups=groups, protocol=protocol,
-                                    purposes=purposes, model_ids=model_ids,
-                                    **kwargs)
+        if protocol.endswith('-va') or protocol.endswith('-VA'):
+            protocol = protocol[:-3]
+            if purposes=='probe': purposes='attack'
+
+        retval = self._db.objects(groups=groups, protocol=protocol,
+            purposes=purposes, model_ids=model_ids, **kwargs)
 
         return [File(f) for f in retval]
 
