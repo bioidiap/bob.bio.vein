@@ -54,7 +54,7 @@ def main(user_input=None):
 
   completions = dict(
       prog=os.path.basename(sys.argv[0]),
-      version=pkg_resources.require('bob.measure')[0].version
+      version=pkg_resources.require('bob.bio.base')[0].version
       )
 
   args = docopt.docopt(
@@ -71,7 +71,7 @@ def main(user_input=None):
   cases = int(args['--cases'])
 
   # generates a huge
-  from bob.measure.load import load_score, get_negatives_positives
+  from bob.bio.base.score.load import load_score, get_negatives_positives
   scores = []
   names = {}
 
