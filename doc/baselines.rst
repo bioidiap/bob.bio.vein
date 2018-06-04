@@ -148,10 +148,17 @@ performance:
 .. code-block:: sh
 
    $ bob bio metrics <path-to>/verafinger/rlt/Nom/nonorm/scores-dev --no-evaluation
-   ('Threshold:', 0.31835292)
-   FAR : 23.636% (11388/48180)
-   FRR : 23.636% (52/220)
-   HTER: 23.636%
+   [Min. criterion: EER ] Threshold on Development set `scores-dev`: 0.31835292
+   ======  ========================
+   None    Development scores-dev
+   ======  ========================
+   FtA     0.0%
+   FMR     23.6% (11388/48180)
+   FNMR    23.6% (52/220)
+   FAR     23.6%
+   FRR     23.6%
+   HTER    23.6%
+   ======  ========================
 
 
 Maximum Curvature with Miura Matching
@@ -181,10 +188,18 @@ we obtained:
 .. code-block:: sh
 
    $ bob bio metrics <path-to>/verafinger/mc/Nom/nonorm/scores-dev --no-evaluation
-   ('Threshold:', 0.0737283)
-   FAR : 4.388% (2114/48180)
-   FRR : 4.545% (10/220)
-   HTER: 4.467%
+   [Min. criterion: EER ] Threshold on Development set `scores-dev`: 7.372830e-02
+   ======  ========================
+   None    Development scores-dev
+   ======  ========================
+   FtA     0.0%
+   FMR     4.4% (2116/48180)
+   FNMR    4.5% (10/220)
+   FAR     4.4%
+   FRR     4.5%
+   HTER    4.5%
+   ======  ========================
+
 
 Wide Line Detector with Miura Matching
 ======================================
@@ -214,10 +229,16 @@ we obtained:
 .. code-block:: sh
 
    $ bob bio metrics <path-to>/verafinger/wld/NOM/nonorm/scores-dev --no-evaluation
-   ('Threshold:', 0.240269475)
-   FAR : 9.770% (4707/48180)
-   FRR : 9.545% (21/220)
-   HTER: 9.658%
+   [Min. criterion: EER ] Threshold on Development set `scores-dev`: 2.402707e-01
+   ======  ========================
+   None    Development scores-dev
+   ======  ========================
+   FtA     0.0%
+   FMR     9.8% (4726/48180)
+   FNMR    10.0% (22/220)
+   FAR     9.8%
+   FRR     10.0%
+   HTER    9.9%
 
 
 Results for other Baselines
