@@ -207,7 +207,7 @@ Wide Line Detector with Miura Matching
 You can find the description of this method on the paper from Huang *et al.*
 [HDLTL10]_.
 
-To run the baseline on the `VERA fingervein`_ database, using the ``NOM``
+To run the baseline on the `VERA fingervein`_ database, using the ``Nom``
 protocol like above, do the following:
 
 
@@ -228,7 +228,7 @@ we obtained:
 
 .. code-block:: sh
 
-   $ bob bio metrics <path-to>/verafinger/wld/NOM/nonorm/scores-dev --no-evaluation
+   $ bob bio metrics <path-to>/verafinger/wld/Nom/nonorm/scores-dev --no-evaluation
    [Min. criterion: EER ] Threshold on Development set `scores-dev`: 2.402707e-01
    ======  ========================
    None    Development scores-dev
@@ -254,7 +254,7 @@ correspond to the the equal-error rate on the development set, in percentage):
    Feature Extractor      Full     B    Nom   1vsall  nom
 ======================== ====== ====== ====== ====== ======
 Repeated Line Tracking    14.6   13.4   23.6   3.4    1.4
-Wide Line Detector         5.8    5.6   9.7   2.8    1.9
+Wide Line Detector         5.8    5.6    9.7   2.8    1.9
 Maximum Curvature          2.5    1.4    4.5   0.9    0.4
 ======================== ====== ====== ====== ====== ======
 
