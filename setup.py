@@ -50,11 +50,11 @@ setup(
         ],
 
       'console_scripts': [
-        'bob_vein_compare_rois.py = bob.bio.vein.script.compare_rois:main',
-        'bob_vein_view_sample.py = bob.bio.vein.script.view_sample:main',
-        'bob_vein_blame.py = bob.bio.vein.script.blame:main',
-        'bob_vein_markdet.py = bob.bio.vein.script.markdet:main',
-        'bob_vein_watershed_mask.py = bob.bio.vein.script.watershed_mask:main',
+        'bob_bio_vein_compare_rois.py = bob.bio.vein.script.compare_rois:main',
+        'bob_bio_vein_view_sample.py = bob.bio.vein.script.view_sample:main',
+        'bob_bio_vein_blame.py = bob.bio.vein.script.blame:main',
+        'bob_bio_vein_markdet.py = bob.bio.vein.script.markdet:main',
+        'bob_bio_vein_watershed_mask.py = bob.bio.vein.script.watershed_mask:main',
         ]
       },
 
