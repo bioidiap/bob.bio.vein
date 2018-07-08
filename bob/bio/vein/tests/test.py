@@ -140,7 +140,7 @@ def test_preprocessor():
   preproc_ref = bob.core.convert(bob.io.base.load(output_img_filename),
       numpy.uint8, (0,255), (0.0,1.0))
 
-  assert numpy.mean(numpy.abs(mask - mask_ref)) < 1e-2
+  assert numpy.mean(numpy.abs(mask ^ mask_ref)) < 1e-2
 
   # Very loose comparison!
   #preprocessor_utils.show_image(numpy.abs(preproc.astype('int16') - preproc_ref.astype('int16')).astype('uint8'))
