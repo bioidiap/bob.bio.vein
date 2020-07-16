@@ -46,8 +46,8 @@ class Database(BioDatabase):
         from bob.db.utfvp.query import Database as LowLevelDatabase
         self._db = LowLevelDatabase()
 
-        self.low_level_group_names = ('train', 'dev')
-        self.high_level_group_names = ('world', 'dev')
+        self.low_level_group_names = ('train', 'dev', 'eval')
+        self.high_level_group_names = ('world', 'dev', 'eval')
 
     def groups(self):
 
