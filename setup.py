@@ -49,6 +49,14 @@ setup(
         'grid = bob.bio.vein.configurations.gridio4g48',
         ],
 
+     'bob.bio.database': [
+        'verafinger = bob.bio.vein.configurations.verafinger:database',
+      ],
+
+      'bob.bio.pipeline': [
+        'wld = bob.bio.vein.configurations.wide_line_detector:pipeline'
+      ],
+
       'console_scripts': [
         'bob_bio_vein_compare_rois.py = bob.bio.vein.script.compare_rois:main',
         'bob_bio_vein_view_sample.py = bob.bio.vein.script.view_sample:main',

@@ -58,8 +58,8 @@ class MiuraMatch (Algorithm):
         ch = ch,
         cw = cw,
 
-        multiple_model_scoring = None,
-        multiple_probe_scoring = None
+        #multiple_model_scoring = None,
+        #multiple_probe_scoring = None
     )
 
     self.ch = ch

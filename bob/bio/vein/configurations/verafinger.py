@@ -12,16 +12,37 @@ You can download the raw data of the `VERA Fingervein`_ database by following
 the link.
 """
 
+from bob.extension import rc
+from bob.bio.vein.database.verafinger import Database
+from bob.bio.base.pipelines.vanilla_biometrics import DatabaseConnector
 
-from ..database.verafinger import Database
+_verafinger_directory = rc["bob.db.verafinger.directory"]
+"""Value of ``~/.bobrc`` for this database"""
 
-_verafinger_directory = "[YOUR_VERAFINGER_DIRECTORY]"
-"""Value of ``~/.bob_bio_databases.txt`` for this database"""
 
-database = Database(
+protocol = 'Nom'
+"""The default protocol to use for tests
+
+You may modify this at runtime by specifying the option ``--protocol`` on the
+command-line of ``verify.py`` or using the keyword ``protocol`` on a
+configuration file that is loaded **after** this configuration resource.
+
+We accept any biometric recognition protocol implemented by bob.db.verafinger.
+Variants of the biometric recognition protocol ending in ``-va`` can be used to
+test for vulnerability analysis. For example, use the protocol ``Nom-va`` to
+test the vulnerability of a biometric recognition pipeline using the ``Nom``
+protocol for enrollment and probe samples from presentation attacks.
+"""
+
+database = DatabaseConnector(Database(
     original_directory = _verafinger_directory,
     original_extension = '.png',
+    protocol = protocol),
+
+    annotation_type = None,
+    fixed_positions = None
     )
+
 """The :py:class:`bob.bio.base.database.BioDatabase` derivative with Verafinger
 database settings
 
@@ -37,16 +58,4 @@ value to the place where you actually installed the Verafinger Database, as
 explained in the section :ref:`bob.bio.vein.baselines`.
 """
 
-protocol = 'Nom'
-"""The default protocol to use for tests
 
-You may modify this at runtime by specifying the option ``--protocol`` on the
-command-line of ``verify.py`` or using the keyword ``protocol`` on a
-configuration file that is loaded **after** this configuration resource.
-
-We accept any biometric recognition protocol implemented by bob.db.verafinger.
-Variants of the biometric recognition protocol ending in ``-va`` can be used to
-test for vulnerability analysis. For example, use the protocol ``Nom-va`` to
-test the vulnerability of a biometric recognition pipeline using the ``Nom``
-protocol for enrollment and probe samples from presentation attacks.
-"""
