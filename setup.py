@@ -32,18 +32,18 @@ setup(
     entry_points={
 
       'bob.bio.config': [
-        # databases
+        # legacy databases
         'verafinger = bob.bio.vein.configurations.verafinger',
         'utfvp = bob.bio.vein.configurations.utfvp',
         'fv3d = bob.bio.vein.configurations.fv3d',
         'putvein = bob.bio.vein.configurations.putvein',
 
-        # baselines
+        # legacy baselines
         'mc = bob.bio.vein.configurations.maximum_curvature',
         'rlt = bob.bio.vein.configurations.repeated_line_tracking',
         'wld = bob.bio.vein.configurations.wide_line_detector',
 
-        # other
+        # other (legacy)
         'parallel = bob.bio.vein.configurations.parallel',
         'gridio4g48 = bob.bio.vein.configurations.gridio4g48',
         'grid = bob.bio.vein.configurations.gridio4g48',
@@ -51,6 +51,9 @@ setup(
 
      'bob.bio.database': [
         'verafinger = bob.bio.vein.configurations.verafinger:database',
+        'utfvp = bob.bio.vein.configurations.utfvp:database',
+        'fv3d = bob.bio.vein.configurations.fv3d:database',
+        'putvein = bob.bio.vein.configurations.putvein:database',
       ],
 
       'bob.bio.pipeline': [
