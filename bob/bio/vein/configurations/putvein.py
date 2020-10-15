@@ -16,17 +16,29 @@ You can download the raw data of the `PUT Vein`_ database by following
 the link.
 """
 
+from bob.extension import rc
 from ..database.putvein import PutveinBioDatabase
+from bob.bio.base.pipelines.vanilla_biometrics import DatabaseConnector
 
-_putvein_directory = "[YOUR_PUTVEIN_IMAGE_DIRECTORY]"
-"""Value of ``~/.bob_bio_databases.txt`` for this database"""
+_putvein_directory = rc["bob.db.putvein.directory"]
+"""Value in ``~/.bobrc`` for this dataset directory"""
 
-database = PutveinBioDatabase(
+legacy_database = PutveinBioDatabase(
     original_directory = _putvein_directory,
     original_extension = '.bmp',
     )
 """The :py:class:`bob.bio.base.database.BioDatabase` derivative with PUT Vein
 database settings
+"""
+
+database = DatabaseConnector(
+    legacy_database,
+    annotation_type=None,
+    fixed_positions=None
+)
+
+"""
+The database interface wrapped for vanilla-biometrics
 
 .. warning::
 
@@ -34,13 +46,14 @@ database settings
    manner, respecting usage protocols. It does **not** contain the raw
    datafiles. You should procure those yourself.
 
-Notice that ``original_directory`` is set to ``[YOUR_PUTVEIN_IMAGE_DIRECTORY]``.
-You must make sure to create ``${HOME}/.bob_bio_databases.txt`` setting this
-value to the place where you actually installed the PUT Vein Database, as
-explained in the section :ref:`bob.bio.vein.baselines`.
+Notice that ``original_directory`` is set to ``rc[bob.db.putvein.directory]``.
+You must make sure to set this value with
+``bob config set bob.db.putvein.directory`` to the place where you actually
+installed the `put vein`_ dataset, as explained in the section
+:ref:`bob.bio.vein.baselines`.
 """
 
-protocol = 'wrist-LR_1'
+protocol = 'wrist-LR_1' # TODO protocol implementation in bob pipelines?
 """The default protocol to use for tests
 
 You may modify this at runtime by specifying the option ``--protocol`` on the

@@ -17,14 +17,10 @@ from bob.bio.vein.database.verafinger import Database
 from bob.bio.base.pipelines.vanilla_biometrics import DatabaseConnector
 
 _verafinger_directory = rc["bob.db.verafinger.directory"]
-"""Value of ``~/.bobrc`` for this database"""
+"""Value in ``~/.bobrc`` for this dataset directory"""
 
-protocol = 'Nom'
+protocol = 'Nom' # TODO protocol implementation in bob pipelines?
 """The default protocol to use for tests
-
-You may modify this at runtime by specifying the option ``--protocol`` on the
-command-line of ``verify.py`` or using the keyword ``protocol`` on a
-configuration file that is loaded **after** this configuration resource.
 
 We accept any biometric recognition protocol implemented by bob.db.verafinger.
 Variants of the biometric recognition protocol ending in ``-va`` can be used to
@@ -42,9 +38,8 @@ database = DatabaseConnector(Database(
     annotation_type=None,
     fixed_positions=None
 )
-
 """The :py:class:`bob.bio.base.database.BioDatabase` derivative with Verafinger
-database settings
+database settings, wrapped with the vanilla-biometrics database connector.
 
 .. warning::
 
@@ -52,8 +47,9 @@ database settings
    manner, respecting usage protocols. It does **not** contain the raw
    datafiles. You should procure those yourself.
 
-Notice that ``original_directory`` is set to ``[YOUR_VERAFINGER_DIRECTORY]``.
-You must make sure to create ``${HOME}/.bob_bio_databases.txt`` setting this
-value to the place where you actually installed the Verafinger Database, as
-explained in the section :ref:`bob.bio.vein.baselines`.
+Notice that ``original_directory`` is set to
+``rc[bob.db.verafinger.directory]``. You must make sure to set this value with
+``bob config set bob.db.verafinger.directory`` to the place where you actually
+installed the `vera fingervein`_ dataset, as explained in the section
+:ref:`bob.bio.vein.baselines`.
 """

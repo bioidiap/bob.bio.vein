@@ -11,17 +11,28 @@ the link.
 """
 
 
+from bob.extension import rc
 from ..database.fv3d import Database
+from bob.bio.base.pipelines.vanilla_biometrics import DatabaseConnector
 
-_fv3d_directory = "[YOUR_FV3D_DIRECTORY]"
-"""Value of ``~/.bob_bio_databases.txt`` for this database"""
+_fv3d_directory = rc["bob.db.fv3d.directory"]
+"""Value in ``~/.bobrc`` for this dataset directory"""
 
-database = Database(
+legacy_database = Database(
     original_directory = _fv3d_directory,
     original_extension = '.png',
-    )
+)
 """The :py:class:`bob.bio.base.database.BioDatabase` derivative with fv3d
 database settings
+"""
+
+database = DatabaseConnector(
+    legacy_database,
+    annotation_type=None,
+    fixed_positions=None
+)
+"""
+The database interface wrapped for vanilla-biometrics
 
 .. warning::
 
@@ -29,16 +40,10 @@ database settings
    manner, respecting usage protocols. It does **not** contain the raw
    datafiles. You should procure those yourself.
 
-Notice that ``original_directory`` is set to ``[YOUR_FV3D_DIRECTORY]``. You
-must make sure to create ``${HOME}/.bob_bio_databases.txt`` setting this value
-to the place where you actually installed the `3D Fingervein`_ Database, as
+Notice that ``original_directory`` is set to ``rc[bob.db.fv3d.directory]``. You
+must make sure to set this value with ``bob config set bob.db.fv3d.directory``
+to the place where you actually installed the `3D Fingervein`_ dataset, as
 explained in the section :ref:`bob.bio.vein.baselines`.
 """
 
-protocol = 'central'
-"""The default protocol to use for tests
-
-You may modify this at runtime by specifying the option ``--protocol`` on the
-command-line of ``verify.py`` or using the keyword ``protocol`` on a
-configuration file that is loaded **after** this configuration resource.
-"""
+protocol = 'central' # TODO protocol implementation in bob pipelines?

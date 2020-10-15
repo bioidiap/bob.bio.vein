@@ -17,16 +17,27 @@ You can download the raw data of the `UTFVP`_ database by following the link.
 .. include:: links.rst
 """
 
+from bob.extension import rc
 from ..database.utfvp import Database
+from bob.bio.base.pipelines.vanilla_biometrics import DatabaseConnector
 
-_utfvp_directory = "[YOUR_UTFVP_DIRECTORY]"
-"""Value of ``~/.bob_bio_databases.txt`` for this database"""
+_utfvp_directory = rc["bob.db.utfvp.directory"]
+"""Value in ``~/.bobrc`` for this dataset directory"""
 
-database = Database(
+legacy_database = Database(
     original_directory = _utfvp_directory,
     original_extension = '.png',
     )
 """The :py:class:`bob.bio.base.database.BioDatabase` derivative with UTFVP settings
+"""
+
+database = DatabaseConnector(
+    legacy_database,
+    annotation_type=None,
+    fixed_positions=None
+)
+"""
+The database interface wrapped for vanilla-biometrics
 
 .. warning::
 
@@ -34,16 +45,13 @@ database = Database(
    manner, respecting usage protocols. It does **not** contain the raw
    datafiles. You should procure those yourself.
 
-Notice that ``original_directory`` is set to ``[YOUR_UTFVP_DIRECTORY]``.
-You must make sure to create ``${HOME}/.bob_bio_databases.txt`` setting this
-value to the place where you actually installed the Verafinger Database, as
-explained in the section :ref:`bob.bio.vein.baselines`.
+Notice that ``original_directory`` is set to ``rc[bob.db.utfvp.directory]``.
+You must make sure to set this value with
+``bob config set bob.db.utfvp.directory`` to the place where you actually
+installed the `utfvp`_ dataset, as explained in the section
+:ref:`bob.bio.vein.baselines`.
 """
 
-protocol = 'nom'
-"""The default protocol to use for tests
 
-You may modify this at runtime by specifying the option ``--protocol`` on the
-command-line of ``verify.py`` or using the keyword ``protocol`` on a
-configuration file that is loaded **after** this configuration resource.
-"""
+
+protocol = 'nom' # TODO protocol implementation in bob pipelines?
