@@ -19,7 +19,6 @@ from bob.bio.base.pipelines.vanilla_biometrics import DatabaseConnector
 _verafinger_directory = rc["bob.db.verafinger.directory"]
 """Value of ``~/.bobrc`` for this database"""
 
-
 protocol = 'Nom'
 """The default protocol to use for tests
 
@@ -34,14 +33,15 @@ test the vulnerability of a biometric recognition pipeline using the ``Nom``
 protocol for enrollment and probe samples from presentation attacks.
 """
 
+"""Updated with the wrapper for the pipelines package"""
 database = DatabaseConnector(Database(
-    original_directory = _verafinger_directory,
-    original_extension = '.png',
-    protocol = protocol),
+    original_directory=_verafinger_directory,
+    original_extension='.png',
+    protocol=protocol),
 
-    annotation_type = None,
-    fixed_positions = None
-    )
+    annotation_type=None,
+    fixed_positions=None
+)
 
 """The :py:class:`bob.bio.base.database.BioDatabase` derivative with Verafinger
 database settings
@@ -57,5 +57,3 @@ You must make sure to create ``${HOME}/.bob_bio_databases.txt`` setting this
 value to the place where you actually installed the Verafinger Database, as
 explained in the section :ref:`bob.bio.vein.baselines`.
 """
-
-

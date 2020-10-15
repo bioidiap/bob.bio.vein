@@ -11,6 +11,9 @@ References:
 3. [TVM14]_
 
 """
+from tempfile import TemporaryDirectory
+from pathlib import Path
+import os
 
 from bob.bio.base.transformers import PreprocessorTransformer
 from bob.bio.base.transformers import ExtractorTransformer
@@ -29,6 +32,23 @@ from bob.bio.vein.preprocessor import (
     Preprocessor,
 )
 
+from bob.bio.vein.extractor import WideLineDetector
+from bob.bio.vein.algorithm import MiuraMatch
+
+"""Baseline updated with the wrapper for the pipelines package"""
+
+"""Sub-directory where temporary files are saved"""
+sub_directory = 'wld'
+user_temp = Path("/idiap/") / "temp" / os.environ["USER"]
+if user_temp.exists():
+    # use /idiap/temp/<USER>/bob_bio_vein_tmp/<SUBDIRECTORY>/
+    legacy_temp_dir = user_temp / "bob_bio_vein_tmp" / sub_directory
+else:
+    # if /idiap/temp/<USER> does not exist, use /tmp/tmpxxxxxxxx
+    legacy_temp_dir = TemporaryDirectory().name
+
+"""Preprocessing using gray-level based finger cropping and no post-processing
+"""
 preprocessor = PreprocessorTransformer(
     Preprocessor(
         crop=NoCrop(),
@@ -38,30 +58,23 @@ preprocessor = PreprocessorTransformer(
     )
 )
 
-
-"""Preprocessing using gray-level based finger cropping and no post-processing
-"""
-
-from bob.bio.vein.extractor import WideLineDetector
-
-extractor = ExtractorTransformer(WideLineDetector())
 """Features are the output of the maximum curvature algorithm, as described on
 [HDLTL10]_.
 
 Defaults taken from [TV13]_.
 """
+extractor = ExtractorTransformer(WideLineDetector())
 
-# Notice the values of ch and cw are different than those from the
-# repeated-line tracking **and** maximum curvature baselines.
-from bob.bio.vein.algorithm import MiuraMatch
 
-biometric_algorithm = BioAlgorithmLegacy(
-    MiuraMatch(ch=18, cw=28), base_dir="/idiap/temp/vbros/pipeline_test/verafinger"
-)
 """Miura-matching algorithm with specific settings for search displacement
 
 Defaults taken from [TV13]_.
 """
-transformer = make_pipeline(wrap(["sample"], preprocessor), wrap(["sample"], extractor))
+# Notice the values of ch and cw are different than those from the
+# repeated-line tracking **and** maximum curvature baselines.
+biometric_algorithm = BioAlgorithmLegacy(
+    MiuraMatch(ch=18, cw=28), base_dir=legacy_temp_dir
+)
 
+transformer = make_pipeline(wrap(["sample"], preprocessor), wrap(["sample"], extractor))
 pipeline = VanillaBiometricsPipeline(transformer, biometric_algorithm)

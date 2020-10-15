@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # Tue 27 Sep 2016 16:48:08 CEST
 
-'''Repeated-Line Tracking and Miura Matching baseline
+"""Repeated-Line Tracking and Miura Matching baseline
 
 References:
 
@@ -10,39 +10,65 @@ References:
 2. [TV13]_
 3. [TVM14]_
 
-'''
-
-sub_directory = 'rlt'
-"""Sub-directory where results will be placed.
-
-You may change this setting using the ``--sub-directory`` command-line option
-or the attribute ``sub_directory`` in a configuration file loaded **after**
-this resource.
 """
+from tempfile import TemporaryDirectory
+from pathlib import Path
+import os
 
-from ..preprocessor import NoCrop, TomesLeeMask, HuangNormalization, \
-    NoFilter, Preprocessor
+from bob.bio.base.transformers import PreprocessorTransformer
+from bob.bio.base.transformers import ExtractorTransformer
+from bob.bio.base.pipelines.vanilla_biometrics import (
+    VanillaBiometricsPipeline,
+    BioAlgorithmLegacy,
+)
+from sklearn.pipeline import make_pipeline
+from bob.pipelines import wrap
 
-preprocessor = Preprocessor(
-    crop=NoCrop(),
-    mask=TomesLeeMask(),
-    normalize=HuangNormalization(),
-    filter=NoFilter(),
-    )
+from bob.bio.vein.preprocessor import (
+    NoCrop,
+    TomesLeeMask,
+    HuangNormalization,
+    NoFilter,
+    Preprocessor,
+)
+from bob.bio.vein.extractor import RepeatedLineTracking
+from bob.bio.vein.algorithm import MiuraMatch
+
+"""Baseline updated with the wrapper for the pipelines package"""
+
+"""Sub-directory where temporary files are saved"""
+sub_directory = 'rlt'
+user_temp = Path("/idiap/") / "temp" / os.environ["USER"]
+if user_temp.exists():
+    # use /idiap/temp/<USER>/bob_bio_vein_tmp/<SUBDIRECTORY>/
+    legacy_temp_dir = user_temp / "bob_bio_vein_tmp" / sub_directory
+else:
+    # if /idiap/temp/<USER> does not exist, use /tmp/tmpxxxxxxxx
+    legacy_temp_dir = TemporaryDirectory().name
+
 """Preprocessing using gray-level based finger cropping and no post-processing
 """
+preprocessor = PreprocessorTransformer(
+    Preprocessor(
+        crop=NoCrop(),
+        mask=TomesLeeMask(),
+        normalize=HuangNormalization(),
+        filter=NoFilter(),
+    )
+)
 
-from ..extractor import RepeatedLineTracking
-
-extractor = RepeatedLineTracking()
 """Features are the output of repeated-line tracking, as described on [MNM04]_.
 
 Defaults taken from [TV13]_.
 """
+extractor = ExtractorTransformer(RepeatedLineTracking())
 
-from ..algorithm import MiuraMatch
-algorithm = MiuraMatch(ch=65, cw=55)
 """Miura-matching algorithm with specific settings for search displacement
 
 Defaults taken from [TV13]_.
 """
+biometric_algorithm = BioAlgorithmLegacy(
+    MiuraMatch(ch=65, cw=55), base_dir=legacy_temp_dir
+)
+transformer = make_pipeline(wrap(["sample"], preprocessor), wrap(["sample"], extractor))
+pipeline = VanillaBiometricsPipeline(transformer, biometric_algorithm)

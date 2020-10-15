@@ -54,7 +54,9 @@ setup(
       ],
 
       'bob.bio.pipeline': [
-        'wld = bob.bio.vein.configurations.wide_line_detector:pipeline'
+        'wld = bob.bio.vein.configurations.wide_line_detector:pipeline',
+        'mc = bob.bio.vein.configurations.maximum_curvature:pipeline',
+        'rlt = bob.bio.vein.configurations.repeated_line_tracking:pipeline',
       ],
 
       'console_scripts': [
