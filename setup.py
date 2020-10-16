@@ -32,11 +32,32 @@ setup(
     entry_points={
 
       'bob.bio.config': [
+        # protocols TODO: add all protocols
+          # verafinger
+          'Nom = bob.bio.vein.configurations.database.protocol.Nom',
+          'Cropped-Nom = bob.bio.vein.configurations.database.protocol.cropped_Nom',
+          'B = bob.bio.vein.configurations.database.protocol.b',
+          'Cropped-B = bob.bio.vein.configurations.database.protocol.cropped_b',
+          'Full = bob.bio.vein.configurations.database.protocol.full',
+          'Cropped-Full = bob.bio.vein.configurations.database.protocol.cropped_full',
+          'Fifty = bob.bio.vein.configurations.database.protocol.fifty',
+          'Cropped-Fifty = bob.bio.vein.configurations.database.protocol.cropped_fifty',
+          # utfvp
+          # 'nom = bob.bio.vein.configurations.database.protocol.nom',
+          # fv3d
+          'central = bob.bio.vein.configurations.database.protocol.central',
+          'left = bob.bio.vein.configurations.database.protocol.left',
+          'right = bob.bio.vein.configurations.database.protocol.right',
+          'stitched = bob.bio.vein.configurations.database.protocol.stitched',
+          # putvein
+          # 'wrist-LR_1 = bob.bio.vein.configurations.database.protocol.wristLR_1',
+          # TODO That will be a LOT of protocols, for putvein...
+
         # legacy databases
-        'verafinger = bob.bio.vein.configurations.verafinger',
-        'utfvp = bob.bio.vein.configurations.utfvp',
-        'fv3d = bob.bio.vein.configurations.fv3d',
-        'putvein = bob.bio.vein.configurations.putvein',
+        'verafinger = bob.bio.vein.configurations.database.verafinger',
+        'utfvp = bob.bio.vein.configurations.database.utfvp',
+        'fv3d = bob.bio.vein.configurations.database.fv3d',
+        'putvein = bob.bio.vein.configurations.database.putvein',
 
         # legacy baselines
         'mc = bob.bio.vein.configurations.maximum_curvature',
@@ -50,10 +71,10 @@ setup(
         ],
 
      'bob.bio.database': [
-        'verafinger = bob.bio.vein.configurations.verafinger:database',
-        'utfvp = bob.bio.vein.configurations.utfvp:database',
-        'fv3d = bob.bio.vein.configurations.fv3d:database',
-        'putvein = bob.bio.vein.configurations.putvein:database',
+        'verafinger = bob.bio.vein.configurations.database.verafinger:database',
+        'utfvp = bob.bio.vein.configurations.database.utfvp:database',
+        'fv3d = bob.bio.vein.configurations.database.fv3d:database',
+        'putvein = bob.bio.vein.configurations.database.putvein:database',
       ],
 
       'bob.bio.pipeline': [

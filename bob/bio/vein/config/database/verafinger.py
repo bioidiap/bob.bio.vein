@@ -16,18 +16,17 @@ from bob.extension import rc
 from bob.bio.vein.database.verafinger import Database
 from bob.bio.base.pipelines.vanilla_biometrics import DatabaseConnector
 
+import logging
+logger = logging.getLogger("bob.bio.vein")
+
 _verafinger_directory = rc["bob.db.verafinger.directory"]
 """Value in ``~/.bobrc`` for this dataset directory"""
 
-protocol = 'Nom' # TODO protocol implementation in bob pipelines?
-"""The default protocol to use for tests
+# Set default protocol if not given via a config file
+if 'protocol' not in locals():
+    logger.info("protocol not specified, using default: 'central'")
+    protocol = 'central'
 
-We accept any biometric recognition protocol implemented by bob.db.verafinger.
-Variants of the biometric recognition protocol ending in ``-va`` can be used to
-test for vulnerability analysis. For example, use the protocol ``Nom-va`` to
-test the vulnerability of a biometric recognition pipeline using the ``Nom``
-protocol for enrollment and probe samples from presentation attacks.
-"""
 
 """Updated with the wrapper for the pipelines package"""
 database = DatabaseConnector(Database(
@@ -53,3 +52,6 @@ Notice that ``original_directory`` is set to
 installed the `vera fingervein`_ dataset, as explained in the section
 :ref:`bob.bio.vein.baselines`.
 """
+
+print(f"VERAFINGER: protocol = '{protocol}'.")
+logger.debug(f"Loaded database verafinger config file, using protocol '{protocol}'.")

@@ -18,15 +18,24 @@ You can download the raw data of the `UTFVP`_ database by following the link.
 """
 
 from bob.extension import rc
-from ..database.utfvp import Database
+from bob.bio.vein.database.utfvp import Database
 from bob.bio.base.pipelines.vanilla_biometrics import DatabaseConnector
+
+import logging
+logger = logging.getLogger("bob.bio.vein")
 
 _utfvp_directory = rc["bob.db.utfvp.directory"]
 """Value in ``~/.bobrc`` for this dataset directory"""
 
+# Set default protocol if not given via a config file
+if 'protocol' not in locals():
+    logger.info("protocol not specified, using default: 'central'")
+    protocol = 'central'
+
 legacy_database = Database(
     original_directory = _utfvp_directory,
     original_extension = '.png',
+    protocol = protocol,
     )
 """The :py:class:`bob.bio.base.database.BioDatabase` derivative with UTFVP settings
 """
@@ -52,6 +61,4 @@ installed the `utfvp`_ dataset, as explained in the section
 :ref:`bob.bio.vein.baselines`.
 """
 
-
-
-protocol = 'nom' # TODO protocol implementation in bob pipelines?
+logger.debug(f"Loaded database utfvp config file, using protocol '{protocol}'.")

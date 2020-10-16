@@ -12,15 +12,25 @@ the link.
 
 
 from bob.extension import rc
-from ..database.fv3d import Database
+from bob.bio.vein.database.fv3d import Database
 from bob.bio.base.pipelines.vanilla_biometrics import DatabaseConnector
 
+import logging
+logger = logging.getLogger("bob.bio.vein")
+
+# Retrieve directory from config
 _fv3d_directory = rc["bob.db.fv3d.directory"]
 """Value in ``~/.bobrc`` for this dataset directory"""
+
+# Set default protocol if not given via a config file
+if 'protocol' not in locals():
+    logger.info("protocol not specified, using default: 'central'")
+    protocol = 'central'
 
 legacy_database = Database(
     original_directory = _fv3d_directory,
     original_extension = '.png',
+    protocol = protocol,
 )
 """The :py:class:`bob.bio.base.database.BioDatabase` derivative with fv3d
 database settings
@@ -45,5 +55,5 @@ must make sure to set this value with ``bob config set bob.db.fv3d.directory``
 to the place where you actually installed the `3D Fingervein`_ dataset, as
 explained in the section :ref:`bob.bio.vein.baselines`.
 """
-
-protocol = 'central' # TODO protocol implementation in bob pipelines?
+print(f"protocol is '{protocol}'")
+logger.debug(f"Loaded database fv3d config file, using protocol '{protocol}'.")

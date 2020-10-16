@@ -17,15 +17,24 @@ the link.
 """
 
 from bob.extension import rc
-from ..database.putvein import PutveinBioDatabase
+from bob.bio.vein.database.putvein import PutveinBioDatabase
 from bob.bio.base.pipelines.vanilla_biometrics import DatabaseConnector
+
+import logging
+logger = logging.getLogger("bob.bio.vein")
 
 _putvein_directory = rc["bob.db.putvein.directory"]
 """Value in ``~/.bobrc`` for this dataset directory"""
 
+# Set default protocol if not given via a config file
+if 'protocol' not in locals():
+    logger.info("protocol not specified, using default: 'central'")
+    protocol = 'central'
+
 legacy_database = PutveinBioDatabase(
     original_directory = _putvein_directory,
     original_extension = '.bmp',
+    protocol = protocol,
     )
 """The :py:class:`bob.bio.base.database.BioDatabase` derivative with PUT Vein
 database settings
@@ -61,9 +70,4 @@ command-line of ``verify.py`` or using the keyword ``protocol`` on a
 configuration file that is loaded **after** this configuration resource.
 """
 
-
-
-
-
-
-
+logger.debug(f"loaded database putvein config file, using protocol '{protocol}'.")
