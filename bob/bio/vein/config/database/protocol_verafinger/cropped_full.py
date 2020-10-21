@@ -3,7 +3,7 @@
 
 # This is a config file for bob.bio.vein
 # It defines the database protocol to use with the Database Interface for the
-# VeraFinger dataset, defined ar bob.db.verafinger.
+# VeraFinger dataset, defined at bob.db.verafinger.
 
 # It is defined as a resource in the setup file of this package.
 
@@ -14,4 +14,9 @@
 
 # The protocol resource must be specified before the database resource.
 
-protocol = 'Cropped-Fifty'
+
+# Available protocols are (some require the creation of your own config file):
+# 'B', 'Cropped-B', 'Cropped-Fifty', 'Cropped-Full', 'Cropped-Nom', 'Fifty',
+# 'Full', 'Nom'
+
+protocol = 'Cropped-Full'

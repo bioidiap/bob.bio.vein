@@ -32,55 +32,55 @@ setup(
     entry_points={
 
       'bob.bio.config': [
-        # protocols TODO: add all protocols
+        # protocols (must be specified before the database in the cmd)
           # verafinger
-          'Nom = bob.bio.vein.configurations.database.protocol.Nom',
-          'Cropped-Nom = bob.bio.vein.configurations.database.protocol.cropped_Nom',
-          'B = bob.bio.vein.configurations.database.protocol.b',
-          'Cropped-B = bob.bio.vein.configurations.database.protocol.cropped_b',
-          'Full = bob.bio.vein.configurations.database.protocol.full',
-          'Cropped-Full = bob.bio.vein.configurations.database.protocol.cropped_full',
-          'Fifty = bob.bio.vein.configurations.database.protocol.fifty',
-          'Cropped-Fifty = bob.bio.vein.configurations.database.protocol.cropped_fifty',
+          'Nom = bob.bio.vein.config.database.protocol_verafinger.nom',
+          'Cropped-Nom = bob.bio.vein.config.database.protocol_verafinger.cropped_nom',
+          'Full = bob.bio.vein.config.database.protocol_verafinger.full',
+          'Cropped-Full = bob.bio.vein.config.database.protocol_verafinger.cropped_full',
           # utfvp
-          # 'nom = bob.bio.vein.configurations.database.protocol.nom',
+          'nom = bob.bio.vein.config.database.protocol_utfvp.nom',
+          'full = bob.bio.vein.config.database.protocol_utfvp.full',
+          '1vsall = bob.bio.vein.config.database.protocol_utfvp.one_vs_all',
           # fv3d
-          'central = bob.bio.vein.configurations.database.protocol.central',
-          'left = bob.bio.vein.configurations.database.protocol.left',
-          'right = bob.bio.vein.configurations.database.protocol.right',
-          'stitched = bob.bio.vein.configurations.database.protocol.stitched',
+          'central = bob.bio.vein.config.database.protocol_fv3d.central',
+          'left = bob.bio.vein.config.database.protocol_fv3d.left',
+          'right = bob.bio.vein.config.database.protocol_fv3d.right',
+          'stitched = bob.bio.vein.config.database.protocol_fv3d.stitched',
           # putvein
-          # 'wrist-LR_1 = bob.bio.vein.configurations.database.protocol.wristLR_1',
-          # TODO That will be a LOT of protocols, for putvein...
+          'wrist-LR-1 = bob.bio.vein.config.database.protocol_putvein.wrist_lr_1',
+          'wrist-LR-4 = bob.bio.vein.config.database.protocol_putvein.wrist_lr_4',
+          'palm-LR-1 = bob.bio.vein.config.database.protocol_putvein.palm_lr_1',
+          'palm-LR-4 = bob.bio.vein.config.database.protocol_putvein.palm_lr_4',
 
         # legacy databases
-        'verafinger = bob.bio.vein.configurations.database.verafinger',
-        'utfvp = bob.bio.vein.configurations.database.utfvp',
-        'fv3d = bob.bio.vein.configurations.database.fv3d',
-        'putvein = bob.bio.vein.configurations.database.putvein',
+        'verafinger = bob.bio.vein.config.database.verafinger',
+        'utfvp = bob.bio.vein.config.database.utfvp',
+        'fv3d = bob.bio.vein.config.database.fv3d',
+        'putvein = bob.bio.vein.config.database.putvein',
 
         # legacy baselines
-        'mc = bob.bio.vein.configurations.maximum_curvature',
-        'rlt = bob.bio.vein.configurations.repeated_line_tracking',
-        'wld = bob.bio.vein.configurations.wide_line_detector',
+        'mc = bob.bio.vein.config.maximum_curvature',
+        'rlt = bob.bio.vein.config.repeated_line_tracking',
+        'wld = bob.bio.vein.config.wide_line_detector',
 
         # other (legacy)
-        'parallel = bob.bio.vein.configurations.parallel',
-        'gridio4g48 = bob.bio.vein.configurations.gridio4g48',
-        'grid = bob.bio.vein.configurations.gridio4g48',
+        'parallel = bob.bio.vein.config.parallel',
+        'gridio4g48 = bob.bio.vein.config.gridio4g48',
+        'grid = bob.bio.vein.config.gridio4g48',
         ],
 
      'bob.bio.database': [
-        'verafinger = bob.bio.vein.configurations.database.verafinger:database',
-        'utfvp = bob.bio.vein.configurations.database.utfvp:database',
-        'fv3d = bob.bio.vein.configurations.database.fv3d:database',
-        'putvein = bob.bio.vein.configurations.database.putvein:database',
+        'verafinger = bob.bio.vein.config.database.verafinger:database',
+        'utfvp = bob.bio.vein.config.database.utfvp:database',
+        'fv3d = bob.bio.vein.config.database.fv3d:database',
+        'putvein = bob.bio.vein.config.database.putvein:database',
       ],
 
       'bob.bio.pipeline': [
-        'wld = bob.bio.vein.configurations.wide_line_detector:pipeline',
-        'mc = bob.bio.vein.configurations.maximum_curvature:pipeline',
-        'rlt = bob.bio.vein.configurations.repeated_line_tracking:pipeline',
+        'wld = bob.bio.vein.config.wide_line_detector:pipeline',
+        'mc = bob.bio.vein.config.maximum_curvature:pipeline',
+        'rlt = bob.bio.vein.config.repeated_line_tracking:pipeline',
       ],
 
       'console_scripts': [
