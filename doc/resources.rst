@@ -101,27 +101,3 @@ Wide-Line Detector and Miura Matching
 
 .. automodule:: bob.bio.vein.config.wide_line_detector
    :members:
-
-
-Other Resources
----------------
-
-Other resources which include configuration parameters for circumstantial
-usage.
-
-.. _bob.bio.vein.resources.parallel:
-
-
-Parallel Running
-================
-
-.. automodule:: bob.bio.vein.config.parallel
-   :members:
-
-
-Using SGE at Idiap
-==================
-
-.. automodule:: bob.bio.vein.config.gridio4g48
-   :members:
-
