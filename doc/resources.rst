@@ -32,7 +32,7 @@ the following runtime attributes of ``verify.py``:
 Verafinger Database
 ===================
 
-.. automodule:: bob.bio.vein.configurations.verafinger
+.. automodule:: bob.bio.vein.config.database.verafinger
    :members:
 
 
@@ -41,7 +41,7 @@ Verafinger Database
 UTFVP Database
 ==============
 
-.. automodule:: bob.bio.vein.configurations.utfvp
+.. automodule:: bob.bio.vein.config.database.utfvp
    :members:
 
 .. _bob.bio.vein.resources.database.fv3d:
@@ -49,7 +49,7 @@ UTFVP Database
 3D Fingervein Database
 ======================
 
-.. automodule:: bob.bio.vein.configurations.fv3d
+.. automodule:: bob.bio.vein.config.database.fv3d
    :members:
 
 
@@ -58,7 +58,7 @@ UTFVP Database
 PUT Vein Databas
 ======================
 
-.. automodule:: bob.bio.vein.configurations.putvein
+.. automodule:: bob.bio.vein.config.database.putvein
    :members:
 
 
@@ -81,7 +81,7 @@ the following runtime attributes of ``verify.py``:
 Repeated Line Tracking and Miura Matching
 =========================================
 
-.. automodule:: bob.bio.vein.configurations.repeated_line_tracking
+.. automodule:: bob.bio.vein.config.repeated_line_tracking
    :members:
 
 
@@ -90,7 +90,7 @@ Repeated Line Tracking and Miura Matching
 Maximum Curvature and Miura Matching
 ====================================
 
-.. automodule:: bob.bio.vein.configurations.maximum_curvature
+.. automodule:: bob.bio.vein.config.maximum_curvature
    :members:
 
 
@@ -99,7 +99,7 @@ Maximum Curvature and Miura Matching
 Wide-Line Detector and Miura Matching
 =====================================
 
-.. automodule:: bob.bio.vein.configurations.wide_line_detector
+.. automodule:: bob.bio.vein.config.wide_line_detector
    :members:
 
 
@@ -115,13 +115,13 @@ usage.
 Parallel Running
 ================
 
-.. automodule:: bob.bio.vein.configurations.parallel
+.. automodule:: bob.bio.vein.config.parallel
    :members:
 
 
 Using SGE at Idiap
 ==================
 
-.. automodule:: bob.bio.vein.configurations.gridio4g48
+.. automodule:: bob.bio.vein.config.gridio4g48
    :members:
 
