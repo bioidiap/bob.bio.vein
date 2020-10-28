@@ -53,5 +53,4 @@ installed the `vera fingervein`_ dataset, as explained in the section
 :ref:`bob.bio.vein.baselines`.
 """
 
-print(f"VERAFINGER: protocol = '{protocol}'.")
 logger.debug(f"Loaded database verafinger config file, using protocol '{protocol}'.")

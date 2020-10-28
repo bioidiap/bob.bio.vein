@@ -69,7 +69,6 @@ user_temp = Path("/idiap/") / "temp" / os.environ["USER"]
 if user_temp.exists():
     # use /idiap/temp/<USER>/bob_bio_vein_tmp/<SUBDIRECTORY>/
     legacy_temp_dir = user_temp / "bob_bio_vein_tmp" / sub_directory
-    print(f"Saving legacy temp in '{legacy_temp_dir}'")
 else:
     # if /idiap/temp/<USER> does not exist, use /tmp/tmpxxxxxxxx
     legacy_temp_dir = TemporaryDirectory().name

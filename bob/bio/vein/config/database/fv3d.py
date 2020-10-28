@@ -55,5 +55,5 @@ must make sure to set this value with ``bob config set bob.db.fv3d.directory``
 to the place where you actually installed the `3D Fingervein`_ dataset, as
 explained in the section :ref:`bob.bio.vein.baselines`.
 """
-print(f"protocol is '{protocol}'")
+
 logger.debug(f"Loaded database fv3d config file, using protocol '{protocol}'.")
