@@ -29,8 +29,8 @@ _utfvp_directory = rc["bob.db.utfvp.directory"]
 
 # Set default protocol if not given via a config file
 if 'protocol' not in locals():
-    logger.info("protocol not specified, using default: 'central'")
-    protocol = 'central'
+    logger.info("protocol not specified, using default: 'nom'")
+    protocol = 'nom'
 
 legacy_database = Database(
     original_directory = _utfvp_directory,

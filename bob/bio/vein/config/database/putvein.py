@@ -28,8 +28,8 @@ _putvein_directory = rc["bob.db.putvein.directory"]
 
 # Set default protocol if not given via a config file
 if 'protocol' not in locals():
-    logger.info("protocol not specified, using default: 'central'")
-    protocol = 'central'
+    logger.info("protocol not specified, using default: 'wrist-LR_1'")
+    protocol = 'wrist-LR_1'
 
 legacy_database = PutveinBioDatabase(
     original_directory = _putvein_directory,
@@ -60,14 +60,6 @@ You must make sure to set this value with
 ``bob config set bob.db.putvein.directory`` to the place where you actually
 installed the `put vein`_ dataset, as explained in the section
 :ref:`bob.bio.vein.baselines`.
-"""
-
-protocol = 'wrist-LR_1' # TODO protocol implementation in bob pipelines?
-"""The default protocol to use for tests
-
-You may modify this at runtime by specifying the option ``--protocol`` on the
-command-line of ``verify.py`` or using the keyword ``protocol`` on a
-configuration file that is loaded **after** this configuration resource.
 """
 
 logger.debug(f"loaded database putvein config file, using protocol '{protocol}'.")

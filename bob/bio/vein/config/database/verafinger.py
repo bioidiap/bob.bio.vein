@@ -24,8 +24,8 @@ _verafinger_directory = rc["bob.db.verafinger.directory"]
 
 # Set default protocol if not given via a config file
 if 'protocol' not in locals():
-    logger.info("protocol not specified, using default: 'central'")
-    protocol = 'central'
+    logger.info("protocol not specified, using default: 'Nom'")
+    protocol = 'Nom'
 
 
 """Updated with the wrapper for the pipelines package"""
