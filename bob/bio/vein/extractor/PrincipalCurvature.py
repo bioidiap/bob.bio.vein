@@ -21,7 +21,7 @@ class PrincipalCurvature (Extractor):
     def __init__(
           self,
           sigma = 3, # Gaussian standard deviation applied
-          threshold = 2, # Percentage of maximum used for hard thresholding
+          threshold = 4, # Percentage of maximum used for hard thresholding
           ):
         """NOTE: In the reference paper where the size of the finger image is 320 by 128,
         the proposed values for sigma and threshold are 3 and 4, respectively.
