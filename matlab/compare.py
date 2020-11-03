@@ -6,7 +6,6 @@
 
 import numpy
 import bob.io.base
-import bob.io.matlab
 from bob.bio.vein.extractor import MaximumCurvature
 
 # Load inputs

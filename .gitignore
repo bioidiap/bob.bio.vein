@@ -19,3 +19,4 @@ parts
 sphinx
 src/
 submitted.sql3
+*.DS_Store
