@@ -40,6 +40,7 @@ setup(
 
         # baselines
         'mc = bob.bio.vein.configurations.maximum_curvature',
+        'pc = bob.bio.vein.configurations.principal_curvature',
         'rlt = bob.bio.vein.configurations.repeated_line_tracking',
         'wld = bob.bio.vein.configurations.wide_line_detector',
 
