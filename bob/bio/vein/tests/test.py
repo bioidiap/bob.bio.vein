@@ -19,7 +19,6 @@ import nose.tools
 import pkg_resources
 
 import bob.io.base
-import bob.io.matlab
 import bob.io.image
 
 from ..preprocessor import utils as preprocessor_utils
@@ -118,9 +117,9 @@ def test_preprocessor():
 
   input_filename = F(('preprocessors', '0019_3_1_120509-160517.png'))
   output_img_filename  = F(('preprocessors',
-    '0019_3_1_120509-160517_img_lee_huang.mat'))
+    '0019_3_1_120509-160517_img_lee_huang.mat.hdf5'))
   output_fvr_filename  = F(('preprocessors',
-    '0019_3_1_120509-160517_fvr_lee_huang.mat'))
+    '0019_3_1_120509-160517_fvr_lee_huang.mat.hdf5'))
 
   img = bob.io.base.load(input_filename)
 
@@ -216,9 +215,9 @@ def test_repeated_line_tracking():
 
   #Repeated Line Tracking method against Matlab reference
 
-  input_img_filename  = F(('extractors', 'miurarlt_input_img.mat'))
-  input_fvr_filename  = F(('extractors', 'miurarlt_input_fvr.mat'))
-  output_filename     = F(('extractors', 'miurarlt_output.mat'))
+  input_img_filename  = F(('extractors', 'miurarlt_input_img.mat.hdf5'))
+  input_fvr_filename  = F(('extractors', 'miurarlt_input_fvr.mat.hdf5'))
+  output_filename     = F(('extractors', 'miurarlt_output.mat.hdf5'))
 
   # Load inputs
   input_img = bob.io.base.load(input_img_filename)
@@ -271,9 +270,9 @@ def test_wide_line_detector():
 
   #Wide Line Detector method against Matlab reference
 
-  input_img_filename  = F(('extractors', 'huangwl_input_img.mat'))
-  input_fvr_filename  = F(('extractors', 'huangwl_input_fvr.mat'))
-  output_filename     = F(('extractors', 'huangwl_output.mat'))
+  input_img_filename  = F(('extractors', 'huangwl_input_img.mat.hdf5'))
+  input_fvr_filename  = F(('extractors', 'huangwl_input_fvr.mat.hdf5'))
+  output_filename     = F(('extractors', 'huangwl_output.mat.hdf5'))
 
   # Load inputs
   input_img = bob.io.base.load(input_img_filename)
@@ -325,9 +324,9 @@ def test_miura_match():
 
   #Match Ratio method against Matlab reference
 
-  template_filename = F(('algorithms', '0001_2_1_120509-135338.mat'))
-  probe_gen_filename = F(('algorithms', '0001_2_2_120509-135558.mat'))
-  probe_imp_filename = F(('algorithms', '0003_2_1_120509-141255.mat'))
+  template_filename = F(('algorithms', '0001_2_1_120509-135338.mat.hdf5'))
+  probe_gen_filename = F(('algorithms', '0001_2_2_120509-135558.mat.hdf5'))
+  probe_imp_filename = F(('algorithms', '0003_2_1_120509-141255.mat.hdf5'))
 
   template_vein = bob.io.base.load(template_filename)
   probe_gen_vein = bob.io.base.load(probe_gen_filename)
@@ -347,9 +346,9 @@ def test_correlate():
 
   #Match Ratio method against Matlab reference
 
-  template_filename = F(('algorithms', '0001_2_1_120509-135338.mat'))
-  probe_gen_filename = F(('algorithms', '0001_2_2_120509-135558.mat'))
-  probe_imp_filename = F(('algorithms', '0003_2_1_120509-141255.mat'))
+  template_filename = F(('algorithms', '0001_2_1_120509-135338.mat.hdf5'))
+  probe_gen_filename = F(('algorithms', '0001_2_2_120509-135558.mat.hdf5'))
+  probe_imp_filename = F(('algorithms', '0003_2_1_120509-141255.mat.hdf5'))
 
   template_vein = bob.io.base.load(template_filename)
   probe_gen_vein = bob.io.base.load(probe_gen_filename)

@@ -36,7 +36,6 @@ requirements:
     - bob.extension
     - bob.core
     - bob.io.base
-    - bob.io.matlab
     - bob.io.image
     - bob.ip.base
     - bob.ip.color
