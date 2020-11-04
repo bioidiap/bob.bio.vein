@@ -13,7 +13,7 @@ from scipy.ndimage import gaussian_filter
 class PrincipalCurvature (Extractor):
     """MiuraMax feature extractor
 
-    Based on J.H. Choi, W. Song, T. Kim, S.R. Lee and H.C. Kim, Finger vein
+    Based on [CW09]_. : J.H. Choi, W. Song, T. Kim, S.R. Lee and H.C. Kim, Finger vein
     extraction using gradient normalization and principal curvature. Proceedings
     on Image Processing: Machine Vision Applications II, SPIE 7251, (2009)
     """
