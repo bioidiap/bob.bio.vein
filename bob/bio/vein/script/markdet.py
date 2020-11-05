@@ -136,9 +136,9 @@ def main(user_input=None):
     sys.exit(e)
 
   if args['<database>'] == 'fv3d':
-    from ..configurations.fv3d import database as db
+    from bob.bio.vein.config.fv3d import database as db
   elif args['<database>'] == 'verafinger':
-    from ..configurations.verafinger import database as db
+    from bob.bio.vein.config.verafinger import database as db
   else:
     raise schema.SchemaError('Database %s is not supported' % \
         args['<database>'])

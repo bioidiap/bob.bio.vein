@@ -270,9 +270,9 @@ def main(user_input=None):
     sys.exit(e)
 
   if args['<database>'] == 'fv3d':
-    from ..configurations.fv3d import database as db
+    from bob.bio.vein.config.fv3d import database as db
   elif args['<database>'] == 'verafinger':
-    from ..configurations.verafinger import database as db
+    from bob.bio.vein.config.verafinger import database as db
 
   database_replacement = "%s/.bob_bio_databases.txt" % os.environ["HOME"]
   db.replace_directories(database_replacement)
