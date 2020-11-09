@@ -32,23 +32,58 @@ setup(
     entry_points={
 
       'bob.bio.config': [
-        # databases
-        'verafinger = bob.bio.vein.configurations.verafinger',
-        'utfvp = bob.bio.vein.configurations.utfvp',
-        'fv3d = bob.bio.vein.configurations.fv3d',
-        'putvein = bob.bio.vein.configurations.putvein',
+        # protocols (must be specified before the database in the cmd)
+          # verafinger
+          'Nom = bob.bio.vein.config.database.protocol_verafinger.nom',
+          'Cropped-Nom = bob.bio.vein.config.database.protocol_verafinger.cropped_nom',
+          'Full = bob.bio.vein.config.database.protocol_verafinger.full',
+          'Cropped-Full = bob.bio.vein.config.database.protocol_verafinger.cropped_full',
+          # utfvp
+          'nom = bob.bio.vein.config.database.protocol_utfvp.nom',
+          'full = bob.bio.vein.config.database.protocol_utfvp.full',
+          '1vsall = bob.bio.vein.config.database.protocol_utfvp.one_vs_all',
+          # fv3d
+          'central = bob.bio.vein.config.database.protocol_fv3d.central',
+          'left = bob.bio.vein.config.database.protocol_fv3d.left',
+          'right = bob.bio.vein.config.database.protocol_fv3d.right',
+          'stitched = bob.bio.vein.config.database.protocol_fv3d.stitched',
+          # putvein
+          'wrist-LR-1 = bob.bio.vein.config.database.protocol_putvein.wrist_lr_1',
+          'wrist-LR-4 = bob.bio.vein.config.database.protocol_putvein.wrist_lr_4',
+          'palm-LR-1 = bob.bio.vein.config.database.protocol_putvein.palm_lr_1',
+          'palm-LR-4 = bob.bio.vein.config.database.protocol_putvein.palm_lr_4',
 
-        # baselines
-        'mc = bob.bio.vein.configurations.maximum_curvature',
-        'pc = bob.bio.vein.configurations.principal_curvature',
-        'rlt = bob.bio.vein.configurations.repeated_line_tracking',
-        'wld = bob.bio.vein.configurations.wide_line_detector',
+        # legacy databases
+        'verafinger = bob.bio.vein.config.database.verafinger',
+        'utfvp = bob.bio.vein.config.database.utfvp',
+        'fv3d = bob.bio.vein.config.database.fv3d',
+        'putvein = bob.bio.vein.config.database.putvein',
 
-        # other
-        'parallel = bob.bio.vein.configurations.parallel',
-        'gridio4g48 = bob.bio.vein.configurations.gridio4g48',
-        'grid = bob.bio.vein.configurations.gridio4g48',
+        # legacy baselines
+        'mc = bob.bio.vein.config.maximum_curvature',
+        'rlt = bob.bio.vein.config.repeated_line_tracking',
+        'wld = bob.bio.vein.config.wide_line_detector',
+        'pc = bob.bio.vein.config.principal_curvature',
+
+        # other (legacy)
+        'parallel = bob.bio.vein.config.parallel',
+        'gridio4g48 = bob.bio.vein.config.gridio4g48',
+        'grid = bob.bio.vein.config.gridio4g48',
         ],
+
+     'bob.bio.database': [
+        'verafinger = bob.bio.vein.config.database.verafinger:database',
+        'utfvp = bob.bio.vein.config.database.utfvp:database',
+        'fv3d = bob.bio.vein.config.database.fv3d:database',
+        'putvein = bob.bio.vein.config.database.putvein:database',
+      ],
+
+      'bob.bio.pipeline': [
+        'wld = bob.bio.vein.config.wide_line_detector:pipeline',
+        'mc = bob.bio.vein.config.maximum_curvature:pipeline',
+        'rlt = bob.bio.vein.config.repeated_line_tracking:pipeline',
+        'pc = bob.bio.vein.config.principal_curvature:pipeline',
+      ],
 
       'console_scripts': [
         'bob_bio_vein_compare_rois.py = bob.bio.vein.script.compare_rois:main',
