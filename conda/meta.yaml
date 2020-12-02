@@ -79,6 +79,7 @@ test:
     - bob.db.verafinger
     - bob.db.fv3d
     - bob.db.putvein
+    - bob.db.atnt
 
 about:
   home: https://www.idiap.ch/software/bob/
