@@ -54,10 +54,6 @@ setup(
             "mc = bob.bio.vein.config.maximum_curvature",
             "rlt = bob.bio.vein.config.repeated_line_tracking",
             "wld = bob.bio.vein.config.wide_line_detector",
-            # other (legacy)
-            "parallel = bob.bio.vein.config.parallel",
-            "gridio4g48 = bob.bio.vein.config.gridio4g48",
-            "grid = bob.bio.vein.config.gridio4g48",
         ],
         "bob.bio.database": [
             "verafinger = bob.bio.vein.config.database.verafinger:database",
