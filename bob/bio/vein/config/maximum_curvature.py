@@ -12,8 +12,7 @@ References:
 
 """
 
-from tempfile import TemporaryDirectory
-from pathlib import Path
+import tempfile
 import os
 
 from bob.bio.base.transformers import PreprocessorTransformer
@@ -38,14 +37,19 @@ from bob.bio.vein.algorithm import MiuraMatch
 """Baseline updated with the wrapper for the pipelines package"""
 
 """Sub-directory where temporary files are saved"""
-sub_directory = 'rlt'
-user_temp = Path("/idiap/") / "temp" / os.environ["USER"]
-if user_temp.exists():
-    # use /idiap/temp/<USER>/bob_bio_vein_tmp/<SUBDIRECTORY>/
-    legacy_temp_dir = user_temp / "bob_bio_vein_tmp" / sub_directory
+sub_directory = "rlt"
+
+default_temp = (
+    os.path.join("/idiap", "temp", os.environ["USER"])
+    if "USER" in os.environ
+    else "~/temp"
+)
+
+if os.path.exists(default_temp):
+    legacy_temp_dir = os.path.join(default_temp, "bob_bio_base_tmp", sub_directory)
 else:
     # if /idiap/temp/<USER> does not exist, use /tmp/tmpxxxxxxxx
-    legacy_temp_dir = TemporaryDirectory().name
+    legacy_temp_dir = tempfile.TemporaryDirectory().name
 
 """Preprocessing using gray-level based finger cropping and no post-processing
 """
@@ -69,9 +73,7 @@ extractor = ExtractorTransformer(MaximumCurvature())
 
 Defaults taken from [TV13]_.
 """
-biometric_algorithm = BioAlgorithmLegacy(
-    MiuraMatch(), base_dir=legacy_temp_dir
-)
+biometric_algorithm = BioAlgorithmLegacy(MiuraMatch(), base_dir=legacy_temp_dir)
 
 transformer = make_pipeline(wrap(["sample"], preprocessor), wrap(["sample"], extractor))
 pipeline = VanillaBiometricsPipeline(transformer, biometric_algorithm)

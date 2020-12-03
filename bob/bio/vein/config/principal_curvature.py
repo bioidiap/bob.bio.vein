@@ -35,17 +35,14 @@ from bob.bio.vein.extractor import PrincipalCurvature
 legacy_extractor = PrincipalCurvature()
 
 
-from bob.bio.base.transformers import (
-    PreprocessorTransformer,
-    ExtractorTransformer
-)
+from bob.bio.base.transformers import PreprocessorTransformer, ExtractorTransformer
 from sklearn.pipeline import make_pipeline
 from bob.pipelines import wrap
 
 
 transformer = make_pipeline(
     wrap(["sample"], PreprocessorTransformer(legacy_preprocessor)),
-    wrap(["sample"], ExtractorTransformer(legacy_extractor))
+    wrap(["sample"], ExtractorTransformer(legacy_extractor)),
 )
 
 
@@ -60,18 +57,21 @@ Defaults taken from [TV13]_.
 """
 
 import os
-from pathlib import Path
-from tempfile import TemporaryDirectory
+import tempfile
 
 sub_directory = "pc"
 
-user_temp = Path("/idiap/") / "temp" / os.environ["USER"]
-if user_temp.exists():
-    # use /idiap/temp/<USER>/bob_bio_vein_tmp/<SUBDIRECTORY>/
-    legacy_temp_dir = user_temp / "bob_bio_vein_tmp" / sub_directory
+default_temp = (
+    os.path.join("/idiap", "temp", os.environ["USER"])
+    if "USER" in os.environ
+    else "~/temp"
+)
+
+if os.path.exists(default_temp):
+    legacy_temp_dir = os.path.join(default_temp, "bob_bio_base_tmp", sub_directory)
 else:
     # if /idiap/temp/<USER> does not exist, use /tmp/tmpxxxxxxxx
-    legacy_temp_dir = TemporaryDirectory().name
+    legacy_temp_dir = tempfile.TemporaryDirectory().name
 
 
 from bob.bio.base.pipelines.vanilla_biometrics import (
@@ -79,9 +79,6 @@ from bob.bio.base.pipelines.vanilla_biometrics import (
     BioAlgorithmLegacy,
 )
 
-biometric_algorithm = BioAlgorithmLegacy(
-    legacy_algorithm,
-    base_dir=legacy_temp_dir,
-)
+biometric_algorithm = BioAlgorithmLegacy(legacy_algorithm, base_dir=legacy_temp_dir,)
 
 pipeline = VanillaBiometricsPipeline(transformer, biometric_algorithm)

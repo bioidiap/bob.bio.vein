@@ -3,88 +3,21 @@
 
 .. _bob.bio.vein.baselines:
 
-===============================
- Executing Baseline Algorithms
-===============================
-
-The first thing you might want to do is to execute one of the vein
-recognition algorithms that are implemented in ``bob.bio.vein``.
+=============================
+Executing Baseline Algorithms
+=============================
 
 
-Running Baseline Experiments
-----------------------------
+In this section we introduce the baselines available in this pakcage.
+To execute one of then in the databases available just run the following command::
 
-To run the baseline experiments, you can use the ``verify.py`` script by
-just going to the console and typing:
+$ bob bio pipelines vanilla-biometrics [DATABASE_NAME] [BASELINE]
 
-.. code-block:: sh
+.. note::
+  Both, `[DATABASE_NAME]` and `[BASELINE]` can be either python resources or
+  python files.
 
-   $ verify.py
-
-
-This script is explained in more detail in :ref:`bob.bio.base.experiments`.
-The ``verify.py --help`` option shows you, which other options you can
-set.
-
-Usually it is a good idea to have at least verbose level 2 (i.e., calling
-``verify.py --verbose --verbose``, or the short version ``verify.py
--vv``).
-
-.. note:: **Running in Parallel**
-
-   To run the experiments in parallel, you can define an SGE grid or local host
-   (multi-processing) configurations as explained in
-   :ref:`running_in_parallel`.
-
-   In short, to run in the Idiap SGE grid, you can simply add the ``--grid``
-   command line option, without parameters. To run experiments in parallel on
-   the local machine, simply add a ``--parallel <N>`` option, where ``<N>``
-   specifies the number of parallel jobs you want to execute.
-
-
-Database setups and baselines are encoded using
-:ref:`bob.bio.base.configuration-files`, all stored inside the package root, in
-the directory ``bob/bio/vein/configurations``. Documentation for each resource
-is available on the section :ref:`bob.bio.vein.resources`.
-
-.. warning::
-
-   You **cannot** run experiments just by executing the command line
-   instructions described in this guide. You **need first** to procure yourself
-   the raw data files that correspond to *each* database used here in order to
-   correctly run experiments with those data. Biometric data is considered
-   private data and, under EU regulations, cannot be distributed without a
-   consent or license. You may consult our
-   :ref:`bob.bio.vein.resources.databases` resources section for checking
-   currently supported databases and accessing download links for the raw data
-   files.
-
-   Once the raw data files have been downloaded, particular attention should be
-   given to the directory locations of those. Unpack the databases carefully
-   and annotate the root directory where they have been unpacked.
-
-   Then, carefully read the *Databases* section of
-   :ref:`bob.bio.base.installation` on how to correctly setup the
-   ``~/.bob_bio_databases.txt`` file.
-
-   Use the following keywords on the left side of the assignment (see
-   :ref:`bob.bio.vein.resources.databases`):
-
-   .. code-block:: text
-
-      [YOUR_VERAFINGER_DIRECTORY] = /complete/path/to/verafinger
-      [YOUR_UTFVP_DIRECTORY] = /complete/path/to/utfvp
-      [YOUR_FV3D_DIRECTORY] = /complete/path/to/fv3d
-
-   Notice it is rather important to use the strings as described above,
-   otherwise ``bob.bio.base`` will not be able to correctly load your images.
-
-   Once this step is done, you can proceed with the instructions below.
-
-
-In the remainder of this section we introduce baseline experiments you can
-readily run with this tool without further configuration. Baselines examplified
-in this guide were published in [TVM14]_.
+  Please, refer to :ref:`bob.bio.base <bob.bio.base>` for more information.  
 
 
 Repeated Line-Tracking with Miura Matching
@@ -98,36 +31,23 @@ protocol, do the following:
 
 .. code-block:: sh
 
-   $ verify.py verafinger rlt -vv
+   $ bob bio pipelines vanilla-biometrics verafinger rlt -vv -c
 
 
 .. tip::
 
    If you have more processing cores on your local machine and don't want to
-   submit your job for SGE execution, you can run it in parallel (using 4
-   parallel tasks) by adding the options ``--parallel=4 --nice=10``. **Before**
-   doing so, make sure the package gridtk_ is properly installed.
+   submit your job for SGE execution, you can run it in parallel by adding the options ``-l local-parallel``. 
+   
+   .. code-block:: sh
 
-   Optionally, you may use the ``parallel`` resource configuration which
-   already sets the number of parallel jobs to the number of hardware cores you
-   have installed on your machine (as with
-   :py:func:`multiprocessing.cpu_count`) and sets ``nice=10``. For example:
+      $ bob bio pipelines vanilla-biometrics verafinger rlt -vv -c -l local-parallel
+
+   To run on the Idiap SGE grid use:
 
    .. code-block:: sh
 
-      $ verify.py verafinger rlt parallel -vv
-
-   To run on the Idiap SGE grid using our stock
-   io-big-48-slots-4G-memory-enabled (see
-   :py:mod:`bob.bio.vein.configurations.gridio4g48`) configuration, use:
-
-   .. code-block:: sh
-
-      $ verify.py verafinger rlt grid -vv
-
-   You may also, optionally, use the configuration resource ``gridio4g48``,
-   which is just an alias of ``grid`` in this package.
-
+      $ bob bio pipelines vanilla-biometrics verafinger rlt -vv -c -l sge
 
 
 This command line selects and runs the following implementations for the
@@ -172,7 +92,7 @@ protocol like above, do the following:
 
 .. code-block:: sh
 
-   $ verify.py verafinger mc -vv
+   $ bob bio pipelines vanilla-biometrics verafinger mc -vv -c
 
 
 This command line selects and runs the following implementations for the
@@ -213,7 +133,7 @@ protocol like above, do the following:
 
 .. code-block:: sh
 
-   $ verify.py verafinger wld -vv
+   $ bob bio pipelines vanilla-biometrics verafinger wld -vv -c
 
 
 This command line selects and runs the following implementations for the
@@ -326,7 +246,7 @@ Now, re-run the experiment using your modified database descriptor:
 
 .. code-block:: sh
 
-   $ verify.py ./verafinger_full.py wld -vv
+   $ bob bio pipelines vanilla-biometrics ./verafinger_full.py wld -vv -c
 
 
 Notice we replace the use of the registered configuration file named
