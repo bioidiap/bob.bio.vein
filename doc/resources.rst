@@ -32,8 +32,8 @@ the following runtime attributes of ``verify.py``:
 Verafinger Database
 ===================
 
-.. automodule:: bob.bio.vein.config.database.verafinger
-   :members:
+.. .. automodule:: bob.bio.vein.config.database.verafinger
+..    :members:
 
 
 .. _bob.bio.vein.resources.database.utfvp:
@@ -41,16 +41,16 @@ Verafinger Database
 UTFVP Database
 ==============
 
-.. automodule:: bob.bio.vein.config.database.utfvp
-   :members:
+.. .. automodule:: bob.bio.vein.config.database.utfvp
+..    :members:
 
 .. _bob.bio.vein.resources.database.fv3d:
 
 3D Fingervein Database
 ======================
 
-.. automodule:: bob.bio.vein.config.database.fv3d
-   :members:
+.. .. automodule:: bob.bio.vein.config.database.fv3d
+..    :members:
 
 
 .. _bob.bio.vein.resources.database.putvein:
@@ -58,8 +58,8 @@ UTFVP Database
 PUT Vein Databas
 ======================
 
-.. automodule:: bob.bio.vein.config.database.putvein
-   :members:
+.. .. automodule:: bob.bio.vein.config.database.putvein
+..    :members:
 
 
 .. _bob.bio.vein.resources.recognition:

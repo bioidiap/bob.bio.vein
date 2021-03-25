@@ -25,6 +25,6 @@
 
 .. [TV13] *B. Ton and R. Veldhuis*, **A high quality finger vascular pattern dataset collected using a custom designed capturing device**, in: IAPR International Conference on Biometrics (ICB), 2013.
 
-.. [KK10] *R. Kabacinski and *M. Kowalski, **Human Vein Pattern Segmentation from Low Quality Images - A Comparison of Methods**, in: Image Processing and Communications Challenges 2, pp. 105-112, 2010.
+.. .. [KK10] *R. Kabacinski and *M. Kowalski, **Human Vein Pattern Segmentation from Low Quality Images - A Comparison of Methods**, in: Image Processing and Communications Challenges 2, pp. 105-112, 2010.
 
 .. [CW09] J.H. Choi, W. Song, T. Kim, S.R. Lee and H.C. Kim, **Finger vein extraction using gradient normalization and principal curvature**, Proceedings on Image Processing: Machine Vision Applications II, SPIE 7251, 2009.
