@@ -75,11 +75,6 @@ test:
     - coverage
     - sphinx
     - sphinx_rtd_theme
-    - bob.db.utfvp
-    - bob.db.verafinger
-    - bob.db.fv3d
-    - bob.db.putvein
-    - bob.db.atnt
 
 about:
   home: https://www.idiap.ch/software/bob/
