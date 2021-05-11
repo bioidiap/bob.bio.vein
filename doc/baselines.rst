@@ -17,7 +17,7 @@ $ bob bio pipelines vanilla-biometrics [DATABASE_NAME] [BASELINE]
   Both, `[DATABASE_NAME]` and `[BASELINE]` can be either python resources or
   python files.
 
-  Please, refer to :ref:`bob.bio.base <bob.bio.base>` for more information.  
+  Please, refer to :ref:`bob.bio.base <bob.bio.base>` for more information.
 
 
 Repeated Line-Tracking with Miura Matching
@@ -37,8 +37,8 @@ protocol, do the following:
 .. tip::
 
    If you have more processing cores on your local machine and don't want to
-   submit your job for SGE execution, you can run it in parallel by adding the options ``-l local-parallel``. 
-   
+   submit your job for SGE execution, you can run it in parallel by adding the options ``-l local-parallel``.
+
    .. code-block:: sh
 
       $ bob bio pipelines vanilla-biometrics verafinger rlt -vv -c -l local-parallel
@@ -259,49 +259,6 @@ Other Resources
 
 This package contains other resources that can be used to evaluate different
 bits of the vein processing toolchain.
-
-
-Training the Watershed Finger region detector
-=============================================
-
-The correct detection of the finger boundaries is an important step of many
-algorithms for the recognition of finger veins. It allows to compensate for
-eventual rotation and scaling issues one might find when comparing models and
-probes. In this package, we propose a novel finger boundary detector based on
-the `Watershedding Morphological Algorithm
-<https://en.wikipedia.org/wiki/Watershed_(image_processing)>`. Watershedding
-works in three steps:
-
-1. Determine markers on the original image indicating the types of areas one
-   would like to detect (e.g. "finger" or "background")
-2. Determine a 2D (gray-scale) surface representing the original image in which
-   darker spots (representing valleys) are more likely to be filled by
-   surrounding markers. This is normally achieved by filtering the image with a
-   high-pass filter like Sobel or using an edge detector such as Canny.
-3. Run the watershed algorithm
-
-In order to determine markers for step 1, we train a neural network which
-outputs the likelihood of a point being part of a finger, given its coordinates
-and values of surrounding pixels.
-
-When used to run an experiment,
-:py:class:`bob.bio.vein.preprocessor.WatershedMask` requires you provide a
-*pre-trained* neural network model that presets the markers before
-watershedding takes place. In order to create one, you can run the program
-`bob_bio_vein_markdet.py`:
-
-.. code-block:: sh
-
-   $ bob_bio_vein_markdet.py --hidden=20 --samples=500 fv3d central dev
-
-You input, as arguments to this application, the database, protocol and subset
-name you wish to use for training the network. The data is loaded observing a
-total maximum number of samples from the dataset (passed with ``--samples=N``),
-the network is trained and recorded into an HDF5 file (by default, the file is
-called ``model.hdf5``, but the name can be changed with the option
-``--model=``).  Once you have a model, you can use the preprocessor mask by
-constructing an object and attaching it to the
-:py:class:`bob.bio.vein.preprocessor.Preprocessor` entry on your configuration.
 
 
 Region of Interest Goodness of Fit

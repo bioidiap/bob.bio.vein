@@ -1,6 +1,6 @@
 from .crop import Cropper, FixedCrop, NoCrop
 from .mask import Padder, Masker, FixedMask, NoMask, AnnotatedRoIMask
-from .mask import KonoMask, LeeMask, TomesLeeMask, WatershedMask
+from .mask import KonoMask, LeeMask, TomesLeeMask
 from .normalize import Normalizer, NoNormalization, HuangNormalization
 from .filters import Filter, NoFilter, HistogramEqualization
 from .preprocessor import Preprocessor
@@ -31,7 +31,6 @@ __appropriate__(
     KonoMask,
     LeeMask,
     TomesLeeMask,
-    WatershedMask,
     Normalizer,
     NoNormalization,
     HuangNormalization,
