@@ -14,5 +14,3 @@ bob.ip.base
 bob.ip.color
 bob.bio.base
 bob.learn.linear
-bob.learn.activation
-bob.learn.mlp
