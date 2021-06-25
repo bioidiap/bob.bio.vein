@@ -61,9 +61,15 @@ The current system readily supports the following freely available datasets:
 
 
 After downloading the databases, annotate the base directories in which they
-are installed. Then, follow the instructions in
-:ref:`bob.bio.base.installation` to let this framework know where root
-installation of such databases are located on your system.
+are installed. Then, run the commands below let this framework know where root
+installation of such databases are located on your system:
+
+.. code-block:: sh
+
+  $ bob config set bob.db.fv3d.directory [PATH]
+  $ bob config set bob.db.putvein.directory [PATH]
+  $ bob config set bob.db.utfvp.directory [PATH]
+  $ bob config set bob.db.verafinger.directory [PATH]
 
 
 Development
