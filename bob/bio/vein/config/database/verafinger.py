@@ -17,25 +17,27 @@ from bob.bio.vein.database.verafinger import Database
 from bob.bio.base.pipelines.vanilla_biometrics import DatabaseConnector
 
 import logging
+
 logger = logging.getLogger("bob.bio.vein")
 
-_verafinger_directory = rc["bob.db.verafinger.directory"]
+_verafinger_directory = rc.get("bob.db.verafinger.directory", "")
 """Value in ``~/.bobrc`` for this dataset directory"""
 
 # Set default protocol if not given via a config file
-if 'protocol' not in locals():
+if "protocol" not in locals():
     logger.info("protocol not specified, using default: 'Nom'")
-    protocol = 'Nom'
+    protocol = "Nom"
 
 
 """Updated with the wrapper for the pipelines package"""
-database = DatabaseConnector(Database(
-    original_directory=_verafinger_directory,
-    original_extension='.png',
-    protocol=protocol),
-
+database = DatabaseConnector(
+    Database(
+        original_directory=_verafinger_directory,
+        original_extension=".png",
+        protocol=protocol,
+    ),
     annotation_type=None,
-    fixed_positions=None
+    fixed_positions=None,
 )
 """The :py:class:`bob.bio.base.database.BioDatabase` derivative with Verafinger
 database settings, wrapped with the vanilla-biometrics database connector.

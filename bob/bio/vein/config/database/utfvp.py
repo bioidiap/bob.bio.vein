@@ -22,28 +22,25 @@ from bob.bio.vein.database.utfvp import Database
 from bob.bio.base.pipelines.vanilla_biometrics import DatabaseConnector
 
 import logging
+
 logger = logging.getLogger("bob.bio.vein")
 
-_utfvp_directory = rc["bob.db.utfvp.directory"]
+_utfvp_directory = rc.get("bob.db.utfvp.directory", "")
 """Value in ``~/.bobrc`` for this dataset directory"""
 
 # Set default protocol if not given via a config file
-if 'protocol' not in locals():
+if "protocol" not in locals():
     logger.info("protocol not specified, using default: 'nom'")
-    protocol = 'nom'
+    protocol = "nom"
 
 legacy_database = Database(
-    original_directory = _utfvp_directory,
-    original_extension = '.png',
-    protocol = protocol,
-    )
+    original_directory=_utfvp_directory, original_extension=".png", protocol=protocol,
+)
 """The :py:class:`bob.bio.base.database.BioDatabase` derivative with UTFVP settings
 """
 
 database = DatabaseConnector(
-    legacy_database,
-    annotation_type=None,
-    fixed_positions=None
+    legacy_database, annotation_type=None, fixed_positions=None
 )
 """
 The database interface wrapped for vanilla-biometrics
