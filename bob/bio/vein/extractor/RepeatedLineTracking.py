@@ -111,13 +111,13 @@ class RepeatedLineTracking (Extractor):
             Dud = 1   # Going down
 
         # Initialize locus-positition table Tc
-        Tc = numpy.zeros(finger_image.shape, numpy.bool)
+        Tc = numpy.zeros(finger_image.shape, bool)
 
         #Dlr = -1; Dud=-1; LET OP
         Vl = 1
         while (Vl > 0):
             # Determine the moving candidate point set Nc
-            Nr = numpy.zeros([3,3], numpy.bool)
+            Nr = numpy.zeros([3,3], bool)
             Rnd = numpy.random.random_sample()
             #Rnd = 0.8 LET OP
             if (Rnd < p_lr):
@@ -128,10 +128,10 @@ class RepeatedLineTracking (Extractor):
                 Nr[1+Dud,:] = True
             else:
                 # Going any direction
-                Nr = numpy.ones([3,3], numpy.bool)
+                Nr = numpy.ones([3,3], bool)
                 Nr[1,1] = False
-            #tmp = numpy.argwhere( (~Tc[yc-2:yc+1,xc-2:xc+1] & Nr & finger_mask[yc-2:yc+1,xc-2:xc+1].astype(numpy.bool)).T.reshape(-1) == True )
-            tmp = numpy.argwhere( (~Tc[yc-1:yc+2,xc-1:xc+2] & Nr & finger_mask[yc-1:yc+2,xc-1:xc+2].astype(numpy.bool)).T.reshape(-1) == True )
+            #tmp = numpy.argwhere( (~Tc[yc-2:yc+1,xc-2:xc+1] & Nr & finger_mask[yc-2:yc+1,xc-2:xc+1].astype(bool)).T.reshape(-1) == True )
+            tmp = numpy.argwhere( (~Tc[yc-1:yc+2,xc-1:xc+2] & Nr & finger_mask[yc-1:yc+2,xc-1:xc+2].astype(bool)).T.reshape(-1) == True )
             Nc = numpy.concatenate((xc + filtermask[tmp,0],yc + filtermask[tmp,1]),axis=1)
             if (Nc.size==0):
                 Vl=-1

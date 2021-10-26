@@ -269,7 +269,7 @@ class KonoMask(Masker):
     y_lo = img_filt_lo.argmin(axis=0)
 
     # Fill region between upper and lower edges
-    finger_mask = numpy.ndarray(image.shape, numpy.bool)
+    finger_mask = numpy.ndarray(image.shape, bool)
     finger_mask[:,:] = False
 
     for i in range(0,img_w):

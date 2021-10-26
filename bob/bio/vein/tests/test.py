@@ -411,7 +411,7 @@ def test_poly_to_mask():
   area = (10, 9) #10 rows, 9 columns
   polygon = [(2, 2), (2, 7), (7, 7), (7, 2)] #square shape, (y, x) format
   mask = preprocessor_utils.poly_to_mask(area, polygon)
-  nose.tools.eq_(mask.dtype, numpy.bool)
+  nose.tools.eq_(mask.dtype, bool)
 
   # This should be the output:
   expected = numpy.array([
@@ -430,7 +430,7 @@ def test_poly_to_mask():
 
   polygon = [(3, 2), (5, 7), (8, 7), (7, 3)] #trapezoid, (y, x) format
   mask = preprocessor_utils.poly_to_mask(area, polygon)
-  nose.tools.eq_(mask.dtype, numpy.bool)
+  nose.tools.eq_(mask.dtype, bool)
 
   # This should be the output:
   expected = numpy.array([
@@ -453,7 +453,7 @@ def test_mask_to_image():
   # Tests we can correctly convert a boolean array into an image
   # that makes sense according to the data types
   sample = numpy.array([False, True])
-  nose.tools.eq_(sample.dtype, numpy.bool)
+  nose.tools.eq_(sample.dtype, bool)
 
   def _check_uint(n):
     conv = preprocessor_utils.mask_to_image(sample, 'uint%d' % n)

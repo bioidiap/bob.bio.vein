@@ -106,7 +106,7 @@ def poly_to_mask(shape, points):
   # draws polygon
   ImageDraw.Draw(mask).polygon(fixed, fill=255)
 
-  return numpy.array(mask, dtype=numpy.bool)
+  return numpy.array(mask, dtype=bool)
 
 
 def mask_to_image(mask, dtype=numpy.uint8):
