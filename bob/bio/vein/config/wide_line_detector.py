@@ -75,9 +75,7 @@ Defaults taken from [TV13]_.
 """
 # Notice the values of ch and cw are different than those from the
 # repeated-line tracking **and** maximum curvature baselines.
-biometric_algorithm = BioAlgorithmLegacy(
-    MiuraMatch(ch=18, cw=28), base_dir=legacy_temp_dir
-)
+biometric_algorithm = MiuraMatch(ch=18, cw=28)
 
 transformer = make_pipeline(wrap(["sample"], preprocessor), wrap(["sample"], extractor))
 pipeline = VanillaBiometricsPipeline(transformer, biometric_algorithm)
