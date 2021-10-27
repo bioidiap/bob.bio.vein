@@ -48,9 +48,6 @@ transformer = make_pipeline(
 
 from bob.bio.vein.algorithm import MiuraMatch
 
-# Notice the values of ch and cw are different than those from the
-# repeated-line tracking **and** maximum curvature baselines.
-legacy_algorithm = MiuraMatch(ch=18, cw=28)
 """Miura-matching algorithm with specific settings for search displacement
 
 Defaults taken from [TV13]_.
@@ -79,6 +76,6 @@ from bob.bio.base.pipelines.vanilla_biometrics import (
     BioAlgorithmLegacy,
 )
 
-biometric_algorithm = BioAlgorithmLegacy(legacy_algorithm, base_dir=legacy_temp_dir,)
+biometric_algorithm = MiuraMatch(ch=18, cw=28)
 
 pipeline = VanillaBiometricsPipeline(transformer, biometric_algorithm)

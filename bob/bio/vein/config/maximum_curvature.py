@@ -73,7 +73,8 @@ extractor = ExtractorTransformer(MaximumCurvature())
 
 Defaults taken from [TV13]_.
 """
-biometric_algorithm = BioAlgorithmLegacy(MiuraMatch(), base_dir=legacy_temp_dir)
+# biometric_algorithm = BioAlgorithmLegacy(MiuraMatch(), base_dir=legacy_temp_dir)
+biometric_algorithm = MiuraMatch()
 
 transformer = make_pipeline(wrap(["sample"], preprocessor), wrap(["sample"], extractor))
 pipeline = VanillaBiometricsPipeline(transformer, biometric_algorithm)

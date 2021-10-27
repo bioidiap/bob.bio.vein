@@ -70,8 +70,7 @@ extractor = ExtractorTransformer(RepeatedLineTracking())
 
 Defaults taken from [TV13]_.
 """
-biometric_algorithm = BioAlgorithmLegacy(
-    MiuraMatch(ch=65, cw=55), base_dir=legacy_temp_dir
-)
+biometric_algorithm = MiuraMatch(ch=65, cw=55)
+
 transformer = make_pipeline(wrap(["sample"], preprocessor), wrap(["sample"], extractor))
 pipeline = VanillaBiometricsPipeline(transformer, biometric_algorithm)
