@@ -72,14 +72,14 @@ class MiuraMatch(BioAlgorithm):
 
         Parameters:
 
-          model (numpy.ndarray): The model of the user to test the probe agains
+          model (numpy.ndarray): The model of the user to test the probe against
 
           probe (numpy.ndarray): The probe to test
 
 
         Returns:
 
-          float: Value between 0 and 0.5, larger value means a better match
+          list[float]: Value between 0 and 0.5, larger value means a better match
 
         """
 
@@ -126,7 +126,7 @@ class MiuraMatch(BioAlgorithm):
                 )
             )
 
-        return numpy.mean(scores)
+        return [numpy.mean(scores)]
 
     def score_multiple_biometric_references(self, biometric_references, data):
         if isinstance(biometric_references, list):
