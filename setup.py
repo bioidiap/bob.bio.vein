@@ -32,9 +32,9 @@ setup(
             "Full = bob.bio.vein.config.database.protocol_verafinger.full",
             "Cropped-Full = bob.bio.vein.config.database.protocol_verafinger.cropped_full",
             # utfvp
-            "nom = bob.bio.vein.config.database.protocol_utfvp.nom",
-            "full = bob.bio.vein.config.database.protocol_utfvp.full",
-            "1vsall = bob.bio.vein.config.database.protocol_utfvp.one_vs_all",
+            "nom = bob.bio.vein.config.database.utfvp_nom",
+            "full = bob.bio.vein.config.database.utfvp_full",
+            "1vsall = bob.bio.vein.config.database.utfvp_1vsall",
             # fv3d
             "central = bob.bio.vein.config.database.protocol_fv3d.central",
             "left = bob.bio.vein.config.database.protocol_fv3d.left",
@@ -47,7 +47,6 @@ setup(
             "palm-LR-4 = bob.bio.vein.config.database.protocol_putvein.palm_lr_4",
             # legacy databases
             "verafinger = bob.bio.vein.config.database.verafinger",
-            "utfvp = bob.bio.vein.config.database.utfvp",
             "fv3d = bob.bio.vein.config.database.fv3d",
             "putvein = bob.bio.vein.config.database.putvein",
             # legacy baselines
@@ -57,7 +56,7 @@ setup(
         ],
         "bob.bio.database": [
             "verafinger = bob.bio.vein.config.database.verafinger:database",
-            "utfvp = bob.bio.vein.config.database.utfvp:database",
+            "utfvp = bob.bio.vein.config.database.utfvp_nom:database",
             "fv3d = bob.bio.vein.config.database.fv3d:database",
             "putvein = bob.bio.vein.config.database.putvein:database",
         ],
