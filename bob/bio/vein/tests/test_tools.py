@@ -473,7 +473,6 @@ def test_mask_to_image():
 
   _check_float(32)
   _check_float(64)
-  _check_float(128)
 
 
   # This should be unsupported
