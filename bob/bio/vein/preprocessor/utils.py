@@ -123,7 +123,6 @@ def mask_to_image(mask, dtype=numpy.uint8):
     * numpy.uint64: ``[0, (2^64)-1]``
     * numpy.float32: ``[0, 1.0]`` (fixed)
     * numpy.float64: ``[0, 1.0]`` (fixed)
-    * numpy.float128: ``[0, 1.0]`` (fixed)
 
   All other types are currently unsupported.
 
@@ -155,7 +154,7 @@ def mask_to_image(mask, dtype=numpy.uint8):
   if dtype in (numpy.uint8, numpy.uint16, numpy.uint32, numpy.uint64):
     retval[retval == 1] = numpy.iinfo(dtype).max
 
-  elif dtype in (numpy.float32, numpy.float64, numpy.float128):
+  elif dtype in (numpy.float32, numpy.float64):
     pass
 
   else:
