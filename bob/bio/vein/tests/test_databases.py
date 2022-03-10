@@ -11,6 +11,56 @@ import os
 from bob.extension.download import get_file
 
 
+def test_verafinger_contactless():
+    from bob.bio.vein.database.verafinger_contactless import VerafingerContactless
+
+    # Getting the absolute path
+    urls = VerafingerContactless.urls()
+    filename = get_file("verafinger_contactless.tar.gz", urls)
+
+    # Removing the file before the test
+    try:
+        os.remove(filename)
+    except Exception:
+        pass
+
+    # nom
+    nom_parameters = {'N_dev': 65,
+                      'N_eval': 68,
+                      'N_session_references': 2,
+                      'N_session_probes': 3,
+                      'N_hands': 2,
+                      }
+
+    protocols_parameters = {'nom': nom_parameters,
+                            }
+
+    def _check_protocol(p, parameters, eval=False):
+        database = VerafingerContactless(protocol=p)
+
+        assert len(database.references(group="dev")) == \
+               parameters['N_dev'] * parameters['N_hands'] * parameters['N_session_references']
+        assert len(database.probes(group="dev")) == \
+               parameters['N_dev'] * parameters['N_hands'] * parameters['N_session_probes']
+
+        if eval:
+            assert len(database.references(group="eval")) == \
+                   parameters['N_eval'] * parameters['N_hands'] * parameters['N_session_references']
+            assert len(database.probes(group="eval")) == \
+                   parameters['N_eval'] * parameters['N_hands'] * parameters['N_session_probes']
+
+        return p
+
+    checked_protocols = []
+
+    checked_protocols.append(
+        _check_protocol("nom", protocols_parameters['nom'], eval=True)
+    )
+
+    for p in VerafingerContactless.protocols():
+        assert p in checked_protocols, "Protocol {} untested".format(p)
+
+
 def test_utfvp():
     from bob.bio.vein.database.utfvp import UtfvpDatabase
 
