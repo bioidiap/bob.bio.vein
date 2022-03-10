@@ -35,6 +35,10 @@ UTFVP Database
 
 .. automodule:: bob.bio.vein.database.fv3d
 
+VERA Fingervein Contactless Database
+==============
+
+.. automodule:: bob.bio.vein.database.verafinger_contactless
 
 
 Pre-processors

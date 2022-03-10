@@ -32,7 +32,8 @@ class VerafingerContactless(CSVDataset):
 
     **Metadata**
 
-    Associated to each sample, you may find the metadata configuration for each capture.
+    Associated to each sample, you may find the metadata configuration for each capture :
+
     * EXPOSURE : exposure time (in ms)
     * ORTHOLED : Power of the ORTHOLED (in % of the max power)
     * CENTERLED : Power of the CENTERLED (in % of the max power)
