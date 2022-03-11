@@ -53,12 +53,15 @@ setup(
             "mc = bob.bio.vein.config.maximum_curvature",
             "rlt = bob.bio.vein.config.repeated_line_tracking",
             "wld = bob.bio.vein.config.wide_line_detector",
+            # verafinger contactless
+            "vera_nom = bob.bio.vein.config.database.verafinger_contactless_nom",
         ],
         "bob.bio.database": [
             "verafinger = bob.bio.vein.config.database.verafinger:database",
             "utfvp = bob.bio.vein.config.database.utfvp_nom:database",
             "fv3d = bob.bio.vein.config.database.fv3d:database",
             "putvein = bob.bio.vein.config.database.putvein:database",
+            "verafinger_contactless = bob.bio.vein.config.database.verafinger_contactless_nom:database",
         ],
         "bob.bio.pipeline": [
             "wld = bob.bio.vein.config.wide_line_detector:pipeline",
