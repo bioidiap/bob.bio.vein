@@ -8,9 +8,9 @@ class ROIAnnotation(TransformerMixin, BaseEstimator):
     """
     Transformer class to read ROI annotation file for grayscale images
     """
-    def __init__(self, roi_path=""):
+    def __init__(self, roi_path):
         super(ROIAnnotation, self).__init__()
-        self.roi_path = Path(roi_path)
+        self.roi_path = Path(roi_path) if roi_path else False
 
     def fit(self, X, y=None):
         return self
@@ -25,7 +25,7 @@ class ROIAnnotation(TransformerMixin, BaseEstimator):
         """
         If the annotation file exists, read it and add the ROI points as an attribute to the sample.
         """
-        if self.roi_path.exists():
+        if self.roi_path and self.roi_path.exists():
             annotated_samples = []
             for x in X:
                 roi_file = (self.roi_path / x.key).with_suffix(".txt")
