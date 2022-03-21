@@ -46,7 +46,7 @@ class VerafingerContactless(CSVDataset):
 
     * Development set : Even subject ids
     * Evaluation set : Odd subject ids
-    * Enrolled : session 1 & 2
+    * Models : session 1 & 2
     * Probes : session 3, 4 &5
 
     """
