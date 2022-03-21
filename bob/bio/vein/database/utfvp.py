@@ -11,6 +11,8 @@ from bob.bio.base.database import CSVToSampleLoaderBiometrics
 from bob.extension import rc
 from bob.extension.download import get_file
 import bob.io.image
+from sklearn.pipeline import make_pipeline
+from bob.bio.vein.database.roi_annotation import ROIAnnotation
 
 
 class UtfvpDatabase(CSVDataset):
@@ -52,6 +54,24 @@ class UtfvpDatabase(CSVDataset):
     Given the difference in the images between trials on the same day, we assume
     users were asked to remove the finger from the device and re-position it
     afterwards.
+
+    **Annotations**
+
+    We provide region-of-interest (RoI) **hand-made** annotations for all images in
+    this dataset. The annotations mark the place where the finger is on the image,
+    excluding the background. The annotation file is a text file with one
+    annotation per line in the format ``(y, x)``, respecting Bob's image encoding
+    convention. The interconnection of these points in a polygon forms the RoI.
+
+    .. warning::
+
+      To use the annotations, you need to provide the roi files.
+      Once you have it downloaded, please run the following command to set the path for Bob
+
+        .. code-block:: sh
+
+            bob config set bob.bio.vein.utfvp.roi [ANNOTATION PATH]
+
 
     **Protocols**
 
@@ -140,20 +160,26 @@ class UtfvpDatabase(CSVDataset):
         filename = get_file(
             "utfvp_csv.tar.gz",
             urls,
-            file_hash="0b22a4ea6a78d54879dc3d866a22108b7513d169cd5c1bceb044854a871f200a",
+            file_hash="1e14c681901c69f99ebe3017566ca1463fb2c6a2952afed4463ba12e331927c3",
         )
 
         super().__init__(
             name="utfvp",
             dataset_protocol_path=filename,
             protocol=protocol,
-            csv_to_sample_loader=CSVToSampleLoaderBiometrics(
-                data_loader=bob.io.image.load,
-                dataset_original_directory=rc.get(
-                    "bob.bio.vein.utfvp.directory", ""
+            csv_to_sample_loader=make_pipeline(
+                CSVToSampleLoaderBiometrics(
+                    data_loader=bob.io.image.load,
+                    dataset_original_directory=rc.get(
+                        "bob.bio.vein.utfvp.directory", ""
+                    ),
+                    extension='',
+                    reference_id_equal_subject_id=False
                 ),
-                extension='',
-                reference_id_equal_subject_id=False
+                ROIAnnotation(
+                    roi_path=rc.get(
+                        "bob.bio.vein.utfvp.roi", ""
+                    )),
             ),
             allow_scoring_with_all_biometric_references=True,
         )
@@ -167,6 +193,6 @@ class UtfvpDatabase(CSVDataset):
 
     @staticmethod
     def urls():
-        return ["https://www.idiap.ch/software/bob/databases/latest/utfvp_csv-0b22a4ea.tar.gz",
-                "http://www.idiap.ch/software/bob/databases/latest/utfvp_csv-0b22a4ea.tar.gz",
+        return ["https://www.idiap.ch/software/bob/databases/latest/utfvp_csv-1e14c681.tar.gz",
+                "http://www.idiap.ch/software/bob/databases/latest/utfvp_csv-1e14c681.tar.gz",
                 ]
