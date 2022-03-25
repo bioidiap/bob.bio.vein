@@ -8,9 +8,9 @@
 # It is defined as a resource in the setup file of this package.
 
 # Usage:
-# $ bob bio pipelines vanilla-biometrics <pipeline> Full verafinger
+# $ bob bio pipeline simple <pipeline> Full verafinger
 # or:
-# $ bob bio pipelines vanilla-biometrics -p <pipeline> Full verafinger
+# $ bob bio pipeline simple -p <pipeline> Full verafinger
 
 # The protocol resource must be specified before the database resource.
 
@@ -19,4 +19,4 @@
 # 'B', 'Cropped-B', 'Cropped-Fifty', 'Cropped-Full', 'Cropped-Nom', 'Fifty',
 # 'Full', 'Nom'
 
-protocol = 'Full'
+protocol = "Full"

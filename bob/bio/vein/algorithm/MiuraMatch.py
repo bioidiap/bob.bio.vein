@@ -4,44 +4,44 @@
 import numpy
 import scipy.signal
 
-from bob.bio.base.pipelines.vanilla_biometrics import BioAlgorithm
+from bob.bio.base.pipelines import BioAlgorithm
 
 
 class MiuraMatch(BioAlgorithm):
     """Finger vein matching: match ratio via cross-correlation
 
-   The method is based on "cross-correlation" between a model and a probe image.
-   It convolves the binary image(s) representing the model with the binary image
-   representing the probe (rotated by 180 degrees), and evaluates how they
-   cross-correlate. If the model and probe are very similar, the output of the
-   correlation corresponds to a single scalar and approaches a maximum. The
-   value is then normalized by the sum of the pixels lit in both binary images.
-   Therefore, the output of this method is a floating-point number in the range
-   :math:`[0, 0.5]`. The higher, the better match.
+    The method is based on "cross-correlation" between a model and a probe image.
+    It convolves the binary image(s) representing the model with the binary image
+    representing the probe (rotated by 180 degrees), and evaluates how they
+    cross-correlate. If the model and probe are very similar, the output of the
+    correlation corresponds to a single scalar and approaches a maximum. The
+    value is then normalized by the sum of the pixels lit in both binary images.
+    Therefore, the output of this method is a floating-point number in the range
+    :math:`[0, 0.5]`. The higher, the better match.
 
-   In case model and probe represent images from the same vein structure, but
-   are misaligned, the output is not guaranteed to be accurate. To mitigate this
-   aspect, Miura et al. proposed to add a *small* cropping factor to the model
-   image, assuming not much information is available on the borders (``ch``, for
-   the vertical direction and ``cw``, for the horizontal direction). This allows
-   the convolution to yield searches for different areas in the probe image. The
-   maximum value is then taken from the resulting operation. The convolution
-   result is normalized by the pixels lit in both the cropped model image and
-   the matching pixels on the probe that yield the maximum on the resulting
-   convolution.
+    In case model and probe represent images from the same vein structure, but
+    are misaligned, the output is not guaranteed to be accurate. To mitigate this
+    aspect, Miura et al. proposed to add a *small* cropping factor to the model
+    image, assuming not much information is available on the borders (``ch``, for
+    the vertical direction and ``cw``, for the horizontal direction). This allows
+    the convolution to yield searches for different areas in the probe image. The
+    maximum value is then taken from the resulting operation. The convolution
+    result is normalized by the pixels lit in both the cropped model image and
+    the matching pixels on the probe that yield the maximum on the resulting
+    convolution.
 
-   For this to work properly, input images are supposed to be binary in nature,
-   with zeros and ones.
+    For this to work properly, input images are supposed to be binary in nature,
+    with zeros and ones.
 
-   Based on [MNM04]_ and [MNM05]_
-   
-   Parameters:
+    Based on [MNM04]_ and [MNM05]_
 
-     ch (:py:class:`int`, optional): Maximum search displacement in y-direction.
+    Parameters:
 
-     cw (:py:class:`int`, optional): Maximum search displacement in x-direction.
+      ch (:py:class:`int`, optional): Maximum search displacement in y-direction.
 
-   """
+      cw (:py:class:`int`, optional): Maximum search displacement in x-direction.
+
+    """
 
     def __init__(
         self,
