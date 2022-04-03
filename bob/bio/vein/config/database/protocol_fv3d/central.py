@@ -8,9 +8,9 @@
 # It is defined as a resource in the setup file of this package.
 
 # Usage:
-# $ bob bio pipelines vanilla-biometrics <pipeline> central fv3d
+# $ bob bio pipeline simple <pipeline> central fv3d
 # or:
-# $ bob bio pipelines vanilla-biometrics -p <pipeline> central fv3d
+# $ bob bio pipeline simple -p <pipeline> central fv3d
 
 # The protocol resource must be specified before the database resource.
 
@@ -20,4 +20,4 @@
 
 # This will be the default protocol if none is specified.
 
-protocol = 'central'
+protocol = "central"

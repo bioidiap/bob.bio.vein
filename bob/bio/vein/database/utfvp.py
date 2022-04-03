@@ -158,9 +158,9 @@ class UtfvpDatabase(CSVDataset):
         # Downloading model if not exists
         urls = UtfvpDatabase.urls()
         filename = get_file(
-            "utfvp_csv.tar.gz",
+            "utfvp.tar.gz",
             urls,
-            file_hash="1e14c681901c69f99ebe3017566ca1463fb2c6a2952afed4463ba12e331927c3",
+            file_hash="526045842fcee46eec3415bfc8ac34d3",
         )
 
         super().__init__(
@@ -173,13 +173,10 @@ class UtfvpDatabase(CSVDataset):
                     dataset_original_directory=rc.get(
                         "bob.bio.vein.utfvp.directory", ""
                     ),
-                    extension='',
-                    reference_id_equal_subject_id=False
+                    extension="",
+                    reference_id_equal_subject_id=False,
                 ),
-                ROIAnnotation(
-                    roi_path=rc.get(
-                        "bob.bio.vein.utfvp.roi", ""
-                    )),
+                ROIAnnotation(roi_path=rc.get("bob.bio.vein.utfvp.roi", "")),
             ),
             allow_scoring_with_all_biometric_references=True,
         )
@@ -187,12 +184,27 @@ class UtfvpDatabase(CSVDataset):
     @staticmethod
     def protocols():
         # TODO: Until we have (if we have) a function that dumps the protocols, let's use this one.
-        return ["nom", "full", "1vsall",
-                "nomLeftRing", "nomRightRing", "nomLeftMiddle", "nomRightMiddle", "nomLeftIndex", "nomRightIndex",
-                "fullLeftRing", "fullRightRing", "fullLeftMiddle", "fullRightMiddle", "fullLeftIndex", "fullRightIndex"]
+        return [
+            "nom",
+            "full",
+            "1vsall",
+            "nomLeftRing",
+            "nomRightRing",
+            "nomLeftMiddle",
+            "nomRightMiddle",
+            "nomLeftIndex",
+            "nomRightIndex",
+            "fullLeftRing",
+            "fullRightRing",
+            "fullLeftMiddle",
+            "fullRightMiddle",
+            "fullLeftIndex",
+            "fullRightIndex",
+        ]
 
     @staticmethod
     def urls():
-        return ["https://www.idiap.ch/software/bob/databases/latest/utfvp_csv-1e14c681.tar.gz",
-                "http://www.idiap.ch/software/bob/databases/latest/utfvp_csv-1e14c681.tar.gz",
-                ]
+        return [
+            "https://www.idiap.ch/software/bob/databases/latest/utfvp-557bfdd2.tar.gz",
+            "http://www.idiap.ch/software/bob/databases/latest/utfvp-557bfdd2.tar.gz",
+        ]

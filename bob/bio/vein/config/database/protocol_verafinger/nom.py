@@ -8,9 +8,9 @@
 # It is defined as a resource in the setup file of this package.
 
 # Usage:
-# $ bob bio pipelines vanilla-biometrics <pipeline> Nom verafinger
+# $ bob bio pipeline simple <pipeline> Nom verafinger
 # or:
-# $ bob bio pipelines vanilla-biometrics -p <pipeline> Nom verafinger
+# $ bob bio pipeline simple -p <pipeline> Nom verafinger
 
 # The protocol resource must be specified before the database resource.
 
@@ -21,4 +21,4 @@
 
 # This will be the default protocol if none is specified.
 
-protocol = 'Nom'
+protocol = "Nom"

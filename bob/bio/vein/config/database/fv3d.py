@@ -13,7 +13,7 @@ the link.
 
 from bob.extension import rc
 from bob.bio.vein.database.fv3d import Database
-from bob.bio.base.pipelines.vanilla_biometrics import DatabaseConnector
+from bob.bio.base.pipelines import DatabaseConnector
 
 import logging
 
@@ -29,7 +29,9 @@ if "protocol" not in locals():
     protocol = "central"
 
 legacy_database = Database(
-    original_directory=_fv3d_directory, original_extension=".png", protocol=protocol,
+    original_directory=_fv3d_directory,
+    original_extension=".png",
+    protocol=protocol,
 )
 """The :py:class:`bob.bio.base.database.BioDatabase` derivative with fv3d
 database settings
@@ -39,7 +41,7 @@ database = DatabaseConnector(
     legacy_database, annotation_type=None, fixed_positions=None
 )
 """
-The database interface wrapped for vanilla-biometrics
+The database interface wrapped for pipeline simple
 
 .. warning::
 

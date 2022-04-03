@@ -8,9 +8,9 @@
 # It is defined as a resource in the setup file of this package.
 
 # Usage:
-# $ bob bio pipelines vanilla-biometrics <pipeline> right fv3d
+# $ bob bio pipeline simple <pipeline> right fv3d
 # or:
-# $ bob bio pipelines vanilla-biometrics -p <pipeline> right fv3d
+# $ bob bio pipeline simple -p <pipeline> right fv3d
 
 # The protocol resource must be specified before the database resource.
 
@@ -18,4 +18,4 @@
 # Available protocols are:
 # 'central', 'left', 'right', 'stitched'
 
-protocol = 'right'
+protocol = "right"

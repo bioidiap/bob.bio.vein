@@ -11,7 +11,7 @@ Executing Baseline Algorithms
 In this section we introduce the baselines available in this pakcage.
 To execute one of then in the databases available just run the following command::
 
-$ bob bio pipelines vanilla-biometrics [DATABASE_NAME] [BASELINE]
+$ bob bio pipeline simple [DATABASE_NAME] [BASELINE]
 
 .. note::
   Both, `[DATABASE_NAME]` and `[BASELINE]` can be either python resources or
@@ -31,7 +31,7 @@ protocol, do the following:
 
 .. code-block:: sh
 
-   $ bob bio pipelines vanilla-biometrics verafinger rlt -vv -c
+   $ bob bio pipeline simple verafinger rlt -vv -c
 
 
 .. tip::
@@ -41,13 +41,13 @@ protocol, do the following:
 
    .. code-block:: sh
 
-      $ bob bio pipelines vanilla-biometrics verafinger rlt -vv -c -l local-parallel
+      $ bob bio pipeline simple verafinger rlt -vv -c -l local-parallel
 
    To run on the Idiap SGE grid use:
 
    .. code-block:: sh
 
-      $ bob bio pipelines vanilla-biometrics verafinger rlt -vv -c -l sge
+      $ bob bio pipeline simple rlt -vv -c -l sge
 
 
 This command line selects and runs the following implementations for the
@@ -92,7 +92,7 @@ protocol like above, do the following:
 
 .. code-block:: sh
 
-   $ bob bio pipelines vanilla-biometrics verafinger mc -vv -c
+   $ bob bio pipeline simple verafinger mc -vv -c
 
 
 This command line selects and runs the following implementations for the
@@ -133,7 +133,7 @@ protocol like above, do the following:
 
 .. code-block:: sh
 
-   $ bob bio pipelines vanilla-biometrics verafinger wld -vv -c
+   $ bob bio pipeline simple verafinger wld -vv -c
 
 
 This command line selects and runs the following implementations for the
@@ -246,7 +246,7 @@ Now, re-run the experiment using your modified database descriptor:
 
 .. code-block:: sh
 
-   $ bob bio pipelines vanilla-biometrics ./verafinger_full.py wld -vv -c
+   $ bob bio pipeline simple ./verafinger_full.py wld -vv -c
 
 
 Notice we replace the use of the registered configuration file named
