@@ -56,7 +56,7 @@ class VerafingerContactless(CSVDataset):
         filename = get_file(
             "verafinger_contactless.tar.gz",
             urls,
-            file_hash="c664a83b8fcba3396b010c4d3e60e425e14b32111c4b955892072e5d687485bd",
+            file_hash="46045cd006b1cddbf98bdb184d9e3cca",
         )
 
         super().__init__(
@@ -68,8 +68,8 @@ class VerafingerContactless(CSVDataset):
                 dataset_original_directory=rc.get(
                     "bob.bio.vein.verafinger_contactless.directory", ""
                 ),
-                extension='',
-                reference_id_equal_subject_id=False
+                extension="",
+                reference_id_equal_subject_id=False,
             ),
             allow_scoring_with_all_biometric_references=True,
         )
@@ -81,6 +81,7 @@ class VerafingerContactless(CSVDataset):
 
     @staticmethod
     def urls():
-        return ["https://www.idiap.ch/software/bob/databases/latest/verafinger_contactless-c664a83b.tar.gz",
-                "http://www.idiap.ch/software/bob/databases/latest/verafinger_contactless-c664a83b.tar.gz",
-                ]
+        return [
+            "https://www.idiap.ch/software/bob/databases/latest/verafinger_contactless-ee484b3b.tar.gz",
+            "http://www.idiap.ch/software/bob/databases/latest/verafinger_contactless-ee484b3b.tar.gz",
+        ]
