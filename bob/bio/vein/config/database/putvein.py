@@ -18,7 +18,7 @@ the link.
 
 from bob.extension import rc
 from bob.bio.vein.database.putvein import PutveinBioDatabase
-from bob.bio.base.pipelines.vanilla_biometrics import DatabaseConnector
+from bob.bio.base.pipelines import DatabaseConnector
 
 import logging
 
@@ -33,7 +33,9 @@ if "protocol" not in locals():
     protocol = "wrist-LR_1"
 
 legacy_database = PutveinBioDatabase(
-    original_directory=_putvein_directory, original_extension=".bmp", protocol=protocol,
+    original_directory=_putvein_directory,
+    original_extension=".bmp",
+    protocol=protocol,
 )
 """The :py:class:`bob.bio.base.database.BioDatabase` derivative with PUT Vein
 database settings
@@ -44,7 +46,7 @@ database = DatabaseConnector(
 )
 
 """
-The database interface wrapped for vanilla-biometrics
+The database interface wrapped for pipeline simple
 
 .. warning::
 

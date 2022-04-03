@@ -8,9 +8,9 @@
 # It is defined as a resource in the setup file of this package.
 
 # Usage:
-# $ bob bio pipelines vanilla-biometrics <pipeline> wrist-LR-1 putvein
+# $ bob bio pipeline simple <pipeline> wrist-LR-1 putvein
 # or:
-# $ bob bio pipelines vanilla-biometrics -p <pipeline> wrist-LR-1 putvein
+# $ bob bio pipeline simple -p <pipeline> wrist-LR-1 putvein
 
 # The protocol resource must be specified before the database resource.
 
@@ -22,5 +22,4 @@
 # 'wrist-L_4', 'wrist-LR_4', 'wrist-R_4', 'wrist-RL_4', 'wrist-R_BEAT_4'
 
 
-protocol = 'palm-LR_1'
-
+protocol = "palm-LR_1"

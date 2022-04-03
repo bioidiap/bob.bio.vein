@@ -71,11 +71,11 @@ else:
     legacy_temp_dir = tempfile.TemporaryDirectory().name
 
 
-from bob.bio.base.pipelines.vanilla_biometrics import (
-    VanillaBiometricsPipeline,
+from bob.bio.base.pipelines import (
+    PipelineSimple,
     BioAlgorithmLegacy,
 )
 
 biometric_algorithm = MiuraMatch(ch=18, cw=28)
 
-pipeline = VanillaBiometricsPipeline(transformer, biometric_algorithm)
+pipeline = PipelineSimple(transformer, biometric_algorithm)

@@ -16,8 +16,8 @@ import os
 
 from bob.bio.base.transformers import PreprocessorTransformer
 from bob.bio.base.transformers import ExtractorTransformer
-from bob.bio.base.pipelines.vanilla_biometrics import (
-    VanillaBiometricsPipeline,
+from bob.bio.base.pipelines import (
+    PipelineSimple,
     BioAlgorithmLegacy,
 )
 from sklearn.pipeline import make_pipeline
@@ -78,4 +78,4 @@ Defaults taken from [TV13]_.
 biometric_algorithm = MiuraMatch(ch=18, cw=28)
 
 transformer = make_pipeline(wrap(["sample"], preprocessor), wrap(["sample"], extractor))
-pipeline = VanillaBiometricsPipeline(transformer, biometric_algorithm)
+pipeline = PipelineSimple(transformer, biometric_algorithm)

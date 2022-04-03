@@ -14,7 +14,7 @@ the link.
 
 from bob.extension import rc
 from bob.bio.vein.database.verafinger import Database
-from bob.bio.base.pipelines.vanilla_biometrics import DatabaseConnector
+from bob.bio.base.pipelines import DatabaseConnector
 
 import logging
 
@@ -40,7 +40,7 @@ database = DatabaseConnector(
     fixed_positions=None,
 )
 """The :py:class:`bob.bio.base.database.BioDatabase` derivative with Verafinger
-database settings, wrapped with the vanilla-biometrics database connector.
+database settings, wrapped with the pipeline simple database connector.
 
 .. warning::
 
