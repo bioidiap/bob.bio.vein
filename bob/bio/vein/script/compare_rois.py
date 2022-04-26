@@ -173,8 +173,8 @@ def main(user_input=None):
   for k in gt:
     gt_file = os.path.join(args['<ground-truth>'], k)
     db_file = os.path.join(args['<database>'], k)
-    gt_roi = bob.io.base.HDF5File(gt_file).read('mask')
-    db_roi = bob.io.base.HDF5File(db_file).read('mask')
+    gt_roi = h5py.File(gt_file).read('mask')
+    db_roi = h5py.File(db_file).read('mask')
     metrics.append((
       k,
       utils.jaccard_index(gt_roi, db_roi),

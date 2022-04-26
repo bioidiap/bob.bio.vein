@@ -7,7 +7,6 @@ import scipy.ndimage
 
 import bob.core
 import bob.io.base
-import bob.ip.base
 
 from bob.bio.base.extractor import Extractor
 

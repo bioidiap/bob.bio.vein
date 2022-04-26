@@ -19,7 +19,7 @@ import nose.tools
 import pkg_resources
 
 import bob.io.base
-import bob.io.image
+import bob.io.base
 
 from ..preprocessor import utils as preprocessor_utils
 
@@ -136,8 +136,9 @@ def test_preprocessor():
   #preprocessor_utils.show_mask_over_image(preproc, mask)
 
   mask_ref = bob.io.base.load(output_fvr_filename).astype('bool')
-  preproc_ref = bob.core.convert(bob.io.base.load(output_img_filename),
-      numpy.uint8, (0,255), (0.0,1.0))
+  preproc_ref = bob.io.base.load(output_img_filename)
+  # convert range 0,255 and dtype to uint8
+  preproc_ref = numpy.round(preproc_ref * 255).astype('uint8')
 
   assert numpy.mean(numpy.abs(mask ^ mask_ref)) < 1e-2
 
