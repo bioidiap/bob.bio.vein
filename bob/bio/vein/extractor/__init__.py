@@ -1,4 +1,3 @@
-from .LocalBinaryPatterns import LocalBinaryPatterns
 from .NormalisedCrossCorrelation import NormalisedCrossCorrelation
 from .PrincipalCurvature import PrincipalCurvature
 from .RepeatedLineTracking import RepeatedLineTracking

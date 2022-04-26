@@ -10,7 +10,7 @@ from bob.bio.base.database import CSVDataset
 from bob.bio.base.database import CSVToSampleLoaderBiometrics
 from bob.extension import rc
 from bob.extension.download import get_file
-import bob.io.image
+import bob.io.base
 
 
 class VerafingerContactless(CSVDataset):
@@ -64,7 +64,7 @@ class VerafingerContactless(CSVDataset):
             dataset_protocol_path=filename,
             protocol=protocol,
             csv_to_sample_loader=CSVToSampleLoaderBiometrics(
-                data_loader=bob.io.image.load,
+                data_loader=bob.io.base.load,
                 dataset_original_directory=rc.get(
                     "bob.bio.vein.verafinger_contactless.directory", ""
                 ),

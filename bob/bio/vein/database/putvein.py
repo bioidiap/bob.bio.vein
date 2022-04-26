@@ -8,8 +8,34 @@ framework).
 """
 
 from bob.bio.base.database import BioFile, BioDatabase
-import bob.ip.color
 import numpy as np
+
+#TODO: I know this is not DRY recommended, but that's life
+# I might move this to a proper package.
+def rgb_to_gray(image):
+    """
+    Converts an RGB image to a grayscale image.
+    The formula is:
+    GRAY = 0.299 * R + 0.587 * G + 0.114 * B
+    
+
+    Parameters
+    ----------
+
+    image : numpy.ndarray
+        An image in RGB format (channels first): For an ND array (N >= 3),
+
+
+    """
+
+    assert image.ndim == 3, "The image should have 3 dimensions"
+
+    R = image[0, :, :]
+    G = image[1, :, :]
+    B = image[2, :, :]
+
+    return 0.299 * R + 0.587 * G + 0.114 * B
+
 
 
 class File(BioFile):
@@ -38,7 +64,7 @@ class File(BioFile):
         """
         color_image = self.f.load(directory=directory,
                                   extension=extension)
-        grayscale_image = bob.ip.color.rgb_to_gray(color_image)
+        grayscale_image = rgb_to_gray(color_image)
         grayscale_image = np.rot90(grayscale_image, k=3)
         return grayscale_image
 

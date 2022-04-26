@@ -35,9 +35,6 @@ requirements:
     - bob.extension
     - bob.core
     - bob.io.base
-    - bob.io.image
-    - bob.ip.base
-    - bob.ip.color
     - bob.bio.base
 
   run:
@@ -68,7 +65,6 @@ test:
     - coverage {{ coverage }}
     - sphinx {{ sphinx }}
     - sphinx_rtd_theme {{ sphinx_rtd_theme }}
-    - bob.db.atnt
 
 about:
   home: https://www.idiap.ch/software/bob/
