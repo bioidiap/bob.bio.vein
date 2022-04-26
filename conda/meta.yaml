@@ -65,7 +65,6 @@ test:
     - coverage {{ coverage }}
     - sphinx {{ sphinx }}
     - sphinx_rtd_theme {{ sphinx_rtd_theme }}
-    - bob.db.atnt
 
 about:
   home: https://www.idiap.ch/software/bob/
