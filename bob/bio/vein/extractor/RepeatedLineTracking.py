@@ -5,20 +5,18 @@ import math
 import numpy
 import scipy.ndimage
 
-import bob.core
-import bob.io.base
-
+from PIL import Image
 from bob.bio.base.extractor import Extractor
 
 
 class RepeatedLineTracking(Extractor):
     """Repeated Line Tracking feature extractor
 
-  Based on N. Miura, A. Nagasaka, and T. Miyatake. Feature extraction of finger
-  vein patterns based on repeated line tracking and its application to personal
-  identification. Machine Vision and Applications, Vol. 15, Num. 4, pp.
-  194--203, 2004
-  """
+    Based on N. Miura, A. Nagasaka, and T. Miyatake. Feature extraction of finger
+    vein patterns based on repeated line tracking and its application to personal
+    identification. Machine Vision and Applications, Vol. 15, Num. 4, pp.
+    194--203, 2004
+    """
 
     def __init__(
         self,
@@ -48,7 +46,7 @@ class RepeatedLineTracking(Extractor):
 
     def repeated_line_tracking(self, finger_image, mask):
         """Computes and returns the MiuraMax features for the given input
-    fingervein image"""
+        fingervein image"""
 
         # Sets the random seed before starting to process
         numpy.random.seed(self.seed)
@@ -59,8 +57,22 @@ class RepeatedLineTracking(Extractor):
         # Rescale image if required
         if self.rescale == True:
             scaling_factor = 0.6
-            finger_image = bob.ip.base.scale(finger_image, scaling_factor)
-            finger_mask = bob.ip.base.scale(finger_mask, scaling_factor)
+            # finger_image = bob.ip.base.scale(finger_image, scaling_factor)
+            # finger_mask = bob.ip.base.scale(finger_mask, scaling_factor)
+            new_size = tuple(
+                (numpy.array(finger_image.shape) * scaling_factor).astype(numpy.int)
+            )
+            finger_image = numpy.array(
+                Image.fromarray(finger_image).resize(size=new_size)
+            ).T
+
+            new_size = tuple(
+                (numpy.array(finger_mask.shape) * scaling_factor).astype(numpy.int)
+            )
+            finger_mask = numpy.array(
+                Image.fromarray(finger_mask).resize(size=new_size)
+            ).T
+
             # To eliminate residuals from the scalation of the binary mask
             finger_mask = scipy.ndimage.binary_dilation(
                 finger_mask, structure=numpy.ones((1, 1))
@@ -271,7 +283,7 @@ class RepeatedLineTracking(Extractor):
 
     def __call__(self, image):
         """Reads the input image, extract the features based on Maximum Curvature
-    of the fingervein image, and writes the resulting template"""
+        of the fingervein image, and writes the resulting template"""
 
         finger_image = image[
             0
@@ -279,4 +291,3 @@ class RepeatedLineTracking(Extractor):
         finger_mask = image[1]
 
         return self.repeated_line_tracking(finger_image, finger_mask)
-
