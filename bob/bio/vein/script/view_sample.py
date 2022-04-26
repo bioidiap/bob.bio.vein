@@ -58,7 +58,7 @@ import matplotlib.pyplot as mpl
 from ..preprocessor import utils
 
 import bob.io.base
-import bob.io.image
+import bob.io.base
 
 
 def save_figures(title, image, mask, image_pp, binary):
@@ -237,7 +237,7 @@ def main(user_input=None):
     image = f.load(db.original_directory, db.original_extension)
     pp_name = f.make_path(os.path.join(args['<processed>'], 'preprocessed'),
         extension='.hdf5')
-    pp = bob.io.base.HDF5File(pp_name)
+    pp = h5py.File(pp_name)
     mask  = pp.read('mask')
     image_pp = pp.read('image')
     try:

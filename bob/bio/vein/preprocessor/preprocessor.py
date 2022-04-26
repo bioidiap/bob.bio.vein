@@ -84,7 +84,7 @@ class Preprocessor (BasePreprocessor):
   def write_data(self, data, filename):
     '''Overrides the default method implementation to handle our tuple'''
 
-    f = bob.io.base.HDF5File(filename, 'w')
+    f = h5py.File(filename, 'w')
     f.set('image', data[0])
     f.set('mask', data[1])
 
@@ -92,5 +92,5 @@ class Preprocessor (BasePreprocessor):
   def read_data(self, filename):
     '''Overrides the default method implementation to handle our tuple'''
 
-    f = bob.io.base.HDF5File(filename, 'r')
+    f = h5py.File(filename, 'r')
     return f.read('image'), f.read('mask')

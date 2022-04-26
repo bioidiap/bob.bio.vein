@@ -10,7 +10,7 @@ from bob.bio.base.database import CSVDataset
 from bob.bio.base.database import CSVToSampleLoaderBiometrics
 from bob.extension import rc
 from bob.extension.download import get_file
-import bob.io.image
+import bob.io.base
 from sklearn.pipeline import make_pipeline
 from bob.bio.vein.database.roi_annotation import ROIAnnotation
 
@@ -169,7 +169,7 @@ class UtfvpDatabase(CSVDataset):
             protocol=protocol,
             csv_to_sample_loader=make_pipeline(
                 CSVToSampleLoaderBiometrics(
-                    data_loader=bob.io.image.load,
+                    data_loader=bob.io.base.load,
                     dataset_original_directory=rc.get(
                         "bob.bio.vein.utfvp.directory", ""
                     ),
