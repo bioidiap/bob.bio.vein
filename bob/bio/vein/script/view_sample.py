@@ -51,8 +51,8 @@ import numpy
 import schema
 import docopt
 
-import bob.core
-logger = bob.core.log.setup("bob.bio.vein")
+import bob.extension.log
+logger = bob.extension.log.setup("bob.bio.vein")
 
 import matplotlib.pyplot as mpl
 from ..preprocessor import utils

@@ -34,14 +34,14 @@ def setup_logger(name, level):
 
   '''
 
-  import bob.core
-  logger = bob.core.log.setup(name)
+  import bob.extension.log
+  logger = bob.extension.log.setup(name)
 
   if not (0 <= level < 4):
     raise schema.SchemaError("there can be only up to 3 -v's in a command-line")
 
   # Sets-up logging
-  bob.core.log.set_verbosity_level(logger, level)
+  bob.extension.log.set_verbosity_level(logger, level)
 
   return logger
 
