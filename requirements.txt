@@ -7,6 +7,5 @@ docopt
 scikit-image
 matplotlib
 bob.extension
-bob.core
 bob.io.base
 bob.bio.base
