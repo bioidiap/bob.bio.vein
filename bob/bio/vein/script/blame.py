@@ -38,8 +38,9 @@ import os
 import sys
 import numpy
 
-import bob.core
-logger = bob.core.log.setup("bob.bio.vein")
+import bob.extension.log
+
+logger = bob.extension.log.setup("bob.bio.vein")
 
 
 def main(user_input=None):
@@ -65,7 +66,7 @@ def main(user_input=None):
 
   # Sets-up logging
   verbosity = int(args['--verbose'])
-  bob.core.log.set_verbosity_level(logger, verbosity)
+  bob.extension.log.set_verbosity_level(logger, verbosity)
 
   # validates number of cases
   cases = int(args['--cases'])
