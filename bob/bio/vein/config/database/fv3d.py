@@ -11,11 +11,11 @@ the link.
 """
 
 
-from bob.extension import rc
-from bob.bio.vein.database.fv3d import Database
-from bob.bio.base.pipelines import DatabaseConnector
-
 import logging
+
+from bob.bio.base.pipelines import DatabaseConnector
+from bob.bio.vein.database.fv3d import Database
+from bob.extension import rc
 
 logger = logging.getLogger("bob.bio.vein")
 

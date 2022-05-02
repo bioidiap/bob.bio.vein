@@ -12,27 +12,26 @@ References:
 
 """
 
-import tempfile
 import os
+import tempfile
 
-from bob.bio.base.transformers import PreprocessorTransformer
-from bob.bio.base.transformers import ExtractorTransformer
-from bob.bio.base.pipelines import (
-    PipelineSimple,
-    BioAlgorithmLegacy,
-)
 from sklearn.pipeline import make_pipeline
-from bob.pipelines import wrap
 
+from bob.bio.base.pipelines import PipelineSimple
+from bob.bio.base.transformers import (
+    ExtractorTransformer,
+    PreprocessorTransformer,
+)
+from bob.bio.vein.algorithm import MiuraMatch
+from bob.bio.vein.extractor import MaximumCurvature
 from bob.bio.vein.preprocessor import (
-    NoCrop,
-    TomesLeeMask,
     HuangNormalization,
+    NoCrop,
     NoFilter,
     Preprocessor,
+    TomesLeeMask,
 )
-from bob.bio.vein.extractor import MaximumCurvature
-from bob.bio.vein.algorithm import MiuraMatch
+from bob.pipelines import wrap
 
 """Baseline updated with the wrapper for the pipelines package"""
 
@@ -46,7 +45,9 @@ default_temp = (
 )
 
 if os.path.exists(default_temp):
-    legacy_temp_dir = os.path.join(default_temp, "bob_bio_base_tmp", sub_directory)
+    legacy_temp_dir = os.path.join(
+        default_temp, "bob_bio_base_tmp", sub_directory
+    )
 else:
     # if /idiap/temp/<USER> does not exist, use /tmp/tmpxxxxxxxx
     legacy_temp_dir = tempfile.TemporaryDirectory().name
@@ -76,5 +77,7 @@ Defaults taken from [TV13]_.
 # biometric_algorithm = BioAlgorithmLegacy(MiuraMatch(), base_dir=legacy_temp_dir)
 biometric_algorithm = MiuraMatch()
 
-transformer = make_pipeline(wrap(["sample"], preprocessor), wrap(["sample"], extractor))
+transformer = make_pipeline(
+    wrap(["sample"], preprocessor), wrap(["sample"], extractor)
+)
 pipeline = PipelineSimple(transformer, biometric_algorithm)

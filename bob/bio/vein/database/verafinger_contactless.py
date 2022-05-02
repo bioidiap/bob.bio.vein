@@ -6,11 +6,11 @@
   VERA-Fingervein-Contactless database implementation
 """
 
-from bob.bio.base.database import CSVDataset
-from bob.bio.base.database import CSVToSampleLoaderBiometrics
+import bob.io.base
+
+from bob.bio.base.database import CSVDataset, CSVToSampleLoaderBiometrics
 from bob.extension import rc
 from bob.extension.download import get_file
-import bob.io.base
 
 
 class VerafingerContactless(CSVDataset):
