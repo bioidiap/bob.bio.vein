@@ -2,17 +2,21 @@
 # vim: set fileencoding=utf-8 :
 # Thu May 24 10:41:42 CEST 2012
 
+import os
+
 from nose.plugins.skip import SkipTest
 
 import bob.bio.base
-from bob.bio.base.test.utils import db_available
+
 from bob.bio.base.test.test_database_implementations import check_database
-import os
+from bob.bio.base.test.utils import db_available
 from bob.extension.download import get_file
 
 
 def test_verafinger_contactless():
-    from bob.bio.vein.database.verafinger_contactless import VerafingerContactless
+    from bob.bio.vein.database.verafinger_contactless import (
+        VerafingerContactless,
+    )
 
     # Getting the absolute path
     urls = VerafingerContactless.urls()
@@ -25,36 +29,54 @@ def test_verafinger_contactless():
         pass
 
     # nom
-    nom_parameters = {'N_dev': 65,
-                      'N_eval': 68,
-                      'N_session_references': 2,
-                      'N_session_probes': 3,
-                      'N_hands': 2,
-                      }
+    nom_parameters = {
+        "N_dev": 65,
+        "N_eval": 68,
+        "N_session_references": 2,
+        "N_session_probes": 3,
+        "N_hands": 2,
+    }
 
-    protocols_parameters = {'nom': nom_parameters,
-                            }
+    protocols_parameters = {
+        "nom": nom_parameters,
+    }
 
     def _check_protocol(p, parameters, eval=False):
         database = VerafingerContactless(protocol=p)
 
-        assert len(database.references(group="dev")) == \
-               parameters['N_dev'] * parameters['N_hands'] * parameters['N_session_references']
-        assert len(database.probes(group="dev")) == \
-               parameters['N_dev'] * parameters['N_hands'] * parameters['N_session_probes']
+        assert (
+            len(database.references(group="dev"))
+            == parameters["N_dev"]
+            * parameters["N_hands"]
+            * parameters["N_session_references"]
+        )
+        assert (
+            len(database.probes(group="dev"))
+            == parameters["N_dev"]
+            * parameters["N_hands"]
+            * parameters["N_session_probes"]
+        )
 
         if eval:
-            assert len(database.references(group="eval")) == \
-                   parameters['N_eval'] * parameters['N_hands'] * parameters['N_session_references']
-            assert len(database.probes(group="eval")) == \
-                   parameters['N_eval'] * parameters['N_hands'] * parameters['N_session_probes']
+            assert (
+                len(database.references(group="eval"))
+                == parameters["N_eval"]
+                * parameters["N_hands"]
+                * parameters["N_session_references"]
+            )
+            assert (
+                len(database.probes(group="eval"))
+                == parameters["N_eval"]
+                * parameters["N_hands"]
+                * parameters["N_session_probes"]
+            )
 
         return p
 
     checked_protocols = []
 
     checked_protocols.append(
-        _check_protocol("nom", protocols_parameters['nom'], eval=True)
+        _check_protocol("nom", protocols_parameters["nom"], eval=True)
     )
 
     for p in VerafingerContactless.protocols():
@@ -76,157 +98,256 @@ def test_utfvp():
 
     N_SUBJECTS, N_FINGERS, N_SESSIONS = 60, 6, 4
     # nom
-    nom_parameters = {'N_train': 10,
-                      'N_dev': 18,
-                      'N_eval': 32,
-                      'N_session': N_SESSIONS // 2,
-                      'N_session_training': N_SESSIONS,
-                      'N_fingers': 6,
-                      'N_fingers_training': 6,
-                      }
+    nom_parameters = {
+        "N_train": 10,
+        "N_dev": 18,
+        "N_eval": 32,
+        "N_session": N_SESSIONS // 2,
+        "N_session_training": N_SESSIONS,
+        "N_fingers": 6,
+        "N_fingers_training": 6,
+    }
     # full
-    full_parameters = {'N_train': 0,
-                       'N_dev': N_SUBJECTS,
-                       'N_eval': 0,
-                       'N_session': N_SESSIONS,
-                       'N_fingers': 6,
-                       }
+    full_parameters = {
+        "N_train": 0,
+        "N_dev": N_SUBJECTS,
+        "N_eval": 0,
+        "N_session": N_SESSIONS,
+        "N_fingers": 6,
+    }
 
     # 1vsall
-    onevsall_parameters = {'N_train': 35,
-                           'N_dev': 65,
-                           'N_eval': 0,
-                           'N_session': N_SESSIONS,
-                           'N_session_training': N_SESSIONS,
-                           'N_fingers': 5,
-                           'N_fingers_training': 1,
-                           }
+    onevsall_parameters = {
+        "N_train": 35,
+        "N_dev": 65,
+        "N_eval": 0,
+        "N_session": N_SESSIONS,
+        "N_session_training": N_SESSIONS,
+        "N_fingers": 5,
+        "N_fingers_training": 1,
+    }
     # subnom
-    subnom_parameters = {'N_train': 10,
-                         'N_dev': 18,
-                         'N_eval': 32,
-                         'N_session': N_SESSIONS // 2,
-                         'N_session_training': N_SESSIONS,
-                         'N_fingers': 1,
-                         'N_fingers_training': 1,
-                         }
+    subnom_parameters = {
+        "N_train": 10,
+        "N_dev": 18,
+        "N_eval": 32,
+        "N_session": N_SESSIONS // 2,
+        "N_session_training": N_SESSIONS,
+        "N_fingers": 1,
+        "N_fingers_training": 1,
+    }
 
     # subfull
-    subfull_parameters = {'N_train': 0,
-                          'N_dev': N_SUBJECTS,
-                          'N_eval': 0,
-                          'N_session': N_SESSIONS,
-                          'N_fingers': 1,
-                          }
+    subfull_parameters = {
+        "N_train": 0,
+        "N_dev": N_SUBJECTS,
+        "N_eval": 0,
+        "N_session": N_SESSIONS,
+        "N_fingers": 1,
+    }
 
-    protocols_parameters = {'nom': nom_parameters,
-                            'full': full_parameters,
-                            '1vsall': onevsall_parameters,
-                            'subnom': subnom_parameters,
-                            'subfull': subfull_parameters,
-                            }
+    protocols_parameters = {
+        "nom": nom_parameters,
+        "full": full_parameters,
+        "1vsall": onevsall_parameters,
+        "subnom": subnom_parameters,
+        "subfull": subfull_parameters,
+    }
 
     def _check_protocol(p, parameters, train=False, eval=False):
         database = UtfvpDatabase(protocol=p)
 
         if train:
-            assert len(database.background_model_samples()) == \
-                   parameters['N_train'] * parameters['N_fingers_training'] * parameters['N_session_training']
+            assert (
+                len(database.background_model_samples())
+                == parameters["N_train"]
+                * parameters["N_fingers_training"]
+                * parameters["N_session_training"]
+            )
 
-        assert len(database.references(group="dev")) == \
-               parameters['N_dev'] * parameters['N_fingers'] * parameters['N_session']
-        assert len(database.probes(group="dev")) == \
-               parameters['N_dev'] * parameters['N_fingers'] * parameters['N_session']
+        assert (
+            len(database.references(group="dev"))
+            == parameters["N_dev"]
+            * parameters["N_fingers"]
+            * parameters["N_session"]
+        )
+        assert (
+            len(database.probes(group="dev"))
+            == parameters["N_dev"]
+            * parameters["N_fingers"]
+            * parameters["N_session"]
+        )
 
         if eval:
-            assert len(database.references(group="eval")) == \
-                   parameters['N_eval'] * parameters['N_fingers'] * parameters['N_session']
-            assert len(database.probes(group="eval")) == \
-                   parameters['N_eval'] * parameters['N_fingers'] * parameters['N_session']
+            assert (
+                len(database.references(group="eval"))
+                == parameters["N_eval"]
+                * parameters["N_fingers"]
+                * parameters["N_session"]
+            )
+            assert (
+                len(database.probes(group="eval"))
+                == parameters["N_eval"]
+                * parameters["N_fingers"]
+                * parameters["N_session"]
+            )
 
         return p
 
     checked_protocols = []
 
     checked_protocols.append(
-        _check_protocol("nom", protocols_parameters['nom'], train=True, eval=True)
+        _check_protocol(
+            "nom", protocols_parameters["nom"], train=True, eval=True
+        )
     )
     checked_protocols.append(
-        _check_protocol("full", protocols_parameters['full'], train=False, eval=False)
+        _check_protocol(
+            "full", protocols_parameters["full"], train=False, eval=False
+        )
     )
     checked_protocols.append(
-        _check_protocol("1vsall", protocols_parameters['1vsall'], train=True, eval=False)
+        _check_protocol(
+            "1vsall", protocols_parameters["1vsall"], train=True, eval=False
+        )
     )
     checked_protocols.append(
-        _check_protocol("nomLeftIndex", protocols_parameters['subnom'], train=True, eval=True)
+        _check_protocol(
+            "nomLeftIndex",
+            protocols_parameters["subnom"],
+            train=True,
+            eval=True,
+        )
     )
     checked_protocols.append(
-        _check_protocol("nomLeftMiddle", protocols_parameters['subnom'], train=True, eval=True)
+        _check_protocol(
+            "nomLeftMiddle",
+            protocols_parameters["subnom"],
+            train=True,
+            eval=True,
+        )
     )
     checked_protocols.append(
-        _check_protocol("nomLeftRing", protocols_parameters['subnom'], train=True, eval=True)
+        _check_protocol(
+            "nomLeftRing", protocols_parameters["subnom"], train=True, eval=True
+        )
     )
     checked_protocols.append(
-        _check_protocol("nomRightIndex", protocols_parameters['subnom'], train=True, eval=True)
+        _check_protocol(
+            "nomRightIndex",
+            protocols_parameters["subnom"],
+            train=True,
+            eval=True,
+        )
     )
     checked_protocols.append(
-        _check_protocol("nomRightMiddle", protocols_parameters['subnom'], train=True, eval=True)
+        _check_protocol(
+            "nomRightMiddle",
+            protocols_parameters["subnom"],
+            train=True,
+            eval=True,
+        )
     )
     checked_protocols.append(
-        _check_protocol("nomRightRing", protocols_parameters['subnom'], train=True, eval=True)
+        _check_protocol(
+            "nomRightRing",
+            protocols_parameters["subnom"],
+            train=True,
+            eval=True,
+        )
     )
     checked_protocols.append(
-        _check_protocol("fullLeftIndex", protocols_parameters['subfull'], train=False, eval=False)
+        _check_protocol(
+            "fullLeftIndex",
+            protocols_parameters["subfull"],
+            train=False,
+            eval=False,
+        )
     )
     checked_protocols.append(
-        _check_protocol("fullLeftMiddle", protocols_parameters['subfull'], train=False, eval=False)
+        _check_protocol(
+            "fullLeftMiddle",
+            protocols_parameters["subfull"],
+            train=False,
+            eval=False,
+        )
     )
     checked_protocols.append(
-        _check_protocol("fullLeftRing", protocols_parameters['subfull'], train=False, eval=False)
+        _check_protocol(
+            "fullLeftRing",
+            protocols_parameters["subfull"],
+            train=False,
+            eval=False,
+        )
     )
     checked_protocols.append(
-        _check_protocol("fullRightIndex", protocols_parameters['subfull'], train=False, eval=False)
+        _check_protocol(
+            "fullRightIndex",
+            protocols_parameters["subfull"],
+            train=False,
+            eval=False,
+        )
     )
     checked_protocols.append(
-        _check_protocol("fullRightMiddle", protocols_parameters['subfull'], train=False, eval=False)
+        _check_protocol(
+            "fullRightMiddle",
+            protocols_parameters["subfull"],
+            train=False,
+            eval=False,
+        )
     )
     checked_protocols.append(
-        _check_protocol("fullRightRing", protocols_parameters['subfull'], train=False, eval=False)
+        _check_protocol(
+            "fullRightRing",
+            protocols_parameters["subfull"],
+            train=False,
+            eval=False,
+        )
     )
 
     for p in UtfvpDatabase.protocols():
         assert p in checked_protocols, "Protocol {} untested".format(p)
 
 
-@db_available('verafinger')
+@db_available("verafinger")
 def test_verafinger():
-    module = bob.bio.base.load_resource('verafinger', 'config',
-                                        preferred_package='bob.bio.vein')
+    module = bob.bio.base.load_resource(
+        "verafinger", "config", preferred_package="bob.bio.vein"
+    )
     try:
-        check_database(module.database, protocol='Fifty', groups=('dev',
-                                                                  'eval'))
+        check_database(
+            module.database, protocol="Fifty", groups=("dev", "eval")
+        )
     except IOError as e:
         raise SkipTest(
-            "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'" % e)
+            "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'"
+            % e
+        )
 
 
-@db_available('fv3d')
+@db_available("fv3d")
 def test_fv3d():
-    module = bob.bio.base.load_resource('fv3d', 'config',
-                                        preferred_package='bob.bio.vein')
+    module = bob.bio.base.load_resource(
+        "fv3d", "config", preferred_package="bob.bio.vein"
+    )
     try:
-        check_database(module.database, protocol='central', groups=('dev',))
+        check_database(module.database, protocol="central", groups=("dev",))
     except IOError as e:
         raise SkipTest(
-            "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'" % e)
+            "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'"
+            % e
+        )
 
 
-@db_available('putvein')
+@db_available("putvein")
 def test_putvein():
-    module = bob.bio.base.load_resource('putvein', 'config',
-                                        preferred_package='bob.bio.vein')
+    module = bob.bio.base.load_resource(
+        "putvein", "config", preferred_package="bob.bio.vein"
+    )
     try:
-        check_database(module.database, protocol='wrist-LR_1', groups=('dev',))
+        check_database(module.database, protocol="wrist-LR_1", groups=("dev",))
     except IOError as e:
         raise SkipTest(
-            "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'" % e)
+            "The database could not queried; probably the db.sql3 file is missing. Here is the error: '%s'"
+            % e
+        )

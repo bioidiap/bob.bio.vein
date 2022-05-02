@@ -4,7 +4,6 @@
 import numpy
 import scipy
 
-
 from PIL import Image
 
 from bob.bio.base.extractor import Extractor
@@ -53,14 +52,18 @@ class WideLineDetector(Extractor):
             scaling_factor = 0.24
 
             new_size = tuple(
-                (numpy.array(finger_image.shape) * scaling_factor).astype(numpy.int)
+                (numpy.array(finger_image.shape) * scaling_factor).astype(
+                    numpy.int
+                )
             )
             finger_image = numpy.array(
                 Image.fromarray(finger_image).resize(size=new_size)
             ).T
 
             new_size = tuple(
-                (numpy.array(finger_mask.shape) * scaling_factor).astype(numpy.int)
+                (numpy.array(finger_mask.shape) * scaling_factor).astype(
+                    numpy.int
+                )
             )
             finger_mask = numpy.array(
                 Image.fromarray(finger_mask).resize(size=new_size)
@@ -75,7 +78,7 @@ class WideLineDetector(Extractor):
         y = numpy.arange((-1) * self.radius, self.radius + 1)
         X, Y = numpy.meshgrid(x, y)
 
-        N = X ** 2 + Y ** 2 <= self.radius ** 2  # Neighbourhood mask
+        N = X**2 + Y**2 <= self.radius**2  # Neighbourhood mask
 
         img_h, img_w = finger_image.shape  # Image height and width
 

@@ -13,11 +13,11 @@ References:
 """
 
 from bob.bio.vein.preprocessor import (
-    NoCrop,
-    TomesLeeMask,
     HuangNormalization,
+    NoCrop,
     NoFilter,
     Preprocessor,
+    TomesLeeMask,
 )
 
 legacy_preprocessor = Preprocessor(
@@ -35,10 +35,13 @@ from bob.bio.vein.extractor import PrincipalCurvature
 legacy_extractor = PrincipalCurvature()
 
 
-from bob.bio.base.transformers import PreprocessorTransformer, ExtractorTransformer
 from sklearn.pipeline import make_pipeline
-from bob.pipelines import wrap
 
+from bob.bio.base.transformers import (
+    ExtractorTransformer,
+    PreprocessorTransformer,
+)
+from bob.pipelines import wrap
 
 transformer = make_pipeline(
     wrap(["sample"], PreprocessorTransformer(legacy_preprocessor)),
@@ -65,16 +68,15 @@ default_temp = (
 )
 
 if os.path.exists(default_temp):
-    legacy_temp_dir = os.path.join(default_temp, "bob_bio_base_tmp", sub_directory)
+    legacy_temp_dir = os.path.join(
+        default_temp, "bob_bio_base_tmp", sub_directory
+    )
 else:
     # if /idiap/temp/<USER> does not exist, use /tmp/tmpxxxxxxxx
     legacy_temp_dir = tempfile.TemporaryDirectory().name
 
 
-from bob.bio.base.pipelines import (
-    PipelineSimple,
-    BioAlgorithmLegacy,
-)
+from bob.bio.base.pipelines import BioAlgorithmLegacy, PipelineSimple
 
 biometric_algorithm = MiuraMatch(ch=18, cw=28)
 

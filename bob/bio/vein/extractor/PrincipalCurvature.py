@@ -3,11 +3,11 @@
 
 import numpy
 
+from scipy.ndimage import gaussian_filter
+
 import bob.io.base
 
 from bob.bio.base.extractor import Extractor
-
-from scipy.ndimage import gaussian_filter
 
 
 class PrincipalCurvature(Extractor):
@@ -29,7 +29,9 @@ class PrincipalCurvature(Extractor):
         """
         # call base class constructor
         Extractor.__init__(
-            self, sigma=sigma, threshold=threshold,
+            self,
+            sigma=sigma,
+            threshold=threshold,
         )
 
         # block parameters
@@ -46,12 +48,12 @@ class PrincipalCurvature(Extractor):
         finger_mask = numpy.zeros(mask.shape)
         finger_mask[mask == True] = 1
 
-        sigma = numpy.sqrt(self.sigma ** 2 / 2)
+        sigma = numpy.sqrt(self.sigma**2 / 2)
 
         gx = self.ut_gauss(image, self.sigma, 1, 0)
         gy = self.ut_gauss(image, self.sigma, 0, 1)
 
-        Gmag = numpy.sqrt(gx ** 2 + gy ** 2)  #  Gradient magnitude
+        Gmag = numpy.sqrt(gx**2 + gy**2)  #  Gradient magnitude
 
         # Apply threshold
         gamma = (self.threshold / 100) * numpy.max(Gmag)
@@ -71,7 +73,9 @@ class PrincipalCurvature(Extractor):
         hyy = self.ut_gauss(gy, sigma, 0, 1)
 
         lambda1 = 0.5 * (
-            hxx + hyy + numpy.sqrt(hxx ** 2 + hyy ** 2 - 2 * hxx * hyy + 4 * hxy ** 2)
+            hxx
+            + hyy
+            + numpy.sqrt(hxx**2 + hyy**2 - 2 * hxx * hyy + 4 * hxy**2)
         )
         veins = lambda1 * finger_mask
 

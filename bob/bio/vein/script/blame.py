@@ -36,6 +36,7 @@ Examples:
 
 import os
 import sys
+
 import numpy
 
 import bob.extension.log
@@ -45,88 +46,117 @@ logger = bob.extension.log.setup("bob.bio.vein")
 
 def main(user_input=None):
 
-  if user_input is not None:
-    argv = user_input
-  else:
-    argv = sys.argv[1:]
+    if user_input is not None:
+        argv = user_input
+    else:
+        argv = sys.argv[1:]
 
-  import docopt
-  import pkg_resources
+    import docopt
+    import pkg_resources
 
-  completions = dict(
-      prog=os.path.basename(sys.argv[0]),
-      version=pkg_resources.require('bob.bio.base')[0].version
-      )
+    completions = dict(
+        prog=os.path.basename(sys.argv[0]),
+        version=pkg_resources.require("bob.bio.base")[0].version,
+    )
 
-  args = docopt.docopt(
-      __doc__ % completions,
-      argv=argv,
-      version=completions['version'],
-      )
+    args = docopt.docopt(
+        __doc__ % completions,
+        argv=argv,
+        version=completions["version"],
+    )
 
-  # Sets-up logging
-  verbosity = int(args['--verbose'])
-  bob.extension.log.set_verbosity_level(logger, verbosity)
+    # Sets-up logging
+    verbosity = int(args["--verbose"])
+    bob.extension.log.set_verbosity_level(logger, verbosity)
 
-  # validates number of cases
-  cases = int(args['--cases'])
+    # validates number of cases
+    cases = int(args["--cases"])
 
-  # generates a huge
-  from bob.bio.base.score.load import load_score, get_negatives_positives
-  scores = []
-  names = {}
+    # generates a huge
+    from bob.bio.base.score.load import get_negatives_positives, load_score
 
-  length = 0
-  for k in args['<score-file>']:
-    model = os.path.splitext(os.path.basename(k))[0]
-    length = max(length, len(model))
+    scores = []
+    names = {}
 
-  for k in args['<score-file>']:
-    model = os.path.splitext(os.path.basename(k))[0]
-    names[model] = k
-    logger.info("Loading score file `%s' for model `%s'..." % (k, model))
-    s = load_score(k)
+    length = 0
+    for k in args["<score-file>"]:
+        model = os.path.splitext(os.path.basename(k))[0]
+        length = max(length, len(model))
 
-    # append a column with the model name
-    m = numpy.array(len(s)*[model], dtype='<U%d' % length)
-    new_dt = numpy.dtype(s.dtype.descr + [('model', m.dtype.descr)])
-    sp = numpy.zeros(s.shape, dtype=new_dt)
-    sp['claimed_id'] = s['claimed_id']
-    sp['real_id'] = s['real_id']
-    sp['test_label'] = s['test_label']
-    sp['score'] = s['score']
-    sp['model'] = m
+    for k in args["<score-file>"]:
+        model = os.path.splitext(os.path.basename(k))[0]
+        names[model] = k
+        logger.info("Loading score file `%s' for model `%s'..." % (k, model))
+        s = load_score(k)
 
-    # stack into the existing scores set
-    scores.append(sp)
+        # append a column with the model name
+        m = numpy.array(len(s) * [model], dtype="<U%d" % length)
+        new_dt = numpy.dtype(s.dtype.descr + [("model", m.dtype.descr)])
+        sp = numpy.zeros(s.shape, dtype=new_dt)
+        sp["claimed_id"] = s["claimed_id"]
+        sp["real_id"] = s["real_id"]
+        sp["test_label"] = s["test_label"]
+        sp["score"] = s["score"]
+        sp["model"] = m
 
-  scores = numpy.concatenate(scores)
-  genuines = scores[scores['claimed_id'] == scores['real_id']]
-  genuines.sort(order='score') #ascending
-  impostors = scores[scores['claimed_id'] != scores['real_id']]
-  impostors.sort(order='score') #ascending
+        # stack into the existing scores set
+        scores.append(sp)
 
-  # print
-  print('The %d worst genuine scores:' % cases)
-  for k in range(cases):
-    print(' %d. model %s -> %s (%f)' % (k+1, genuines[k]['model'][0],
-      genuines[k]['test_label'], genuines[k]['score']))
+    scores = numpy.concatenate(scores)
+    genuines = scores[scores["claimed_id"] == scores["real_id"]]
+    genuines.sort(order="score")  # ascending
+    impostors = scores[scores["claimed_id"] != scores["real_id"]]
+    impostors.sort(order="score")  # ascending
 
-  print('The %d best genuine scores:' % cases)
-  for k in range(cases):
-    pos = len(genuines)-k-1
-    print(' %d. model %s -> %s (%f)' % (k+1, genuines[pos]['model'][0],
-      genuines[pos]['test_label'], genuines[pos]['score']))
+    # print
+    print("The %d worst genuine scores:" % cases)
+    for k in range(cases):
+        print(
+            " %d. model %s -> %s (%f)"
+            % (
+                k + 1,
+                genuines[k]["model"][0],
+                genuines[k]["test_label"],
+                genuines[k]["score"],
+            )
+        )
 
-  print('The %d worst impostor scores:' % cases)
-  for k in range(cases):
-    pos = len(impostors)-k-1
-    print(' %d. model %s -> %s (%f)' % (k+1, impostors[pos]['model'][0],
-      impostors[pos]['test_label'], impostors[pos]['score']))
+    print("The %d best genuine scores:" % cases)
+    for k in range(cases):
+        pos = len(genuines) - k - 1
+        print(
+            " %d. model %s -> %s (%f)"
+            % (
+                k + 1,
+                genuines[pos]["model"][0],
+                genuines[pos]["test_label"],
+                genuines[pos]["score"],
+            )
+        )
 
-  print('The %d best impostor scores:' % cases)
-  for k in range(cases):
-    print(' %d. model %s -> %s (%f)' % (k+1, impostors[k]['model'][0],
-      impostors[k]['test_label'], impostors[k]['score']))
+    print("The %d worst impostor scores:" % cases)
+    for k in range(cases):
+        pos = len(impostors) - k - 1
+        print(
+            " %d. model %s -> %s (%f)"
+            % (
+                k + 1,
+                impostors[pos]["model"][0],
+                impostors[pos]["test_label"],
+                impostors[pos]["score"],
+            )
+        )
 
-  return 0
+    print("The %d best impostor scores:" % cases)
+    for k in range(cases):
+        print(
+            " %d. model %s -> %s (%f)"
+            % (
+                k + 1,
+                impostors[k]["model"][0],
+                impostors[k]["test_label"],
+                impostors[k]["score"],
+            )
+        )
+
+    return 0

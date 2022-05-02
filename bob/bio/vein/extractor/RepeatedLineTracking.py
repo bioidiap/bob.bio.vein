@@ -2,10 +2,12 @@
 # vim: set fileencoding=utf-8 :
 
 import math
+
 import numpy
 import scipy.ndimage
 
 from PIL import Image
+
 from bob.bio.base.extractor import Extractor
 
 
@@ -60,14 +62,18 @@ class RepeatedLineTracking(Extractor):
             # finger_image = bob.ip.base.scale(finger_image, scaling_factor)
             # finger_mask = bob.ip.base.scale(finger_mask, scaling_factor)
             new_size = tuple(
-                (numpy.array(finger_image.shape) * scaling_factor).astype(numpy.int)
+                (numpy.array(finger_image.shape) * scaling_factor).astype(
+                    numpy.int
+                )
             )
             finger_image = numpy.array(
                 Image.fromarray(finger_image).resize(size=new_size)
             ).T
 
             new_size = tuple(
-                (numpy.array(finger_mask.shape) * scaling_factor).astype(numpy.int)
+                (numpy.array(finger_mask.shape) * scaling_factor).astype(
+                    numpy.int
+                )
             )
             finger_mask = numpy.array(
                 Image.fromarray(finger_mask).resize(size=new_size)
@@ -101,8 +107,12 @@ class RepeatedLineTracking(Extractor):
             print("Error: profile_w must be odd")
 
         ro = numpy.round(self.r * math.sqrt(2) / 2)  # r for oblique directions
-        hW = (self.profile_w - 1) / 2  # half width for horz. and vert. directions
-        hWo = numpy.round(hW * math.sqrt(2) / 2)  # half width for oblique directions
+        hW = (
+            self.profile_w - 1
+        ) / 2  # half width for horz. and vert. directions
+        hWo = numpy.round(
+            hW * math.sqrt(2) / 2
+        )  # half width for oblique directions
 
         # Omit unreachable borders
         border = int(self.r + hW)
@@ -114,7 +124,9 @@ class RepeatedLineTracking(Extractor):
         ## Uniformly distributed starting points
         aux = numpy.argwhere((finger_mask > 0) == True)
         indices = numpy.random.permutation(aux)
-        indices = indices[0 : self.iterations, :]  # Limit to number of iterations
+        indices = indices[
+            0 : self.iterations, :
+        ]  # Limit to number of iterations
 
         ## Iterate through all starting points
         for it in range(0, self.iterations):
@@ -159,7 +171,9 @@ class RepeatedLineTracking(Extractor):
                     (
                         ~Tc[yc - 1 : yc + 2, xc - 1 : xc + 2]
                         & Nr
-                        & finger_mask[yc - 1 : yc + 2, xc - 1 : xc + 2].astype(bool)
+                        & finger_mask[yc - 1 : yc + 2, xc - 1 : xc + 2].astype(
+                            bool
+                        )
                     ).T.reshape(-1)
                     == True
                 )

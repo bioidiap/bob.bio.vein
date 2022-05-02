@@ -122,7 +122,9 @@ class MiuraMatch(BioAlgorithm):
                 Nmm
                 / (
                     crop_R.sum()
-                    + I[t0 : t0 + h - 2 * self.ch, s0 : s0 + w - 2 * self.cw].sum()
+                    + I[
+                        t0 : t0 + h - 2 * self.ch, s0 : s0 + w - 2 * self.cw
+                    ].sum()
                 )
             )
 

@@ -62,4 +62,3 @@ Matching Algorithms
 -------------------
 
 .. automodule:: bob.bio.vein.algorithm
-

@@ -23,7 +23,7 @@ class VeinBioFile(BioFile):
             client_id=f.model_id,
             path=f.path,
             file_id=f.id,
-            )
+        )
 
         # keep copy of original low-level database file object
         self.f = f
