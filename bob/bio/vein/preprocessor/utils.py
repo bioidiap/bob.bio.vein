@@ -235,7 +235,7 @@ def show_mask_over_image(image, mask, color="red"):
 
 
 def jaccard_index(a, b):
-    """Calculates the intersection over union for two masks
+    r"""Calculates the intersection over union for two masks
 
   This function calculates the Jaccard index:
 

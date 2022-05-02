@@ -256,7 +256,7 @@ def main(user_input=None):
         try:
             binary = f.load(os.path.join(args["<processed>"], "extracted"))
             binary = numpy.rot90(binary, k=1)
-        except:
+        except Exception:
             binary = None
         fig = proof_figure(stem, image, mask, image_pp, binary)
         if args["--save"]:

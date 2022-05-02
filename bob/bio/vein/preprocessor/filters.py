@@ -31,7 +31,7 @@ class Filter(object):
 
         """
 
-        raise NotImplemented("You must implement the __call__ slot")
+        raise NotImplementedError("You must implement the __call__ slot")
 
 
 class NoFilter(Filter):

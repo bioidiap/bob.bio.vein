@@ -47,7 +47,7 @@ class Correlate(Algorithm):
 
         """
 
-        I = probe.astype(numpy.float64)
+        image_ = probe.astype(numpy.float64)
 
         if len(model.shape) == 2:
             model = numpy.array([model])
@@ -58,7 +58,7 @@ class Correlate(Algorithm):
         for md in model:
 
             R = md.astype(numpy.float64)
-            Nm = skimage.feature.match_template(I, R)
+            Nm = skimage.feature.match_template(image_, R)
 
             # figures out where the maximum is on the resulting matrix
             t0, s0 = numpy.unravel_index(Nm.argmax(), Nm.shape)

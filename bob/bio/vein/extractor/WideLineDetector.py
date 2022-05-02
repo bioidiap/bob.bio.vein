@@ -45,10 +45,10 @@ class WideLineDetector(Extractor):
         finger_image = finger_image.astype(numpy.float64)
 
         finger_mask = numpy.zeros(mask.shape)
-        finger_mask[mask == True] = 1
+        finger_mask[mask == True] = 1  # noqa: E712
 
         # Rescale image if required
-        if self.rescale == True:
+        if self.rescale:
             scaling_factor = 0.24
 
             new_size = tuple(

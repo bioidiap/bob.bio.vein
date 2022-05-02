@@ -96,7 +96,7 @@ def test_utfvp():
     except Exception:
         pass
 
-    N_SUBJECTS, N_FINGERS, N_SESSIONS = 60, 6, 4
+    N_SUBJECTS, N_SESSIONS = 60, 4
     # nom
     nom_parameters = {
         "N_train": 10,

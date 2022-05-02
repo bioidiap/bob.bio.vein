@@ -83,7 +83,7 @@ class MiuraMatch(BioAlgorithm):
 
         """
 
-        I = probe.astype(numpy.float64)
+        image_ = probe.astype(numpy.float64)
 
         if len(model.shape) == 2:
             model = numpy.array([model])
@@ -103,7 +103,7 @@ class MiuraMatch(BioAlgorithm):
             # yields best results. Otherwise, you may try  the other options bellow
             # -> check our test_correlation() method on the test units for more
             # details and benchmarks.
-            Nm = scipy.signal.fftconvolve(I, numpy.rot90(crop_R, k=2), "valid")
+            Nm = scipy.signal.fftconvolve(image_, numpy.rot90(crop_R, k=2), "valid")
             # 2nd best: use convolve2d or correlate2d directly;
             # Nm = scipy.signal.convolve2d(I, numpy.rot90(crop_R, k=2), 'valid')
             # 3rd best: use correlate2d
@@ -122,7 +122,7 @@ class MiuraMatch(BioAlgorithm):
                 Nmm
                 / (
                     crop_R.sum()
-                    + I[
+                    + image_[
                         t0 : t0 + h - 2 * self.ch, s0 : s0 + w - 2 * self.cw
                     ].sum()
                 )

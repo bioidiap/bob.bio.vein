@@ -33,7 +33,7 @@ class MaximumCurvature(Extractor):
         self.sigma = sigma
 
     def detect_valleys(self, image, mask):
-        """Detects valleys on the image respecting the mask
+        r"""Detects valleys on the image respecting the mask
 
         This step corresponds to Step 1-1 in the original paper. The objective is,
         for all 4 cross-sections (z) of the image (horizontal, vertical, 45 and -45
@@ -178,7 +178,7 @@ class MaximumCurvature(Extractor):
         )
 
     def eval_vein_probabilities(self, k):
-        """Evaluates joint vein centre probabilities from cross-sections
+        r"""Evaluates joint vein centre probabilities from cross-sections
 
         This function will take $\kappa$ and will calculate the vein centre
         probabilities taking into consideration valley widths and depths. It
@@ -318,7 +318,7 @@ class MaximumCurvature(Extractor):
         return V
 
     def connect_centres(self, V):
-        """Connects vein centres by filtering vein probabilities ``V``
+        r"""Connects vein centres by filtering vein probabilities ``V``
 
         This function does the equivalent of Step 2 / Equation 4 at Miura's paper.
 

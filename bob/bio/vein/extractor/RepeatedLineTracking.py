@@ -54,10 +54,10 @@ class RepeatedLineTracking(Extractor):
         numpy.random.seed(self.seed)
 
         finger_mask = numpy.zeros(mask.shape)
-        finger_mask[mask == True] = 1
+        finger_mask[mask == True] = 1  # noqa: E712
 
         # Rescale image if required
-        if self.rescale == True:
+        if self.rescale:
             scaling_factor = 0.6
             # finger_image = bob.ip.base.scale(finger_image, scaling_factor)
             # finger_mask = bob.ip.base.scale(finger_mask, scaling_factor)
@@ -121,14 +121,14 @@ class RepeatedLineTracking(Extractor):
         finger_mask[:, 0:border] = 0
         finger_mask[:, finger_mask.shape[1] - border :] = 0
 
-        ## Uniformly distributed starting points
-        aux = numpy.argwhere((finger_mask > 0) == True)
+        # Uniformly distributed starting points
+        aux = numpy.argwhere(finger_mask > 0)
         indices = numpy.random.permutation(aux)
         indices = indices[
             0 : self.iterations, :
         ]  # Limit to number of iterations
 
-        ## Iterate through all starting points
+        # Iterate through all starting points
         for it in range(0, self.iterations):
             yc = indices[it, 0]  # Current tracking point, y
             xc = indices[it, 1]  # Current tracking point, x
@@ -175,7 +175,6 @@ class RepeatedLineTracking(Extractor):
                             bool
                         )
                     ).T.reshape(-1)
-                    == True
                 )
                 Nc = numpy.concatenate(
                     (xc + filtermask[tmp, 0], yc + filtermask[tmp, 1]), axis=1
@@ -184,10 +183,10 @@ class RepeatedLineTracking(Extractor):
                     Vl = -1
                     continue
 
-                ## Detect dark line direction near current tracking point
+                # Detect dark line direction near current tracking point
                 Vdepths = numpy.zeros((Nc.shape[0], 1))  # Valley depths
                 for i in range(0, Nc.shape[0]):
-                    ## Horizontal or vertical
+                    # Horizontal or vertical
                     if Nc[i, 1] == yc:
                         # Horizontal plane
                         yp = Nc[i, 1]
@@ -217,7 +216,7 @@ class RepeatedLineTracking(Extractor):
                             + finger_image[int(yp), int(xp - hW)]
                         )
 
-                    ## Oblique directions
+                    # Oblique directions
                     if ((Nc[i, 0] > xc) and (Nc[i, 1] < yc)) or (
                         (Nc[i, 0] < xc) and (Nc[i, 1] > yc)
                     ):
