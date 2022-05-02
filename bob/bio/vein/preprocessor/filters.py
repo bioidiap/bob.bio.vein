@@ -3,8 +3,6 @@
 
 """Base utilities for post-filtering vein images"""
 
-import numpy
-
 
 class Filter(object):
     """Objects of this class filter the input image"""

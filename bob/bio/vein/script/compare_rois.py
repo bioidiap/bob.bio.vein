@@ -48,6 +48,7 @@ import operator
 import os
 import sys
 
+import h5py
 import numpy
 
 import bob.extension.log

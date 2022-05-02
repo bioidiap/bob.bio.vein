@@ -7,8 +7,6 @@ import math
 
 import numpy
 import scipy.ndimage
-import skimage.filters
-import skimage.morphology
 
 from .utils import poly_to_mask
 

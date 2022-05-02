@@ -47,6 +47,7 @@ import os
 import sys
 
 import docopt
+import h5py
 import numpy
 import schema
 
@@ -88,8 +89,6 @@ def save_figures(title, image, mask, image_pp, binary):
     bob.io.base.save(image, os.path.join(title, "original.png"))
 
     # add preprocessed image
-    from ..preprocessor import utils
-
     img = utils.draw_mask_over_image(image_pp, mask)
     img = numpy.array(img).transpose(2, 0, 1)
     bob.io.base.save(img[:3], os.path.join(title, "preprocessed.png"))
@@ -140,8 +139,6 @@ def proof_figure(title, image, mask, image_pp, binary=None):
     mpl.imshow(image, cmap="gray")
 
     # add preprocessed image
-    from ..preprocessor import utils
-
     img = utils.draw_mask_over_image(image_pp, mask)
     mpl.subplot(images, 1, 2)
     mpl.title("Preprocessed")
@@ -223,7 +220,7 @@ def main(user_input=None):
     try:
         from .validate import setup_logger
 
-        logger = setup_logger("bob.bio.vein", args["--verbose"])
+        setup_logger("bob.bio.vein", args["--verbose"])
         args = validate(args)
     except schema.SchemaError as e:
         sys.exit(e)
@@ -258,7 +255,7 @@ def main(user_input=None):
             binary = numpy.rot90(binary, k=1)
         except Exception:
             binary = None
-        fig = proof_figure(stem, image, mask, image_pp, binary)
+        proof_figure(stem, image, mask, image_pp, binary)
         if args["--save"]:
             save_figures(args["--save"], image, mask, image_pp, binary)
         else:

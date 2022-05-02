@@ -73,7 +73,7 @@ def main(user_input=None):
     cases = int(args["--cases"])
 
     # generates a huge
-    from bob.bio.base.score.load import get_negatives_positives, load_score
+    from bob.bio.base.score.load import load_score
 
     scores = []
     names = {}

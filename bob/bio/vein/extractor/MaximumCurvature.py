@@ -6,8 +6,6 @@ import math
 import numpy
 import scipy.ndimage
 
-import bob.io.base
-
 from bob.bio.base.extractor import Extractor
 
 

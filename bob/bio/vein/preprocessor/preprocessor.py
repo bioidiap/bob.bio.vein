@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
-
-import bob.io.base
+import h5py
 
 from bob.bio.base.preprocessor import Preprocessor as BasePreprocessor
 

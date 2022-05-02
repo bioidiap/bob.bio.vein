@@ -4,8 +4,6 @@
 
 """Base utilities for pre-cropping images"""
 
-import numpy
-
 
 class Cropper(object):
     """This is the base class for all croppers

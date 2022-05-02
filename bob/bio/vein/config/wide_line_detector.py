@@ -16,7 +16,7 @@ import tempfile
 
 from sklearn.pipeline import make_pipeline
 
-from bob.bio.base.pipelines import BioAlgorithmLegacy, PipelineSimple
+from bob.bio.base.pipelines import PipelineSimple
 from bob.bio.base.transformers import (
     ExtractorTransformer,
     PreprocessorTransformer,

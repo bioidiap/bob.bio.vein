@@ -5,8 +5,6 @@ import numpy
 
 from scipy.ndimage import gaussian_filter
 
-import bob.io.base
-
 from bob.bio.base.extractor import Extractor
 
 

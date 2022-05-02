@@ -3,8 +3,6 @@
 
 import numpy
 
-import bob.io.base
-
 from bob.bio.base.extractor import Extractor
 
 

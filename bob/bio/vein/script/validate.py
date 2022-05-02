@@ -172,8 +172,6 @@ def open_multipage_pdf_file(s):
       schema.SchemaError: if the path exists
 
     """
-    import matplotlib.pyplot as mpl
-
     from matplotlib.backends.backend_pdf import PdfPages
 
     return PdfPages(s)

@@ -248,7 +248,7 @@ def test_max_curvature_HE():
     from ..extractor.MaximumCurvature import MaximumCurvature
 
     MC = MaximumCurvature(sigma=5)
-    extr_data = MC(preproc_data)
+    MC(preproc_data)
     # preprocessor_utils.show_image((255.*extr_data).astype('uint8'))
 
 
@@ -317,7 +317,7 @@ def test_repeated_line_tracking_HE():
         profile_w=PROFILE_WIDTH,
         seed=0,
     )
-    extr_data = RLT(preproc_data)
+    RLT(preproc_data)
 
 
 def test_wide_line_detector():
@@ -384,7 +384,7 @@ def test_wide_line_detector_HE():
         g=SUM_NEIGHBOURHOOD,
         rescale=RESCALE,
     )
-    extr_data = WLD(preproc_data)
+    WLD(preproc_data)
 
 
 def test_miura_match():
@@ -416,16 +416,16 @@ def test_correlate():
 
     template_filename = F(("algorithms", "0001_2_1_120509-135338.mat.hdf5"))
     probe_gen_filename = F(("algorithms", "0001_2_2_120509-135558.mat.hdf5"))
-    probe_imp_filename = F(("algorithms", "0003_2_1_120509-141255.mat.hdf5"))
+    # probe_imp_filename = F(("algorithms", "0003_2_1_120509-141255.mat.hdf5"))
 
     template_vein = bob.io.base.load(template_filename)
     probe_gen_vein = bob.io.base.load(probe_gen_filename)
-    probe_imp_vein = bob.io.base.load(probe_imp_filename)
+    # probe_imp_vein = bob.io.base.load(probe_imp_filename)
 
     from ..algorithm.Correlate import Correlate
 
     C = Correlate()
-    score_gen = C.score(template_vein, probe_gen_vein)
+    C.score(template_vein, probe_gen_vein)
 
     # we don't check here - no templates
 
@@ -545,14 +545,14 @@ def test_mask_to_image():
     def _check_float(n):
         conv = preprocessor_utils.mask_to_image(sample, "float%d" % n)
         nose.tools.eq_(conv.dtype, getattr(numpy, "float%d" % n))
-        assert numpy.array_equal(conv, [0, 1.0]), "%r != %r" % (conv, target)
+        assert numpy.array_equal(conv, [0, 1.0]), "%r != %r" % (conv, [0, 1.0])
 
     _check_float(32)
     _check_float(64)
 
     # This should be unsupported
     try:
-        conv = preprocessor_utils.mask_to_image(sample, "int16")
+        preprocessor_utils.mask_to_image(sample, "int16")
     except TypeError as e:
         assert "int16" in str(e)
     else:

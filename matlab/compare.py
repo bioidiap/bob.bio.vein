@@ -29,8 +29,6 @@ G_matlab = bob.io.base.load("mc_g_matlab.hdf5")
 G_matlab = G_matlab.T
 
 # Apply Python implementation
-from bob.bio.vein.extractor.MaximumCurvature import MaximumCurvature
-
 MC = MaximumCurvature(3)
 
 kappa = MC.detect_valleys(image, region)  # OK

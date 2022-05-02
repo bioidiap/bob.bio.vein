@@ -103,7 +103,9 @@ class MiuraMatch(BioAlgorithm):
             # yields best results. Otherwise, you may try  the other options bellow
             # -> check our test_correlation() method on the test units for more
             # details and benchmarks.
-            Nm = scipy.signal.fftconvolve(image_, numpy.rot90(crop_R, k=2), "valid")
+            Nm = scipy.signal.fftconvolve(
+                image_, numpy.rot90(crop_R, k=2), "valid"
+            )
             # 2nd best: use convolve2d or correlate2d directly;
             # Nm = scipy.signal.convolve2d(I, numpy.rot90(crop_R, k=2), 'valid')
             # 3rd best: use correlate2d
