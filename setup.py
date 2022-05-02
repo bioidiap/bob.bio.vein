@@ -26,29 +26,10 @@ setup(
     entry_points={
         "bob.bio.config": [
             # protocols (must be specified before the database in the cmd)
-            # verafinger
-            "Nom = bob.bio.vein.config.database.protocol_verafinger.nom",
-            "Cropped-Nom = bob.bio.vein.config.database.protocol_verafinger.cropped_nom",
-            "Full = bob.bio.vein.config.database.protocol_verafinger.full",
-            "Cropped-Full = bob.bio.vein.config.database.protocol_verafinger.cropped_full",
             # utfvp
             "nom = bob.bio.vein.config.database.utfvp_nom",
             "full = bob.bio.vein.config.database.utfvp_full",
             "1vsall = bob.bio.vein.config.database.utfvp_1vsall",
-            # fv3d
-            "central = bob.bio.vein.config.database.protocol_fv3d.central",
-            "left = bob.bio.vein.config.database.protocol_fv3d.left",
-            "right = bob.bio.vein.config.database.protocol_fv3d.right",
-            "stitched = bob.bio.vein.config.database.protocol_fv3d.stitched",
-            # putvein
-            "wrist-LR-1 = bob.bio.vein.config.database.protocol_putvein.wrist_lr_1",
-            "wrist-LR-4 = bob.bio.vein.config.database.protocol_putvein.wrist_lr_4",
-            "palm-LR-1 = bob.bio.vein.config.database.protocol_putvein.palm_lr_1",
-            "palm-LR-4 = bob.bio.vein.config.database.protocol_putvein.palm_lr_4",
-            # legacy databases
-            "verafinger = bob.bio.vein.config.database.verafinger",
-            "fv3d = bob.bio.vein.config.database.fv3d",
-            "putvein = bob.bio.vein.config.database.putvein",
             # legacy baselines
             "mc = bob.bio.vein.config.maximum_curvature",
             "rlt = bob.bio.vein.config.repeated_line_tracking",
@@ -57,10 +38,7 @@ setup(
             "vera_nom = bob.bio.vein.config.database.verafinger_contactless_nom",
         ],
         "bob.bio.database": [
-            "verafinger = bob.bio.vein.config.database.verafinger:database",
             "utfvp = bob.bio.vein.config.database.utfvp_nom:database",
-            "fv3d = bob.bio.vein.config.database.fv3d:database",
-            "putvein = bob.bio.vein.config.database.putvein:database",
             "verafinger_contactless = bob.bio.vein.config.database.verafinger_contactless_nom:database",
         ],
         "bob.bio.pipeline": [

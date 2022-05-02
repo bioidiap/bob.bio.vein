@@ -20,20 +20,12 @@ Common Utilities
 
 .. automodule:: bob.bio.vein.database
 
-Vera Fingervein Database
-========================
-
-.. automodule:: bob.bio.vein.database.verafinger
 
 UTFVP Database
 ==============
 
 .. automodule:: bob.bio.vein.database.utfvp
 
-3D Fingervein Database
-======================
-
-.. automodule:: bob.bio.vein.database.fv3d
 
 VERA Fingervein Contactless Database
 ====================================
