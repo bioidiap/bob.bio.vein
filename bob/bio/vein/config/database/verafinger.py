@@ -12,11 +12,11 @@ You can download the raw data of the `VERA Fingervein`_ database by following
 the link.
 """
 
-from bob.extension import rc
-from bob.bio.vein.database.verafinger import Database
-from bob.bio.base.pipelines import DatabaseConnector
-
 import logging
+
+from bob.bio.base.pipelines import DatabaseConnector
+from bob.bio.vein.database.verafinger import Database
+from bob.extension import rc
 
 logger = logging.getLogger("bob.bio.vein")
 
@@ -55,4 +55,6 @@ installed the `vera fingervein`_ dataset, as explained in the section
 :ref:`bob.bio.vein.baselines`.
 """
 
-logger.debug(f"Loaded database verafinger config file, using protocol '{protocol}'.")
+logger.debug(
+    f"Loaded database verafinger config file, using protocol '{protocol}'."
+)

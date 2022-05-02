@@ -1,6 +1,8 @@
-from sklearn.base import TransformerMixin, BaseEstimator
 from pathlib import Path
+
 from numpy import loadtxt
+from sklearn.base import BaseEstimator, TransformerMixin
+
 from bob.pipelines import DelayedSample
 
 
@@ -8,6 +10,7 @@ class ROIAnnotation(TransformerMixin, BaseEstimator):
     """
     Transformer class to read ROI annotation file for grayscale images
     """
+
     def __init__(self, roi_path):
         super(ROIAnnotation, self).__init__()
         self.roi_path = Path(roi_path) if roi_path else False
@@ -29,7 +32,7 @@ class ROIAnnotation(TransformerMixin, BaseEstimator):
             annotated_samples = []
             for x in X:
                 roi_file = (self.roi_path / x.key).with_suffix(".txt")
-                roi = loadtxt(roi_file, dtype='uint16')
+                roi = loadtxt(roi_file, dtype="uint16")
 
                 sample = DelayedSample.from_sample(x, roi=roi)
                 annotated_samples.append(sample)

@@ -6,13 +6,14 @@
   Utfvp database implementation
 """
 
-from bob.bio.base.database import CSVDataset
-from bob.bio.base.database import CSVToSampleLoaderBiometrics
+from sklearn.pipeline import make_pipeline
+
+import bob.io.base
+
+from bob.bio.base.database import CSVDataset, CSVToSampleLoaderBiometrics
+from bob.bio.vein.database.roi_annotation import ROIAnnotation
 from bob.extension import rc
 from bob.extension.download import get_file
-import bob.io.base
-from sklearn.pipeline import make_pipeline
-from bob.bio.vein.database.roi_annotation import ROIAnnotation
 
 
 class UtfvpDatabase(CSVDataset):

@@ -43,172 +43,178 @@ Example:
 
 """
 
-import os
-import sys
 import fnmatch
 import operator
+import os
+import sys
 
+import h5py
 import numpy
 
 import bob.extension.log
+
 logger = bob.extension.log.setup("bob.bio.vein")
 
 import bob.io.base
 
 
 def make_catalog(d):
-  """Returns a catalog dictionary containing the file stems available in ``d``
+    """Returns a catalog dictionary containing the file stems available in ``d``
 
-  Parameters:
+    Parameters:
 
-    d (str): A path representing a directory that will be scanned for .hdf5
-      files
+      d (str): A path representing a directory that will be scanned for .hdf5
+        files
 
 
-  Returns
+    Returns
 
-    list: A list of stems, from the directory ``d``, that represent files of
-    type HDF5 in that directory. Each file should contain two objects:
-    ``image`` and ``mask``.
+      list: A list of stems, from the directory ``d``, that represent files of
+      type HDF5 in that directory. Each file should contain two objects:
+      ``image`` and ``mask``.
 
-  """
+    """
 
-  logger.info("Scanning directory `%s'..." % d)
-  retval = []
-  for path, dirs, files in os.walk(d):
-    basedir = os.path.relpath(path, d)
-    logger.debug("Scanning sub-directory `%s'..." % basedir)
-    candidates = fnmatch.filter(files, '*.hdf5')
-    if not candidates: continue
-    logger.debug("Found %d files" % len(candidates))
-    retval += [os.path.join(basedir, k) for k in candidates]
-  logger.info("Found a total of %d files at `%s'" % (len(retval), d))
-  return sorted(retval)
+    logger.info("Scanning directory `%s'..." % d)
+    retval = []
+    for path, dirs, files in os.walk(d):
+        basedir = os.path.relpath(path, d)
+        logger.debug("Scanning sub-directory `%s'..." % basedir)
+        candidates = fnmatch.filter(files, "*.hdf5")
+        if not candidates:
+            continue
+        logger.debug("Found %d files" % len(candidates))
+        retval += [os.path.join(basedir, k) for k in candidates]
+    logger.info("Found a total of %d files at `%s'" % (len(retval), d))
+    return sorted(retval)
 
 
 def sort_table(table, cols):
-  """Sorts a table by multiple columns
+    """Sorts a table by multiple columns
 
 
-  Parameters:
+    Parameters:
 
-    table (:py:class:`list` of :py:class:`list`): Or tuple of tuples, where
-      each inner list represents a row
+      table (:py:class:`list` of :py:class:`list`): Or tuple of tuples, where
+        each inner list represents a row
 
-    cols (list, tuple): Specifies the column numbers to sort by e.g. (1,0)
-      would sort by column 1, then by column 0
+      cols (list, tuple): Specifies the column numbers to sort by e.g. (1,0)
+        would sort by column 1, then by column 0
 
 
-  Returns:
+    Returns:
 
-    list: of lists, with the table re-ordered as you see fit.
+      list: of lists, with the table re-ordered as you see fit.
 
-  """
+    """
 
-  for col in reversed(cols):
-      table = sorted(table, key=operator.itemgetter(col))
-  return table
+    for col in reversed(cols):
+        table = sorted(table, key=operator.itemgetter(col))
+    return table
 
 
 def mean_std_for_column(table, column):
-  """Calculates the mean and standard deviation for the column in question
+    """Calculates the mean and standard deviation for the column in question
 
 
-  Parameters:
+    Parameters:
 
-    table (:py:class:`list` of :py:class:`list`): Or tuple of tuples, where
-      each inner list represents a row
+      table (:py:class:`list` of :py:class:`list`): Or tuple of tuples, where
+        each inner list represents a row
 
-    col (int): The number of the column from where to extract the data for
-      calculating the mean and the standard-deviation.
+      col (int): The number of the column from where to extract the data for
+        calculating the mean and the standard-deviation.
 
 
-  Returns:
+    Returns:
 
-    float: mean
+      float: mean
 
-    float: (unbiased) standard deviation
+      float: (unbiased) standard deviation
 
-  """
+    """
 
-  z = numpy.array([k[column] for k in table])
-  return z.mean(), z.std(ddof=1)
+    z = numpy.array([k[column] for k in table])
+    return z.mean(), z.std(ddof=1)
 
 
 def main(user_input=None):
 
-  if user_input is not None:
-    argv = user_input
-  else:
-    argv = sys.argv[1:]
+    if user_input is not None:
+        argv = user_input
+    else:
+        argv = sys.argv[1:]
 
-  import docopt
-  import pkg_resources
+    import docopt
+    import pkg_resources
 
-  completions = dict(
-      prog=os.path.basename(sys.argv[0]),
-      version=pkg_resources.require('bob.bio.vein')[0].version
-      )
+    completions = dict(
+        prog=os.path.basename(sys.argv[0]),
+        version=pkg_resources.require("bob.bio.vein")[0].version,
+    )
 
-  args = docopt.docopt(
-      __doc__ % completions,
-      argv=argv,
-      version=completions['version'],
-      )
+    args = docopt.docopt(
+        __doc__ % completions,
+        argv=argv,
+        version=completions["version"],
+    )
 
-  # Sets-up logging
-  verbosity = int(args['--verbose'])
-  bob.extension.log.set_verbosity_level(logger, verbosity)
+    # Sets-up logging
+    verbosity = int(args["--verbose"])
+    bob.extension.log.set_verbosity_level(logger, verbosity)
 
-  # Catalogs
-  gt = make_catalog(args['<ground-truth>'])
-  db = make_catalog(args['<database>'])
+    # Catalogs
+    gt = make_catalog(args["<ground-truth>"])
+    db = make_catalog(args["<database>"])
 
-  if gt != db:
-    raise RuntimeError("Ground-truth and database have different files!")
+    if gt != db:
+        raise RuntimeError("Ground-truth and database have different files!")
 
-  # Calculate all metrics required
-  from ..preprocessor import utils
-  metrics = []
-  for k in gt:
-    gt_file = os.path.join(args['<ground-truth>'], k)
-    db_file = os.path.join(args['<database>'], k)
-    gt_roi = h5py.File(gt_file).read('mask')
-    db_roi = h5py.File(db_file).read('mask')
-    metrics.append((
-      k,
-      utils.jaccard_index(gt_roi, db_roi),
-      utils.intersect_ratio(gt_roi, db_roi),
-      utils.intersect_ratio_of_complement(gt_roi, db_roi),
-      ))
-    logger.info("%s: JI = %.5g, M1 = %.5g, M2 = %5.g" % metrics[-1])
+    # Calculate all metrics required
+    from ..preprocessor import utils
 
-  # Print statistics
-  names = (
-      (1, 'Jaccard index'),
-      (2, 'Intersection ratio (m1)'),
-      (3, 'Intersection ratio of complement (m2)'),
-      )
-  print("Statistics:")
-  for k, name in names:
-    mean, std = mean_std_for_column(metrics, k)
-    print(name + ': ' + '%.2e +- %.2e' % (mean, std))
+    metrics = []
+    for k in gt:
+        gt_file = os.path.join(args["<ground-truth>"], k)
+        db_file = os.path.join(args["<database>"], k)
+        gt_roi = h5py.File(gt_file).read("mask")
+        db_roi = h5py.File(db_file).read("mask")
+        metrics.append(
+            (
+                k,
+                utils.jaccard_index(gt_roi, db_roi),
+                utils.intersect_ratio(gt_roi, db_roi),
+                utils.intersect_ratio_of_complement(gt_roi, db_roi),
+            )
+        )
+        logger.info("%s: JI = %.5g, M1 = %.5g, M2 = %5.g" % metrics[-1])
 
-  # Print worst cases, if the user asked so
-  if args['--annotate'] is not None:
-    N = int(args['--annotate'])
-    if N <= 0:
-      raise docopt.DocoptExit("Argument to --annotate should be >0")
-
-    print("Worst cases by metric:")
+    # Print statistics
+    names = (
+        (1, "Jaccard index"),
+        (2, "Intersection ratio (m1)"),
+        (3, "Intersection ratio of complement (m2)"),
+    )
+    print("Statistics:")
     for k, name in names:
-      print(name + ':')
+        mean, std = mean_std_for_column(metrics, k)
+        print(name + ": " + "%.2e +- %.2e" % (mean, std))
 
-      if k in (1,2):
-        worst = sort_table(metrics, (k,))[:N]
-      else:
-        worst = reversed(sort_table(metrics, (k,))[-N:])
+    # Print worst cases, if the user asked so
+    if args["--annotate"] is not None:
+        N = int(args["--annotate"])
+        if N <= 0:
+            raise docopt.DocoptExit("Argument to --annotate should be >0")
 
-      for n, l in enumerate(worst):
-        fname = os.path.join(args['<database>'], l[0])
-        print('  %d. [%.2e] %s' % (n, l[k], fname))
+        print("Worst cases by metric:")
+        for k, name in names:
+            print(name + ":")
+
+            if k in (1, 2):
+                worst = sort_table(metrics, (k,))[:N]
+            else:
+                worst = reversed(sort_table(metrics, (k,))[-N:])
+
+            for n, l in enumerate(worst):
+                fname = os.path.join(args["<database>"], l[0])
+                print("  %d. [%.2e] %s" % (n, l[k], fname))

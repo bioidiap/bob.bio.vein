@@ -16,11 +16,11 @@ You can download the raw data of the `PUT Vein`_ database by following
 the link.
 """
 
-from bob.extension import rc
-from bob.bio.vein.database.putvein import PutveinBioDatabase
-from bob.bio.base.pipelines import DatabaseConnector
-
 import logging
+
+from bob.bio.base.pipelines import DatabaseConnector
+from bob.bio.vein.database.putvein import PutveinBioDatabase
+from bob.extension import rc
 
 logger = logging.getLogger("bob.bio.vein")
 
@@ -61,4 +61,6 @@ installed the `put vein`_ dataset, as explained in the section
 :ref:`bob.bio.vein.baselines`.
 """
 
-logger.debug(f"loaded database putvein config file, using protocol '{protocol}'.")
+logger.debug(
+    f"loaded database putvein config file, using protocol '{protocol}'."
+)

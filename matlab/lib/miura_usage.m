@@ -3,7 +3,7 @@
 img = im2double(imread('finger.png')); % Read the image
 img = imresize(img,0.5);               % Downscale image
 
-% Get the valid region, this is a binary mask which indicates the region of 
+% Get the valid region, this is a binary mask which indicates the region of
 % the finger. For quick testing it is possible to use something like:
 % fvr = ones(size(img));
 % The lee_region() function can be found here:
@@ -16,7 +16,7 @@ v_max_curvature = miura_max_curvature(img,fvr,sigma);
 
 % Binarise the vein image
 md = median(v_max_curvature(v_max_curvature>0));
-v_max_curvature_bin = v_max_curvature > md; 
+v_max_curvature_bin = v_max_curvature > md;
 
 %% Extract veins using repeated line tracking method
 max_iterations = 3000; r=1; W=17; % Parameters
@@ -24,7 +24,7 @@ v_repeated_line = miura_repeated_line_tracking(img,fvr,max_iterations,r,W);
 
 % Binarise the vein image
 md = median(v_repeated_line(v_repeated_line>0));
-v_repeated_line_bin = v_repeated_line > md; 
+v_repeated_line_bin = v_repeated_line > md;
 
 %% Match
 cw = 80; ch=30;
@@ -57,7 +57,7 @@ subplot(3,2,3)
   title('Binarised veins extracted by maximum curvature method')
 subplot(3,2,4)
   imshow(overlay_max_curvature)
-  title('Maximum curvature method')  
+  title('Maximum curvature method')
 subplot(3,2,5)
   imshow(v_repeated_line_bin)
   title('Binarised veins extracted by repeated line tracking method')

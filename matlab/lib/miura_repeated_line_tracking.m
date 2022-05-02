@@ -12,7 +12,7 @@ function veins = miura_repeated_line_tracking(img, fvr, iterations, r, W)
 %  veins - Vein image
 
 % Reference:
-% Feature extraction of finger vein patterns based on repeated line 
+% Feature extraction of finger vein patterns based on repeated line
 %    tracking and its application to personal identification
 % N. Miura, A. Nagasaka, and T. Miyatake
 % Machine Vision and Applications, Volume 15, Number 4 (2004), pp. 194--203
@@ -55,22 +55,22 @@ a = a(1:iterations); % Limit to number of iterations
 for it = 1:size(ys,1)
     xc = xs(it); % Current tracking point, x
     yc = ys(it); % Current tracking point, y
-    
+
     % Determine the moving-direction attributes
     % Going left or right ?
     if rand() >= 0.5
         Dlr = -1;  % Going left
     else
-        Dlr = 1; % Going right 
+        Dlr = 1; % Going right
     end
 
     % Going up or down ?
     if rand() >= 0.5
         Dud = -1;  % Going up
     else
-        Dud = 1; % Going down 
+        Dud = 1; % Going down
     end
-    
+
     % Initialize locus-positition table Tc
     Tc = false(size(img));
 
@@ -84,7 +84,7 @@ for it = 1:size(ys,1)
         if Rnd < p_lr
             % Going left or right
             Nr(:,2+Dlr) = true;
-        elseif (Rnd >= p_lr) && (Rnd < p_lr + p_ud)  
+        elseif (Rnd >= p_lr) && (Rnd < p_lr + p_ud)
             % Going up or down
             Nr(2+Dud,:) = true;
         else
@@ -95,7 +95,7 @@ for it = 1:size(ys,1)
 
         tmp = find( ~Tc(yc-1:yc+1,xc-1:xc+1) & Nr & fvr(yc-1:yc+1,xc-1:xc+1) );
         Nc =[xc + bla(tmp,1), yc + bla(tmp,2)];
-        
+
         if size(Nc,1)==0
             Vl=-1;
             continue
@@ -104,7 +104,7 @@ for it = 1:size(ys,1)
         %% Detect dark line direction near current tracking point
         Vdepths = zeros(size(Nc,1),1); % Valley depths
         for i = 1:size(Nc,1)
-            % Horizontal or vertical 
+            % Horizontal or vertical
             if Nc(i,2) == yc
                 % Horizontal plane
                 yp = Nc(i,2);
@@ -134,7 +134,7 @@ for it = 1:size(ys,1)
                     2*img(yp,xp) + ...
                     img(yp, xp - hW);
             end
-            
+
             % Oblique directions
             if ((Nc(i,1) > xc) && (Nc(i,2) < yc)) || ((Nc(i,1) < xc) && (Nc(i,2) > yc))
                 % Diagonal, up /
@@ -162,7 +162,7 @@ for it = 1:size(ys,1)
                     xp = Nc(i,1) + ro;
                     yp = Nc(i,2) + ro;
                 end
-                
+
                 Vdepths(i) = img(yp + hWo, xp - hWo) - ...
                     2*img(yp,xp) + ...
                     img(yp - hWo, xp + hWo);
@@ -177,10 +177,10 @@ for it = 1:size(ys,1)
         % Increase value of tracking space
         Tr(yc, xc) = Tr(yc, xc) + 1;
         %writeVideo(writerObj,Tr);
-        
+
         % Move tracking point
         xc = Nc(index, 1);
-        yc = Nc(index, 2); 
+        yc = Nc(index, 2);
     end
 end
 veins = Tr;

@@ -13,11 +13,12 @@ the generated sphinx documentation)
 """
 
 import os
-import numpy
-import nose.tools
 
-import pkg_resources
 import h5py
+import nose.tools
+import numpy
+import pkg_resources
+
 import bob.io.base
 
 from ..preprocessor import utils as preprocessor_utils
@@ -82,8 +83,8 @@ def test_masking():
 
     # tests if the masking stage at preprocessors work as planned
 
-    from ..preprocessor.mask import FixedMask, NoMask, AnnotatedRoIMask
     from ..database import AnnotatedArray
+    from ..preprocessor.mask import AnnotatedRoIMask, FixedMask, NoMask
 
     shape = (17, 20)
     test_image = numpy.random.randint(0, 1000, size=shape, dtype=int)
@@ -141,11 +142,11 @@ def test_preprocessor():
     img = bob.io.base.load(input_filename)
 
     from ..preprocessor import (
-        Preprocessor,
-        NoCrop,
-        LeeMask,
         HuangNormalization,
+        LeeMask,
+        NoCrop,
         NoFilter,
+        Preprocessor,
     )
 
     processor = Preprocessor(
@@ -180,7 +181,9 @@ def test_max_curvature():
     mask = mask.T
     mask = mask.astype("bool")
 
-    vt_ref = numpy.array(h5py.File(F(("extractors", "mc_vt_matlab.hdf5")))["Vt"])
+    vt_ref = numpy.array(
+        h5py.File(F(("extractors", "mc_vt_matlab.hdf5")))["Vt"]
+    )
     vt_ref = vt_ref.T
     g_ref = numpy.array(h5py.File(F(("extractors", "mc_g_matlab.hdf5")))["G"])
     g_ref = g_ref.T
@@ -212,7 +215,8 @@ def test_max_curvature():
     # We require no more than 30 pixels (from a total of 63'840) are different
     # between ours and the matlab implementation
     assert numpy.abs(bin_ref - bina).sum() < 30, (
-        "Binarized image differs from reference by %s" % numpy.abs(bin_ref - bina).sum()
+        "Binarized image differs from reference by %s"
+        % numpy.abs(bin_ref - bina).sum()
     )
 
 
@@ -225,11 +229,11 @@ def test_max_curvature_HE():
 
     # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in maximum_curvature.py configuration file + postprocessing)
     from ..preprocessor import (
-        Preprocessor,
-        NoCrop,
-        LeeMask,
-        HuangNormalization,
         HistogramEqualization,
+        HuangNormalization,
+        LeeMask,
+        NoCrop,
+        Preprocessor,
     )
 
     processor = Preprocessor(
@@ -244,7 +248,7 @@ def test_max_curvature_HE():
     from ..extractor.MaximumCurvature import MaximumCurvature
 
     MC = MaximumCurvature(sigma=5)
-    extr_data = MC(preproc_data)
+    MC(preproc_data)
     # preprocessor_utils.show_image((255.*extr_data).astype('uint8'))
 
 
@@ -283,11 +287,11 @@ def test_repeated_line_tracking_HE():
 
     # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in repeated_line_tracking.py configuration file + postprocessing)
     from ..preprocessor import (
-        Preprocessor,
-        NoCrop,
-        LeeMask,
-        HuangNormalization,
         HistogramEqualization,
+        HuangNormalization,
+        LeeMask,
+        NoCrop,
+        Preprocessor,
     )
 
     processor = Preprocessor(
@@ -308,9 +312,12 @@ def test_repeated_line_tracking_HE():
     # Width of profile
     PROFILE_WIDTH = 21
     RLT = RepeatedLineTracking(
-        iterations=NUMBER_ITERATIONS, r=DISTANCE_R, profile_w=PROFILE_WIDTH, seed=0
+        iterations=NUMBER_ITERATIONS,
+        r=DISTANCE_R,
+        profile_w=PROFILE_WIDTH,
+        seed=0,
     )
-    extr_data = RLT(preproc_data)
+    RLT(preproc_data)
 
 
 def test_wide_line_detector():
@@ -347,11 +354,11 @@ def test_wide_line_detector_HE():
 
     # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in wide_line_detector.py configuration file + postprocessing)
     from ..preprocessor import (
-        Preprocessor,
-        NoCrop,
-        LeeMask,
-        HuangNormalization,
         HistogramEqualization,
+        HuangNormalization,
+        LeeMask,
+        NoCrop,
+        Preprocessor,
     )
 
     processor = Preprocessor(
@@ -377,7 +384,7 @@ def test_wide_line_detector_HE():
         g=SUM_NEIGHBOURHOOD,
         rescale=RESCALE,
     )
-    extr_data = WLD(preproc_data)
+    WLD(preproc_data)
 
 
 def test_miura_match():
@@ -409,16 +416,16 @@ def test_correlate():
 
     template_filename = F(("algorithms", "0001_2_1_120509-135338.mat.hdf5"))
     probe_gen_filename = F(("algorithms", "0001_2_2_120509-135558.mat.hdf5"))
-    probe_imp_filename = F(("algorithms", "0003_2_1_120509-141255.mat.hdf5"))
+    # probe_imp_filename = F(("algorithms", "0003_2_1_120509-141255.mat.hdf5"))
 
     template_vein = bob.io.base.load(template_filename)
     probe_gen_vein = bob.io.base.load(probe_gen_filename)
-    probe_imp_vein = bob.io.base.load(probe_imp_filename)
+    # probe_imp_vein = bob.io.base.load(probe_imp_filename)
 
     from ..algorithm.Correlate import Correlate
 
     C = Correlate()
-    score_gen = C.score(template_vein, probe_gen_vein)
+    C.score(template_vein, probe_gen_vein)
 
     # we don't check here - no templates
 
@@ -437,7 +444,9 @@ def test_assert_points():
         except AssertionError as e:
             assert str(point) in str(e)
         else:
-            raise AssertionError("Did not assert %s is outside of %s" % (point, area))
+            raise AssertionError(
+                "Did not assert %s is outside of %s" % (point, area)
+            )
 
     outside = [(-1, 0), (10, 0), (0, 5), (10, 5), (15, 12)]
     for k in outside:
@@ -525,7 +534,7 @@ def test_mask_to_image():
     def _check_uint(n):
         conv = preprocessor_utils.mask_to_image(sample, "uint%d" % n)
         nose.tools.eq_(conv.dtype, getattr(numpy, "uint%d" % n))
-        target = [0, (2 ** n) - 1]
+        target = [0, (2**n) - 1]
         assert numpy.array_equal(conv, target), "%r != %r" % (conv, target)
 
     _check_uint(8)
@@ -536,14 +545,14 @@ def test_mask_to_image():
     def _check_float(n):
         conv = preprocessor_utils.mask_to_image(sample, "float%d" % n)
         nose.tools.eq_(conv.dtype, getattr(numpy, "float%d" % n))
-        assert numpy.array_equal(conv, [0, 1.0]), "%r != %r" % (conv, target)
+        assert numpy.array_equal(conv, [0, 1.0]), "%r != %r" % (conv, [0, 1.0])
 
     _check_float(32)
     _check_float(64)
 
     # This should be unsupported
     try:
-        conv = preprocessor_utils.mask_to_image(sample, "int16")
+        preprocessor_utils.mask_to_image(sample, "int16")
     except TypeError as e:
         assert "int16" in str(e)
     else:
@@ -571,16 +580,20 @@ def test_jaccard_index():
     nose.tools.eq_(preprocessor_utils.jaccard_index(a, a), 1.0)
     nose.tools.eq_(preprocessor_utils.jaccard_index(b, b), 1.0)
     nose.tools.eq_(
-        preprocessor_utils.jaccard_index(a, numpy.ones(a.shape, dtype=bool)), 2.0 / 4.0
+        preprocessor_utils.jaccard_index(a, numpy.ones(a.shape, dtype=bool)),
+        2.0 / 4.0,
     )
     nose.tools.eq_(
-        preprocessor_utils.jaccard_index(a, numpy.zeros(a.shape, dtype=bool)), 0.0
+        preprocessor_utils.jaccard_index(a, numpy.zeros(a.shape, dtype=bool)),
+        0.0,
     )
     nose.tools.eq_(
-        preprocessor_utils.jaccard_index(b, numpy.ones(b.shape, dtype=bool)), 3.0 / 4.0
+        preprocessor_utils.jaccard_index(b, numpy.ones(b.shape, dtype=bool)),
+        3.0 / 4.0,
     )
     nose.tools.eq_(
-        preprocessor_utils.jaccard_index(b, numpy.zeros(b.shape, dtype=bool)), 0.0
+        preprocessor_utils.jaccard_index(b, numpy.zeros(b.shape, dtype=bool)),
+        0.0,
     )
 
 
@@ -605,19 +618,25 @@ def test_intersection_ratio():
     nose.tools.eq_(preprocessor_utils.intersect_ratio(a, a), 1.0)
     nose.tools.eq_(preprocessor_utils.intersect_ratio(b, b), 1.0)
     nose.tools.eq_(
-        preprocessor_utils.intersect_ratio(a, numpy.ones(a.shape, dtype=bool)), 1.0
+        preprocessor_utils.intersect_ratio(a, numpy.ones(a.shape, dtype=bool)),
+        1.0,
     )
     nose.tools.eq_(
-        preprocessor_utils.intersect_ratio(a, numpy.zeros(a.shape, dtype=bool)), 0
+        preprocessor_utils.intersect_ratio(a, numpy.zeros(a.shape, dtype=bool)),
+        0,
     )
     nose.tools.eq_(
-        preprocessor_utils.intersect_ratio(b, numpy.ones(b.shape, dtype=bool)), 1.0
+        preprocessor_utils.intersect_ratio(b, numpy.ones(b.shape, dtype=bool)),
+        1.0,
     )
     nose.tools.eq_(
-        preprocessor_utils.intersect_ratio(b, numpy.zeros(b.shape, dtype=bool)), 0
+        preprocessor_utils.intersect_ratio(b, numpy.zeros(b.shape, dtype=bool)),
+        0,
     )
 
-    nose.tools.eq_(preprocessor_utils.intersect_ratio_of_complement(a, b), 1.0 / 2.0)
+    nose.tools.eq_(
+        preprocessor_utils.intersect_ratio_of_complement(a, b), 1.0 / 2.0
+    )
     nose.tools.eq_(preprocessor_utils.intersect_ratio_of_complement(a, a), 0.0)
     nose.tools.eq_(preprocessor_utils.intersect_ratio_of_complement(b, b), 0.0)
     nose.tools.eq_(
