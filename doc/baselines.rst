@@ -25,8 +25,8 @@ Repeated Line-Tracking with Miura Matching
 
 Detailed description at :ref:`bob.bio.vein.resources.recognition.rlt`.
 
-To run the baseline on the `VERA fingervein`_ database, using the ``Nom``
-protocol, do the following:
+To run the baseline on the ``VERA fingervein`` database, using the ``Nom``
+protocol (deprecated), do the following:
 
 
 .. code-block:: sh
@@ -53,7 +53,7 @@ protocol, do the following:
 This command line selects and runs the following implementations for the
 toolchain:
 
-* :ref:`bob.bio.vein.resources.database.verafinger`
+* ``bob.bio.vein.resources.database.verafinger``
 * :ref:`bob.bio.vein.resources.recognition.rlt`
 
 As the tool runs, you'll see printouts that show how it advances through
@@ -86,7 +86,7 @@ Maximum Curvature with Miura Matching
 
 Detailed description at :ref:`bob.bio.vein.resources.recognition.mc`.
 
-To run the baseline on the `VERA fingervein`_ database, using the ``Nom``
+To run the baseline on the ``VERA fingervein`` database, using the ``Nom``
 protocol like above, do the following:
 
 
@@ -98,7 +98,7 @@ protocol like above, do the following:
 This command line selects and runs the following implementations for the
 toolchain:
 
-* :ref:`bob.bio.vein.resources.database.verafinger`
+* ``bob.bio.vein.resources.database.verafinger``
 * :ref:`bob.bio.vein.resources.recognition.mc`
 
 In a 4-core machine and using 4 parallel tasks, it takes around 1 hour and 40
@@ -127,7 +127,7 @@ Wide Line Detector with Miura Matching
 You can find the description of this method on the paper from Huang *et al.*
 [HDLTL10]_.
 
-To run the baseline on the `VERA fingervein`_ database, using the ``Nom``
+To run the baseline on the ``VERA fingervein`` database, using the ``Nom``
 protocol like above, do the following:
 
 
@@ -139,7 +139,7 @@ protocol like above, do the following:
 This command line selects and runs the following implementations for the
 toolchain:
 
-* :ref:`bob.bio.vein.resources.database.verafinger`
+* ``bob.bio.vein.resources.database.verafinger``
 * :ref:`bob.bio.vein.resources.recognition.wld`
 
 In a 4-core machine and using 4 parallel tasks, it takes only around 5 minutes

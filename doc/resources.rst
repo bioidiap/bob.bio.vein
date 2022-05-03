@@ -27,38 +27,12 @@ the following runtime attributes of ``verify.py``:
   * ``protocol``
 
 
-.. _bob.bio.vein.resources.database.verafinger:
-
-Verafinger Database
-===================
-
-.. .. automodule:: bob.bio.vein.config.database.verafinger
-..    :members:
-
-
 .. _bob.bio.vein.resources.database.utfvp:
 
 UTFVP Database
 ==============
 
 .. .. automodule:: bob.bio.vein.config.database.utfvp
-..    :members:
-
-.. _bob.bio.vein.resources.database.fv3d:
-
-3D Fingervein Database
-======================
-
-.. .. automodule:: bob.bio.vein.config.database.fv3d
-..    :members:
-
-
-.. _bob.bio.vein.resources.database.putvein:
-
-PUT Vein Databas
-======================
-
-.. .. automodule:: bob.bio.vein.config.database.putvein
 ..    :members:
 
 
