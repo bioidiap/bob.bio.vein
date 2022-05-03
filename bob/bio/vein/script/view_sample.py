@@ -225,10 +225,13 @@ def main(user_input=None):
     except schema.SchemaError as e:
         sys.exit(e)
 
-    if args["<database>"] == "fv3d":
-        from bob.bio.vein.config.fv3d import database as db
-    elif args["<database>"] == "verafinger":
-        from bob.bio.vein.config.verafinger import database as db
+    raise NotImplementedError("Supported databases are not implemented yet")
+    db = args["<database>"]
+
+    # if args["<database>"] == "fv3d":
+    #     from bob.bio.vein.config.fv3d import database as db
+    # elif args["<database>"] == "verafinger":
+    #     from bob.bio.vein.config.verafinger import database as db
 
     database_replacement = "%s/.bob_bio_databases.txt" % os.environ["HOME"]
     db.replace_directories(database_replacement)
