@@ -674,16 +674,16 @@ def test_hamming_distance():
     # Tests on simple binary arrays:
     # 1.) Maximum HD (1.0):
     model_1 = numpy.array([0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0])
-    probe_1 = numpy.array([[1, 0, 0, 0, 1, 0], [0, 1, 1, 1, 0, 1]])
-    score_max = HD.score(model_1, probe_1)
+    probe_1 = numpy.array([[1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1]])
+    score_max = HD.compare([model_1], [probe_1])[0, 0]
     assert score_max == 1.0
     # 2.) Minimum HD (0.0):
     model_2 = numpy.array([0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1])
-    probe_2 = numpy.array([[0, 1, 1, 1, 0, 1], [0, 1, 1, 1, 0, 1]])
-    score_min = HD.score(model_2, probe_2)
+    probe_2 = numpy.array([[0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1]])
+    score_min = HD.compare([model_2], [probe_2])[0, 0]
     assert score_min == 0.0
     # 3.) HD of exactly half (0.5)
     model_3 = numpy.array([0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0])
-    probe_3 = numpy.array([[0, 1, 1, 1, 0, 1], [0, 1, 1, 1, 0, 1]])
-    score_half = HD.score(model_3, probe_3)
+    probe_3 = numpy.array([[0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1]])
+    score_half = HD.compare([model_3], [probe_3])[0, 0]
     assert score_half == 0.5

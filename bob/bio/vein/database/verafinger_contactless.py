@@ -71,7 +71,7 @@ class VerafingerContactless(CSVDataset):
                 extension="",
                 reference_id_equal_subject_id=False,
             ),
-            allow_scoring_with_all_biometric_references=True,
+            score_all_vs_all=True,
         )
 
     @staticmethod
