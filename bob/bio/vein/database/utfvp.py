@@ -179,7 +179,7 @@ class UtfvpDatabase(CSVDataset):
                 ),
                 ROIAnnotation(roi_path=rc.get("bob.bio.vein.utfvp.roi", "")),
             ),
-            allow_scoring_with_all_biometric_references=True,
+            score_all_vs_all=True,
         )
 
     @staticmethod
