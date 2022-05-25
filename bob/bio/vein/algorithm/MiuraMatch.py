@@ -47,25 +47,35 @@ class MiuraMatch(BioAlgorithm):
         self,
         ch=80,  # Maximum search displacement in y-direction
         cw=90,  # Maximum search displacement in x-direction
+        probes_score_fusion="max",
+        enrolls_score_fusion="mean",
+        **kwargs,
     ):
-
-        # call base class constructor
-        BioAlgorithm.__init__(
-            self,
-            ch=ch,
-            cw=cw,
-            # multiple_model_scoring = None,
-            # multiple_probe_scoring = None
+        super().__init__(
+            probes_score_fusion=probes_score_fusion,
+            enrolls_score_fusion=enrolls_score_fusion,
+            **kwargs,
         )
 
         self.ch = ch
         self.cw = cw
 
-    def enroll(self, enroll_features):
-        """Enrolls the model by computing an average graph for each model"""
+    def create_templates(self, feature_sets, enroll):
+        return feature_sets
 
-        # return the generated model
-        return numpy.array(enroll_features)
+    def compare(self, enroll_templates, probe_templates):
+        # returns scores NxM where N is the number of enroll templates and M is the number of probe templates
+        # enroll_templates is Nx?1xD
+        # probe_templates is Mx?2xD
+        scores = []
+        for enroll in enroll_templates:
+            scores.append([])
+            for probe in probe_templates:
+                s = [[self.score(e, p) for p in probe] for e in enroll]
+                s = self.fuse_probe_scores(s, axis=1)
+                s = self.fuse_enroll_scores(s, axis=0)
+                scores[-1].append(s)
+        return numpy.array(scores)
 
     def score(self, model, probe):
         """Computes the score between the probe and the model.
@@ -85,57 +95,36 @@ class MiuraMatch(BioAlgorithm):
 
         image_ = probe.astype(numpy.float64)
 
-        if len(model.shape) == 2:
-            model = numpy.array([model])
+        md = model
+        # erode model by (ch, cw)
+        R = md.astype(numpy.float64)
+        h, w = R.shape  # same as I
+        crop_R = R[self.ch : h - self.ch, self.cw : w - self.cw]
 
-        scores = []
+        # correlates using scipy - fastest option available iff the self.ch and
+        # self.cw are height (>30). In this case, the number of components
+        # returned by the convolution is high and using an FFT-based method
+        # yields best results. Otherwise, you may try  the other options bellow
+        # -> check our test_correlation() method on the test units for more
+        # details and benchmarks.
+        Nm = scipy.signal.fftconvolve(image_, numpy.rot90(crop_R, k=2), "valid")
+        # 2nd best: use convolve2d or correlate2d directly;
+        # Nm = scipy.signal.convolve2d(I, numpy.rot90(crop_R, k=2), 'valid')
+        # 3rd best: use correlate2d
+        # Nm = scipy.signal.correlate2d(I, crop_R, 'valid')
 
-        # iterate over all models for a given individual
-        for md in model:
-            # erode model by (ch, cw)
-            R = md.astype(numpy.float64)
-            h, w = R.shape  # same as I
-            crop_R = R[self.ch : h - self.ch, self.cw : w - self.cw]
+        # figures out where the maximum is on the resulting matrix
+        t0, s0 = numpy.unravel_index(Nm.argmax(), Nm.shape)
 
-            # correlates using scipy - fastest option available iff the self.ch and
-            # self.cw are height (>30). In this case, the number of components
-            # returned by the convolution is high and using an FFT-based method
-            # yields best results. Otherwise, you may try  the other options bellow
-            # -> check our test_correlation() method on the test units for more
-            # details and benchmarks.
-            Nm = scipy.signal.fftconvolve(
-                image_, numpy.rot90(crop_R, k=2), "valid"
-            )
-            # 2nd best: use convolve2d or correlate2d directly;
-            # Nm = scipy.signal.convolve2d(I, numpy.rot90(crop_R, k=2), 'valid')
-            # 3rd best: use correlate2d
-            # Nm = scipy.signal.correlate2d(I, crop_R, 'valid')
+        # this is our output
+        Nmm = Nm[t0, s0]
 
-            # figures out where the maximum is on the resulting matrix
-            t0, s0 = numpy.unravel_index(Nm.argmax(), Nm.shape)
+        # normalizes the output by the number of pixels lit on the input
+        # matrices, taking into consideration the surface that produced the
+        # result (i.e., the eroded model and part of the probe)
+        score = Nmm / (
+            crop_R.sum()
+            + image_[t0 : t0 + h - 2 * self.ch, s0 : s0 + w - 2 * self.cw].sum()
+        )
 
-            # this is our output
-            Nmm = Nm[t0, s0]
-
-            # normalizes the output by the number of pixels lit on the input
-            # matrices, taking into consideration the surface that produced the
-            # result (i.e., the eroded model and part of the probe)
-            scores.append(
-                Nmm
-                / (
-                    crop_R.sum()
-                    + image_[
-                        t0 : t0 + h - 2 * self.ch, s0 : s0 + w - 2 * self.cw
-                    ].sum()
-                )
-            )
-
-        return [numpy.mean(scores)]
-
-    def score_multiple_biometric_references(self, biometric_references, data):
-        if isinstance(biometric_references, list):
-            return [self.score(model, data) for model in biometric_references]
-        else:
-            raise ValueError(
-                "The model does not have the desired format (list, array, ...)"
-            )
+        return score
