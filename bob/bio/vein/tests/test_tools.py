@@ -15,7 +15,6 @@ the generated sphinx documentation)
 import os
 
 import h5py
-import nose.tools
 import numpy
 import pkg_resources
 
@@ -41,8 +40,8 @@ def test_cropping():
 
     dont_crop = NoCrop()
     cropped = dont_crop(test_image)
-    nose.tools.eq_(test_image.shape, cropped.shape)
-    nose.tools.eq_((test_image - cropped).sum(), 0)
+    assert test_image.shape == cropped.shape
+    (test_image - cropped).sum() == 0
 
     top = 5
     bottom = 2
@@ -50,10 +49,11 @@ def test_cropping():
     right = 7
     fixed_crop = FixedCrop(top, bottom, left, right)
     cropped = fixed_crop(test_image)
-    nose.tools.eq_(
-        cropped.shape, (shape[0] - (top + bottom), shape[1] - (left + right))
+    assert cropped.shape == (
+        shape[0] - (top + bottom),
+        shape[1] - (left + right),
     )
-    nose.tools.eq_((test_image[top:-bottom, left:-right] - cropped).sum(), 0)
+    assert (test_image[top:-bottom, left:-right] - cropped).sum() == 0
 
     # tests metadata survives after cropping (and it is corrected)
     from ..database import AnnotatedArray
@@ -91,9 +91,9 @@ def test_masking():
 
     masker = NoMask()
     mask = masker(test_image)
-    nose.tools.eq_(mask.dtype, numpy.dtype("bool"))
-    nose.tools.eq_(mask.shape, test_image.shape)
-    nose.tools.eq_(mask.sum(), numpy.prod(shape))
+    assert mask.dtype == numpy.dtype("bool")
+    assert mask.shape == test_image.shape
+    assert mask.sum() == numpy.prod(shape)
 
     top = 4
     bottom = 2
@@ -101,11 +101,11 @@ def test_masking():
     right = 1
     masker = FixedMask(top, bottom, left, right)
     mask = masker(test_image)
-    nose.tools.eq_(mask.dtype, numpy.dtype("bool"))
-    nose.tools.eq_(
-        mask.sum(), (shape[0] - (top + bottom)) * (shape[1] - (left + right))
+    assert mask.dtype == numpy.dtype("bool")
+    assert mask.sum() == (shape[0] - (top + bottom)) * (
+        shape[1] - (left + right)
     )
-    nose.tools.eq_(mask[top:-bottom, left:-right].sum(), mask.sum())
+    assert mask[top:-bottom, left:-right].sum() == mask.sum()
 
     # this matches the previous "fixed" mask - notice we consider the pixels
     # under the polygon line to be **part** of the RoI (mask position == True)
@@ -120,11 +120,11 @@ def test_masking():
     image = AnnotatedArray(test_image, metadata=dict(roi=annotations))
     masker = AnnotatedRoIMask()
     mask = masker(image)
-    nose.tools.eq_(mask.dtype, numpy.dtype("bool"))
-    nose.tools.eq_(
-        mask.sum(), (shape[0] - (top + bottom)) * (shape[1] - (left + right))
+    assert mask.dtype == numpy.dtype("bool")
+    assert mask.sum() == (shape[0] - (top + bottom)) * (
+        shape[1] - (left + right)
     )
-    nose.tools.eq_(mask[top:-bottom, left:-right].sum(), mask.sum())
+    assert mask[top:-bottom, left:-right].sum() == mask.sum()
 
 
 def test_preprocessor():
@@ -483,7 +483,7 @@ def test_poly_to_mask():
     area = (10, 9)  # 10 rows, 9 columns
     polygon = [(2, 2), (2, 7), (7, 7), (7, 2)]  # square shape, (y, x) format
     mask = preprocessor_utils.poly_to_mask(area, polygon)
-    nose.tools.eq_(mask.dtype, bool)
+    assert mask.dtype == bool
 
     # This should be the output:
     expected = numpy.array(
@@ -504,7 +504,7 @@ def test_poly_to_mask():
 
     polygon = [(3, 2), (5, 7), (8, 7), (7, 3)]  # trapezoid, (y, x) format
     mask = preprocessor_utils.poly_to_mask(area, polygon)
-    nose.tools.eq_(mask.dtype, bool)
+    assert mask.dtype == bool
 
     # This should be the output:
     expected = numpy.array(
@@ -529,11 +529,11 @@ def test_mask_to_image():
     # Tests we can correctly convert a boolean array into an image
     # that makes sense according to the data types
     sample = numpy.array([False, True])
-    nose.tools.eq_(sample.dtype, bool)
+    assert sample.dtype == bool
 
     def _check_uint(n):
         conv = preprocessor_utils.mask_to_image(sample, "uint%d" % n)
-        nose.tools.eq_(conv.dtype, getattr(numpy, "uint%d" % n))
+        assert conv.dtype == getattr(numpy, "uint%d" % n)
         target = [0, (2**n) - 1]
         assert numpy.array_equal(conv, target), "%r != %r" % (conv, target)
 
@@ -544,7 +544,7 @@ def test_mask_to_image():
 
     def _check_float(n):
         conv = preprocessor_utils.mask_to_image(sample, "float%d" % n)
-        nose.tools.eq_(conv.dtype, getattr(numpy, "float%d" % n))
+        assert conv.dtype == getattr(numpy, "float%d" % n)
         assert numpy.array_equal(conv, [0, 1.0]), "%r != %r" % (conv, [0, 1.0])
 
     _check_float(32)
@@ -576,24 +576,24 @@ def test_jaccard_index():
         ]
     )
 
-    nose.tools.eq_(preprocessor_utils.jaccard_index(a, b), 1.0 / 4.0)
-    nose.tools.eq_(preprocessor_utils.jaccard_index(a, a), 1.0)
-    nose.tools.eq_(preprocessor_utils.jaccard_index(b, b), 1.0)
-    nose.tools.eq_(
-        preprocessor_utils.jaccard_index(a, numpy.ones(a.shape, dtype=bool)),
-        2.0 / 4.0,
+    assert preprocessor_utils.jaccard_index(a, b) == 1.0 / 4.0
+    assert preprocessor_utils.jaccard_index(a, a) == 1.0
+    assert preprocessor_utils.jaccard_index(b, b) == 1.0
+    assert (
+        preprocessor_utils.jaccard_index(a, numpy.ones(a.shape, dtype=bool))
+        == 2.0 / 4.0
     )
-    nose.tools.eq_(
-        preprocessor_utils.jaccard_index(a, numpy.zeros(a.shape, dtype=bool)),
-        0.0,
+    assert (
+        preprocessor_utils.jaccard_index(a, numpy.zeros(a.shape, dtype=bool))
+        == 0.0
     )
-    nose.tools.eq_(
-        preprocessor_utils.jaccard_index(b, numpy.ones(b.shape, dtype=bool)),
-        3.0 / 4.0,
+    assert (
+        preprocessor_utils.jaccard_index(b, numpy.ones(b.shape, dtype=bool))
+        == 3.0 / 4.0
     )
-    nose.tools.eq_(
-        preprocessor_utils.jaccard_index(b, numpy.zeros(b.shape, dtype=bool)),
-        0.0,
+    assert (
+        preprocessor_utils.jaccard_index(b, numpy.zeros(b.shape, dtype=bool))
+        == 0.0
     )
 
 
@@ -614,54 +614,52 @@ def test_intersection_ratio():
         ]
     )
 
-    nose.tools.eq_(preprocessor_utils.intersect_ratio(a, b), 1.0 / 2.0)
-    nose.tools.eq_(preprocessor_utils.intersect_ratio(a, a), 1.0)
-    nose.tools.eq_(preprocessor_utils.intersect_ratio(b, b), 1.0)
-    nose.tools.eq_(
-        preprocessor_utils.intersect_ratio(a, numpy.ones(a.shape, dtype=bool)),
-        1.0,
+    assert preprocessor_utils.intersect_ratio(a, b) == 1.0 / 2.0
+    assert preprocessor_utils.intersect_ratio(a, a) == 1.0
+    assert preprocessor_utils.intersect_ratio(b, b) == 1.0
+    assert (
+        preprocessor_utils.intersect_ratio(a, numpy.ones(a.shape, dtype=bool))
+        == 1.0
     )
-    nose.tools.eq_(
-        preprocessor_utils.intersect_ratio(a, numpy.zeros(a.shape, dtype=bool)),
-        0,
+    assert (
+        preprocessor_utils.intersect_ratio(a, numpy.zeros(a.shape, dtype=bool))
+        == 0
     )
-    nose.tools.eq_(
-        preprocessor_utils.intersect_ratio(b, numpy.ones(b.shape, dtype=bool)),
-        1.0,
+    assert (
+        preprocessor_utils.intersect_ratio(b, numpy.ones(b.shape, dtype=bool))
+        == 1.0
     )
-    nose.tools.eq_(
-        preprocessor_utils.intersect_ratio(b, numpy.zeros(b.shape, dtype=bool)),
-        0,
+    assert (
+        preprocessor_utils.intersect_ratio(b, numpy.zeros(b.shape, dtype=bool))
+        == 0
     )
 
-    nose.tools.eq_(
-        preprocessor_utils.intersect_ratio_of_complement(a, b), 1.0 / 2.0
-    )
-    nose.tools.eq_(preprocessor_utils.intersect_ratio_of_complement(a, a), 0.0)
-    nose.tools.eq_(preprocessor_utils.intersect_ratio_of_complement(b, b), 0.0)
-    nose.tools.eq_(
+    assert preprocessor_utils.intersect_ratio_of_complement(a, b) == 1.0 / 2.0
+    assert preprocessor_utils.intersect_ratio_of_complement(a, a) == 0.0
+    assert preprocessor_utils.intersect_ratio_of_complement(b, b) == 0.0
+    assert (
         preprocessor_utils.intersect_ratio_of_complement(
             a, numpy.ones(a.shape, dtype=bool)
-        ),
-        1.0,
+        )
+        == 1.0
     )
-    nose.tools.eq_(
+    assert (
         preprocessor_utils.intersect_ratio_of_complement(
             a, numpy.zeros(a.shape, dtype=bool)
-        ),
-        0,
+        )
+        == 0
     )
-    nose.tools.eq_(
+    assert (
         preprocessor_utils.intersect_ratio_of_complement(
             b, numpy.ones(b.shape, dtype=bool)
-        ),
-        1.0,
+        )
+        == 1.0
     )
-    nose.tools.eq_(
+    assert (
         preprocessor_utils.intersect_ratio_of_complement(
             b, numpy.zeros(b.shape, dtype=bool)
-        ),
-        0,
+        )
+        == 0
     )
 
 
