@@ -161,7 +161,7 @@ class UtfvpDatabase(CSVDatabase):
         filename = get_file(
             "utfvp.tar.gz",
             urls,
-            file_hash="526045842fcee46eec3415bfc8ac34d3",
+            file_hash="c8d3318f",
         )
 
         super().__init__(
@@ -183,29 +183,8 @@ class UtfvpDatabase(CSVDatabase):
         )
 
     @staticmethod
-    def protocols():
-        # TODO: Until we have (if we have) a function that dumps the protocols, let's use this one.
-        return [
-            "nom",
-            "full",
-            "1vsall",
-            "nomLeftRing",
-            "nomRightRing",
-            "nomLeftMiddle",
-            "nomRightMiddle",
-            "nomLeftIndex",
-            "nomRightIndex",
-            "fullLeftRing",
-            "fullRightRing",
-            "fullLeftMiddle",
-            "fullRightMiddle",
-            "fullLeftIndex",
-            "fullRightIndex",
-        ]
-
-    @staticmethod
     def urls():
         return [
-            "https://www.idiap.ch/software/bob/databases/latest/utfvp-557bfdd2.tar.gz",
-            "http://www.idiap.ch/software/bob/databases/latest/utfvp-557bfdd2.tar.gz",
+            "https://www.idiap.ch/software/bob/databases/latest/vein/utfvp-c8d3318f.tar.gz",
+            "http://www.idiap.ch/software/bob/databases/latest/vein/utfvp-c8d3318f.tar.gz",
         ]
