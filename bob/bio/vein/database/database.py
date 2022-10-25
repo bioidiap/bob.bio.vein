@@ -14,11 +14,17 @@ class VeinBioFile(BioFile):
 
     Parameters:
 
-      f (object): Low-level file (or sample) object that is kept inside
+        f (object): Low-level file (or sample) object that is kept inside
 
     """
 
     def __init__(self, f):
+        import warnings
+
+        warnings.warn(
+            "This class is deprecated. Use bob.bio.base.pipelines.CSVDatabase and bob.pipelines.Sample instead.",
+            DeprecationWarning,
+        )
         super(VeinBioFile, self).__init__(
             client_id=f.model_id,
             path=f.path,
