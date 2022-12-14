@@ -69,7 +69,6 @@ class VerafingerContactless(CSVDatabase):
                     "bob.bio.vein.verafinger_contactless.directory", ""
                 ),
                 extension="",
-                template_id_equal_subject_id=False,
             ),
             score_all_vs_all=True,
         )

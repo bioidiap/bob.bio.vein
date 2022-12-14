@@ -175,7 +175,6 @@ class UtfvpDatabase(CSVDatabase):
                         "bob.bio.vein.utfvp.directory", ""
                     ),
                     extension="",
-                    template_id_equal_subject_id=False,
                 ),
                 ROIAnnotation(roi_path=rc.get("bob.bio.vein.utfvp.roi", "")),
             ),
