@@ -161,7 +161,7 @@ class UtfvpDatabase(CSVDatabase):
         filename = get_file(
             "utfvp.tar.gz",
             urls,
-            file_hash="c8d3318f",
+            file_hash="fe51ba85",
         )
 
         super().__init__(
@@ -185,6 +185,6 @@ class UtfvpDatabase(CSVDatabase):
     @staticmethod
     def urls():
         return [
-            "https://www.idiap.ch/software/bob/databases/latest/vein/utfvp-c8d3318f.tar.gz",
-            "http://www.idiap.ch/software/bob/databases/latest/vein/utfvp-c8d3318f.tar.gz",
+            "https://www.idiap.ch/software/bob/databases/latest/vein/utfvp-fe51ba85.tar.gz",
+            "http://www.idiap.ch/software/bob/databases/latest/vein/utfvp-fe51ba85.tar.gz",
         ]

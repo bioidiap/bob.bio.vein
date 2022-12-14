@@ -56,7 +56,7 @@ class VerafingerContactless(CSVDatabase):
         filename = get_file(
             "verafinger_contactless.tar.gz",
             urls,
-            file_hash="18607d9a",
+            file_hash="656ef935",
         )
 
         super().__init__(
@@ -77,6 +77,6 @@ class VerafingerContactless(CSVDatabase):
     @staticmethod
     def urls():
         return [
-            "https://www.idiap.ch/software/bob/databases/latest/vein/verafinger_contactless-18607d9a.tar.gz",
-            "http://www.idiap.ch/software/bob/databases/latest/vein/verafinger_contactless-18607d9a.tar.gz",
+            "https://www.idiap.ch/software/bob/databases/latest/vein/verafinger_contactless-656ef935.tar.gz",
+            "http://www.idiap.ch/software/bob/databases/latest/vein/verafinger_contactless-656ef935.tar.gz",
         ]
