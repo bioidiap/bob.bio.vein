@@ -154,19 +154,19 @@ class UtfvpDatabase(CSVDatabase):
     that generated the model being matched. So, there are 1299 probes per model.
 
     """
+    name = "utfvp"
+    category = "vein"
+    dataset_protocols_name = "utfvp.tar.gz"
+    dataset_protocols_urls = [
+            "https://www.idiap.ch/software/bob/databases/latest/vein/utfvp-fe51ba85.tar.gz",
+            "http://www.idiap.ch/software/bob/databases/latest/vein/utfvp-fe51ba85.tar.gz",
+        ]
+    dataset_protocols_hash = "fe51ba85"
 
     def __init__(self, protocol):
-        # Downloading model if not exists
-        urls = UtfvpDatabase.urls()
-        filename = get_file(
-            "utfvp.tar.gz",
-            urls,
-            file_hash="fe51ba85",
-        )
 
         super().__init__(
-            name="utfvp",
-            dataset_protocols_path=filename,
+            name=self.name,
             protocol=protocol,
             transformer=make_pipeline(
                 FileSampleLoader(
@@ -180,31 +180,3 @@ class UtfvpDatabase(CSVDatabase):
             ),
             score_all_vs_all=True,
         )
-
-    @staticmethod
-    def protocols():
-        # TODO: Until we have (if we have) a function that dumps the protocols, let's use this one.
-        return [
-            "nom",
-            "full",
-            "1vsall",
-            "nomLeftRing",
-            "nomRightRing",
-            "nomLeftMiddle",
-            "nomRightMiddle",
-            "nomLeftIndex",
-            "nomRightIndex",
-            "fullLeftRing",
-            "fullRightRing",
-            "fullLeftMiddle",
-            "fullRightMiddle",
-            "fullLeftIndex",
-            "fullRightIndex",
-        ]
-
-    @staticmethod
-    def urls():
-        return [
-            "https://www.idiap.ch/software/bob/databases/latest/vein/utfvp-fe51ba85.tar.gz",
-            "http://www.idiap.ch/software/bob/databases/latest/vein/utfvp-fe51ba85.tar.gz",
-        ]

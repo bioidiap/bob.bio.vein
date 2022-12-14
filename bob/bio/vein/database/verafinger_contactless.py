@@ -50,18 +50,18 @@ class VerafingerContactless(CSVDatabase):
     * Probes : session 3, 4 &5
 
     """
-
+    name = "verafinger_contactless"
+    category = "vein"
+    dataset_protocols_name = "verafinger_contactless.tar.gz"
+    dataset_protocols_urls = [
+            "https://www.idiap.ch/software/bob/databases/latest/vein/verafinger_contactless-656ef935.tar.gz",
+            "http://www.idiap.ch/software/bob/databases/latest/vein/verafinger_contactless-656ef935.tar.gz",
+        ]
+    dataset_protocols_hash = "656ef935"
     def __init__(self, protocol):
-        urls = VerafingerContactless.urls()
-        filename = get_file(
-            "verafinger_contactless.tar.gz",
-            urls,
-            file_hash="656ef935",
-        )
 
         super().__init__(
-            name="verafinger_contactless",
-            dataset_protocols_path=filename,
+            name=self.name,
             protocol=protocol,
             transformer=FileSampleLoader(
                 data_loader=bob.io.base.load,
@@ -72,15 +72,3 @@ class VerafingerContactless(CSVDatabase):
             ),
             score_all_vs_all=True,
         )
-
-    @staticmethod
-    def protocols():
-        # TODO: Until we have (if we have) a function that dumps the protocols, let's use this one.
-        return ["nom"]
-
-    @staticmethod
-    def urls():
-        return [
-            "https://www.idiap.ch/software/bob/databases/latest/vein/verafinger_contactless-656ef935.tar.gz",
-            "http://www.idiap.ch/software/bob/databases/latest/vein/verafinger_contactless-656ef935.tar.gz",
-        ]
