@@ -74,6 +74,11 @@ class VerafingerContactless(CSVDatabase):
         )
 
     @staticmethod
+    def protocols():
+        # TODO: Until we have (if we have) a function that dumps the protocols, let's use this one.
+        return ["nom"]
+
+    @staticmethod
     def urls():
         return [
             "https://www.idiap.ch/software/bob/databases/latest/vein/verafinger_contactless-656ef935.tar.gz",

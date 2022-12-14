@@ -182,6 +182,27 @@ class UtfvpDatabase(CSVDatabase):
         )
 
     @staticmethod
+    def protocols():
+        # TODO: Until we have (if we have) a function that dumps the protocols, let's use this one.
+        return [
+            "nom",
+            "full",
+            "1vsall",
+            "nomLeftRing",
+            "nomRightRing",
+            "nomLeftMiddle",
+            "nomRightMiddle",
+            "nomLeftIndex",
+            "nomRightIndex",
+            "fullLeftRing",
+            "fullRightRing",
+            "fullLeftMiddle",
+            "fullRightMiddle",
+            "fullLeftIndex",
+            "fullRightIndex",
+        ]
+
+    @staticmethod
     def urls():
         return [
             "https://www.idiap.ch/software/bob/databases/latest/vein/utfvp-fe51ba85.tar.gz",
