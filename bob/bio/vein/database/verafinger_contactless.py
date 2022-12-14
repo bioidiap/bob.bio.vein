@@ -10,7 +10,6 @@ import bob.io.base
 
 from bob.bio.base.database import CSVDatabase, FileSampleLoader
 from bob.extension import rc
-from bob.extension.download import get_file
 
 
 class VerafingerContactless(CSVDatabase):
@@ -50,14 +49,16 @@ class VerafingerContactless(CSVDatabase):
     * Probes : session 3, 4 &5
 
     """
+
     name = "verafinger_contactless"
     category = "vein"
     dataset_protocols_name = "verafinger_contactless.tar.gz"
     dataset_protocols_urls = [
-            "https://www.idiap.ch/software/bob/databases/latest/vein/verafinger_contactless-656ef935.tar.gz",
-            "http://www.idiap.ch/software/bob/databases/latest/vein/verafinger_contactless-656ef935.tar.gz",
-        ]
+        "https://www.idiap.ch/software/bob/databases/latest/vein/verafinger_contactless-656ef935.tar.gz",
+        "http://www.idiap.ch/software/bob/databases/latest/vein/verafinger_contactless-656ef935.tar.gz",
+    ]
     dataset_protocols_hash = "656ef935"
+
     def __init__(self, protocol):
 
         super().__init__(

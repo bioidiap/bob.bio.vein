@@ -13,7 +13,6 @@ import bob.io.base
 from bob.bio.base.database import CSVDatabase, FileSampleLoader
 from bob.bio.vein.database.roi_annotation import ROIAnnotation
 from bob.extension import rc
-from bob.extension.download import get_file
 
 
 class UtfvpDatabase(CSVDatabase):
@@ -154,13 +153,14 @@ class UtfvpDatabase(CSVDatabase):
     that generated the model being matched. So, there are 1299 probes per model.
 
     """
+
     name = "utfvp"
     category = "vein"
     dataset_protocols_name = "utfvp.tar.gz"
     dataset_protocols_urls = [
-            "https://www.idiap.ch/software/bob/databases/latest/vein/utfvp-fe51ba85.tar.gz",
-            "http://www.idiap.ch/software/bob/databases/latest/vein/utfvp-fe51ba85.tar.gz",
-        ]
+        "https://www.idiap.ch/software/bob/databases/latest/vein/utfvp-fe51ba85.tar.gz",
+        "http://www.idiap.ch/software/bob/databases/latest/vein/utfvp-fe51ba85.tar.gz",
+    ]
     dataset_protocols_hash = "fe51ba85"
 
     def __init__(self, protocol):
