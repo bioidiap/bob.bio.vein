@@ -8,12 +8,11 @@
 
 import bob.io.base
 
-from bob.bio.base.database import CSVDataset, CSVToSampleLoaderBiometrics
+from bob.bio.base.database import CSVDatabase, FileSampleLoader
 from bob.extension import rc
-from bob.extension.download import get_file
 
 
-class VerafingerContactless(CSVDataset):
+class VerafingerContactless(CSVDatabase):
     """
     The VERA Fingervein Contactless database contains 1330 finger vein images of 133 persons,
     with id ranging from 1 to 137 (with 4 defects).
@@ -51,37 +50,26 @@ class VerafingerContactless(CSVDataset):
 
     """
 
+    name = "verafinger_contactless"
+    category = "vein"
+    dataset_protocols_name = "verafinger_contactless.tar.gz"
+    dataset_protocols_urls = [
+        "https://www.idiap.ch/software/bob/databases/latest/vein/verafinger_contactless-656ef935.tar.gz",
+        "http://www.idiap.ch/software/bob/databases/latest/vein/verafinger_contactless-656ef935.tar.gz",
+    ]
+    dataset_protocols_hash = "656ef935"
+
     def __init__(self, protocol):
-        urls = VerafingerContactless.urls()
-        filename = get_file(
-            "verafinger_contactless.tar.gz",
-            urls,
-            file_hash="46045cd006b1cddbf98bdb184d9e3cca",
-        )
 
         super().__init__(
-            name="verafinger_contactless",
-            dataset_protocol_path=filename,
+            name=self.name,
             protocol=protocol,
-            csv_to_sample_loader=CSVToSampleLoaderBiometrics(
+            transformer=FileSampleLoader(
                 data_loader=bob.io.base.load,
                 dataset_original_directory=rc.get(
                     "bob.bio.vein.verafinger_contactless.directory", ""
                 ),
                 extension="",
-                reference_id_equal_subject_id=False,
             ),
             score_all_vs_all=True,
         )
-
-    @staticmethod
-    def protocols():
-        # TODO: Until we have (if we have) a function that dumps the protocols, let's use this one.
-        return ["nom"]
-
-    @staticmethod
-    def urls():
-        return [
-            "https://www.idiap.ch/software/bob/databases/latest/verafinger_contactless-ee484b3b.tar.gz",
-            "http://www.idiap.ch/software/bob/databases/latest/verafinger_contactless-ee484b3b.tar.gz",
-        ]
