@@ -10,13 +10,12 @@ from sklearn.pipeline import make_pipeline
 
 import bob.io.base
 
-from bob.bio.base.database import CSVDataset, CSVToSampleLoaderBiometrics
+from bob.bio.base.database import CSVDatabase, FileSampleLoader
 from bob.bio.vein.database.roi_annotation import ROIAnnotation
 from bob.extension import rc
-from bob.extension.download import get_file
 
 
-class UtfvpDatabase(CSVDataset):
+class UtfvpDatabase(CSVDatabase):
     """
     The University of Twente Finger Vascular Pattern dataset
 
@@ -155,57 +154,29 @@ class UtfvpDatabase(CSVDataset):
 
     """
 
+    name = "utfvp"
+    category = "vein"
+    dataset_protocols_name = "utfvp.tar.gz"
+    dataset_protocols_urls = [
+        "https://www.idiap.ch/software/bob/databases/latest/vein/utfvp-fe51ba85.tar.gz",
+        "http://www.idiap.ch/software/bob/databases/latest/vein/utfvp-fe51ba85.tar.gz",
+    ]
+    dataset_protocols_hash = "fe51ba85"
+
     def __init__(self, protocol):
-        # Downloading model if not exists
-        urls = UtfvpDatabase.urls()
-        filename = get_file(
-            "utfvp.tar.gz",
-            urls,
-            file_hash="526045842fcee46eec3415bfc8ac34d3",
-        )
 
         super().__init__(
-            name="utfvp",
-            dataset_protocol_path=filename,
+            name=self.name,
             protocol=protocol,
-            csv_to_sample_loader=make_pipeline(
-                CSVToSampleLoaderBiometrics(
+            transformer=make_pipeline(
+                FileSampleLoader(
                     data_loader=bob.io.base.load,
                     dataset_original_directory=rc.get(
                         "bob.bio.vein.utfvp.directory", ""
                     ),
                     extension="",
-                    reference_id_equal_subject_id=False,
                 ),
                 ROIAnnotation(roi_path=rc.get("bob.bio.vein.utfvp.roi", "")),
             ),
             score_all_vs_all=True,
         )
-
-    @staticmethod
-    def protocols():
-        # TODO: Until we have (if we have) a function that dumps the protocols, let's use this one.
-        return [
-            "nom",
-            "full",
-            "1vsall",
-            "nomLeftRing",
-            "nomRightRing",
-            "nomLeftMiddle",
-            "nomRightMiddle",
-            "nomLeftIndex",
-            "nomRightIndex",
-            "fullLeftRing",
-            "fullRightRing",
-            "fullLeftMiddle",
-            "fullRightMiddle",
-            "fullLeftIndex",
-            "fullRightIndex",
-        ]
-
-    @staticmethod
-    def urls():
-        return [
-            "https://www.idiap.ch/software/bob/databases/latest/utfvp-557bfdd2.tar.gz",
-            "http://www.idiap.ch/software/bob/databases/latest/utfvp-557bfdd2.tar.gz",
-        ]
