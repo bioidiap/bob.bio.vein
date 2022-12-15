@@ -13,7 +13,7 @@ def test_verafinger_contactless():
     )
 
     # Getting the absolute path
-    urls = VerafingerContactless.urls()
+    urls = VerafingerContactless.dataset_protocols_urls
     filename = get_file("verafinger_contactless.tar.gz", urls)
 
     # Removing the file before the test
@@ -81,7 +81,7 @@ def test_utfvp():
     from bob.bio.vein.database.utfvp import UtfvpDatabase
 
     # Getting the absolute path
-    urls = UtfvpDatabase.urls()
+    urls = UtfvpDatabase.dataset_protocols_urls
     filename = get_file("utfvp_csv.tar.gz", urls)
 
     # Removing the file before the test
