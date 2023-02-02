@@ -3,6 +3,7 @@ from .MiuraMatch import MiuraMatch
 from .Correlate import Correlate
 from .HammingDistance import HammingDistance
 
+
 # gets sphinx autodoc done right - don't remove it
 def __appropriate__(*args):
     """Says object was actually declared here, an not on the import module.

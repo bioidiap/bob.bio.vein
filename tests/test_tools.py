@@ -30,7 +30,6 @@ def F(parts):
 
 
 def test_cropping():
-
     # tests if the cropping stage at preprocessors works as planned
 
     from ..preprocessor.crop import FixedCrop, NoCrop
@@ -80,7 +79,6 @@ def test_cropping():
 
 
 def test_masking():
-
     # tests if the masking stage at preprocessors work as planned
 
     from ..database import AnnotatedArray
@@ -128,7 +126,6 @@ def test_masking():
 
 
 def test_preprocessor():
-
     # tests the whole preprocessing mechanism, compares to matlab source
 
     input_filename = F(("preprocessors", "0019_3_1_120509-160517.png"))
@@ -171,7 +168,6 @@ def test_preprocessor():
 
 
 def test_max_curvature():
-
     # Maximum Curvature method against Matlab reference
 
     image = bob.io.base.load(F(("extractors", "image.hdf5")))
@@ -253,7 +249,6 @@ def test_max_curvature_HE():
 
 
 def test_repeated_line_tracking():
-
     # Repeated Line Tracking method against Matlab reference
 
     input_img_filename = F(("extractors", "miurarlt_input_img.mat.hdf5"))
@@ -321,7 +316,6 @@ def test_repeated_line_tracking_HE():
 
 
 def test_wide_line_detector():
-
     # Wide Line Detector method against Matlab reference
 
     input_img_filename = F(("extractors", "huangwl_input_img.mat.hdf5"))
@@ -388,7 +382,6 @@ def test_wide_line_detector_HE():
 
 
 def test_miura_match():
-
     # Match Ratio method against Matlab reference
 
     template_filename = F(("algorithms", "0001_2_1_120509-135338.mat.hdf5"))
@@ -411,7 +404,6 @@ def test_miura_match():
 
 
 def test_correlate():
-
     # Match Ratio method against Matlab reference
 
     template_filename = F(("algorithms", "0001_2_1_120509-135338.mat.hdf5"))
@@ -431,7 +423,6 @@ def test_correlate():
 
 
 def test_assert_points():
-
     # Tests that point assertion works as expected
     area = (10, 5)
     inside = [(0, 0), (3, 2), (9, 4)]
@@ -454,7 +445,6 @@ def test_assert_points():
 
 
 def test_fix_points():
-
     # Tests that point clipping works as expected
     area = (10, 5)
     inside = [(0, 0), (3, 2), (9, 4)]
@@ -478,7 +468,6 @@ def test_fix_points():
 
 
 def test_poly_to_mask():
-
     # Tests we can generate a mask out of a polygon correctly
     area = (10, 9)  # 10 rows, 9 columns
     polygon = [(2, 2), (2, 7), (7, 7), (7, 2)]  # square shape, (y, x) format
@@ -525,7 +514,6 @@ def test_poly_to_mask():
 
 
 def test_mask_to_image():
-
     # Tests we can correctly convert a boolean array into an image
     # that makes sense according to the data types
     sample = numpy.array([False, True])
@@ -560,7 +548,6 @@ def test_mask_to_image():
 
 
 def test_jaccard_index():
-
     # Tests to verify the Jaccard index calculation is accurate
     a = numpy.array(
         [
@@ -598,7 +585,6 @@ def test_jaccard_index():
 
 
 def test_intersection_ratio():
-
     # Tests to verify the intersection ratio calculation is accurate
     a = numpy.array(
         [
@@ -664,7 +650,6 @@ def test_intersection_ratio():
 
 
 def test_hamming_distance():
-
     from ..algorithm.HammingDistance import HammingDistance
 
     HD = HammingDistance()

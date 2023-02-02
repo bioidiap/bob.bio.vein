@@ -22,7 +22,6 @@ class WideLineDetector(Extractor):
         g=41,  # Sum of neigbourhood threshold
         rescale=True,
     ):
-
         # call base class constructor
         Extractor.__init__(
             self,

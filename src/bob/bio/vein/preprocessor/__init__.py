@@ -6,6 +6,7 @@ from .normalize import Normalizer, NoNormalization, HuangNormalization
 from .filters import Filter, NoFilter, HistogramEqualization
 from .preprocessor import Preprocessor
 
+
 # gets sphinx autodoc done right - don't remove it
 def __appropriate__(*args):
     """Says object was actually declared here, an not on the import module.

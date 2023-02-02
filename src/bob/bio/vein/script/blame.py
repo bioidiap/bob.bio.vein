@@ -45,7 +45,6 @@ logger = bob.extension.log.setup("bob.bio.vein")
 
 
 def main(user_input=None):
-
     if user_input is not None:
         argv = user_input
     else:

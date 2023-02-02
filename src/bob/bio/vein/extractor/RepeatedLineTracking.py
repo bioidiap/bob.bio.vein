@@ -28,7 +28,6 @@ class RepeatedLineTracking(Extractor):
         rescale=True,
         seed=0,  # Seed for the algorithm's random walk
     ):
-
         # call base class constructor
         Extractor.__init__(
             self,

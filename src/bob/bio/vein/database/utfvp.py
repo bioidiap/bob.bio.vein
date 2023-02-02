@@ -164,7 +164,6 @@ class UtfvpDatabase(CSVDatabase):
     dataset_protocols_hash = "fe51ba85"
 
     def __init__(self, protocol):
-
         super().__init__(
             name=self.name,
             protocol=protocol,
