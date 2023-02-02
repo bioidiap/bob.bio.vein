@@ -20,7 +20,7 @@ import pkg_resources
 
 import bob.io.base
 
-from ..preprocessor import utils as preprocessor_utils
+from bob.bio.vein.preprocessor import utils as preprocessor_utils
 
 
 def F(parts):
@@ -32,7 +32,7 @@ def F(parts):
 def test_cropping():
     # tests if the cropping stage at preprocessors works as planned
 
-    from ..preprocessor.crop import FixedCrop, NoCrop
+    from bob.bio.vein.preprocessor.crop import FixedCrop, NoCrop
 
     shape = (20, 17)
     test_image = numpy.random.randint(0, 1000, size=shape, dtype=int)
@@ -55,7 +55,7 @@ def test_cropping():
     assert (test_image[top:-bottom, left:-right] - cropped).sum() == 0
 
     # tests metadata survives after cropping (and it is corrected)
-    from ..database import AnnotatedArray
+    from bob.bio.vein.database import AnnotatedArray
 
     annotations = [
         (top - 2, left + 2),  # slightly above and to the right
@@ -81,8 +81,12 @@ def test_cropping():
 def test_masking():
     # tests if the masking stage at preprocessors work as planned
 
-    from ..database import AnnotatedArray
-    from ..preprocessor.mask import AnnotatedRoIMask, FixedMask, NoMask
+    from bob.bio.vein.database import AnnotatedArray
+    from bob.bio.vein.preprocessor.mask import (
+        AnnotatedRoIMask,
+        FixedMask,
+        NoMask,
+    )
 
     shape = (17, 20)
     test_image = numpy.random.randint(0, 1000, size=shape, dtype=int)
@@ -138,7 +142,7 @@ def test_preprocessor():
 
     img = bob.io.base.load(input_filename)
 
-    from ..preprocessor import (
+    from bob.bio.vein.preprocessor import (
         HuangNormalization,
         LeeMask,
         NoCrop,
@@ -190,7 +194,7 @@ def test_max_curvature():
     bin_ref = bin_ref.T
 
     # Apply Python implementation
-    from ..extractor.MaximumCurvature import MaximumCurvature
+    from bob.bio.vein.extractor.MaximumCurvature import MaximumCurvature
 
     MC = MaximumCurvature(3)  # value used to create references
 
@@ -224,7 +228,7 @@ def test_max_curvature_HE():
     input_img = bob.io.base.load(input_img_filename)
 
     # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in maximum_curvature.py configuration file + postprocessing)
-    from ..preprocessor import (
+    from bob.bio.vein.preprocessor import (
         HistogramEqualization,
         HuangNormalization,
         LeeMask,
@@ -241,7 +245,7 @@ def test_max_curvature_HE():
     preproc_data = processor(input_img)
 
     # Extract features from preprocessed and histogram equalized data using MC extractor (same parameters as in maximum_curvature.py configuration file)
-    from ..extractor.MaximumCurvature import MaximumCurvature
+    from bob.bio.vein.extractor.MaximumCurvature import MaximumCurvature
 
     MC = MaximumCurvature(sigma=5)
     MC(preproc_data)
@@ -260,7 +264,7 @@ def test_repeated_line_tracking():
     input_fvr = bob.io.base.load(input_fvr_filename)
 
     # Apply Python implementation
-    from ..extractor.RepeatedLineTracking import RepeatedLineTracking
+    from bob.bio.vein.extractor.RepeatedLineTracking import RepeatedLineTracking
 
     RLT = RepeatedLineTracking(3000, 1, 21, False)
     output_img = RLT((input_img, input_fvr))
@@ -281,7 +285,7 @@ def test_repeated_line_tracking_HE():
     input_img = bob.io.base.load(input_img_filename)
 
     # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in repeated_line_tracking.py configuration file + postprocessing)
-    from ..preprocessor import (
+    from bob.bio.vein.preprocessor import (
         HistogramEqualization,
         HuangNormalization,
         LeeMask,
@@ -298,7 +302,7 @@ def test_repeated_line_tracking_HE():
     preproc_data = processor(input_img)
 
     # Extract features from preprocessed and histogram equalized data using RLT extractor (same parameters as in repeated_line_tracking.py configuration file)
-    from ..extractor.RepeatedLineTracking import RepeatedLineTracking
+    from bob.bio.vein.extractor.RepeatedLineTracking import RepeatedLineTracking
 
     # Maximum number of iterations
     NUMBER_ITERATIONS = 3000
@@ -327,7 +331,7 @@ def test_wide_line_detector():
     input_fvr = bob.io.base.load(input_fvr_filename)
 
     # Apply Python implementation
-    from ..extractor.WideLineDetector import WideLineDetector
+    from bob.bio.vein.extractor.WideLineDetector import WideLineDetector
 
     WL = WideLineDetector(5, 1, 41, False)
     output_img = WL((input_img, input_fvr))
@@ -347,7 +351,7 @@ def test_wide_line_detector_HE():
     input_img = bob.io.base.load(input_img_filename)
 
     # Preprocess the data and apply Histogram Equalization postprocessing (same parameters as in wide_line_detector.py configuration file + postprocessing)
-    from ..preprocessor import (
+    from bob.bio.vein.preprocessor import (
         HistogramEqualization,
         HuangNormalization,
         LeeMask,
@@ -364,7 +368,7 @@ def test_wide_line_detector_HE():
     preproc_data = processor(input_img)
 
     # Extract features from preprocessed and histogram equalized data using WLD extractor (same parameters as in wide_line_detector.py configuration file)
-    from ..extractor.WideLineDetector import WideLineDetector
+    from bob.bio.vein.extractor.WideLineDetector import WideLineDetector
 
     # Radius of the circular neighbourhood region
     RADIUS_NEIGHBOURHOOD_REGION = 5
@@ -392,7 +396,7 @@ def test_miura_match():
     probe_gen_vein = bob.io.base.load(probe_gen_filename)
     probe_imp_vein = bob.io.base.load(probe_imp_filename)
 
-    from ..algorithm.MiuraMatch import MiuraMatch
+    from bob.bio.vein.algorithm.MiuraMatch import MiuraMatch
 
     MM = MiuraMatch(ch=18, cw=28)
     score_gen = MM.score(template_vein, probe_gen_vein)
@@ -414,7 +418,7 @@ def test_correlate():
     probe_gen_vein = bob.io.base.load(probe_gen_filename)
     # probe_imp_vein = bob.io.base.load(probe_imp_filename)
 
-    from ..algorithm.Correlate import Correlate
+    from bob.bio.vein.algorithm.Correlate import Correlate
 
     C = Correlate()
     C.score(template_vein, probe_gen_vein)
@@ -650,7 +654,7 @@ def test_intersection_ratio():
 
 
 def test_hamming_distance():
-    from ..algorithm.HammingDistance import HammingDistance
+    from bob.bio.vein.algorithm.HammingDistance import HammingDistance
 
     HD = HammingDistance()
 
