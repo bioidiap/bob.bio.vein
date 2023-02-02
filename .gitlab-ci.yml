@@ -1,4 +1,4 @@
 include:
   - project: bob/dev-profile
-    ref: citools_link_update
+    ref: main
     file: gitlab/python.yml
