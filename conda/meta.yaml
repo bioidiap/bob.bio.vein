@@ -1,6 +1,10 @@
 {% set data = load_file_data(RECIPE_DIR + '/../pyproject.toml') %}
 {% set name = data['project']['name'] %}
 
+package:
+  name: {{ name }}
+  version: {{ data['project']['version'] }}
+
 source:
   path: ..
 
