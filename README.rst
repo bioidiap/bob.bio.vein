@@ -5,8 +5,8 @@
    :target: https://www.idiap.ch/software/bob/docs/bob/bob.bio.vein/master/sphinx/index.html
 .. image:: https://gitlab.idiap.ch/bob/bob.bio.vein/badges/master/pipeline.svg
    :target: https://gitlab.idiap.ch/bob/bob.bio.vein/commits/master
-.. image:: https://www.idiap.ch/software/bob/docs/bob/bob.bio.vein/master/coverage
-   :target: https://gitlab.idiap.ch/bob/bob.bio.vein/commits/master
+.. image:: https://gitlab.idiap.ch/bob/bob.bio.vein/badges/master/coverage.svg
+   :target: https://www.idiap.ch/software/bob/docs/bob/bob.bio.vein/master/coverage/
 .. image:: https://img.shields.io/badge/gitlab-project-0000c0.svg
    :target: https://gitlab.idiap.ch/bob/bob.bio.vein
 
