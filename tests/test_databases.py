@@ -4,8 +4,6 @@
 
 import os
 
-from bob.extension.download import get_file
-
 
 def test_verafinger_contactless():
     from bob.bio.vein.database.verafinger_contactless import (
@@ -13,8 +11,7 @@ def test_verafinger_contactless():
     )
 
     # Getting the absolute path
-    urls = VerafingerContactless.dataset_protocols_urls
-    filename = get_file("verafinger_contactless.tar.gz", urls)
+    filename = VerafingerContactless(protocol="nom").dataset_protocols_path
 
     # Removing the file before the test
     try:
@@ -81,8 +78,7 @@ def test_utfvp():
     from bob.bio.vein.database.utfvp import UtfvpDatabase
 
     # Getting the absolute path
-    urls = UtfvpDatabase.dataset_protocols_urls
-    filename = get_file("utfvp_csv.tar.gz", urls)
+    filename = UtfvpDatabase(protocol="nom").dataset_protocols_path
 
     # Removing the file before the test
     try:
