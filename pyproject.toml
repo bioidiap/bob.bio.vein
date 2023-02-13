@@ -36,7 +36,6 @@
         "scikit-image",
         "matplotlib",
         "clapp",
-        "bob.extension",
         "bob.io.base",
         "bob.bio.base",
     ]
