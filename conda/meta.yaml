@@ -29,7 +29,6 @@ requirements:
     - scikit-image {{ scikit_image }}
     - matplotlib {{ matplotlib }}
     - clapp
-    - bob.extension
     - bob.io.base
     - bob.bio.base
 
@@ -37,7 +36,6 @@ requirements:
     - python
     - setuptools
     - clapp
-    - bob.extension
     - bob.io.base
     - bob.bio.base
     - {{ pin_compatible('numpy') }}
