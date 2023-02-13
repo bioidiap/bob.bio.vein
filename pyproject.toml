@@ -1,6 +1,104 @@
 [build-system]
-    requires = ["setuptools", "wheel", "bob.extension"]
+    requires = ["setuptools>=61.0.0", "wheel"]
     build-backend = "setuptools.build_meta"
+
+[project]
+    name = "bob.bio.vein"
+    version = "4.0.4b0"
+    requires-python = ">=3.9"
+    description = "Vein Recognition Library"
+    dynamic = ["readme"]
+    license = {text = "GPLv3 License"}
+    authors = [
+    {name = "Andre Anjos", email = "andre.anjos@idiap.ch"},
+    {name = "Pedro Tome", email = "pedro.tome@idiap.ch"},
+    ]
+    keywords = ["bob", "biometric recognition", "evaluation", "vein"]
+
+    classifiers=[
+        "Framework :: Bob",
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Natural Language :: English",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+    ]
+    dependencies = [
+        "setuptools",
+        "numpy",
+        "scipy",
+        "pillow",
+        "schema",
+        "docopt",
+        "scikit-image",
+        "matplotlib",
+        "clapp",
+        "bob.extension",
+        "bob.io.base",
+        "bob.bio.base",
+    ]
+
+[project.urls]
+    documentation = "https://www.idiap.ch/software/bob/docs/bob/bob.bio.vein/stable/"
+    homepage = "https://pypi.org/project/bob.bio.vein/"
+    repository = "https://gitlab.idiap.ch/bob/bob.bio.vein"
+    changelog = "https://gitlab.idiap.ch/bob/bob.bio.vein/-/releases"
+
+[project.optional-dependencies]
+    qa = ["pre-commit"]
+    doc = [
+        "sphinx",
+        "sphinx_rtd_theme",
+        "sphinx-autodoc-typehints",
+        "auto-intersphinx",
+        "sphinxcontrib-programoutput",
+        ]
+    test = [
+        "pytest",
+        "pytest-cov",
+        "coverage",
+        ]
+
+[tool.setuptools]
+    zip-safe = false
+    package-dir = {"" = "src"}
+
+[tool.setuptools.dynamic]
+    readme = {file = "README.rst"}
+
+[project.entry-points."bob.bio.config"]
+    # protocols (must be specified before the database in the cmd)
+    # utfvp
+    nom = "bob.bio.vein.config.database.utfvp_nom"
+    full = "bob.bio.vein.config.database.utfvp_full"
+    1vsall = "bob.bio.vein.config.database.utfvp_1vsall"
+    # legacy baselines
+    mc = "bob.bio.vein.config.maximum_curvature"
+    rlt = "bob.bio.vein.config.repeated_line_tracking"
+    wld = "bob.bio.vein.config.wide_line_detector"
+    # verafinger contactless
+    vera_nom = "bob.bio.vein.config.database.verafinger_contactless_nom"
+
+[project.entry-points."bob.bio.database"]
+    utfvp = "bob.bio.vein.config.database.utfvp_nom:database"
+    verafinger_contactless = "bob.bio.vein.config.database.verafinger_contactless_nom:database"
+
+[project.entry-points."bob.bio.pipeline"]
+    wld = "bob.bio.vein.config.wide_line_detector:pipeline"
+    mc = "bob.bio.vein.config.maximum_curvature:pipeline"
+    rlt = "bob.bio.vein.config.repeated_line_tracking:pipeline"
+
+[project.scripts]
+    bob_bio_vein_compare_rois = "bob.bio.vein.script.compare_rois:main"
+    bob_bio_vein_view_sample = "bob.bio.vein.script.view_sample:main"
+    bob_bio_vein_blame = "bob.bio.vein.script.blame:main"
+
+
+[tool.distutils.bdist_wheel]
+    universal = true
 
 [tool.isort]
     profile = "black"
@@ -10,3 +108,15 @@
 
 [tool.black]
     line-length = 80
+
+[tool.coverage.run]
+    relative_files = true
+
+[tool.pytest.ini_options]
+    addopts = [
+        "--import-mode=append",
+        "--cov-report=term-missing",
+        "--cov=bob.bio.vein",
+    ]
+    junit_logging = "all"
+    junit_log_passing_tests = false

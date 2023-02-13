@@ -472,7 +472,6 @@ class MaximumCurvature(Extractor):
         plt.show()
 
     def __call__(self, image):
-
         finger_image = image[0].astype("float64")
         finger_mask = image[1]
 

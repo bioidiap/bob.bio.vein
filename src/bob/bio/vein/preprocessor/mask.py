@@ -32,7 +32,6 @@ class Padder(object):
     """
 
     def __init__(self, padding_width=5, padding_constant=51):
-
         self.padding_width = padding_width
         self.padding_constant = padding_constant
 
@@ -211,7 +210,6 @@ class KonoMask(Masker):
     """
 
     def __init__(self, sigma=5, padder=Padder()):
-
         self.sigma = sigma
         self.padder = padder
 

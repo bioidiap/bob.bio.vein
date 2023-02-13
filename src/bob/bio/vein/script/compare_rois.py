@@ -48,14 +48,11 @@ import operator
 import os
 import sys
 
+import clapp.logging
 import h5py
 import numpy
 
-import bob.extension.log
-
-logger = bob.extension.log.setup("bob.bio.vein")
-
-import bob.io.base
+logger = clapp.logging.setup("bob.bio.vein")
 
 
 def make_catalog(d):
@@ -139,7 +136,6 @@ def mean_std_for_column(table, column):
 
 
 def main(user_input=None):
-
     if user_input is not None:
         argv = user_input
     else:
@@ -161,7 +157,7 @@ def main(user_input=None):
 
     # Sets-up logging
     verbosity = int(args["--verbose"])
-    bob.extension.log.set_verbosity_level(logger, verbosity)
+    clapp.logging.set_verbosity_level(logger, verbosity)
 
     # Catalogs
     gt = make_catalog(args["<ground-truth>"])

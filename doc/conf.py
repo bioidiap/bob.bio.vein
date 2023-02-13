@@ -24,6 +24,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx.ext.mathjax",
+    "auto_intersphinx",
 ]
 
 # Be picky about warnings
@@ -231,23 +232,8 @@ autodoc_default_options = {
     "show-inheritance": True,
 }
 
-# For inter-documentation mapping:
-from bob.extension.utils import link_documentation, load_requirements
-
-sphinx_requirements = "extra-intersphinx.txt"
-if os.path.exists(sphinx_requirements):
-    intersphinx_mapping = link_documentation(
-        additional_packages=load_requirements(sphinx_requirements)
-    )
-else:
-    intersphinx_mapping = link_documentation()
-
-# Add scikit-image link
-skimage_version = pkg_resources.require("scikit-image")[0].version
-skimage_version = ".".join(skimage_version.split(".")[:2])
-intersphinx_mapping[
-    "http://scikit-image.org/docs/%s.x" % skimage_version
-] = None
-
-# Add PIL link
-intersphinx_mapping["http://pillow.readthedocs.io/en/stable"] = None
+auto_intersphinx_packages = [
+    ("python", "3"),
+    "numpy",
+    "bob.bio.base",
+]

@@ -36,9 +36,9 @@ def setup_logger(name, level):
 
     """
 
-    import bob.extension.log
+    import clapp.logging
 
-    logger = bob.extension.log.setup(name)
+    logger = clapp.logging.setup(name)
 
     if not (0 <= level < 4):
         raise schema.SchemaError(
@@ -46,7 +46,7 @@ def setup_logger(name, level):
         )
 
     # Sets-up logging
-    bob.extension.log.set_verbosity_level(logger, level)
+    clapp.logging.set_verbosity_level(logger, level)
 
     return logger
 

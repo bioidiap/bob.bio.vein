@@ -6,10 +6,13 @@
   VERA-Fingervein-Contactless database implementation
 """
 
+from clapp.rc import UserDefaults
+
 import bob.io.base
 
 from bob.bio.base.database import CSVDatabase, FileSampleLoader
-from bob.extension import rc
+
+rc = UserDefaults("~/.bobrc")
 
 
 class VerafingerContactless(CSVDatabase):
@@ -60,7 +63,6 @@ class VerafingerContactless(CSVDatabase):
     dataset_protocols_hash = "656ef935"
 
     def __init__(self, protocol):
-
         super().__init__(
             name=self.name,
             protocol=protocol,
