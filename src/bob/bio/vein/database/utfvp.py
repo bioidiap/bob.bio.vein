@@ -6,13 +6,15 @@
   Utfvp database implementation
 """
 
+from clapp.rc import UserDefaults
 from sklearn.pipeline import make_pipeline
 
 import bob.io.base
 
 from bob.bio.base.database import CSVDatabase, FileSampleLoader
 from bob.bio.vein.database.roi_annotation import ROIAnnotation
-from bob.extension import rc
+
+rc = UserDefaults("~/.bobrc")
 
 
 class UtfvpDatabase(CSVDatabase):
@@ -164,7 +166,6 @@ class UtfvpDatabase(CSVDatabase):
     dataset_protocols_hash = "fe51ba85"
 
     def __init__(self, protocol):
-
         super().__init__(
             name=self.name,
             protocol=protocol,

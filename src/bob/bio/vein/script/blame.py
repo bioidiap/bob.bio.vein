@@ -37,15 +37,13 @@ Examples:
 import os
 import sys
 
+import clapp.logging
 import numpy
 
-import bob.extension.log
-
-logger = bob.extension.log.setup("bob.bio.vein")
+logger = clapp.logging.setup("bob.bio.vein")
 
 
 def main(user_input=None):
-
     if user_input is not None:
         argv = user_input
     else:
@@ -67,7 +65,7 @@ def main(user_input=None):
 
     # Sets-up logging
     verbosity = int(args["--verbose"])
-    bob.extension.log.set_verbosity_level(logger, verbosity)
+    clapp.logging.set_verbosity_level(logger, verbosity)
 
     # validates number of cases
     cases = int(args["--cases"])

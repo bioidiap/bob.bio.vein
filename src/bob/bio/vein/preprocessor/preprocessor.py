@@ -40,14 +40,13 @@ class Preprocessor(BasePreprocessor):
     """
 
     def __init__(self, crop, mask, normalize, filter, **kwargs):
-
         BasePreprocessor.__init__(
             self,
             crop=crop,
             mask=mask,
             normalize=normalize,
             filter=filter,
-            **kwargs
+            **kwargs,
         )
 
         self.crop = crop

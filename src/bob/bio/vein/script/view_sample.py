@@ -46,14 +46,13 @@ Examples:
 import os
 import sys
 
+import clapp.logging
 import docopt
 import h5py
 import numpy
 import schema
 
-import bob.extension.log
-
-logger = bob.extension.log.setup("bob.bio.vein")
+logger = clapp.logging.setup("bob.bio.vein")
 
 import matplotlib.pyplot as mpl
 
@@ -198,7 +197,6 @@ def validate(args):
 
 
 def main(user_input=None):
-
     if user_input is not None:
         argv = user_input
     else:
