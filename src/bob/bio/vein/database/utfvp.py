@@ -14,7 +14,7 @@ import bob.io.base
 from bob.bio.base.database import CSVDatabase, FileSampleLoader
 from bob.bio.vein.database.roi_annotation import ROIAnnotation
 
-rc = UserDefaults("~/.bobrc")
+rc = UserDefaults("bobrc.toml")
 
 
 class UtfvpDatabase(CSVDatabase):
