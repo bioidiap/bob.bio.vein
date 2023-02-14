@@ -12,7 +12,7 @@ import bob.io.base
 
 from bob.bio.base.database import CSVDatabase, FileSampleLoader
 
-rc = UserDefaults("~/.bobrc")
+rc = UserDefaults("bobrc.toml")
 
 
 class VerafingerContactless(CSVDatabase):
