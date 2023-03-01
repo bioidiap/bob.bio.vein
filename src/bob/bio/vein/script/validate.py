@@ -36,9 +36,9 @@ def setup_logger(name, level):
 
     """
 
-    import clapp.logging
+    import clapper.logging
 
-    logger = clapp.logging.setup(name)
+    logger = clapper.logging.setup(name)
 
     if not (0 <= level < 4):
         raise schema.SchemaError(
@@ -46,7 +46,7 @@ def setup_logger(name, level):
         )
 
     # Sets-up logging
-    clapp.logging.set_verbosity_level(logger, level)
+    clapper.logging.set_verbosity_level(logger, level)
 
     return logger
 

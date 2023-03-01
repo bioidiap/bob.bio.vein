@@ -28,14 +28,14 @@ requirements:
     - docopt {{ docopt }}
     - scikit-image {{ scikit_image }}
     - matplotlib {{ matplotlib }}
-    - clapp
+    - clapper
     - bob.io.base
     - bob.bio.base
 
   run:
     - python
     - setuptools
-    - clapp
+    - clapper
     - bob.io.base
     - bob.bio.base
     - {{ pin_compatible('numpy') }}

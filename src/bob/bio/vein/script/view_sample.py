@@ -46,13 +46,13 @@ Examples:
 import os
 import sys
 
-import clapp.logging
+import clapper.logging
 import docopt
 import h5py
 import numpy
 import schema
 
-logger = clapp.logging.setup("bob.bio.vein")
+logger = clapper.logging.setup("bob.bio.vein")
 
 import matplotlib.pyplot as mpl
 
