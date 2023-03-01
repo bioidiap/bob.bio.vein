@@ -37,10 +37,10 @@ Examples:
 import os
 import sys
 
-import clapp.logging
+import clapper.logging
 import numpy
 
-logger = clapp.logging.setup("bob.bio.vein")
+logger = clapper.logging.setup("bob.bio.vein")
 
 
 def main(user_input=None):
@@ -65,7 +65,7 @@ def main(user_input=None):
 
     # Sets-up logging
     verbosity = int(args["--verbose"])
-    clapp.logging.set_verbosity_level(logger, verbosity)
+    clapper.logging.set_verbosity_level(logger, verbosity)
 
     # validates number of cases
     cases = int(args["--cases"])
