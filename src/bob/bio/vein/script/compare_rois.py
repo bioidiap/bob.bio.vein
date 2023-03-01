@@ -48,11 +48,11 @@ import operator
 import os
 import sys
 
-import clapp.logging
+import clapper.logging
 import h5py
 import numpy
 
-logger = clapp.logging.setup("bob.bio.vein")
+logger = clapper.logging.setup("bob.bio.vein")
 
 
 def make_catalog(d):
@@ -157,7 +157,7 @@ def main(user_input=None):
 
     # Sets-up logging
     verbosity = int(args["--verbose"])
-    clapp.logging.set_verbosity_level(logger, verbosity)
+    clapper.logging.set_verbosity_level(logger, verbosity)
 
     # Catalogs
     gt = make_catalog(args["<ground-truth>"])

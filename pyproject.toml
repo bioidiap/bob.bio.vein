@@ -35,7 +35,7 @@
         "docopt",
         "scikit-image",
         "matplotlib",
-        "clapp",
+        "clapper",
         "bob.io.base",
         "bob.bio.base",
     ]

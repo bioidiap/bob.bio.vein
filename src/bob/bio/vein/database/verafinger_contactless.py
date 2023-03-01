@@ -6,7 +6,7 @@
   VERA-Fingervein-Contactless database implementation
 """
 
-from clapp.rc import UserDefaults
+from clapper.rc import UserDefaults
 
 import bob.io.base
 
