@@ -21,30 +21,32 @@ requirements:
     - python {{ python }}
     - setuptools {{ setuptools }}
     - pip {{ pip }}
-    - numpy {{ numpy }}
-    - scipy {{ scipy }}
-    - pillow {{ pillow }}
-    - schema {{ schema }}
-    - docopt {{ docopt }}
-    - scikit-image {{ scikit_image }}
-    - matplotlib {{ matplotlib }}
-    - clapper
+    - bob
     - bob.io.base
     - bob.bio.base
+    - clapper {{ clapper }}
+    - docopt {{ docopt }}
+    - matplotlib {{ matplotlib }}
+    - numpy {{ numpy }}
+    - pillow {{ pillow }}
+    - schema {{ schema }}
+    - scikit-image {{ scikit_image }}
+    - scipy {{ scipy }}
 
   run:
     - python
     - setuptools
-    - clapper
+    - bob
     - bob.io.base
     - bob.bio.base
+    - {{ pin_compatible('clapper') }}
+    - {{ pin_compatible('docopt') }}
+    - {{ pin_compatible('matplotlib') }}
     - {{ pin_compatible('numpy') }}
-    - {{ pin_compatible('scipy') }}
     - {{ pin_compatible('pillow') }}
     - {{ pin_compatible('schema') }}
-    - {{ pin_compatible('docopt') }}
     - {{ pin_compatible('scikit-image') }}
-    - {{ pin_compatible('matplotlib') }}
+    - {{ pin_compatible('scipy') }}
 
 test:
   imports:
