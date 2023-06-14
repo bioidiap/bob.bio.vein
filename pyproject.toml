@@ -27,17 +27,17 @@
         "Topic :: Software Development :: Libraries :: Python Modules",
     ]
     dependencies = [
-        "setuptools",
-        "numpy",
-        "scipy",
-        "pillow",
-        "schema",
-        "docopt",
-        "scikit-image",
-        "matplotlib",
-        "clapper",
+        "bob",
         "bob.io.base",
         "bob.bio.base",
+        "clapper",
+        "docopt",
+        "matplotlib",
+        "numpy",
+        "pillow",
+        "schema",
+        "scikit-image",
+        "scipy",
     ]
 
 [project.urls]
