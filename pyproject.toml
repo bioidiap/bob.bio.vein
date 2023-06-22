@@ -4,7 +4,7 @@
 
 [project]
     name = "bob.bio.vein"
-    version = "4.0.4b0"
+    version = "5.0.0"
     requires-python = ">=3.9"
     description = "Vein Recognition Library"
     dynamic = ["readme"]
@@ -27,21 +27,21 @@
         "Topic :: Software Development :: Libraries :: Python Modules",
     ]
     dependencies = [
-        "bob",
-        "bob.io.base",
-        "bob.bio.base",
-        "clapper",
-        "docopt",
-        "matplotlib",
-        "numpy",
-        "pillow",
-        "schema",
-        "scikit-image",
-        "scipy",
+        "bob==12.0.0",
+        "bob.io.base==5.1.0",
+        "bob.bio.base==8.0.0",
+        "clapper==1.0.1",
+        "docopt==0.6.2",
+        "matplotlib==3.6.2",
+        "numpy==1.23.5",
+        "pillow==9.4.0",
+        "schema==0.7.5",
+        "scikit-image==0.19.3",
+        "scipy==1.10.0",
     ]
 
 [project.urls]
-    documentation = "https://www.idiap.ch/software/bob/docs/bob/bob.bio.vein/master/sphinx/"
+    documentation = "https://www.idiap.ch/software/bob/docs/bob/bob.bio.vein/v5.0.0/sphinx/"
     homepage = "https://pypi.org/project/bob.bio.vein/"
     repository = "https://gitlab.idiap.ch/bob/bob.bio.vein"
     changelog = "https://gitlab.idiap.ch/bob/bob.bio.vein/-/releases"
@@ -49,16 +49,16 @@
 [project.optional-dependencies]
     qa = ["pre-commit"]
     doc = [
-        "sphinx",
-        "sphinx_rtd_theme",
-        "sphinx-autodoc-typehints",
-        "auto-intersphinx",
-        "sphinxcontrib-programoutput",
+        "sphinx==5.3.0",
+        "sphinx-rtd-theme==1.1.1",
+        "sphinx-autodoc-typehints==1.21.8",
+        "auto-intersphinx==1.0.2",
+        "sphinxcontrib-programoutput==0.17",
         ]
     test = [
-        "pytest",
-        "pytest-cov",
-        "coverage",
+        "pytest==7.2.1",
+        "pytest-cov==4.0.0",
+        "coverage==7.0.5",
         ]
 
 [tool.setuptools]
@@ -119,3 +119,7 @@
     ]
     junit_logging = "all"
     junit_log_passing_tests = false
+
+[profile]
+    repository_url = "git@gitlab.idiap.ch:bob/dev-profile.git"
+    commit_hash = "ade723be1f11feddb7bece235de32cc98953dc07"
